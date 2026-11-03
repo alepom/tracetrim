@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tracetrim"
+version = "0.0.1"
+description = "Learn which fields of tool outputs an agent actually uses, from its traces, and trim the rest."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# Token counts are measured, never estimated: `measure` needs a real tokenizer.
+measure = ["tiktoken>=0.7"]
+test = ["pytest>=8", "tiktoken>=0.7"]
+
+[project.scripts]
+tracetrim = "tracetrim.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

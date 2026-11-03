@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.tmp-pip/
+.env
+# Real traces can contain client data and third-party API payloads:
+# they stay local until checked for terms of use and confidentiality.
+traces/
+out/
+# Third-party terms are archived locally (copyrighted text): not published.
+legal/
