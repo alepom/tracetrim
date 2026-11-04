@@ -5,7 +5,7 @@ Nel video ci sono **due server MCP**:
 | | cos'è | ruolo nel video |
 |---|---|---|
 | **billing** | il server di fatturazione che l'agente usa già (simulato, in forma Stripe, dati finti) | "l'MCP dell'agente" |
-| **tracetrim** | il nostro, configurato per stare **davanti** a billing | "il nostro tool" |
+| **tracetrim** | il nostro, in modalità automatica, **davanti** a billing | "il nostro tool" |
 
 Lo script avvia entrambi, li rende raggiungibili dal Playground con due tunnel ngrok e mostra in un
 solo terminale le chiamate che arrivano a ciascuno. Tutto resta acceso dall'inizio alla fine: le scene
@@ -20,8 +20,11 @@ all'agente una risposta più leggera. Per questo, quando si aggancia tracetrim, 
 diretto a billing si **spegne**: se restassero accesi entrambi l'agente vedrebbe due copie degli stessi
 tool e potrebbe scavalcare tracetrim.
 
-Cosa toglie, tracetrim l'ha imparato osservando le esecuzioni precedenti dello stesso agente: per ogni
-tool, quali campi l'agente usa davvero.
+Cosa togliere, tracetrim lo impara da solo, nel video stesso: osserva le prime esecuzioni (3, per la
+demo) senza cambiare nulla; alla fine di ognuna l'agente gli passa la risposta finale con lo strumento
+`tracetrim_done`, e tracetrim confronta i dati ricevuti con ciò che l'agente ha scritto. Dopo la terza
+applica da sé le azioni sicure (taglia i campi mai usati, tiene identificativi ed `expand`), e da lì in
+poi l'agente riceve risposte più leggere. All'utente resta una riga in più nel prompt.
 
 ## Prima di girare
 
@@ -31,11 +34,13 @@ tool, quali campi l'agente usa davvero.
    export DEMO_TOKEN=scegli-un-segreto
    export NGROK_DOMAIN=tuo-dominio.ngrok-free.app
    ```
-2. Avvia tutto:
+2. Avvia tutto, partendo da zero:
    ```bash
-   cd ~/progetti/tracetrim && docs/demo_playground.sh
+   cd ~/progetti/tracetrim && docs/demo_playground.sh --reset
    ```
-   Lo script stampa i due URL e il token, poi mostra le chiamate in arrivo. Lascialo aperto.
+   Lo script stampa i due URL, il token e l'indirizzo del report dal vivo, poi mostra le chiamate in
+   arrivo. Lascialo aperto. Ciò che tracetrim impara resta in `out/demo/auto/` anche se riavvii lo
+   script: usa `--reset` solo per ricominciare da zero (per esempio dopo una prova).
 3. Nel Playground crea l'agente: modello a tua scelta, **System message** e **User message** da
    [`demo_prompts_IT.md`](demo_prompts_IT.md).
 4. Sempre nel Playground, aggiungi **entrambi** i server (*Tools → Add → MCP server*), con l'header
@@ -44,34 +49,53 @@ tool, quali campi l'agente usa davvero.
    - `tracetrim` → l'URL "tracetrim".
 
    Tieni acceso solo `billing`.
+5. Apri nel browser l'indirizzo del report stampato dallo script
+   (`http://127.0.0.1:8799/report?token=...`): si aggiorna da solo ogni 10 secondi. All'inizio dice
+   che tracetrim sta osservando.
 
 ## Scena 1 — L'agente con il suo MCP
 
 Esegui l'agente. Nel terminale scorrono le righe `[billing]`: sono le chiamate dell'agente al suo
 server. Nel Playground annota i token di input consumati.
 
-## Scena 2 — Il report: cosa ha imparato tracetrim
+## Scena 2 — Aggancio tracetrim: osserva
 
-Apri `out/demo/report.html` (da Windows:
-`\\wsl.localhost\Debian\home\alepom\progetti\tracetrim\out\demo\report.html`). Mostra la cifra in
-alto, "Dove vanno i token", i campi che l'agente non usa mai, e in fondo le **azioni**: quelle
-automatiche, già nella configurazione che tracetrim sta usando, e quelle manuali, da valutare.
+Nel Playground spegni `billing` e accendi `tracetrim`. Esegui l'agente **tre volte**, svuotando la chat
+ogni volta (ogni esecuzione dev'essere nuova, non il seguito della precedente). Nel
+video basta mostrarne una per intero e accelerare le altre.
 
-## Scena 3 — Aggancio tracetrim
+Da mostrare:
+- nel Playground, tra gli strumenti, gli stessi di billing più `expand` e `tracetrim_done`; alla fine
+  dell'esecuzione l'agente chiama `tracetrim_done` con la sua risposta;
+- nel terminale, per ogni chiamata, la riga `[billing]` (la chiamata arriva comunque al server) e la
+  riga `[tracetrim]` con `+0%`: per ora non toglie nulla;
+- a fine esecuzione:
+  ```
+  [tracetrim] run 1 closed (with answer): 10 calls, 16,561 -> 16,561 tokens (+0%), 0 expand
+  [tracetrim]   1 complete runs · report updated · learning: 2 more complete runs before trimming
+  ```
+- il report che si riempie: la cifra in alto, "Dove vanno i token", i campi che l'agente non usa mai.
 
-Nel Playground spegni `billing` e accendi `tracetrim`. Esegui di nuovo. Nel terminale, per ogni
-chiamata, due righe:
+## Scena 3 — tracetrim filtra da solo
+
+Dopo la terza esecuzione il terminale dice `trimming 4 tools`. Esegui di nuovo (chat vuota). Ora:
 
 ```
 [billing] stripe_list_charges {"customer": "cus_..."}
 [tracetrim] stripe_list_charges                   1,579 ->      783 tokens (-50%)  hidden: 18 groups
-[tracetrim]   session: 2 calls, 2,227 -> 1,074 (-52%), 0 expand
+[tracetrim]   this run: 2 calls, 2,227 -> 1,074 (-52%), 0 expand · session: ...
 ```
 
-La prima riga mostra che la chiamata arriva comunque a billing; la seconda quanto tracetrim ha
-tolto prima di passarla all'agente. Da mostrare anche: i token di input nel Playground, confrontati con
-la scena 1, e le risposte ai cinque ticket, che restano corrette (la tabella delle risposte giuste è in
-`demo_prompts_IT.md`).
+Da mostrare: la riga di chiusura dell'esecuzione (circa −50% sui risultati degli strumenti), i token di
+input nel Playground confrontati con la scena 1, e le risposte ai cinque ticket, che restano corrette
+(la tabella delle risposte giuste è in `demo_prompts_IT.md`).
+
+## Scena 4 — Il report: automatico e manuale
+
+Nel report, in alto, "Modalità automatica: il filtro è attivo". In fondo le **azioni**: quelle
+automatiche, che tracetrim ha già applicato, e quelle manuali, che restano da valutare a chi gestisce
+l'agente. Se l'agente chiedesse troppo spesso `expand` per un tool, tracetrim smetterebbe di filtrarlo
+da solo e il report lo segnalerebbe.
 
 ## Variante con Headroom (facoltativa)
 
@@ -83,6 +107,11 @@ risposte; il primo avvio è più lento.
 
 - I due server sono protetti dal token finché i tunnel sono aperti; Ctrl+C chiude tutto.
 - tracetrim filtra solo ciò che passa da lui: non tocca la ricerca web nativa del Playground.
+- In una prova con un agente vero (5 esecuzioni, 3 di osservazione) i risultati degli strumenti sono
+  scesi del 50% circa dopo l'apprendimento, nessuna richiesta di `expand`, 5 ticket su 5 corretti in
+  ogni esecuzione. Il modello del Playground può comportarsi diversamente: fai una prova prima di girare.
+- Se l'agente non chiama `tracetrim_done`, quell'esecuzione resta solo nella telemetria (si chiude
+  dopo 5 minuti di pausa) e non conta per l'apprendimento.
 - Una sola esecuzione per scena non è una misura: presenta i numeri come dimostrazione del meccanismo.
   I risultati sono nel paper.
 - Se lo script si ferma con "ngrok did not open both tunnels", il piano ngrok non consente due tunnel

@@ -51,7 +51,7 @@ def main():
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
-        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version {about.VERSION} of {about.NAME}}}\n"
+        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, {about.NAME} {about.VERSION} (studies run with versions 0.1 and 0.2)}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
         + (f" DOI \\href{{https://doi.org/{about.PAPER_DOI}}}{{{about.PAPER_DOI}}}." if about.PAPER_DOI else "") + "}\n"
         f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{about.SOFTWARE_DOI}}}{{{about.SOFTWARE_DOI}}}}}\n"

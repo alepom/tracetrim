@@ -308,6 +308,11 @@ L = {
     "aggressive": ("after aggressive projection", "dopo la proiezione aggressiva"),
     "misses": ("held-out misses", "mancati sui run esclusi"),
     "suggestions": ("Suggestions", "Suggerimenti"), "none": ("No suggestion.", "Nessun suggerimento."),
+    "auto_title": ("Automatic mode", "Modalità automatica"),
+    "auto_applied": ("trimming is on, with the automatic actions below",
+                     "il filtro è attivo, con le azioni automatiche qui sotto"),
+    "auto_learning": ("learning: complete runs", "in apprendimento: esecuzioni complete"),
+    "auto_off": ("switched off after too many expand requests", "spenti dopo troppe richieste di expand"),
     "project": ("Project and author", "Progetto e autore"),
     "hero": ("of tool-output tokens removed by the prudent projection, on runs it never saw",
              "dei token restituiti dai tool tolti dalla proiezione prudente, su run mai visti"),
@@ -465,6 +470,15 @@ def render_html(d: dict, sugg: list[dict]) -> str:
 
     saving = 1 - T["loo_prudent"] / (T["raw"] or 1)
     agg = 1 - T["loo_aggressive"] / (T["raw"] or 1)
+    auto = d.get("auto")
+    auto_html = ""
+    if auto:
+        state = (_t("auto_applied") if auto["applied"]
+                 else f'{_t("auto_learning")} {auto["complete_runs"]}/{auto["min_runs"]}')
+        off = (f' · {_t("auto_off")}: ' + ", ".join(f"<code>{html.escape(x)}</code>" for x in auto["switched_off"])
+               if auto["switched_off"] else "")
+        auto_html = (f'<div class="autobox"><b>{_t("auto_title")}</b> · {state}{off}'
+                     f' · <span class="method">{html.escape(auto["updated"])}</span></div>')
     hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero")}</div>'
             f'<div class="hs">{_t("hero_sub")}: −{agg:.0%} · {_t("misses")}: {T["loo_misses"]}/{T["loo_trimmed_calls"]}</div></div>')
 
@@ -548,6 +562,7 @@ details {{ background:var(--card); border:1px solid var(--line); border-radius:6
 summary {{ cursor:pointer; }}
 code {{ font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }}
 .method {{ color:var(--mut); font-size:14px; }}
+.autobox {{ background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:6px; padding:8px 12px; margin:0 0 12px; font-size:14px; }}
 .hero {{ margin:4px 0 16px; }}
 .hero .hv {{ font-size:56px; font-weight:600; line-height:1.05; }}
 .hero .hk {{ font-size:15px; }} .hero .hs {{ color:var(--mut); font-size:13px; }}
@@ -590,7 +605,7 @@ pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; 
 <button class="it" onclick="document.body.className='it'">IT</button></div>
 <h1>{_t("title")}</h1><p class="sub">{_t("subtitle")}</p>
 <p class="byline">{html.escape(d["generator"]["name"])} {html.escape(d["generator"]["version"])} · {html.escape(d["generator"]["author"])}</p>
-{hero}<div class="tiles">{tiles_html}</div>
+{auto_html}{hero}<div class="tiles">{tiles_html}</div>
 {_chart_tools(d)}
 <h2>{_t("suggestions")}</h2><ul class="sugg">{sugg_html}</ul>
 <h2>{_t("actions")}</h2>{cfg_html}

@@ -26,7 +26,7 @@ Zenodo e repository.
 
 ## Azioni esterne (le fai tu, seguendo la guida)
 
-- Creare il repository GitHub e pubblicare la release `v0.2.0`.
+- Creare il repository GitHub e pubblicare la release `v0.3.0`.
 - Creare le due bozze Zenodo (paper e software+dati) e riservare i DOI.
 - Inserire i DOI: `src/tracetrim/about.py` (`PAPER_DOI`, `SOFTWARE_DOI`, `REPOSITORY`, `LICENSE`), `CITATION.cff`,
   l'articolo; poi ricompilare il paper e rifare i pacchetti.

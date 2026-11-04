@@ -5,7 +5,7 @@
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
   tracetrim proxy   --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
-                    [--config report.config.json] [--record traces/session.jsonl]
+                    [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -131,17 +131,18 @@ def cmd_report(a):
 
 def cmd_proxy(a):
     import asyncio
-    from .proxy import serve
+    from .proxy import Options, serve, serve_http
     if bool(a.upstream_cmd) == bool(a.upstream_url):
         raise SystemExit("give exactly one of --upstream-cmd or --upstream-url")
-    headers = dict(h.split("=", 1) for h in a.header)
+    if a.auto and a.config:
+        raise SystemExit("--auto manages its own config: do not pass --config")
+    o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
+                headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
+                quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs)
     if a.http:
-        from .proxy import serve_http
-        asyncio.run(serve_http(a.upstream_cmd, a.upstream_url, headers, a.config, a.record,
-                               host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host,
-                               quiet=a.quiet, structural=a.structural))
+        asyncio.run(serve_http(o, host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
     else:
-        asyncio.run(serve(a.upstream_cmd, a.upstream_url, headers, a.config, a.record, a.quiet, a.structural))
+        asyncio.run(serve(o))
 
 
 def main(argv=None):
@@ -192,6 +193,9 @@ def main(argv=None):
     s.add_argument("--allowed-host", action="append", default=[],
                    help="Host header accepted over HTTP (repeatable), e.g. the tunnel's public host")
     s.add_argument("--quiet", action="store_true", help="no per-call log on stderr")
+    s.add_argument("--auto", metavar="WORKDIR",
+                   help="automatic mode: record runs, learn, apply safe actions, keep the report (see tracetrim.auto)")
+    s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto)")
     s.add_argument("--structural", choices=["toon", "headroom"],
                    help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
     s.set_defaults(func=cmd_proxy)

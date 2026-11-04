@@ -5,7 +5,10 @@
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
 of it on a new run. The learner must see the final answer: an MCP gateway placed between agent and tools can
 \emph{apply} a projection, but learning from what it sees alone misses most of what the agent uses. The practical
-consequence is an architecture: learn offline from full traces, review, apply anywhere.
+consequence is an architecture: learn offline from full traces, review, apply anywhere. Version 0.3 of the library
+adds a second route, not evaluated in the studies reported here: the proxy offers the agent one more tool, through
+which the agent hands over its final answer, so that the gateway sees complete traces and can learn and apply the
+safe part of a projection on its own.
 
 \paragraph{Where usage detection is blind, a projection fails.} The losses we found have one cause: the projection
 removes what the detector cannot see. The agent transforms values (timestamps into dates, cents into euros, URLs

@@ -2,17 +2,22 @@
 # Demo with two MCP servers, both reachable by the OpenAI Playground:
 #
 #   billing    the server the agent already uses (simulated, Stripe-shaped, C4)
-#   tracetrim  our proxy, placed in front of billing, with the 0.2 configuration
+#   tracetrim  our proxy, placed in front of billing, in automatic mode: it
+#              observes the first runs, then trims on its own
 #
-#   docs/demo_playground.sh             # start both, print the two URLs, show both logs
-#   docs/demo_playground.sh --headroom  # tracetrim also applies Headroom (experimental)
+#   docs/demo_playground.sh               # start both, print URLs, show both logs
+#   docs/demo_playground.sh --reset       # forget what was learned: start from zero
+#   docs/demo_playground.sh --min-runs 5  # runs to observe before trimming (default 3)
+#   docs/demo_playground.sh --headroom    # tracetrim also applies Headroom (experimental)
 #
 # Environment (optional, recommended): DEMO_TOKEN (same token for both servers),
 # NGROK_DOMAIN (static domain, used for the tracetrim URL so it never changes).
 #
 # Everything stays up until Ctrl+C: the scenes are switched in the Playground,
 # not here. In this terminal, [billing] lines show each call reaching the
-# server the agent already used; [tracetrim] lines show what the proxy removed.
+# server the agent already used; [tracetrim] lines show what the proxy removed
+# and, at the end of each run, what it learned. What it learned is kept in
+# out/demo/auto/ across restarts, until --reset.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -20,9 +25,17 @@ BILLING_PORT=8798
 TRACETRIM_PORT=8799
 TOKEN=${DEMO_TOKEN:-$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')}
 EXTRA=()
-[ "${1:-}" = "--headroom" ] && EXTRA=(--structural headroom)
+MIN_RUNS=3
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --headroom) EXTRA=(--structural headroom) ;;
+    --reset) rm -rf out/demo/auto ;;
+    --min-runs) MIN_RUNS=$2; shift ;;
+    *) echo "unknown option: $1"; exit 2 ;;
+  esac
+  shift
+done
 mkdir -p out/demo
-[ -f out/demo/report.config.json ] || .venv/bin/tracetrim report traces/C4/A*.jsonl -o out/demo/report.html
 
 PIDS=()
 cleanup() { kill "${PIDS[@]}" 2>/dev/null || true; }
@@ -69,7 +82,7 @@ fi
 PIDS+=($!)
 sleep 2
 .venv/bin/tracetrim proxy --upstream-url "http://127.0.0.1:$BILLING_PORT/mcp" --header "Authorization=Bearer $TOKEN" \
-  --config out/demo/report.config.json "${EXTRA[@]}" \
+  --auto out/demo/auto --min-runs "$MIN_RUNS" "${EXTRA[@]}" \
   --http "$TRACETRIM_PORT" --token "$TOKEN" --allowed-host "${TRACETRIM_URL#https://}" > out/demo/tracetrim.log 2>&1 &
 PIDS+=($!)
 
@@ -80,8 +93,13 @@ cat <<EOF
     billing    $BILLING_URL/mcp       the MCP the agent already uses
     tracetrim  $TRACETRIM_URL/mcp       in front of billing
 
+  Live report (refreshes by itself):
+    http://127.0.0.1:$TRACETRIM_PORT/report?token=$TOKEN
+
   Scene 1: connect only billing, run the agent.
-  Scene 2: add tracetrim, switch billing off, run again.
+  Scene 2: switch billing off, tracetrim on. Run $MIN_RUNS times (clear the chat each time):
+           tracetrim observes, the report fills in.
+  Scene 3: run again: now tracetrim trims, on its own.
 
   Ctrl+C stops servers and tunnels.
 

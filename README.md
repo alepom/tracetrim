@@ -16,8 +16,10 @@ where this works and where it fails. In short:
 | Learning from tool calls only (what a gateway sees) | misses most of what agents use |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
-Version 0.2 keeps identifying fields and recognises transformed values by default. Read the
-[paper](https://doi.org/10.5281/zenodo.23953934) before trimming anything that matters.
+Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
+adds an automatic mode: put the proxy in front of your MCP server and it observes, learns and
+trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
+anything that matters.
 
 ## Install
 
@@ -28,7 +30,43 @@ pip install "tracetrim[headroom] @ git+https://github.com/alepom/tracetrim"   # 
 
 Python 3.10+. From a clone: `pip install -e ".[measure,proxy,test]"`. Not on PyPI yet.
 
+## The short way: automatic mode
+
+Your agent already uses an MCP server. Put tracetrim in front of it, point the agent at tracetrim
+instead, and add one line to the agent's instructions:
+
+```bash
+tracetrim proxy --upstream-url https://mcp.example.com/mcp --header "Authorization=Bearer UPSTREAM_TOKEN" \
+  --auto tracetrim-data/ --http 8799 --token CHOOSE_A_SECRET
+```
+
+```text
+Last step, required if the tool tracetrim_done is available: when your final answer is ready,
+call tracetrim_done once with the complete answer, before you show it; then show the same answer.
+```
+
+(or `--upstream-cmd "python -m my_server"` for a local server over stdio.) Then use the agent as usual:
+
+- **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
+  (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
+  never uses, with suggestions;
+- **during the first runs** (5 by default, `--min-runs`) nothing is changed: the proxy only observes.
+  `tracetrim_done` is how it sees the answer — the study found that learning from tool calls alone
+  misses most of what agents use;
+- **after that**, it applies the report's automatic actions on its own: the prudent projection, with
+  identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
+  report as a manual action for you to review;
+- **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
+  trimmed, and the report says so. Runs without `tracetrim_done` count for telemetry, not for learning.
+
+Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
+delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), tool
+outputs shrank by about half after learning, no field was asked back, and every answer stayed
+correct: a check, not a measurement — the measurements are in the paper.
+
 ## Quickstart: five runs, one report, one config
+
+The manual way, with a review step before anything is applied.
 
 **1. Record a few runs with full tool outputs.** A trace is JSONL, one event per line:
 

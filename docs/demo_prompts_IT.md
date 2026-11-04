@@ -1,7 +1,9 @@
 # Prompt per la demo nel Playground
 
-Stesse istruzioni dell'agente C4 dello studio (`experiments/prompts/c4-system.md`), con una sola
-differenza: la risposta finale è in testo leggibile invece che in JSON, per il video. La demo non è una
+Stesse istruzioni dell'agente C4 dello studio (`experiments/prompts/c4-system.md`), con tre
+differenze: la risposta finale è in testo leggibile invece che in JSON, per il video; l'agente cerca il
+motivo preciso di un pagamento rifiutato (senza questa riga, con o senza tracetrim, tendeva a fermarsi
+alla fattura); l'ultimo passo chiede di chiamare `tracetrim_done`, che serve alla modalità automatica. La demo non è una
 misura: i numeri dello studio vengono dal prompt originale.
 
 ## System message (da incollare)
@@ -21,9 +23,12 @@ Alcuni risultati possono essere ridotti per risparmiare contesto: se in fondo a 
 Per ogni ticket:
 1. Identifica il cliente dalla sua email.
 2. Consulta solo i dati che servono a rispondere: addebiti, fatture, rimborsi o abbonamento, secondo la richiesta.
+   Se un pagamento non è andato a buon fine, cerca nell'addebito il motivo preciso del rifiuto.
 3. Fai una diagnosi basata sui dati, citando gli identificativi degli oggetti (es. ch_..., in_..., sub_..., re_...) da cui la ricavi.
 4. Scrivi una risposta al cliente: cortese, chiara, con importi in euro e date in formato leggibile, senza identificativi tecnici.
 5. Indica le azioni interne da fare, se servono.
+
+ULTIMO PASSO, OBBLIGATORIO SE LO STRUMENTO tracetrim_done È DISPONIBILE: quando la risposta per tutti i ticket è pronta, PRIMA di mostrarla chiama tracetrim_done una sola volta, passando l'intera risposta finale; poi mostra la stessa risposta.
 
 Ogni identificativo, importo e data che riporti DEVE venire dagli strumenti: NON inventarli.
 </ISTRUZIONI>

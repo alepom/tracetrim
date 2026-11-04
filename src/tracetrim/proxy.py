@@ -3,6 +3,7 @@
   tracetrim proxy --upstream-cmd "python -m my_server" --config report.config.json
   tracetrim proxy --upstream-url https://example.test/mcp --header "Authorization=Bearer ..." \
                   --config report.config.json --record traces/session.jsonl
+  tracetrim proxy --upstream-url https://example.test/mcp --auto workdir/      # learns and applies on its own
 
 The client (Claude Desktop, Claude Code, Cursor, an agent SDK) launches the
 proxy instead of the server: no code changes. The proxy
@@ -19,7 +20,9 @@ most of what agents use. Learn from full traces; apply here.
 from __future__ import annotations
 
 import json
+import sys
 from contextlib import asynccontextmanager
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .projection import project
@@ -55,10 +58,20 @@ class Live:
         except ImportError:
             self.count, self.unit = (lambda t: len(t or "")), "chars"
         self.raw = self.sent = self.calls = self.expands = 0
+        # In automatic mode the session mixes runs before and after learning:
+        # the current run is shown too, and reset when the run closes.
+        self.per_run = False
+        self.run = [0, 0, 0, 0]          # calls, raw, sent, expands
+
+    def new_run(self) -> str:
+        c, r, s, e = self.run
+        self.run = [0, 0, 0, 0]
+        return f"{c} calls, {r:,} -> {s:,} {self.unit} ({self._pct(s, r)}), {e} expand"
 
     def call(self, tool: str, raw: str, sent: str) -> None:
         r, s = self.count(raw), self.count(sent)
         self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
+        self.run = [self.run[0] + 1, self.run[1] + r, self.run[2] + s, self.run[3]]
         hidden = sent.rsplit("\n[trimmed] ", 1)[1].split("hidden: ", 1)[1] if "\n[trimmed] " in sent else ""
         groups = len(hidden.split(", ")) if hidden else 0
         self._print(f"{tool:<34} {r:>8,} -> {s:>8,} {self.unit} ({self._pct(s, r)})"
@@ -66,6 +79,7 @@ class Live:
 
     def expand(self, call_id: str, fields: list[str], got: str) -> None:
         self.expands += 1
+        self.run[3] += 1
         self._print(f"{'expand ' + call_id:<34} the agent asked for {', '.join(fields)[:60]}"
                     f" ({self.count(got):,} {self.unit})")
 
@@ -77,6 +91,9 @@ class Live:
             return
         import sys
         total = f"session: {self.calls} calls, {self.raw:,} -> {self.sent:,} ({self._pct(self.sent, self.raw)}), {self.expands} expand"
+        if self.per_run:
+            c, r, s, e = self.run
+            total = f"this run: {c} calls, {r:,} -> {s:,} ({self._pct(s, r)}), {e} expand · {total}"
         print(f"[tracetrim] {line}\n[tracetrim]   {total}", file=sys.stderr, flush=True)
 
 
@@ -86,6 +103,7 @@ class Trimmer:
     def __init__(self, policy: Policy | None):
         self.policy = policy
         self.originals: dict[str, object] = {}
+        self.tool_of: dict[str, str] = {}
         self.n = 0
 
     def output(self, tool: str, out: str) -> str:
@@ -103,6 +121,7 @@ class Trimmer:
         self.n += 1
         cid = f"c{self.n}"
         self.originals[cid] = payload
+        self.tool_of[cid] = tool
         groups: dict[str, int] = {}
         for h in hidden:
             g = ".".join(h.split(".")[:2])
@@ -122,31 +141,79 @@ class Trimmer:
         return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False)
 
 
-def _server(upstream_cmd, upstream_url, headers, config, record, quiet=False, structural=None):
+@dataclass
+class Options:
+    upstream_cmd: str | None = None
+    upstream_url: str | None = None
+    headers: dict = field(default_factory=dict)
+    config: str | None = None
+    record: str | None = None
+    quiet: bool = False
+    structural: str | None = None
+    auto_dir: str | None = None      # automatic mode: learn, apply, report (see tracetrim.auto)
+    min_runs: int = 5
+    idle_seconds: int = 300          # a run without tracetrim_done is closed after this pause
+
+
+def _server(o: Options):
+    import asyncio
     import shlex
+    import time
 
     from mcp import ClientSession, types
     from mcp.client.stdio import StdioServerParameters, stdio_client
     from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
     from mcp.server.lowlevel import Server
 
-    policy = Policy.load(config) if config else None
-    if structural:
+    from .auto import DONE, Learner
+
+    learner = Learner(o.auto_dir, o.min_runs) if o.auto_dir else None
+    policy = Policy.load(o.config) if o.config else (learner.initial_policy() if learner else None)
+    if o.structural:
         # Override from the command line: "toon" or "headroom" after the projection
         # (or alone, when no config is given).
         policy = policy or Policy({"format": "tracetrim/config@1", "tools": {}}, None)
-        policy.structural = structural
+        policy.structural = o.structural
     trimmer = Trimmer(policy)
-    rec = Path(record).open("a", encoding="utf-8") if record else None
-    live = Live(quiet)
+    rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
+    live = Live(o.quiet)
+    live.per_run = bool(learner)
+    last_call = [0.0]
+
+    def log(line):
+        if not o.quiet:
+            print(f"[tracetrim] {line}", file=sys.stderr, flush=True)
+
+    if learner:
+        st = learner.state
+        log(f"auto mode: {learner.dir} · {st['complete_runs']} complete runs (learning from {o.min_runs})"
+            f" · config {'applied' if policy and policy.tools else 'not applied yet'}")
+
+    async def close_run(answer):
+        path = learner.done(answer)
+        if path is None:
+            return
+        run_total = live.new_run()
+        new = await asyncio.to_thread(learner.relearn)
+        st = learner.state
+        if new is not None:
+            if o.structural:
+                new.structural = o.structural
+            trimmer.policy = new
+        applied = trimmer.policy is not None and bool(trimmer.policy.tools)
+        log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
+        log(f"  {st['complete_runs']} complete runs · report updated · "
+            + (f"trimming {len(trimmer.policy.tools)} tools" if applied
+               else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
+            + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
 
     @asynccontextmanager
     async def upstream(_server):
-        if upstream_cmd:
-            argv = shlex.split(upstream_cmd)
+        if o.upstream_cmd:
+            argv = shlex.split(o.upstream_cmd)
             transport = stdio_client(StdioServerParameters(command=argv[0], args=argv[1:]))
         else:
-            transport = streamable_http_client(upstream_url, http_client=create_mcp_http_client(headers=headers))
+            transport = streamable_http_client(o.upstream_url, http_client=create_mcp_http_client(headers=o.headers))
         async with transport as (read, write), ClientSession(read, write) as session:
             await session.initialize()
             yield {"session": session}
@@ -156,17 +223,30 @@ def _server(upstream_cmd, upstream_url, headers, config, record, quiet=False, st
         # The proxy rewrites outputs, so an upstream output schema no longer
         # describes them: clients that validate results would reject them.
         tools = [t.model_copy(update={"output_schema": None}) for t in up.tools]
-        if trimmer.policy is not None:
+        # In automatic mode expand is listed from the start: clients may cache
+        # the tool list, and trimming begins only after the first runs.
+        if trimmer.policy is not None or learner:
             tools.append(types.Tool(**EXPAND))
+        if learner:
+            tools.append(types.Tool(**DONE))
         return types.ListToolsResult(tools=tools)
 
     async def call_tool(ctx, params):
         args = params.arguments or {}
-        if params.name == "expand":
+        if learner and params.name == "tracetrim_done":
+            await close_run(str(args.get("answer", "")))
+            text = "Recorded."
+        elif params.name == "expand":
             fields = [str(f) for f in args.get("fields") or []]
-            text = trimmer.expand(str(args.get("call_id", "")), fields)
-            live.expand(str(args.get("call_id", "")), fields, text)
+            cid = str(args.get("call_id", ""))
+            text = trimmer.expand(cid, fields)
+            live.expand(cid, fields, text)
+            if learner and cid in trimmer.tool_of:
+                learner.expanded(trimmer.tool_of[cid])
         else:
+            if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
+                await close_run(None)
+            last_call[0] = time.time()
             r = await ctx.lifespan_context["session"].call_tool(params.name, args)
             raw = "".join(getattr(c, "text", "") or "" for c in (r.content or []))
             if rec:
@@ -174,48 +254,79 @@ def _server(upstream_cmd, upstream_url, headers, config, record, quiet=False, st
                                      ensure_ascii=False) + "\n")
                 rec.flush()
             text = trimmer.output(params.name, raw)
+            if learner:
+                learner.call(params.name, args, raw)
+                if "\n[trimmed] " in text:
+                    learner.trimmed(params.name)
             live.call(params.name, raw, text)
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
-    return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool)
+    return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool), learner
 
 
-async def serve(upstream_cmd: str | None, upstream_url: str | None, headers: dict[str, str],
-                config: str | None, record: str | None, quiet: bool = False, structural: str | None = None) -> None:
+async def serve(o: Options) -> None:
     """stdio: the client launches the proxy as a local process."""
     from mcp.server.stdio import stdio_server
-    server = _server(upstream_cmd, upstream_url, headers, config, record, quiet, structural)
-    async with stdio_server() as (read, write):
-        await server.run(read, write, server.create_initialization_options())
+    server, learner = _server(o)
+    if learner:
+        print(f"[tracetrim] report: {(learner.dir / 'report.html').resolve()}", file=sys.stderr, flush=True)
+    try:
+        async with stdio_server() as (read, write):
+            await server.run(read, write, server.create_initialization_options())
+    finally:
+        if learner:
+            learner.flush()
 
 
-async def serve_http(upstream_cmd, upstream_url, headers, config, record, *, host: str, port: int,
-                     token: str | None, allowed_hosts: list[str], quiet: bool = False,
-                     structural: str | None = None) -> None:
+async def serve_http(o: Options, *, host: str, port: int, token: str | None, allowed_hosts: list[str]) -> None:
     """Streamable HTTP at /mcp, for hosted clients (e.g. the OpenAI Playground)
-    that call the server from their own infrastructure.
+    that call the server from their own infrastructure. In automatic mode the
+    live report is served at /report?token=..., refreshing itself.
 
     Exposed through a tunnel, the proxy is reachable by anyone who knows the
     URL, and it holds the upstream credentials: `token` makes every request
-    carry `Authorization: Bearer <token>`.
+    carry `Authorization: Bearer <token>` (the report page, opened in a
+    browser, takes it as a query parameter instead).
     """
+    from urllib.parse import parse_qs
+
     import uvicorn
     from mcp.server.transport_security import TransportSecuritySettings
 
-    server = _server(upstream_cmd, upstream_url, headers, config, record, quiet, structural)
+    server, learner = _server(o)
     security = TransportSecuritySettings(
         enable_dns_rebinding_protection=bool(allowed_hosts),
         allowed_hosts=allowed_hosts, allowed_origins=[])
     app = server.streamable_http_app(host=host, transport_security=security)
 
+    async def respond(send, status, body, ctype=b"text/plain; charset=utf-8"):
+        await send({"type": "http.response.start", "status": status, "headers": [(b"content-type", ctype)]})
+        await send({"type": "http.response.body", "body": body})
+
     async def guarded(scope, receive, send):
+        if scope["type"] == "http" and learner and scope.get("path") == "/report":
+            q = parse_qs(scope.get("query_string", b"").decode())
+            if token and q.get("token", [""])[0] != token:
+                return await respond(send, 401, b"unauthorized")
+            page = learner.dir / "report.html"
+            if not page.exists():
+                html = ("<!doctype html><meta charset=utf-8><meta http-equiv=refresh content=10>"
+                        "<body style='font:16px system-ui;padding:24px'>tracetrim is observing: the report appears "
+                        "after the first run.</body>").encode()
+            else:
+                html = page.read_bytes().replace(b"<head>", b"<head><meta http-equiv=\"refresh\" content=\"10\">", 1)
+            return await respond(send, 200, html, b"text/html; charset=utf-8")
         if token and scope["type"] == "http":
             auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode()
             if auth != f"Bearer {token}":
-                await send({"type": "http.response.start", "status": 401,
-                            "headers": [(b"content-type", b"text/plain")]})
-                await send({"type": "http.response.body", "body": b"unauthorized"})
-                return
+                return await respond(send, 401, b"unauthorized")
         await app(scope, receive, send)
 
-    await uvicorn.Server(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()
+    if learner:
+        print(f"[tracetrim] live report: http://{host}:{port}/report" + (f"?token={token}" if token else ""),
+              file=sys.stderr, flush=True)
+    try:
+        await uvicorn.Server(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()
+    finally:
+        if learner:
+            learner.flush()
