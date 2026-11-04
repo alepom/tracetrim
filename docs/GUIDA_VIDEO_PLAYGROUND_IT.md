@@ -28,30 +28,69 @@ poi l'agente riceve risposte più leggere. All'utente resta una riga in più nel
 
 ## Prima di girare
 
-1. In un terminale WSL (facoltativo ma consigliato, così token e URL non cambiano tra una prova e
-   l'altra; il dominio statico gratuito è nella dashboard di ngrok, voce *Domains*):
+1. In un terminale WSL scegli un token che puoi mostrare nel video (compare nel terminale e nel
+   Playground; dopo la registrazione non serve più):
    ```bash
-   export DEMO_TOKEN=scegli-un-segreto
-   export NGROK_DOMAIN=tuo-dominio.ngrok-free.app
+   export DEMO_TOKEN=demo-accademia-2026
    ```
+   Il dominio gratuito di ngrok è fisso (lo trovi nella dashboard di ngrok, voce *Domains*): gli URL
+   non cambiano tra una prova e l'altra.
 2. Avvia tutto, partendo da zero:
    ```bash
    cd ~/progetti/tracetrim && docs/demo_playground.sh --reset
    ```
-   Lo script stampa i due URL, il token e l'indirizzo del report dal vivo, poi mostra le chiamate in
-   arrivo. Lascialo aperto. Ciò che tracetrim impara resta in `out/demo/auto/` anche se riavvii lo
-   script: usa `--reset` solo per ricominciare da zero (per esempio dopo una prova).
-3. Nel Playground crea l'agente: modello a tua scelta, **System message** e **User message** da
-   [`demo_prompts_IT.md`](demo_prompts_IT.md).
-4. Sempre nel Playground, aggiungi **entrambi** i server (*Tools → Add → MCP server*), con l'header
-   `Authorization: Bearer <token>` e approvazione *never*:
-   - `billing` → l'URL "billing" stampato dallo script;
-   - `tracetrim` → l'URL "tracetrim".
+   Lo script avvia billing, tracetrim (che legge billing da `out/demo/mcp.json`, come farebbe
+   qualunque utente) e un solo tunnel; stampa gli indirizzi e poi mostra le chiamate in arrivo.
+   Lascialo aperto. Gli indirizzi sono:
 
-   Tieni acceso solo `billing`.
-5. Apri nel browser l'indirizzo del report stampato dallo script
-   (`http://127.0.0.1:8799/report?token=...`): si aggiorna da solo ogni 10 secondi. All'inizio dice
-   che tracetrim sta osservando.
+   | | URL |
+   |---|---|
+   | billing | `https://<tuo-dominio>.ngrok-free.dev/billing/mcp` |
+   | tracetrim | `https://<tuo-dominio>.ngrok-free.dev/tracetrim/mcp` |
+   | report dal vivo | `http://127.0.0.1:8799/report?token=<token>` |
+
+   Ciò che tracetrim impara resta in `out/demo/auto/` anche se riavvii lo script: `--reset` serve
+   per ricominciare da zero, per esempio dopo una prova.
+
+## L'agente nel Playground
+
+Su platform.openai.com → **Playground** → **Chat** (Responses):
+
+| impostazione | valore |
+|---|---|
+| Modello | `gpt-5.6-terra` (quello delle prove; un altro modello va riprovato prima) |
+| Reasoning effort | predefinito |
+| System message (*Developer message*) | il blocco "System message" di [`demo_prompts_IT.md`](demo_prompts_IT.md) |
+| Tools | i due server MCP qui sotto |
+
+I due server: *Tools → + Add → MCP server → Custom*.
+
+| campo | billing | tracetrim |
+|---|---|---|
+| URL | `…ngrok-free.dev/billing/mcp` | `…ngrok-free.dev/tracetrim/mcp` |
+| Label | `billing` | `tracetrim` |
+| Authentication / header | `Authorization: Bearer <token>` | `Authorization: Bearer <token>` |
+| Approval | *Never* (nessuna conferma per chiamata) | *Never* |
+
+Tieni acceso solo `billing`. Il messaggio dell'utente è il blocco "User message" di
+`demo_prompts_IT.md`: incollalo a ogni esecuzione, **con la chat svuotata** (ogni esecuzione deve
+partire da zero).
+
+Il report: apri l'indirizzo "report dal vivo" in un browser di Windows. Si aggiorna da solo ogni 10
+secondi; all'inizio dice che tracetrim sta osservando. Se `127.0.0.1` non risponde da Windows, usa
+`https://…ngrok-free.dev/tracetrim/report?token=<token>` e clicca *Visit Site* nella pagina di avviso
+di ngrok.
+
+## Dove si vede cosa
+
+| cosa | dove |
+|---|---|
+| le chiamate che arrivano a billing | terminale, righe `[billing]` |
+| quanto tracetrim toglie a ogni chiamata | terminale, righe `[tracetrim] … -> … tokens (-NN%)` |
+| il bilancio di ogni esecuzione e cosa ha imparato | terminale, `run N closed …` e la riga sotto |
+| la telemetria: strumenti, campi mai usati, azioni | report dal vivo |
+| il momento in cui parte il filtro automatico | terminale `trimming N tools`; report, riquadro "Modalità automatica" |
+| il costo per l'agente | Playground: token di input di ogni risposta |
 
 ## Scena 1 — L'agente con il suo MCP
 
@@ -114,5 +153,6 @@ risposte; il primo avvio è più lento.
   dopo 5 minuti di pausa) e non conta per l'apprendimento.
 - Una sola esecuzione per scena non è una misura: presenta i numeri come dimostrazione del meccanismo.
   I risultati sono nel paper.
-- Se lo script si ferma con "ngrok did not open both tunnels", il piano ngrok non consente due tunnel
-  insieme: guarda `out/demo/ngrok.log` e scrivimi.
+- Un solo tunnel, due percorsi: il piano gratuito di ngrok ha un solo dominio, e due tunnel sullo stesso
+  dominio si dividerebbero le richieste a caso. Se lo script si ferma con "ngrok did not open the
+  tunnel", guarda `out/demo/ngrok.log`.
