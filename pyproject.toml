@@ -8,12 +8,16 @@ version = "0.0.1"
 description = "Learn which fields of tool outputs an agent actually uses, from its traces, and trim the rest."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [{ name = "Alessio Pomaro" }]
 dependencies = []
 
 [project.optional-dependencies]
 # Token counts are measured, never estimated: `measure` needs a real tokenizer.
 measure = ["tiktoken>=0.7"]
 test = ["pytest>=8", "tiktoken>=0.7"]
+
+[project.urls]
+Homepage = "https://www.alessiopomaro.it/"
 
 [project.scripts]
 tracetrim = "tracetrim.cli:main"

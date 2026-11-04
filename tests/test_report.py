@@ -64,3 +64,11 @@ def test_config_from_auto_actions_applies_through_policy(tmp_path):
     out = json.loads(pol.apply("search_volume", json.dumps(VOLUMES)))
     assert "location_code" not in out["items"][0] and out["items"][0]["keyword"] == "spa weekend"
     assert pol.apply("other", '{"a": "\\u00e0"}') == '{"a": "à"}'
+
+
+def test_report_names_project_and_author_and_no_missing_identifier():
+    d = _data()
+    a = render_html(d, suggestions(d))
+    assert "Alessio Pomaro" in a and "0009-0008-6975-996X" in a and "tracetrim" in a
+    assert "repository" not in d["generator"] and "paper_doi" not in d["generator"]
+    assert "None" not in a
