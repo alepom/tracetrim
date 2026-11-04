@@ -70,5 +70,12 @@ def test_report_names_project_and_author_and_no_missing_identifier():
     d = _data()
     a = render_html(d, suggestions(d))
     assert "Alessio Pomaro" in a and "0009-0008-6975-996X" in a and "tracetrim" in a
-    assert "repository" not in d["generator"] and "paper_doi" not in d["generator"]
+    # Every identifier appears if and only if it exists: a report must never
+    # link to a repository or a DOI that is not there.
+    from tracetrim import about
+    for key in ("REPOSITORY", "PAPER_DOI", "SOFTWARE_DOI", "LICENSE"):
+        value = getattr(about, key)
+        assert (key.lower() in d["generator"]) == (value is not None)
+        if value is not None:
+            assert value in a
     assert "None" not in a
