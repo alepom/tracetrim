@@ -1,0 +1,47 @@
+\section{Study 2: safeguards}
+\label{sec:study2}
+
+Study~2 replayed the Phase B conversations again, \StudyTwoRunsPerArm{} runs per arm, with the projection learned
+with both safeguards (arm \texttt{v02}) and with the same projection followed by structural compression
+(Table~\ref{tab:study2}).
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_study2.tex}
+\caption{Study 2: replay of the same runs as Phase B, \StudyTwoRunsPerArm{} runs per arm, safeguards S1 and S2 on.
+Columns as in Table~\ref{tab:phaseb}.}
+\label{tab:study2}
+\end{table}
+
+\paragraph{Pre-registered hypotheses.} All four held as frozen. \emph{H5}: in billing support the \texttt{v02} arm
+diagnosed all five tickets correctly in \StudyTwoFrozenAllRightVtwo{} runs, the period end included, where the
+0.1 projection had lost it. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
+(\StudyTwoVtwoGatesiii), so no identifier was invented; with 0.1 the prudent arm had passed in
+\PhaseBPrudentGatesiii{} runs. \emph{H7}: in CI triage every \texttt{v02} run found all four expected links,
+including the one lost in Phase B. \emph{H8}: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
+\StudyTwoVtwoTokensiii, \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} of the tool-message tokens in the
+editorial plan, the literature scan, billing support and CI triage, against \StudyTwoHeadroomTokensi, \StudyTwoHeadroomTokensiii, \StudyTwoHeadroomTokensiv{} and
+\StudyTwoHeadroomTokensv{} for Headroom. The safeguards cost part of the saving (compare
+\PhaseBPrudentTokensiii{} with \StudyTwoVtwoTokensiii{} in the literature scan) and bought back the three lost
+pieces of information.
+
+\paragraph{A fourth mechanism, found after the fact.} Reading the billing-support answers, we found that the
+frozen test for one ticket was too lenient: it accepted the diagnosis when the word ``funds'' appeared anywhere in
+the ticket, so advice such as ``check that you have sufficient funds'' passed it even when the diagnosis did not
+give the reason for the declined payment. With a strict test on the diagnosis alone (added after the data were
+seen, and reported beside the frozen result rather than instead of it), the raw arm gave the reason in
+\StudyTwoStrictAllRightRaw{} runs and the \texttt{v02} arm in \StudyTwoStrictAllRightVtwo. The reason arrives as an
+English sentence and the agent writes it in Italian: a \emph{translated} value, which neither usage detection nor
+safeguard S2 recognises. The \texttt{v02} answers were not wrong (``the card was declined'') but less informative.
+
+\paragraph{Structural compression is not free.} Adding cleaning and TOON to the \texttt{v02} projection saved a
+few more points but introduced errors that the projection alone did not: in the editorial plan the gates passed in
+\StudyTwoVtwostructuralGatesi{} runs instead of \StudyTwoVtwoGatesi, each time because the same keyword was reported
+with a volume of zero where the tool had returned a positive one, and in billing support the decline reason went missing in more runs
+(\StudyTwoFrozenAllRightVtwostructural{} runs with all tickets right under the frozen test). A denser format is also
+a harder one to read off correctly; its savings must be weighed against that.
+
+\paragraph{The content-gap case.} The content-gap analyst failed the gates in most runs of every arm, the raw one
+included (\StudyTwoRawGatesii): when the search API returns a redirect link instead of a result's URL, the agent
+reconstructs the URL from the breadcrumb, against the instructions. The safeguards neither caused nor fixed this,
+and the projection saves little on this task (\StudyTwoVtwoTokensii).

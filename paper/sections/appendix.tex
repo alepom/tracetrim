@@ -1,0 +1,22 @@
+\section{Deviations from the protocols}
+\label{app:deviations}
+
+All are dated and explained in full in the repository's \texttt{protocol.md}; none was hidden or left unapplied.
+
+\begin{enumerate}\setcounter{enumi}{-1}
+\item A bug in the agent loop dropped the system prompt after the first turn; found in the pilot and fixed before
+  Phase A. Pilot runs are excluded.
+\item Prompts were written during the pilot rather than at freezing, and fixed before Phase A.
+\item Tool-level caps made explicit: at most five results per literature search; a safety guard at 80 calls.
+\item The literature catalogue was used without an API key, within its free daily allowance.
+\item A verification pilot after the fix; one correction to the CI-triage gate (several job names per cause).
+\item Simulated tools fixed before Phase A, with the OpenAPI versions and the presence rule documented.
+\item Transport errors of the search-data server: retries reconnect; after three failures the agent receives an
+  error and the run continues, flagged. Two editorial-plan runs are flagged.
+\item The list of hidden fields shown with \texttt{expand} was grouped, largest groups first, before Phase C.
+\item Post hoc: the literature-scan gate now requires a declared identifier to exist (it had accepted a valid DOI
+  next to an invented identifier).
+\item Phase C was delayed by a faulty resume script; no run was altered.
+\item Post hoc: the CI-triage gate also splits job names on ``/''.
+\item Post hoc: a strict test for one billing ticket, reported beside the frozen one.
+\end{enumerate}

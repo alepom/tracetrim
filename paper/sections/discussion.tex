@@ -1,0 +1,31 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What the agent uses can be learned, but only from complete traces.} Across five agents, most of what
+tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
+of it on a new run. The learner must see the final answer: an MCP gateway placed between agent and tools can
+\emph{apply} a projection, but learning from what it sees alone misses most of what the agent uses. The practical
+consequence is an architecture: learn offline from full traces, review, apply anywhere.
+
+\paragraph{Where usage detection is blind, a projection fails.} The losses we found have one cause: the projection
+removes what the detector cannot see. The agent transforms values (timestamps into dates, cents into euros, URLs
+into short identifiers, English into Italian), or reads a field only to decide something (an issue title to match
+a failure). Safeguards can close known blind spots, and S1 and S2 closed three of the four we found, but the list of
+possible transformations is open. The general lesson is that a learned projection is a \emph{proposal}, whose
+blind spots are exactly the fields that matter in ways the text does not show.
+
+\paragraph{Identifiers are special.} The most serious failure was not a loss but a fabrication: deprived of an
+identifier it was asked to report, an agent invented plausible ones. Identifiers are cheap to keep and costly to
+lose, so a projection should never remove them, whatever the usage says.
+
+\paragraph{The recovery path matters.} With \texttt{expand}, a wrong cut costs one round trip instead of a wrong
+answer: in the live runs the agents asked for hidden fields when they needed them, and the end-to-end cost still
+fell. This only works when the agent knows what is hidden, which is why the hidden fields are listed, grouped,
+after every trimmed output.
+
+\paragraph{How to use it.} These results suggest a workflow rather than an automatic switch: record a few runs of a
+task with full outputs; generate the telemetry report, which is useful on its own and changes nothing; review the
+proposed configuration, a plain list of kept and dropped fields; apply it with identifier protection and
+\texttt{expand}; and keep recording, so that a field the agent starts needing shows up in the next report. The
+library implements each step, including an MCP proxy that applies a configuration in front of any server without
+changes to the agent.

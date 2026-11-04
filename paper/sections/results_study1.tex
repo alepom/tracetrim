@@ -13,7 +13,7 @@ parses are prose, which a field projection cannot touch; its projection removed 
 
 \begin{table}[t]
 \centering\small
-\input{generated/table_phase_a.tex}
+\resizebox{\textwidth}{!}{\input{generated/table_phase_a.tex}}
 \caption{Phase A, eight live runs per case. \emph{Used}: share of tool-output tokens left by the in-sample
 aggressive projection (used fields and record keys), a lower bound of use. \emph{Prudent}, \emph{Aggressive}:
 change in tool-output tokens on held-out runs. \emph{Misses}: held-out calls in which the aggressive projection
@@ -57,8 +57,7 @@ raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \e
 \paragraph{Transformed values.} In billing support, the end of the subscription period arrives as a Unix timestamp
 and the agent writes it as a date. Usage detection does not recognise the rewritten value, so the field is judged
 unused and removed; every projected arm then answered the customer who asked until when the service would be
-available with a vague sentence instead of the date. The same mechanism removes amounts given in cents and written
-in euros.
+available with a vague sentence instead of the date.
 
 \paragraph{Fields used only to reason.} In CI triage the projection removed issue titles: the agent reads them to
 decide which issue a failure belongs to, but writes only the issue number. Without titles, every projected arm

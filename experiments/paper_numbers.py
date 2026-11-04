@@ -29,6 +29,11 @@ def pct(x, signed=True):
     return (f"$-${abs(v)}\\%" if v < 0 else (f"+{v}\\%" if signed and v > 0 else f"{v}\\%"))
 
 
+def apct(x, signed=None):
+    """Prose form: the verb carries the direction ("removed 63%", "fell by 56%")."""
+    return f"{abs(round(100 * x))}\\%"
+
+
 def num(n):
     return f"{int(round(n)):,}".replace(",", "{,}")
 
@@ -45,7 +50,7 @@ def main():
 
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
-        f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE} · ORCID {about.ORCID}}}\n"
+        f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
         f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version {about.VERSION} of {about.NAME}}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed.}}\n", encoding="utf-8")
 
@@ -59,14 +64,14 @@ def main():
             m(f"PhaseARuns{R}", str(len(r["runs"])))
             m(f"PhaseACalls{R}", num(r["calls"]))
             m(f"PhaseARaw{R}", num(full["raw"]))
-            m(f"PhaseAUsedShare{R}", pct(rq1["share"], False))
-            m(f"PhaseAPrudentSaving{R}", pct(-full["prudent_saving"]))
-            m(f"PhaseAAggressiveSaving{R}", pct(-full["aggressive_saving"]))
+            m(f"PhaseAUsedShare{R}", apct(rq1["share"], False))
+            m(f"PhaseAPrudentSaving{R}", apct(-full["prudent_saving"]))
+            m(f"PhaseAAggressiveSaving{R}", apct(-full["aggressive_saving"]))
             m(f"PhaseAMisses{R}", f"{full['misses']}/{full['trimmed_calls']}")
             m(f"PhaseAMissesCalls{R}", f"{calls['misses']}/{calls['trimmed_calls']}")
             g = r["gates"]
             fo, ft = sum(x["facts_ok"] for x in g), sum(x["facts"] for x in g)
-            m(f"PhaseAFacts{R}", pct(fo / ft, False) if ft else "--")
+            m(f"PhaseAFacts{R}", apct(fo / ft, False) if ft else "--")
             rows.append(f"{CASE_NAME[c]} & {len(r['runs'])} & {num(r['calls'])} & {num(full['raw'])} & "
                         f"{pct(rq1['share'], False)} & {pct(-full['prudent_saving'])} & {pct(-full['aggressive_saving'])} & "
                         f"{full['misses']}/{full['trimmed_calls']} & {calls['misses']}/{calls['trimmed_calls']} \\\\")
@@ -90,19 +95,27 @@ def main():
             raw_tok = r["arms"]["raw"]["tool_tokens"]
             for arm, x in r["arms"].items():
                 key = arm.replace("-", "").replace("v02", "Vtwo").capitalize()
-                m(f"{label}{key}Tokens{R}", pct(x["tool_tokens"] / raw_tok - 1))
+                m(f"{label}{key}Tokens{R}", apct(x["tool_tokens"] / raw_tok - 1))
                 m(f"{label}{key}Gates{R}", f"{x['gates_passed']}/{len(x['runs'])}")
                 meds = ", ".join(f"{k.replace('_', ' ')} {v:g}" for k, v in x["medians"].items())
                 rows.append(f"{CASE_NAME[c] if arm == 'raw' else ''} & {arm} & {pct(x['tool_tokens'] / raw_tok - 1) if arm != 'raw' else num(raw_tok)} & "
                             f"{x['gates_passed']}/{len(x['runs'])} & {'' if arm == 'raw' else ('holds' if x['holds'] else 'does not hold')} \\\\")
             if r.get("headroom"):
                 h = r["headroom"]
-                m(f"{label}HeadroomTokens{R}", pct(h["headroom"] / h["tool_tokens"] - 1))
+                m(f"{label}HeadroomTokens{R}", apct(h["headroom"] / h["tool_tokens"] - 1))
                 rows.append(f" & Headroom (tokens only) & {pct(h['headroom'] / h['tool_tokens'] - 1)} & -- & -- \\\\")
             rows.append("\\addlinespace")
         (GEN / f"table_{name.removesuffix('.json')}.tex").write_text(
             "\\begin{tabular}{llrrl}\n\\toprule\nCase & Arm & Tool tokens & Gates passed & Band rule \\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    s2 = load("study2.json")
+    if s2 and "C4" in s2["cases"]:
+        for arm, key in (("raw", "Raw"), ("v02", "Vtwo"), ("v02-structural", "Vtwostructural")):
+            th = s2["cases"]["C4"]["arms"][arm]["thermometers"]
+            m(f"StudyTwoStrictAllRight{key}", f"{sum(t.get('correct_diagnoses_strict') == 5 for t in th)}/{len(th)}")
+            m(f"StudyTwoFrozenAllRight{key}", f"{sum(t.get('correct_diagnoses') == 5 for t in th)}/{len(th)}")
+        m("StudyTwoRunsPerArm", str(len(s2["cases"]["C4"]["arms"]["raw"]["runs"])))
 
     # ---- Phase C ----------------------------------------------------------
     cdat = load("phase_c.json")
@@ -123,7 +136,7 @@ def main():
             if "raw" in arms and "prudent" in arms:
                 rr, pp = arms["raw"], arms["prudent"]
                 for k, label in (("billed_input", "Input"), ("uncached_input", "Uncached"), ("cost_usd", "Cost")):
-                    m(f"PhaseCChange{label}{R}", pct(statistics.median(pp[k]) / statistics.median(rr[k]) - 1))
+                    m(f"PhaseCChange{label}{R}", apct(statistics.median(pp[k]) / statistics.median(rr[k]) - 1))
         (GEN / "table_phase_c.tex").write_text(
             "\\begin{tabular}{llrrrrr}\n\\toprule\nCase & Arm & Input tokens & Uncached & Turns & Expand calls & Gates \\\\\n"
             "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")

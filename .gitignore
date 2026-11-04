@@ -10,3 +10,9 @@ traces/
 out/
 # Third-party terms are archived locally (copyrighted text): not published.
 legal/
+# LaTeX build files
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.bbl
+paper/*.out
