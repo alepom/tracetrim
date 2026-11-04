@@ -1,0 +1,30 @@
+{
+  "headroom_version": "0.39.1",
+  "cases": {
+    "C1": {
+      "tool_tokens": 114712,
+      "headroom": 82991,
+      "saving": 0.27652730315921614
+    },
+    "C2": {
+      "tool_tokens": 50488,
+      "headroom": 45624,
+      "saving": 0.09633972429092064
+    },
+    "C3": {
+      "tool_tokens": 227433,
+      "headroom": 189700,
+      "saving": 0.1659082015362766
+    },
+    "C4": {
+      "tool_tokens": 16931,
+      "headroom": 11378,
+      "saving": 0.3279782647215167
+    },
+    "C5": {
+      "tool_tokens": 74976,
+      "headroom": 51785,
+      "saving": 0.3093123132735809
+    }
+  }
+}

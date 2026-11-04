@@ -14,6 +14,7 @@ instruction and a gate is a guarantee:
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import sys
@@ -87,6 +88,8 @@ class DataForSEO:
         self.allowed = allowed
         self.module = module        # a simulated server, launched over stdio
         self.rejections = 0
+        self.retries = 0
+        self.tool_failures = []     # calls that failed even after reconnecting
 
     def _transport(self):
         if self.module:
@@ -98,12 +101,23 @@ class DataForSEO:
         http = create_mcp_http_client(headers={"X-MCP-Token": token})
         return streamable_http_client(DFS_URL, http_client=http, max_sse_event_size=16 * 1024 * 1024)
 
-    async def __aenter__(self):
+    async def _connect(self):
         self._cm = self._transport()
         read, write = await self._cm.__aenter__()
         self._session_cm = ClientSession(read, write)
         self.session = await self._session_cm.__aenter__()
         await self.session.initialize()
+
+    async def _close(self, *exc):
+        for cm in (getattr(self, "_session_cm", None), getattr(self, "_cm", None)):
+            try:
+                if cm is not None:
+                    await cm.__aexit__(*(exc or (None, None, None)))
+            except BaseException:
+                pass                # a broken stream may refuse to close cleanly
+
+    async def __aenter__(self):
+        await self._connect()
         listed = {t.name: t for t in (await self.session.list_tools()).tools}
         missing = [n for n in self.allowed if n not in listed]
         if missing:
@@ -118,14 +132,29 @@ class DataForSEO:
         return self
 
     async def __aexit__(self, *exc):
-        await self._session_cm.__aexit__(*exc)
-        await self._cm.__aexit__(*exc)
+        await self._close(*exc)
 
     async def call(self, name: str, args: dict) -> str:
         if not self.module and not domain_gate(name, args):
             self.rejections += 1
             return BLOCKED
-        r = await self.session.call_tool(name, args, read_timeout_seconds=240)
+        # A dropped stream kills the session: each retry reconnects. If the
+        # call still fails, the agent gets an error message, as it would from
+        # a real failing tool, and the run goes on, flagged.
+        for attempt in range(3):
+            try:
+                r = await self.session.call_tool(name, args, read_timeout_seconds=240)
+                break
+            except Exception as e:      # MCPError, transport errors
+                self.retries += 1
+                print(f"    {name} {json.dumps(args, ensure_ascii=False)[:160]} failed "
+                      f"({type(e).__name__}: {str(e)[:60]}), attempt {attempt + 1}/3", flush=True)
+                if attempt == 2:
+                    self.tool_failures.append({"tool": name, "arguments": args, "error": str(e)[:200]})
+                    return "Error: the tool did not respond (the server closed the connection). Try a different request."
+                await asyncio.sleep(5 * (attempt + 1))
+                await self._close()
+                await self._connect()
         parts = [getattr(c, "text", "") for c in (getattr(r, "content", None) or [])]
         return "".join(parts)
 

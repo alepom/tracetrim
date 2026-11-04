@@ -56,7 +56,18 @@ def text_of(item) -> str:
     return "".join(getattr(c, "text", "") or "" for c in (getattr(item, "content", None) or []))
 
 
-async def run(case: str, run_id: str, model: str) -> dict:
+def phase_c_projection(case: str):
+    """Phase C: the prudent projection learned from ALL Phase A traces of the case."""
+    from tracetrim.projection import learn
+    from tracetrim.traces import load
+    from tracetrim.usage import analyse
+    paths = sorted((TRACES / case).glob("A*.jsonl"))
+    if len(paths) < 2:
+        sys.exit(f"{case}: Phase C needs Phase A traces, found {len(paths)}")
+    return learn([analyse(load(p)) for p in paths], "prudent"), [p.stem for p in paths]
+
+
+async def run(case: str, run_id: str, model: str, arm: str = "raw") -> dict:
     before = spent()
     if before >= PRICES["stop_usd"]:
         sys.exit(f"stop rule: {before:.2f} USD already spent (cap {PRICES['stop_usd']})")
@@ -72,12 +83,33 @@ async def run(case: str, run_id: str, model: str) -> dict:
         sys.exit(f"{trace_path} exists: run ids are never reused")
 
     events = [{"kind": "prompt", "text": system}, {"kind": "prompt", "text": user}]
-    turns, n_calls, flags = [], 0, []
+    turns, flags = [], []
     total = {"input": 0, "cached": 0, "output": 0}
     client = AsyncOpenAI(timeout=900.0, max_retries=0)
     t0 = time.time()
 
-    async with toolset(case) as tools:
+    try:
+        return await _loop(case, run_id, model, arm, before, system, user, trace_path, meta_path,
+                           events, turns, total, flags, client, t0)
+    except BaseException:
+        # The tokens of an aborted run are spent all the same: the ledger must
+        # see them, or the stop rule counts less than the bill.
+        LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        with LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"case": case, "run": run_id, "model": model, "aborted": True,
+                                 "cost_usd": round(cost(total), 4), "usage": total}) + "\n")
+        raise
+
+
+async def _loop(case, run_id, model, arm, before, system, user, trace_path, meta_path,
+                events, turns, total, flags, client, t0):
+    n_calls = 0
+    async with toolset(case) as base:
+        tools, learned_from = base, None
+        if arm == "prudent":
+            from .expand import Trimmed
+            projection, learned_from = phase_c_projection(case)
+            tools = Trimmed(base, projection)
         kwargs = {"model": model, "instructions": system, "tools": tools.schemas,
                   "input": [{"role": "user", "content": user}]}
         while True:
@@ -132,7 +164,11 @@ async def run(case: str, run_id: str, model: str) -> dict:
         "started": datetime.fromtimestamp(t0, timezone.utc).isoformat(timespec="seconds"),
         "seconds": round(time.time() - t0, 1),
         "turns": len(turns), "calls": n_calls, "usage": total, "usage_per_turn": turns,
-        "domain_rejections": rejections, "flags": flags,
+        "domain_rejections": rejections, "flags": flags + (["tool_failure"] if getattr(base, "tool_failures", None) else []),
+        "tool_failures": getattr(base, "tool_failures", []), "retries": getattr(base, "retries", 0),
+        "arm": arm, "learned_from": learned_from,
+        "expand_calls": getattr(tools, "expand_calls", None),
+        "expanded_fields": getattr(tools, "expanded_fields", None),
         "cost_usd": round(cost(total), 4), "prices": "experiments/prices.json (assumed, to be verified)",
     }
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -149,11 +185,13 @@ def main():
     p.add_argument("run_id", nargs="?")
     p.add_argument("--model", default=PRICES["model"])
     p.add_argument("--spend", action="store_true")
+    p.add_argument("--arm", choices=["raw", "prudent"], default="raw",
+                   help="Phase C: prudent = projection learned from Phase A, plus expand")
     a = p.parse_args()
     if a.spend or not a.case:
         print(f"spent: {spent():.3f} USD of {PRICES['stop_usd']} (prices assumed)")
         return
-    m = asyncio.run(run(a.case, a.run_id, a.model))
+    m = asyncio.run(run(a.case, a.run_id, a.model, a.arm))
     print(f"\n  {m['case']} {m['run']}: {m['turns']} turns, {m['calls']} calls, "
           f"input {m['usage']['input']:,} (cached {m['usage']['cached']:,}), output {m['usage']['output']:,}, "
           f"{m['cost_usd']:.3f} USD, {m['seconds']} s, rejections {m['domain_rejections']}, flags {m['flags']}")

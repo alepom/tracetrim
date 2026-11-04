@@ -194,3 +194,20 @@ All recorded on 2026-11-04, during the pilot, before any run of Phase A.
    listed in `experiments/simulated/SOURCES.md`, with the presence rule stated there (top-level fields as the APIs
    return them; below the top level, required fields and the branch a `type` names). Prompts of C4 (Italian, as its
    customers) and C5 (English) written during the pilot, fixed with this commit.
+6. **Infrastructure abort in Phase A (2026-11-04).** Run C1 A7 aborted when the DataForSEO MCP server closed the
+   stream mid-call (`SSE stream ended without a response`); no trace was written. Tool calls now retry transient
+   transport errors twice before aborting, and an aborted run is written to the spend ledger with its partial usage.
+   The lost usage of C1 A7 is recorded as an estimate at its upper bound (0.469 USD, the most expensive C1 run).
+   The repeat failed at the same point (the retries reused the dead session; its partial usage, 0.198 USD, is in the
+   ledger). Final rule: each retry opens a new session; after three failed attempts the agent receives an error
+   message, as from a real failing tool, the run continues and is flagged `tool_failure` with the failing call in its
+   metadata. Flagged runs are kept and reported; a sensitivity analysis excludes them.
+7. **`expand` listing changed before Phase C (2026-11-04).** The first implementation listed the first 20 hidden field
+   paths in alphabetical order. While Phase B was running, C4 showed that a filtered agent lost a date held in
+   `data[].items` (see the C4 results); in Phase C such a field could have been cut from the list, and the agent would
+   not have known it could ask for it. The listing now groups hidden fields two levels deep, largest groups first
+   (at most 25 groups), and `expand` accepts a group. Changed before any Phase C run; Phases A and B are unaffected.
+8. **C3 gate tightened after Phase B (2026-11-04).** The C3 gate accepted a work when its OpenAlex id OR its DOI
+   matched a returned work. In the structural arm an agent wrote the prompt's example id (`W4391234567`) for every
+   work, and the gate passed it because the DOIs matched. A declared OpenAlex id must now exist in the tool outputs.
+   The fix was made after seeing the data; it is applied to every run of every phase, and both versions are reported.

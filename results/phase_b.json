@@ -1,0 +1,1258 @@
+{
+  "rule": "H2 band rule; 2 runs per arm",
+  "cases": {
+    "C1": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "B-raw-1",
+            "B-raw-2"
+          ],
+          "tool_tokens": 114712,
+          "billed_input": [
+            121344,
+            121344
+          ],
+          "gates": [
+            {
+              "run": "C1/B-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 60,
+              "facts": 60,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/B-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 58,
+              "facts": 59,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 20,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 45
+            },
+            {
+              "items": 20,
+              "median_volume": 320,
+              "long_tail_pct": 7,
+              "notes_with_blog_link_pct": 45
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "items": 20.0,
+            "median_volume": 455.0,
+            "long_tail_pct": 5.0,
+            "notes_with_blog_link_pct": 45.0
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "prudent": {
+          "runs": [
+            "B-prudent-1",
+            "B-prudent-2"
+          ],
+          "tool_tokens": 46793,
+          "billed_input": [
+            53425,
+            53425
+          ],
+          "gates": [
+            {
+              "run": "C1/B-prudent-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 72,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/B-prudent-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 79,
+              "facts": 80,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 24,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 33
+            },
+            {
+              "items": 20,
+              "median_volume": 590,
+              "long_tail_pct": 4,
+              "notes_with_blog_link_pct": 40
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "items": 22.0,
+            "median_volume": 590.0,
+            "long_tail_pct": 3.5,
+            "notes_with_blog_link_pct": 36.5
+          },
+          "outside_band": [
+            "items",
+            "notes_with_blog_link_pct"
+          ],
+          "holds": false
+        },
+        "aggressive": {
+          "runs": [
+            "B-aggressive-1",
+            "B-aggressive-2"
+          ],
+          "tool_tokens": 41666,
+          "billed_input": [
+            48298,
+            48298
+          ],
+          "gates": [
+            {
+              "run": "C1/B-aggressive-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 72,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/B-aggressive-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 66,
+              "facts": 66,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 24,
+              "median_volume": 1300,
+              "long_tail_pct": 1,
+              "notes_with_blog_link_pct": 42
+            },
+            {
+              "items": 22,
+              "median_volume": 1300,
+              "long_tail_pct": 2,
+              "notes_with_blog_link_pct": 32
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "items": 23.0,
+            "median_volume": 1300.0,
+            "long_tail_pct": 1.5,
+            "notes_with_blog_link_pct": 37.0
+          },
+          "outside_band": [
+            "items",
+            "median_volume",
+            "long_tail_pct",
+            "notes_with_blog_link_pct"
+          ],
+          "holds": false
+        },
+        "structural": {
+          "runs": [
+            "B-structural-1",
+            "B-structural-2"
+          ],
+          "tool_tokens": 45567,
+          "billed_input": [
+            52199,
+            52199
+          ],
+          "gates": [
+            {
+              "run": "C1/B-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 79,
+              "facts": 80,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/B-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 97,
+              "facts": 97,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 20,
+              "median_volume": 1300,
+              "long_tail_pct": 4,
+              "notes_with_blog_link_pct": 50
+            },
+            {
+              "items": 24,
+              "median_volume": 1300,
+              "long_tail_pct": 4,
+              "notes_with_blog_link_pct": 38
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "items": 22.0,
+            "median_volume": 1300.0,
+            "long_tail_pct": 4.0,
+            "notes_with_blog_link_pct": 44.0
+          },
+          "outside_band": [
+            "items",
+            "median_volume",
+            "notes_with_blog_link_pct"
+          ],
+          "holds": false
+        }
+      },
+      "band": {
+        "items": [
+          20,
+          20
+        ],
+        "median_volume": [
+          320,
+          590
+        ],
+        "long_tail_pct": [
+          3,
+          7
+        ],
+        "notes_with_blog_link_pct": [
+          45,
+          45
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 114712,
+        "headroom": 82991,
+        "saving": 0.27652730315921614
+      }
+    },
+    "C2": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "B-raw-1",
+            "B-raw-2"
+          ],
+          "tool_tokens": 50488,
+          "billed_input": [
+            52197,
+            52197
+          ],
+          "gates": [
+            {
+              "run": "C2/B-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 40,
+              "facts": 43,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/B-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 31,
+              "facts": 48,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 16,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 21,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "topics": 3.0,
+            "distinct_sources": 18.5,
+            "own_pages_read": 3.0,
+            "gaps": 10.0,
+            "gaps_with_evidence_pct": 100.0
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "prudent": {
+          "runs": [
+            "B-prudent-1",
+            "B-prudent-2"
+          ],
+          "tool_tokens": 44602,
+          "billed_input": [
+            46311,
+            46311
+          ],
+          "gates": [
+            {
+              "run": "C2/B-prudent-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 33,
+              "facts": 45,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/B-prudent-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 27,
+              "facts": 45,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "topics": 3.0,
+            "distinct_sources": 18.0,
+            "own_pages_read": 3.0,
+            "gaps": 9.5,
+            "gaps_with_evidence_pct": 100.0
+          },
+          "outside_band": [
+            "gaps"
+          ],
+          "holds": false
+        },
+        "aggressive": {
+          "runs": [
+            "B-aggressive-1",
+            "B-aggressive-2"
+          ],
+          "tool_tokens": 42400,
+          "billed_input": [
+            44109,
+            44109
+          ],
+          "gates": [
+            {
+              "run": "C2/B-aggressive-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 30,
+              "facts": 46,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/B-aggressive-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 25,
+              "facts": 49,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 12,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "topics": 3.0,
+            "distinct_sources": 18.0,
+            "own_pages_read": 3.0,
+            "gaps": 11.0,
+            "gaps_with_evidence_pct": 100.0
+          },
+          "outside_band": [
+            "gaps"
+          ],
+          "holds": false
+        },
+        "structural": {
+          "runs": [
+            "B-structural-1",
+            "B-structural-2"
+          ],
+          "tool_tokens": 43900,
+          "billed_input": [
+            45609,
+            45609
+          ],
+          "gates": [
+            {
+              "run": "C2/B-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 29,
+              "facts": 47,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/B-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 25,
+              "facts": 42,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "topics": 3.0,
+            "distinct_sources": 16.5,
+            "own_pages_read": 3.0,
+            "gaps": 10.0,
+            "gaps_with_evidence_pct": 100.0
+          },
+          "outside_band": [],
+          "holds": true
+        }
+      },
+      "band": {
+        "topics": [
+          3,
+          3
+        ],
+        "distinct_sources": [
+          16,
+          21
+        ],
+        "own_pages_read": [
+          3,
+          3
+        ],
+        "gaps": [
+          10,
+          10
+        ],
+        "gaps_with_evidence_pct": [
+          100,
+          100
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 50488,
+        "headroom": 45624,
+        "saving": 0.09633972429092064
+      }
+    },
+    "C3": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "B-raw-1",
+            "B-raw-2"
+          ],
+          "tool_tokens": 227433,
+          "billed_input": [
+            228350,
+            228350
+          ],
+          "gates": [
+            {
+              "run": "C3/B-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/B-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "works": 12.0,
+            "distinct_works": 12.0,
+            "recent_2023_pct": 100.0,
+            "open_questions": 6.0
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "prudent": {
+          "runs": [
+            "B-prudent-1",
+            "B-prudent-2"
+          ],
+          "tool_tokens": 73519,
+          "billed_input": [
+            74436,
+            74436
+          ],
+          "gates": [
+            {
+              "run": "C3/B-prudent-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 12,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/B-prudent-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 12,
+              "facts": 24,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 7
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 7
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "works": 12.0,
+            "distinct_works": 12.0,
+            "recent_2023_pct": 100.0,
+            "open_questions": 7.0
+          },
+          "outside_band": [
+            "open_questions"
+          ],
+          "holds": false
+        },
+        "aggressive": {
+          "runs": [
+            "B-aggressive-1",
+            "B-aggressive-2"
+          ],
+          "tool_tokens": 47608,
+          "billed_input": [
+            48525,
+            48525
+          ],
+          "gates": [
+            {
+              "run": "C3/B-aggressive-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 12,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/B-aggressive-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 11,
+              "facts": 22,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "works": 11.5,
+            "distinct_works": 11.5,
+            "recent_2023_pct": 100.0,
+            "open_questions": 6.0
+          },
+          "outside_band": [
+            "works",
+            "distinct_works"
+          ],
+          "holds": false
+        },
+        "structural": {
+          "runs": [
+            "B-structural-1",
+            "B-structural-2"
+          ],
+          "tool_tokens": 64758,
+          "billed_input": [
+            65675,
+            65675
+          ],
+          "gates": [
+            {
+              "run": "C3/B-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 11,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/B-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 12,
+              "facts": 12,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 11,
+              "distinct_works": 1,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "works": 11.5,
+            "distinct_works": 6.5,
+            "recent_2023_pct": 100.0,
+            "open_questions": 6.0
+          },
+          "outside_band": [
+            "works",
+            "distinct_works"
+          ],
+          "holds": false
+        }
+      },
+      "band": {
+        "works": [
+          12,
+          12
+        ],
+        "distinct_works": [
+          12,
+          12
+        ],
+        "recent_2023_pct": [
+          100,
+          100
+        ],
+        "open_questions": [
+          6,
+          6
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 227433,
+        "headroom": 189700,
+        "saving": 0.1659082015362766
+      }
+    },
+    "C4": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "B-raw-1",
+            "B-raw-2"
+          ],
+          "tool_tokens": 16931,
+          "billed_input": [
+            18076,
+            18076
+          ],
+          "gates": [
+            {
+              "run": "C4/B-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/B-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "tickets": 5.0,
+            "correct_diagnoses": 5.0,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "prudent": {
+          "runs": [
+            "B-prudent-1",
+            "B-prudent-2"
+          ],
+          "tool_tokens": 5289,
+          "billed_input": [
+            6434,
+            6434
+          ],
+          "gates": [
+            {
+              "run": "C4/B-prudent-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 17,
+              "facts": 17,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/B-prudent-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "evidence_per_ticket": 2.4,
+              "wrong": [
+                "T3"
+              ]
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "evidence_per_ticket": 2.4,
+              "wrong": [
+                "T3"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "tickets": 5.0,
+            "correct_diagnoses": 4.0,
+            "evidence_per_ticket": 2.4
+          },
+          "outside_band": [
+            "correct_diagnoses",
+            "evidence_per_ticket"
+          ],
+          "holds": false
+        },
+        "aggressive": {
+          "runs": [
+            "B-aggressive-1",
+            "B-aggressive-2"
+          ],
+          "tool_tokens": 2760,
+          "billed_input": [
+            3905,
+            3905
+          ],
+          "gates": [
+            {
+              "run": "C4/B-aggressive-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/B-aggressive-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": [
+                "T3"
+              ]
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": [
+                "T3"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "tickets": 5.0,
+            "correct_diagnoses": 4.0,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [
+            "correct_diagnoses"
+          ],
+          "holds": false
+        },
+        "structural": {
+          "runs": [
+            "B-structural-1",
+            "B-structural-2"
+          ],
+          "tool_tokens": 4635,
+          "billed_input": [
+            5780,
+            5780
+          ],
+          "gates": [
+            {
+              "run": "C4/B-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/B-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 13,
+              "facts": 13,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 3,
+              "evidence_per_ticket": 2.0,
+              "wrong": [
+                "T2",
+                "T3"
+              ]
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "evidence_per_ticket": 1.6,
+              "wrong": [
+                "T3"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "tickets": 5.0,
+            "correct_diagnoses": 3.5,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [
+            "correct_diagnoses"
+          ],
+          "holds": false
+        }
+      },
+      "band": {
+        "tickets": [
+          5,
+          5
+        ],
+        "correct_diagnoses": [
+          5,
+          5
+        ],
+        "evidence_per_ticket": [
+          1.8,
+          1.8
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 16931,
+        "headroom": 11378,
+        "saving": 0.3279782647215167
+      }
+    },
+    "C5": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "B-raw-1",
+            "B-raw-2"
+          ],
+          "tool_tokens": 74976,
+          "billed_input": [
+            75942,
+            75942
+          ],
+          "gates": [
+            {
+              "run": "C5/B-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/B-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "root_causes": 3.0,
+            "causes_found": 3.0,
+            "links_found": 4.0,
+            "failed_runs_covered": 5.0
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "prudent": {
+          "runs": [
+            "B-prudent-1",
+            "B-prudent-2"
+          ],
+          "tool_tokens": 17619,
+          "billed_input": [
+            18585,
+            18585
+          ],
+          "gates": [
+            {
+              "run": "C5/B-prudent-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/B-prudent-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "root_causes": 3.0,
+            "causes_found": 3.0,
+            "links_found": 3.0,
+            "failed_runs_covered": 5.0
+          },
+          "outside_band": [
+            "links_found"
+          ],
+          "holds": false
+        },
+        "aggressive": {
+          "runs": [
+            "B-aggressive-1",
+            "B-aggressive-2"
+          ],
+          "tool_tokens": 13658,
+          "billed_input": [
+            14624,
+            14624
+          ],
+          "gates": [
+            {
+              "run": "C5/B-aggressive-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/B-aggressive-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "root_causes": 3.0,
+            "causes_found": 3.0,
+            "links_found": 3.0,
+            "failed_runs_covered": 5.0
+          },
+          "outside_band": [
+            "links_found"
+          ],
+          "holds": false
+        },
+        "structural": {
+          "runs": [
+            "B-structural-1",
+            "B-structural-2"
+          ],
+          "tool_tokens": 16666,
+          "billed_input": [
+            17632,
+            17632
+          ],
+          "gates": [
+            {
+              "run": "C5/B-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/B-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 3,
+              "failed_runs_covered": 5,
+              "missing": [
+                "#150"
+              ]
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "root_causes": 3.0,
+            "causes_found": 3.0,
+            "links_found": 3.0,
+            "failed_runs_covered": 5.0
+          },
+          "outside_band": [
+            "links_found"
+          ],
+          "holds": false
+        }
+      },
+      "band": {
+        "root_causes": [
+          3,
+          3
+        ],
+        "causes_found": [
+          3,
+          3
+        ],
+        "links_found": [
+          4,
+          4
+        ],
+        "failed_runs_covered": [
+          5,
+          5
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 74976,
+        "headroom": 51785,
+        "saving": 0.3093123132735809
+      }
+    }
+  }
+}

@@ -117,6 +117,10 @@ def check_c3(ans, outs):
         doi = str(w.get("doi") or "").lower().removeprefix("https://doi.org/")
         title = by_id.get(wid) or (by_doi.get(doi) if doi and doi != "null" else None)
         items.append((f"work {wid or doi}", title is not None and _norm(w.get("title")) == title))
+        # A declared identifier must exist: a valid DOI does not excuse an
+        # invented OpenAlex id (Phase B showed an agent copying the prompt's example).
+        if wid and wid not in ("None", "null"):
+            items.append((f"openalex_id {wid}", wid in by_id))
     return ok, items
 
 
