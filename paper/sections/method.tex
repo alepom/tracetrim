@@ -27,7 +27,8 @@ text, and reasoning is encrypted in the APIs used here.
 arguments of later tool calls (\emph{calls}), which is what a proxy between the agent and its tools can observe.
 
 \paragraph{Structural compression.} After projection, outputs can be cleaned (null and empty values removed) and
-written in TOON: indented \texttt{key: value} lines, with arrays of uniform flat objects as tables whose field names
+written in a TOON-style encoding \citep{schopplich2026toon} implemented in the library (not the reference
+implementation): indented \texttt{key: value} lines, with arrays of uniform flat objects as tables whose field names
 appear once.
 
 \paragraph{\texttt{expand}.} At run time, a projected output is followed by a line listing the hidden fields,

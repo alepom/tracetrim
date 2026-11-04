@@ -104,3 +104,24 @@ def structural(output: str) -> str:
     if not isinstance(payload, (dict, list)):
         return output
     return to_toon(clean(payload))
+
+
+def headroom(output: str, tool: str = "tool") -> str:
+    """Compress one tool output with Headroom (Apache-2.0), if installed.
+
+    EXPERIMENTAL in tracetrim: Headroom was measured as a token baseline in
+    the study behind this library, not validated for answer quality on top of
+    a projection. It needs `pip install tracetrim[headroom]` (torch included).
+    Its text compressor needs a model download; without it, Headroom
+    compresses structured content only.
+    """
+    try:
+        from headroom import CompressConfig, compress
+    except ImportError as e:
+        raise RuntimeError("Headroom is not installed: pip install 'tracetrim[headroom]'") from e
+    msgs = [{"role": "assistant", "content": None, "tool_calls": [
+                {"id": "t1", "type": "function", "function": {"name": tool, "arguments": "{}"}}]},
+            {"role": "tool", "tool_call_id": "t1", "name": tool, "content": output}]
+    r = compress(msgs, model="gpt-4o", model_limit=400000,
+                 config=CompressConfig(protect_recent=0, protect_analysis_context=False))
+    return next((m["content"] for m in r.messages if m.get("role") == "tool"), output)

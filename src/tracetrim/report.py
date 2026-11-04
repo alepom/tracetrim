@@ -47,11 +47,11 @@ def _is_error(c) -> bool:
     return isinstance(c.payload, dict) and "error" in c.payload
 
 
-def compute(names, usages, unseen="keep") -> dict:
+def compute(names, usages, unseen="keep", protect_ids=True) -> dict:
     count = measure.tokenizer()
-    deployed_p = learn(usages, "prudent", unseen=unseen)
-    deployed_a = learn(usages, "aggressive", unseen=unseen)
-    rows = measure.leave_one_out(names, usages, unseen=unseen)
+    deployed_p = learn(usages, "prudent", unseen=unseen, protect_ids=protect_ids)
+    deployed_a = learn(usages, "aggressive", unseen=unseen, protect_ids=protect_ids)
+    rows = measure.leave_one_out(names, usages, unseen=unseen, protect_ids=protect_ids)
 
     tools = defaultdict(lambda: {
         "calls": 0, "raw": 0, "unescaped": 0, "prose_calls": 0, "prose_tokens": 0,
@@ -108,7 +108,7 @@ def compute(names, usages, unseen="keep") -> dict:
 
     # Which fields a held-out run used and the projection removed, by name.
     for i, calls in enumerate(usages):
-        agg = learn(usages[:i] + usages[i + 1:], "aggressive", unseen=unseen)
+        agg = learn(usages[:i] + usages[i + 1:], "aggressive", unseen=unseen, protect_ids=protect_ids)
         for c in calls:
             if c.structured and c.tool in agg.keep:
                 for f in c.used:
@@ -131,6 +131,7 @@ def compute(names, usages, unseen="keep") -> dict:
         "generator": about.as_dict(),
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "unseen": unseen,
+        "protect_ids": protect_ids,
         "traces": names,
         "totals": {
             "traces": len(names), "calls": sum(t["calls"] for t in tools.values()),
@@ -279,7 +280,7 @@ def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
     """The runtime config and the projection it points to, from `auto` actions only."""
     trim = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "trim"}
     expand = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "expand"} & trim
-    p = learn(usages, "prudent", unseen=d["unseen"])
+    p = learn(usages, "prudent", unseen=d["unseen"], protect_ids=d.get("protect_ids", True))
     p.keep = {t: v for t, v in p.keep.items() if t in trim}
     p.seen = {t: v for t, v in p.seen.items() if t in trim}
     config = {

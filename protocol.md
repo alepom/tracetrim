@@ -278,3 +278,9 @@ The spend cap of 40 USD and its stop rule are unchanged.
     beside the frozen one (`correct_diagnoses_strict`, `H5_strict_posthoc`); H5 is evaluated as frozen. Under the strict
     test the v02 arm loses the decline reason in every replay: the reason arrives in English and the agent translates
     it, a fourth loss mechanism that safeguard S2 does not cover.
+12. **Publication of traces (2026-11-04).** The protocol promised pseudonymised traces for the cases built on the
+    search-data API, with "the same analysis results". Pseudonymising the values that matter (volumes are numbers)
+    would change those results, so the promise cannot be kept as written. Instead: traces of C3 (CC0 catalogue), C4
+    and C5 (simulated) are released in full; for C1 and C2 only derived per-call records are released (tool, field
+    paths used, echoed and judgeable, token counts), which reproduce the usage analysis without redistributing the
+    provider's data.

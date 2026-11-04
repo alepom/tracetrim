@@ -111,10 +111,11 @@ def cmd_measure(a):
 
 def cmd_report(a):
     from . import report as rp
-    traces, usages = _read(a.traces)
-    d = rp.compute([t.name for t in traces], usages, a.unseen)
+    traces, usages = _read(a.traces, a.v01)
+    d = rp.compute([t.name for t in traces], usages, a.unseen, protect_ids=not a.v01)
     sugg = rp.suggestions(d)
     out = Path(a.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
     cfg_path, proj_path = out.with_suffix(".config.json"), out.with_suffix(".projection.json")
     config, projection = rp.build_config(d, sugg, usages, proj_path.name)
     projection.save(proj_path)
@@ -174,6 +175,8 @@ def main(argv=None):
     s.add_argument("traces", nargs="+")
     s.add_argument("-o", "--output", default="report.html")
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
+    s.add_argument("--v01", action="store_true",
+                   help="tracetrim 0.1 behaviour (for comparisons): no identifier protection, no transformed values")
     s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand (stdio)")

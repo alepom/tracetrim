@@ -16,6 +16,8 @@ dependencies = []
 measure = ["tiktoken>=0.7"]
 test = ["pytest>=8", "tiktoken>=0.7"]
 proxy = ["mcp>=2"]
+# Experimental, heavy (torch): see tracetrim.structural.headroom.
+headroom = ["headroom-ai>=0.39"]
 
 [project.urls]
 Homepage = "https://www.alessiopomaro.it/"

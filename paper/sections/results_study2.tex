@@ -34,12 +34,16 @@ seen, and reported beside the frozen result rather than instead of it), the raw 
 English sentence and the agent writes it in Italian: a \emph{translated} value, which neither usage detection nor
 safeguard S2 recognises. The \texttt{v02} answers were not wrong (``the card was declined'') but less informative.
 
-\paragraph{Structural compression is not free.} Adding cleaning and TOON to the \texttt{v02} projection saved a
-few more points but introduced errors that the projection alone did not: in the editorial plan the gates passed in
-\StudyTwoVtwostructuralGatesi{} runs instead of \StudyTwoVtwoGatesi, each time because the same keyword was reported
-with a volume of zero where the tool had returned a positive one, and in billing support the decline reason went missing in more runs
-(\StudyTwoFrozenAllRightVtwostructural{} runs with all tickets right under the frozen test). A denser format is also
-a harder one to read off correctly; its savings must be weighed against that.
+\paragraph{Format changes behaviour.} Cleaning and TOON encoding remove no information, yet adding them to the
+\texttt{v02} projection changed answers. In the editorial plan the gates passed in \StudyTwoVtwostructuralGatesi{}
+runs instead of \StudyTwoVtwoGatesi, each time on the same keyword: the search-volume tool, which the prompt names as
+the source of all volumes, returned that keyword without a volume, while another tool gave one. With JSON the agent
+used the other tool's figure; with the denser format it wrote zero. In billing support the arm had all tickets
+right, under the frozen test, in \StudyTwoFrozenAllRightVtwostructural{} runs. The format did not hide data: it
+shifted how the model resolved an ambiguity. The evidence is thin (one keyword, five runs), and the encoder is the
+library's own minimal TOON-style implementation, not the reference one \citep{schopplich2026toon}; but it is a
+reminder that a format the model reads less often is not a neutral choice, and its saving has to be validated like
+any other change to what the agent reads.
 
 \paragraph{The content-gap case.} The content-gap analyst failed the gates in most runs of every arm, the raw one
 included (\StudyTwoRawGatesii): when the search API returns a redirect link instead of a result's URL, the agent
