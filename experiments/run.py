@@ -64,7 +64,9 @@ def phase_c_projection(case: str):
     paths = sorted((TRACES / case).glob("A*.jsonl"))
     if len(paths) < 2:
         sys.exit(f"{case}: Phase C needs Phase A traces, found {len(paths)}")
-    return learn([analyse(load(p)) for p in paths], "prudent"), [p.stem for p in paths]
+    # 0.1 behaviour pinned: Phase C tests the projection of Phases A-B.
+    return (learn([analyse(load(p), normalize=False) for p in paths], "prudent", protect_ids=False),
+            [p.stem for p in paths])
 
 
 async def run(case: str, run_id: str, model: str, arm: str = "raw") -> dict:

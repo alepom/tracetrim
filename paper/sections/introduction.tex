@@ -1,0 +1,37 @@
+\section{Introduction}
+\label{sec:intro}
+
+An agent built on a large language model works by calling tools and reading what they return. The tools are
+usually written for programs, not for models: a keyword-research API returns monthly volumes, click-through data,
+backlink counts and a dozen normalisations of each; a payment API returns every field of a charge, null or not; a
+code-hosting API embeds a full user object, with fifteen navigation URLs, in every issue. All of it enters the
+context, is paid for at every subsequent turn, and competes for the model's attention with what the task needs.
+
+Practitioners handle this by hand: a wrapper function per tool that keeps the fields the task uses. This works,
+but it requires knowing which fields those are, for each tool and each task, and keeping the wrappers in step
+with the APIs. Generic compressors avoid the per-tool work but do not know what the task needs, so they remove
+structural redundancy and leave the semantic one.
+
+This paper asks whether the hand-written selection can be \emph{learned}. The agent's own execution traces show
+what it did with each tool output: which values reappear in the arguments of later calls and in the final answer.
+A field whose values never reappear, across runs of the same task, is a candidate for removal. We call the
+resulting filter a \emph{learned projection}, implement it in an open-source library (\texttt{tracetrim}), and
+test it on five agents: three that use real APIs (an editorial planner and a content-gap analyst on a search-data
+API, a literature scanner on a scholarly catalogue) and two that use simulated servers whose payloads follow the
+public OpenAPI descriptions of a payment API and a code-hosting API.
+
+The study has two parts. \textbf{Study~1}, with a protocol frozen before any run, measures how much a projection
+learned from other runs removes on a held-out run, where it must be learned to work, whether it transfers between
+tasks, and whether the agent's answer survives when the conversation is replayed with projected tool outputs. It
+finds large savings and three precise ways in which the projection fails: values the agent \emph{transforms}
+before writing them (a Unix timestamp written as a date), fields the agent uses only \emph{to reason}, and, most
+seriously, an agent that \emph{invents identifiers} when the identifier field has been removed. \textbf{Study~2}
+adds two safeguards motivated by those failures and tests, again with a protocol frozen in advance, whether they
+remove the losses while keeping most of the saving.
+
+The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
+that estimates savings and misses on runs the projection has never seen; (ii) evidence that the learner must see
+the agent's final answer, so a proxy placed only between agent and tools (an MCP gateway) cannot learn by itself;
+(iii) a characterisation of the failure modes, including identifier fabrication; (iv) safeguards and their test;
+(v) an open-source implementation with a bilingual telemetry report that is useful on its own, independently of
+any trimming.

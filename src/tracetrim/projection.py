@@ -22,11 +22,23 @@ reproduces the strict behaviour of the original measurements.
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from .usage import CallUsage, leaves, parse_output
+
+# Fields that identify a record, to a program or to a person. The pilot study
+# showed that removing them is not just a loss: without the id, an agent
+# invented ids; without issue titles, it could not match an issue to a failure.
+# Kept whenever `protect_ids` is on, whatever the usage says.
+IDENTIFYING = re.compile(r"^(id|uuid|guid|doi|url|html_url|uri|href|slug|number|title|name|display_name)$|_id$")
+
+
+def identifying(path: str) -> bool:
+    return bool(IDENTIFYING.search(path.rsplit(".", 1)[-1].removesuffix("[]")))
+
 
 MODES = ("prudent", "aggressive")
 SOURCES = ("full", "calls")
@@ -95,7 +107,8 @@ def project(node, keep: set[str], path="", drop: set[str] | None = None):
     return node if path in keep else _EMPTY
 
 
-def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="keep") -> Projection:
+def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="keep",
+          protect_ids: bool = False) -> Projection:
     """`usages`: one list of CallUsage per trace (see usage.analyse)."""
     if mode not in MODES or source not in SOURCES or unseen not in UNSEEN:
         raise ValueError(f"mode in {MODES}, source in {SOURCES}, unseen in {UNSEEN}")
@@ -108,4 +121,6 @@ def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="
             judgeable[c.tool] |= c.judgeable
             seen[c.tool] |= {p for p, _ in leaves(c.payload)}
     keep = {t: used[t] | (seen[t] - judgeable[t]) if mode == "prudent" else used[t] for t in seen}
+    if protect_ids:
+        keep = {t: k | {p for p in seen[t] if identifying(p)} for t, k in keep.items()}
     return Projection(mode, source, keep, {t: set(v) for t, v in seen.items()}, unseen)

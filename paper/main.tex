@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+\input{generated/meta.tex}
+\input{generated/numbers.tex}
+
+\title{Agents Read More Than They Use\\
+\large Learning Tool-Output Projections from Execution Traces, and Where They Fail}
+\author{\PaperAuthors}
+\date{\PaperVersionLine}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\noindent\textbf{Status.} \PaperStatus
+
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/method}
+\input{sections/design}
+\input{sections/results_study1}
+\input{sections/results_study2}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+
+\section*{AI assistance and authorship}
+\input{sections/ai_statement}
+
+\section*{Funding and competing interests}
+This study received no external funding. API costs were paid by the author. The author has no financial or other
+relationship with OpenAI, DataForSEO, OpenAlex, Stripe, GitHub or the authors of Headroom and TOON.
+
+\section*{Code and data availability}
+\input{sections/availability}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+\end{document}

@@ -1,0 +1,249 @@
+% references.bib -- verified bibliography for the tracetrim preprint.
+% Every entry was checked on 2026-11-04 against a primary source:
+% ACL Anthology .bib export, DOI content negotiation (doi.org / Crossref),
+% NeurIPS / ICLR / PMLR / USENIX proceedings pages, the arXiv API, or the
+% official GitHub repository / PyPI page / project website.
+% Where the published version differs from arXiv (authors, title), the
+% published version is used.
+
+% ---------------------------------------------------------------------------
+% 1. Prompt / context compression
+% ---------------------------------------------------------------------------
+
+@inproceedings{jiang2023llmlingua,
+  title     = {{LLMLingua}: Compressing Prompts for Accelerated Inference of Large Language Models},
+  author    = {Jiang, Huiqiang and Wu, Qianhui and Lin, Chin-Yew and Yang, Yuqing and Qiu, Lili},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {13358--13376},
+  year      = {2023},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2023.emnlp-main.825},
+  url       = {https://aclanthology.org/2023.emnlp-main.825/}
+}
+
+@inproceedings{jiang2024longllmlingua,
+  title     = {{LongLLMLingua}: Accelerating and Enhancing {LLMs} in Long Context Scenarios via Prompt Compression},
+  author    = {Jiang, Huiqiang and Wu, Qianhui and Luo, Xufang and Li, Dongsheng and Lin, Chin-Yew and Yang, Yuqing and Qiu, Lili},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages     = {1658--1677},
+  year      = {2024},
+  address   = {Bangkok, Thailand},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2024.acl-long.91},
+  url       = {https://aclanthology.org/2024.acl-long.91/}
+}
+
+@inproceedings{pan2024llmlingua2,
+  title     = {{LLMLingua-2}: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression},
+  author    = {Pan, Zhuoshi and Wu, Qianhui and Jiang, Huiqiang and Xia, Menglin and Luo, Xufang and Zhang, Jue and Lin, Qingwei and R{\"u}hle, Victor and Yang, Yuqing and Lin, Chin-Yew and Zhao, H. Vicky and Qiu, Lili and Zhang, Dongmei},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL 2024},
+  pages     = {963--981},
+  year      = {2024},
+  address   = {Bangkok, Thailand},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2024.findings-acl.57},
+  url       = {https://aclanthology.org/2024.findings-acl.57/}
+}
+
+% "Selective Context". Author order follows the ACL Anthology (published)
+% version; arXiv 2310.06201 lists Lin before Guerin.
+@inproceedings{li2023compressing,
+  title     = {Compressing Context to Enhance Inference Efficiency of Large Language Models},
+  author    = {Li, Yucheng and Dong, Bo and Guerin, Frank and Lin, Chenghua},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {6342--6353},
+  year      = {2023},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2023.emnlp-main.391},
+  url       = {https://aclanthology.org/2023.emnlp-main.391/}
+}
+
+% Published title adds "Context"; the arXiv title (2310.04408) omits it.
+@inproceedings{xu2024recomp,
+  title     = {{RECOMP}: Improving Retrieval-Augmented {LMs} with Context Compression and Selective Augmentation},
+  author    = {Xu, Fangyuan and Shi, Weijia and Choi, Eunsol},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  url       = {https://proceedings.iclr.cc/paper_files/paper/2024/hash/bda88ed2892f5e61c9a9bf215c566913-Abstract-Conference.html},
+  eprint    = {2310.04408},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{mu2023gist,
+  title     = {Learning to Compress Prompts with Gist Tokens},
+  author    = {Mu, Jesse and Li, Xiang and Goodman, Noah},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS 2023)},
+  pages     = {19327--19352},
+  year      = {2023},
+  doi       = {10.52202/075280-0848},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/3d77c6dcc7f143aa2154e7f4d5e22d68-Abstract-Conference.html},
+  eprint    = {2304.08467},
+  archivePrefix = {arXiv}
+}
+
+% ---------------------------------------------------------------------------
+% 2. Tool use by LLMs and tool-output / observation handling in agents
+% ---------------------------------------------------------------------------
+
+% NeurIPS version adds Eric Hambro (absent from arXiv 2302.04761).
+@inproceedings{schick2023toolformer,
+  title     = {Toolformer: Language Models Can Teach Themselves to Use Tools},
+  author    = {Schick, Timo and Dwivedi-Yu, Jane and Dessi, Roberto and Raileanu, Roberta and Lomeli, Maria and Hambro, Eric and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS 2023)},
+  pages     = {68539--68551},
+  year      = {2023},
+  doi       = {10.52202/075280-2997},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/d842425e4bf79ba039352da0f658a906-Abstract-Conference.html},
+  eprint    = {2302.04761},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{yao2023react,
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  author    = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  booktitle = {The Eleventh International Conference on Learning Representations (ICLR)},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2210.03629},
+  eprint    = {2210.03629},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{qin2024toolllm,
+  title     = {{ToolLLM}: Facilitating Large Language Models to Master 16000+ Real-world {APIs}},
+  author    = {Qin, Yujia and Liang, Shihao and Ye, Yining and Zhu, Kunlun and Yan, Lan and Lu, Yaxi and Lin, Yankai and Cong, Xin and Tang, Xiangru and Qian, Bill and Zhao, Sihan and Hong, Lauren and Tian, Runchu and Xie, Ruobing and Zhou, Jie and Gerstein, Mark and Li, Dahai and Liu, Zhiyuan and Sun, Maosong},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  url       = {https://proceedings.iclr.cc/paper_files/paper/2024/hash/28e50ee5b72e90b50e7196fde8ea260e-Abstract-Conference.html},
+  eprint    = {2307.16789},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{kang2026acon,
+  title     = {{ACON}: Optimizing Context Compression for Long-horizon {LLM} Agents},
+  author    = {Kang, Minki and Chen, Wei-Ning and Han, Dongge and Inan, Huseyin A. and Wutschitz, Lukas and Chen, Yanzhi and Sim, Robert and Rajmohan, Saravan},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {306},
+  pages     = {55321--55375},
+  year      = {2026},
+  url       = {https://proceedings.mlr.press/v306/kang26b.html},
+  eprint    = {2510.00615},
+  archivePrefix = {arXiv}
+}
+
+% Workshop paper (DL4C @ NeurIPS 2025, per the arXiv v3 comment); cited as preprint.
+@misc{lindenbauer2025complexity,
+  title     = {The Complexity Trap: Simple Observation Masking Is as Efficient as {LLM} Summarization for Agent Context Management},
+  author    = {Lindenbauer, Tobias and Slinko, Igor and Felder, Ludwig and Bogomolov, Egor and Zharov, Yaroslav},
+  year      = {2025},
+  eprint    = {2508.21433},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.SE},
+  url       = {https://arxiv.org/abs/2508.21433},
+  note      = {Presented at the 4th Deep Learning for Code (DL4C) Workshop at NeurIPS 2025}
+}
+
+@misc{kovacs2026squeez,
+  title     = {Squeez: Task-Conditioned Tool-Output Pruning for Coding Agents},
+  author    = {Kov{\'a}cs, {\'A}d{\'a}m},
+  year      = {2026},
+  eprint    = {2604.04979},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2604.04979}
+}
+
+% ---------------------------------------------------------------------------
+% 3. Long-context degradation
+% ---------------------------------------------------------------------------
+
+@article{liu2024lost,
+  title     = {Lost in the Middle: How Language Models Use Long Contexts},
+  author    = {Liu, Nelson F. and Lin, Kevin and Hewitt, John and Paranjape, Ashwin and Bevilacqua, Michele and Petroni, Fabio and Liang, Percy},
+  journal   = {Transactions of the Association for Computational Linguistics},
+  volume    = {12},
+  pages     = {157--173},
+  year      = {2024},
+  publisher = {MIT Press},
+  doi       = {10.1162/tacl_a_00638},
+  url       = {https://aclanthology.org/2024.tacl-1.9/}
+}
+
+% ---------------------------------------------------------------------------
+% 4. Model Context Protocol
+% ---------------------------------------------------------------------------
+
+@misc{mcp2026spec,
+  title        = {Model Context Protocol Specification, Version 2026-07-28},
+  author       = {{Model Context Protocol}},
+  year         = {2026},
+  howpublished = {\url{https://modelcontextprotocol.io/specification/2026-07-28}},
+  note         = {Latest version as of access date; source at \url{https://github.com/modelcontextprotocol/modelcontextprotocol}. Accessed 2026-11-04}
+}
+
+% ---------------------------------------------------------------------------
+% 5. Closely related tools
+% ---------------------------------------------------------------------------
+
+@misc{headroom2026,
+  title        = {Headroom: Compress Tool Outputs, Logs, Files, and {RAG} Chunks Before They Reach the {LLM}},
+  author       = {{Headroom Contributors}},
+  year         = {2026},
+  howpublished = {\url{https://github.com/headroomlabs-ai/headroom}},
+  note         = {Python package \texttt{headroom-ai}, version 0.42.0 (latest release at access date). Apache-2.0. Accessed 2026-11-04}
+}
+
+@misc{schopplich2026toon,
+  title        = {{TOON} Specification: Token-Oriented Object Notation, Version 4.4 (Working Draft)},
+  author       = {Schopplich, Johann},
+  year         = {2026},
+  month        = oct,
+  howpublished = {\url{https://github.com/toon-format/spec}},
+  note         = {Dated 2026-10-08. Reference implementation: \url{https://github.com/toon-format/toon}. Accessed 2026-11-04}
+}
+
+@misc{atlassian2026mcpcompressor,
+  title        = {mcp-compressor: An {MCP} Server Wrapper for Reducing Tokens Consumed by {MCP} Tools},
+  author       = {{Atlassian Labs}},
+  year         = {2026},
+  howpublished = {\url{https://github.com/atlassian-labs/mcp-compressor}},
+  note         = {Version 0.40.0 (latest release at access date). Apache-2.0. Accessed 2026-11-04}
+}
+
+@misc{sift2026gateway,
+  title        = {Sift: Reliability Gateway for {AI} Tool Output},
+  author       = {{lourencomaciel}},
+  year         = {2026},
+  howpublished = {\url{https://github.com/lourencomaciel/sift-gateway}},
+  note         = {Python package \texttt{sift-gateway}, version 0.4.4, \url{https://pypi.org/project/sift-gateway/}. MIT. Accessed 2026-11-04}
+}
+
+% ---------------------------------------------------------------------------
+% 6. Hallucinated identifiers and references
+% ---------------------------------------------------------------------------
+
+@article{walters2023fabrication,
+  title     = {Fabrication and errors in the bibliographic citations generated by {ChatGPT}},
+  author    = {Walters, William H. and Wilder, Esther Isabelle},
+  journal   = {Scientific Reports},
+  volume    = {13},
+  number    = {1},
+  pages     = {14045},
+  year      = {2023},
+  publisher = {Springer Nature},
+  doi       = {10.1038/s41598-023-41032-5}
+}
+
+@inproceedings{spracklen2025package,
+  title     = {We Have a Package for You! {A} Comprehensive Analysis of Package Hallucinations by Code Generating {LLMs}},
+  author    = {Spracklen, Joseph and Wijewickrama, Raveen and Sakib, A H M Nazmus and Maiti, Anindya and Viswanath, Bimal and Jadliwala, Murtuza},
+  booktitle = {34th USENIX Security Symposium (USENIX Security 25)},
+  pages     = {3687--3706},
+  year      = {2025},
+  publisher = {USENIX Association},
+  isbn      = {978-1-939133-52-6},
+  url       = {https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen},
+  eprint    = {2406.10279},
+  archivePrefix = {arXiv}
+}

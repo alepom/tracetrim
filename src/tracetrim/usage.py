@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 from .traces import Trace
 
@@ -75,6 +76,61 @@ def keys_of(value) -> list[tuple[str, ...]]:
     return [tuple(ws[i:i + N_MAX]) for i in range(len(ws) - N_MAX + 1)]
 
 
+MONTHS = {
+    "it": ("gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto",
+           "settembre", "ottobre", "novembre", "dicembre"),
+    "en": ("january", "february", "march", "april", "may", "june", "july", "august",
+           "september", "october", "november", "december"),
+}
+_MONEY = re.compile(r"(amount|price|total|subtotal|balance|cost|fee|tax)", re.I)
+_ISO_DATE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})")
+
+
+def _date_keys(d) -> list[tuple[str, ...]]:
+    forms = [d.strftime("%Y-%m-%d"), d.strftime("%d/%m/%Y"), f"{d.day}/{d.month}/{d.year}"]
+    keys = [tuple(words(f)) for f in forms]
+    for names in MONTHS.values():
+        m = names[d.month - 1]
+        keys += [(str(d.day), m), (m, str(d.day)), (str(d.day), m, str(d.year))]
+    return keys
+
+
+def transformed_keys(value, path: str = "") -> list[tuple[str, ...]]:
+    """Forms an agent writes a value in after transforming it.
+
+    The pilot study lost information exactly where the agent did not copy a
+    value but rewrote it: a Unix timestamp as "20 novembre", an amount in
+    cents as "29,00", an OpenAlex URL as its short id. These normalisers are
+    deliberately few and generic; each one is a hypothesis of the
+    confirmation study, not a guarantee.
+    """
+    if isinstance(value, bool) or value is None:
+        return []
+    keys: list[tuple[str, ...]] = []
+    if isinstance(value, int):
+        if 946_684_800 <= value <= 4_102_444_800:          # 2000-01-01 .. 2100-01-01
+            keys += _date_keys(datetime.fromtimestamp(value, timezone.utc))
+        name = path.rsplit(".", 1)[-1]
+        if _MONEY.search(name) and abs(value) >= 100:      # minor units: 2900 -> 29,00
+            major = f"{value / 100:.2f}"
+            grouped = f"{value / 100:,.2f}"
+            for f in (major, major.replace(".", ","), grouped,
+                      grouped.replace(",", "_").replace(".", ",").replace("_", ".")):
+                keys.append(tuple(words(f)))
+    elif isinstance(value, str):
+        m = _ISO_DATE.match(value)
+        if m:
+            try:
+                keys += _date_keys(datetime(int(m[1]), int(m[2]), int(m[3])))
+            except ValueError:
+                pass
+        if value.startswith(("http://", "https://")):
+            last = value.rstrip("/").rsplit("/", 1)[-1]
+            if len(last) >= 4 and re.fullmatch(r"[\w.\-]+", last):
+                keys.append(tuple(words(last)))
+    return [k for k in keys if k]
+
+
 def parse_output(output: str | None):
     """The output as JSON, or None when it is an error, prose or hidden."""
     if not output:
@@ -102,7 +158,9 @@ class CallUsage:
         return isinstance(self.payload, (dict, list))
 
 
-def analyse(trace: Trace) -> list[CallUsage]:
+def analyse(trace: Trace, normalize: bool = False) -> list[CallUsage]:
+    """`normalize`: also look for transformed forms of each value (dates,
+    amounts in minor units, short ids from URLs). Off by default in 0.1."""
     texts = [e.text for e in trace.events]
 
     # First event where each n-gram is written. Two versions: a proxy in front
@@ -127,6 +185,8 @@ def analyse(trace: Trace) -> list[CallUsage]:
             k = keys_of(value)
             if k:
                 u.judgeable.add(path)
+            if normalize:
+                k = k + transformed_keys(value, path)
             if any(x in own for x in k):
                 u.echo.add(path)
             seen = [first_in_calls[x] for x in k if x in first_in_calls]

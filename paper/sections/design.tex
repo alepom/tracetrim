@@ -1,0 +1,43 @@
+\section{Experimental design}
+\label{sec:design}
+
+Both studies follow protocols frozen before their runs and tagged in the repository (\texttt{protocol-v1},
+amended as \texttt{protocol-v2}; Study~2 as \texttt{protocol-v3}). Every change made after freezing is listed,
+dated and explained in the protocol's ``Deviations'' section and summarised in Appendix~\ref{app:deviations}.
+
+\paragraph{Cases.} Five agents, all with \texttt{gpt-5.6-terra} at default parameters, in a loop of our own
+(OpenAI Responses API with function calling), because hosted tool integrations do not expose tool outputs to the
+client.
+\begin{itemize}
+\item \textbf{C1, editorial plan}: twelve tools of a search-data API (keyword research, trends, search results,
+  rankings, page parsing) reached through its MCP server; the agent plans articles for the author's own website.
+\item \textbf{C2, content gaps}: search results and page parsing; the agent compares what ranks on Google with
+  what the website has published.
+\item \textbf{C3, literature scan}: two tools on the OpenAlex catalogue (CC0), five results per search.
+\item \textbf{C4, billing support}$^\dagger$: seven tools of a simulated MCP server whose payloads follow the
+  public OpenAPI description of the Stripe API; the agent answers five customer tickets with known correct answers.
+\item \textbf{C5, CI triage}$^\dagger$: six tools of a simulated MCP server following the GitHub REST API
+  description; the agent explains the week's CI failures on \texttt{main} and links them to issues and pull
+  requests, again with known correct answers.
+\end{itemize}
+$^\dagger$Simulated payloads are generated from the OpenAPI schemas with a seeded generator; because we design
+them, C4 and C5 are reported separately and never pooled with the real-API cases. Inputs name only the author's
+own domain; a gate in the tool wrapper rejects any other domain for page parsing, ranking targets and
+\texttt{site:} queries.
+
+\paragraph{Study 1.} \emph{Phase A}: eight live runs per case, used for usage, leave-one-out projections,
+learning source and transfer between C1 and C2 (on the tools they share). \emph{Phase B}: the third run of each
+case, chosen before looking at the data, is replayed up to the final answer, changing only the tool messages:
+raw, prudent, aggressive, and prudent plus structural compression; two runs per arm; projections learned from the
+other seven runs. Headroom is applied to the same conversations as a token-only baseline. \emph{Phase C}: live
+runs on C1 and C4 with the prudent projection and \texttt{expand}, against raw runs, three per arm.
+
+\paragraph{Study 2.} The Phase B conversations are replayed again with the safeguards on (arm \texttt{v02}, and
+\texttt{v02} plus structural compression) against the raw arm, five runs per arm.
+
+\paragraph{Measures.} \emph{Gates} are binary: the answer parses, has the required structure, and every fact it
+attributes to a tool (volumes, URLs, identifiers, run and issue numbers, quoted error lines) matches the raw tool
+outputs, whatever the agent was shown. \emph{Thermometers} are graded: editorial metrics for C1, coverage metrics
+for C2 and C3, and the number of correct diagnoses and links for C4 and C5, whose correct answers are known.
+Results are reported as medians with ranges; with two to five runs per arm no significance test is claimed. The
+pre-registered rule for quality (H2) holds an arm to the raw arm's range on every thermometer.

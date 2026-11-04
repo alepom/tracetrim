@@ -1,0 +1,40 @@
+\section{Method}
+\label{sec:method}
+
+\paragraph{Traces.} A trace is the ordered record of what the agent was given and what it wrote: prompts, tool
+calls (the arguments the agent wrote and the raw output it received) and messages, the final answer included. The
+library reads a neutral JSONL format and the Python exports of the OpenAI Playground.
+
+\paragraph{Usage.} Each structured output is flattened into leaves identified by a path in which list indices are
+collapsed (\texttt{items[].keyword\_info.search\_volume}). A leaf is \emph{used} when one of its values appears in
+something the agent wrote \emph{after} receiving it and not before. Values are matched as word $n$-grams
+($n \le 4$): short strings as a whole, prose by any 4-gram, numbers in their plain and grouped forms. Values too
+generic to attribute (booleans, integers below 100, one-word strings shorter than four characters) are not
+\emph{judgeable}. A value that already appears in the call's own arguments is an \emph{echo}: not a use, but the
+record's key (the keyword next to its volume), and it is always kept.
+
+\paragraph{Projection.} For each tool, the \emph{aggressive} projection keeps the used fields and the echoes; the
+\emph{prudent} one also keeps every field that was never judgeable. Fields never seen while learning pass through,
+so that a field added to an API is not hidden silently. Projected outputs are re-serialised without ASCII escapes.
+
+\paragraph{Leave-one-out evaluation.} For each trace, the projection is learned from the other traces of the same
+task and applied to it. Two quantities are reported: the tool-output tokens left (counted with the
+\texttt{o200k\_base} tokenizer, each output once), and the \emph{misses}: calls in which the projection removes a
+field that this trace used later. Usage is a lower bound: a field read only while reasoning leaves no trace in the
+text, and reasoning is encrypted in the APIs used here.
+
+\paragraph{Learning source.} Usage can be learned from everything the agent wrote (\emph{full}) or only from the
+arguments of later tool calls (\emph{calls}), which is what a proxy between the agent and its tools can observe.
+
+\paragraph{Structural compression.} After projection, outputs can be cleaned (null and empty values removed) and
+written in TOON: indented \texttt{key: value} lines, with arrays of uniform flat objects as tables whose field names
+appear once.
+
+\paragraph{\texttt{expand}.} At run time, a projected output is followed by a line listing the hidden fields,
+grouped two levels deep and largest groups first, and the agent can retrieve any of them with an \texttt{expand}
+tool. This turns a loss into a round trip, provided the agent knows what is missing.
+
+\paragraph{Safeguards (version 0.2, Study 2).} S1 keeps identifying fields (\texttt{id}, \texttt{*\_id},
+\texttt{doi}, \texttt{url}, \texttt{number}, \texttt{title}, \texttt{name} and similar) whatever the usage says.
+S2 recognises transformed values: Unix timestamps and ISO dates also match as written dates, in Italian and English;
+integers in money-named fields also match as major units with two decimals; URLs also match by their last segment.

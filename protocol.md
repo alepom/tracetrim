@@ -211,3 +211,58 @@ All recorded on 2026-11-04, during the pilot, before any run of Phase A.
    matched a returned work. In the structural arm an agent wrote the prompt's example id (`W4391234567`) for every
    work, and the gate passed it because the DOIs matched. A declared OpenAlex id must now exist in the tool outputs.
    The fix was made after seeing the data; it is applied to every run of every phase, and both versions are reported.
+
+9. **Phase C delayed, not changed (2026-11-04).** The script meant to finish Phase C while the author was offline
+   waited for "no run in progress" by matching a process name that also appeared in its own launcher's command
+   line, so it waited forever. No run was lost or altered: the run in progress finished, the other eight were started
+   later from the session. Only the timing of Phase C changed.
+
+---
+
+# Confirmation study (Study 2) — frozen on 2026-11-04
+
+Motivated by Phase B, which found three mechanisms by which the learned projection loses information. Study 2 tests
+whether two safeguards, added to the library as version 0.2, remove those losses while keeping most of the saving.
+Approved by the author and tagged `protocol-v3` before any of its runs.
+
+## Safeguards under test (tracetrim 0.2)
+
+- **S1 — identifying fields are kept** whatever the usage says: `id`, `*_id`, `uuid`, `guid`, `doi`, `url`,
+  `html_url`, `uri`, `href`, `slug`, `number`, `title`, `name`, `display_name` (`learn(..., protect_ids=True)`).
+- **S2 — transformed values are recognised** (`analyse(..., normalize=True)`): Unix timestamps and ISO dates also
+  match as dates (ISO, day/month/year, day and month name in Italian and English); integers in fields named like
+  money (`amount`, `price`, `total`, `subtotal`, `balance`, `cost`, `fee`, `tax`) also match as major units with two
+  decimals; URLs also match by their last path segment.
+
+`expand` (the third safeguard) needs a live loop; its evidence is Phase C.
+
+## Design
+
+Same conversations as Phase B: trace A3 of each case, replayed up to the final answer, only the tool messages changed.
+Projections are learned from the same seven traces (A1-A8 without A3). Arms, interleaved:
+
+| Arm | Tool messages |
+|---|---|
+| raw | as returned |
+| v02 | prudent projection learned with S1 + S2 |
+| v02-structural | the same, then clean-up and TOON |
+
+5 runs per arm and case (75 replays). Same model, same closing message, same gates and thermometers as Phase B;
+the C3 gate is the tightened one (deviation 8).
+
+## Hypotheses (stated before any run of Study 2)
+
+- **H5 (C4, timestamp):** in every v02 run, all five tickets are diagnosed correctly (T3 included).
+- **H6 (C3, identifiers):** in every v02 run, the C3 gates pass, i.e. no OpenAlex id is invented.
+- **H7 (C5, titles):** in every v02 run, all four expected issue and pull-request links are found (#150 included).
+- **H8 (saving):** the v02 arm keeps at most 70% of the raw tool-message tokens in C1, C3, C4 and C5 (a saving of
+  at least 30%; C2 is exempt, its saving was 12% before any safeguard). Offline estimate, made before any run:
+  -53%, -46%, -57%, -61%.
+- Secondary, as in Phase B: the band rule on every thermometer, against the raw arm's 5 runs.
+
+The structural arm is reported against the same outcomes, as exploratory.
+
+## Budget
+
+Mean Phase B replay cost per case, cache included: 0.45 USD for the five cases, so about 7 USD for 75 replays.
+The spend cap of 40 USD and its stop rule are unchanged.

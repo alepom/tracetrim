@@ -35,7 +35,9 @@ from tracetrim.usage import analyse
 from .run import LEDGER, PRICES, TRACES, cost, spent
 
 TRACE = "A3"            # chosen before looking at any Phase A content (protocol, Phase B)
-ARMS = ("raw", "prudent", "aggressive", "structural")
+ARMS = ("raw", "prudent", "aggressive", "structural")       # Phase B, tracetrim 0.1
+ARMS_D = ("raw", "v02", "v02-structural")                   # Study 2, safeguards S1 + S2
+PREFIX = {"B": ARMS, "D": ARMS_D}
 CLOSE = {
     "it": "Hai raccolto tutti i dati che ti servono. Non chiamare altri strumenti: produci ora la risposta finale nel formato richiesto.",
     "en": "You have collected all the data you need. Do not call any more tools: produce the final answer now, in the required format.",
@@ -44,18 +46,26 @@ LANG = {"C1": "it", "C2": "it", "C3": "en", "C4": "it", "C5": "en"}
 
 
 def arms_for(case: str):
-    """The tool-message transform of each arm, learned without the replayed trace."""
+    """The tool-message transform of each arm, learned without the replayed trace.
+
+    Phase B arms pin the 0.1 behaviour explicitly, so they stay reproducible
+    whatever the library defaults become; Study 2 arms switch on S1 and S2.
+    """
     others = sorted(p for p in (TRACES / case).glob("A*.jsonl") if p.stem != TRACE)
     if len(others) < 2:
         sys.exit(f"{case}: need Phase A traces besides {TRACE}, found {len(others)}")
-    usages = [analyse(load(p)) for p in others]
-    prudent = learn(usages, "prudent")
-    aggressive = learn(usages, "aggressive")
+    loaded = [load(p) for p in others]
+    usages = [analyse(t, normalize=False) for t in loaded]
+    prudent = learn(usages, "prudent", protect_ids=False)
+    aggressive = learn(usages, "aggressive", protect_ids=False)
+    v02 = learn([analyse(t, normalize=True) for t in loaded], "prudent", protect_ids=True)
     return {
         "raw": lambda tool, out: out,
         "prudent": prudent.apply,
         "aggressive": aggressive.apply,
         "structural": lambda tool, out: structural(prudent.apply(tool, out)),
+        "v02": v02.apply,
+        "v02-structural": lambda tool, out: structural(v02.apply(tool, out)),
     }, [p.stem for p in others]
 
 
@@ -79,14 +89,16 @@ def main():
     a.add_argument("--runs", type=int, default=2)
     a.add_argument("--dry", action="store_true")
     a.add_argument("--model", default=PRICES["model"])
+    a.add_argument("--study", choices=list(PREFIX), default="B", help="B = Phase B, D = Study 2")
     o = a.parse_args()
+    arms = PREFIX[o.study]
 
     trace = load(TRACES / o.case / f"{TRACE}.jsonl")
     transforms, learned_from = arms_for(o.case)
     count = tokenizer()
     convs = {}
     print(f"\n  {o.case} {TRACE}, projections learned from {', '.join(learned_from)}\n")
-    for arm in ARMS:
+    for arm in arms:
         msgs = conversation(trace, transforms[arm]) + [{"role": "user", "content": CLOSE[LANG[o.case]]}]
         tool_tok = sum(count(m["content"]) for m in msgs if m["role"] == "tool")
         convs[arm] = (msgs, tool_tok)
@@ -97,10 +109,10 @@ def main():
     client = OpenAI(timeout=900.0, max_retries=1)
     base_events = [e for e in trace.events if e.kind != "message"]
     for i in range(1, o.runs + 1):
-        for arm in ARMS:              # interleaved: drifts hit every arm alike
+        for arm in arms:              # interleaved: drifts hit every arm alike
             if spent() >= PRICES["stop_usd"]:
                 sys.exit(f"stop rule: {spent():.2f} USD spent")
-            dest = TRACES / o.case / f"B-{arm}-{i}.jsonl"
+            dest = TRACES / o.case / f"{o.study}-{arm}-{i}.jsonl"
             if dest.exists():
                 continue
             msgs, tool_tok = convs[arm]
@@ -116,7 +128,7 @@ def main():
                     fh.write(json.dumps(d, ensure_ascii=False) + "\n")
                 fh.write(json.dumps({"kind": "message", "text": r.choices[0].message.content or ""},
                                     ensure_ascii=False) + "\n")
-            meta = {"case": o.case, "run": dest.stem, "phase": "B", "arm": arm, "replay_of": TRACE,
+            meta = {"case": o.case, "run": dest.stem, "phase": o.study, "arm": arm, "replay_of": TRACE,
                     "learned_from": learned_from, "model": o.model, "tool_message_tokens": tool_tok,
                     "usage": usage, "cost_usd": round(cost(usage), 4), "seconds": round(time.time() - t0, 1)}
             dest.with_suffix(".meta.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
