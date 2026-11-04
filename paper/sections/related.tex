@@ -1,0 +1,40 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Prompt and context compression.} A large body of work compresses what a language model reads.
+Token-level methods drop tokens scored as uninformative, by self-information \citep{li2023compressing} or by a
+small language model \citep{jiang2023llmlingua}, possibly conditioned on the question
+\citep{jiang2024longllmlingua}; LLMLingua-2 learns a task-agnostic compressor \citep{pan2024llmlingua2}. RECOMP
+compresses retrieved documents for retrieval-augmented generation \citep{xu2024recomp}, and gist tokens learn soft
+prompt representations \citep{mu2023gist}. These methods operate on text and decide token by token; the projection
+studied here operates on structured outputs and decides field by field, and its output is still readable,
+diffable JSON. The motivation is shared: models use information in long contexts unevenly \citep{liu2024lost}, so
+what is removed is not only cost.
+
+\paragraph{Tool use and the agent loop.} Agents that interleave reasoning and tool calls \citep{yao2023react},
+learn when to call APIs \citep{schick2023toolformer} or operate over thousands of real APIs \citep{qin2024toolllm}
+accumulate tool observations at every turn. The Model Context Protocol \citep{mcp2026spec} has made connecting
+third-party tools routine, which moves the choice of what an agent reads from the agent's author to the tool's.
+
+\paragraph{Compressing what agents observe.} Closest to this work are methods that reduce agent observations.
+ACON optimises, in natural language, compression guidelines for observations and history from the agent's
+failures, and distils the compressor into smaller models \citep{kang2026acon}. For software-engineering agents,
+masking older observations matches LLM summarisation at half the cost \citep{lindenbauer2025complexity}. Squeez
+fine-tunes a small model to return, for a focused query and one tool output, the smallest verbatim evidence block
+the agent should inspect next \citep{kovacs2026squeez}. Our setting differs in three ways: the projection is learned
+from the agent's own traces without training or calling any model, so it adds no inference cost and its decisions
+are a reviewable list of fields; it targets structured outputs of arbitrary APIs rather than code-agent
+observations; and we measure where such learning fails, not only how much it saves.
+
+\paragraph{Tools.} Headroom compresses agent context in front of the model, routing content to compressors by type
+\citep{headroom2026}; TOON is a compact, table-oriented serialisation of JSON for language models
+\citep{schopplich2026toon}. Both are structural: they do not decide which fields a task needs, and we compare against
+them as such. Gateways for the Model Context Protocol reduce context in other places: mcp-compressor compresses the
+descriptions and schemas of the tools exposed \citep{atlassian2026mcpcompressor}, and Sift stores full payloads
+outside the context and lets the agent query them \citep{sift2026gateway}, which is close in spirit to our
+\texttt{expand}.
+
+\paragraph{Fabricated identifiers.} Language models fabricate plausible identifiers when the real ones are not in
+front of them: bibliographic references \citep{walters2023fabrication} and software package names
+\citep{spracklen2025package}. We observe the same behaviour inside an agent loop, caused by the removal of an
+identifier field, which makes identifiers a category a projection must never remove.

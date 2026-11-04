@@ -15,6 +15,7 @@ dependencies = []
 # Token counts are measured, never estimated: `measure` needs a real tokenizer.
 measure = ["tiktoken>=0.7"]
 test = ["pytest>=8", "tiktoken>=0.7"]
+proxy = ["mcp>=2"]
 
 [project.urls]
 Homepage = "https://www.alessiopomaro.it/"

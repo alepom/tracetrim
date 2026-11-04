@@ -290,7 +290,9 @@ def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
         # report's threshold.
         "unescape": True,
         "cache_identical_calls": any(s["action"]["type"] == "cache" for s in sugg),
-        "tools": {t: {"trim": "prudent", "expand": t in expand} for t in sorted(trim)},
+        # expand on for every trimmed tool (safeguard of 0.2): a wrong cut costs
+        # one round trip instead of a wrong answer.
+        "tools": {t: {"trim": "prudent", "expand": True} for t in sorted(trim)},
     }
     return config, p
 

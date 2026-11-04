@@ -4,6 +4,8 @@
   tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
+  tracetrim proxy   --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
+                    [--config report.config.json] [--record traces/session.jsonl]
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -126,6 +128,20 @@ def cmd_report(a):
           f"{len(sugg)} suggestions ({auto} automatic)")
 
 
+def cmd_proxy(a):
+    import asyncio
+    from .proxy import serve
+    if bool(a.upstream_cmd) == bool(a.upstream_url):
+        raise SystemExit("give exactly one of --upstream-cmd or --upstream-url")
+    headers = dict(h.split("=", 1) for h in a.header)
+    if a.http:
+        from .proxy import serve_http
+        asyncio.run(serve_http(a.upstream_cmd, a.upstream_url, headers, a.config, a.record,
+                               host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
+    else:
+        asyncio.run(serve(a.upstream_cmd, a.upstream_url, headers, a.config, a.record))
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tracetrim", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -157,6 +173,19 @@ def main(argv=None):
     s.add_argument("-o", "--output", default="report.html")
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
     s.set_defaults(func=cmd_report)
+
+    s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand (stdio)")
+    s.add_argument("--upstream-cmd", help="command that starts the upstream MCP server over stdio")
+    s.add_argument("--upstream-url", help="URL of an upstream streamable-HTTP MCP server")
+    s.add_argument("--header", action="append", default=[], help="K=V header for the upstream URL")
+    s.add_argument("--config", help="runtime config written by `tracetrim report`")
+    s.add_argument("--record", help="append every call (raw output) to this JSONL trace")
+    s.add_argument("--http", type=int, metavar="PORT", help="serve streamable HTTP at /mcp instead of stdio")
+    s.add_argument("--host", default="127.0.0.1")
+    s.add_argument("--token", help="require 'Authorization: Bearer TOKEN' on every HTTP request")
+    s.add_argument("--allowed-host", action="append", default=[],
+                   help="Host header accepted over HTTP (repeatable), e.g. the tunnel's public host")
+    s.set_defaults(func=cmd_proxy)
 
     a = p.parse_args(argv)
     a.func(a)
