@@ -13,7 +13,7 @@ AUTHOR_ROLE = "Independent Researcher"
 ORCID = "0009-0008-6975-996X"
 WEBSITE = "https://www.alessiopomaro.it/"
 
-REPOSITORY = None     # set when the author creates the public repository
+REPOSITORY = "https://github.com/alepom/tracetrim"
 PAPER_DOI = None      # set when the Zenodo record is reserved
 SOFTWARE_DOI = None
 LICENSE = None        # set when the author confirms it

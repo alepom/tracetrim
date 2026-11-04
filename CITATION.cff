@@ -10,7 +10,8 @@ authors:
     affiliation: "Independent Researcher"
     email: "info@alessiopomaro.it"
     orcid: "https://orcid.org/0009-0008-6975-996X"
-# repository-code and doi are added when the author creates the repository and the Zenodo records
+repository-code: "https://github.com/alepom/tracetrim"
+# doi (software) and the preferred-citation doi are added when the Zenodo records are reserved
 preferred-citation:
   type: report
   title: "Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"
