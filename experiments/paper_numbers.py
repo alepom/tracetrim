@@ -120,6 +120,10 @@ def main():
                 rows.append(f"{CASE_NAME[c] if arm == 'raw' else ''} & {arm} & {num(med('billed_input'))} & "
                             f"{num(med('uncached_input'))} & {med('turns'):g} & {med('expand_calls'):g} & "
                             f"{x['gates_passed']}/{len(x['runs'])} \\\\")
+            if "raw" in arms and "prudent" in arms:
+                rr, pp = arms["raw"], arms["prudent"]
+                for k, label in (("billed_input", "Input"), ("uncached_input", "Uncached"), ("cost_usd", "Cost")):
+                    m(f"PhaseCChange{label}{R}", pct(statistics.median(pp[k]) / statistics.median(rr[k]) - 1))
         (GEN / "table_phase_c.tex").write_text(
             "\\begin{tabular}{llrrrrr}\n\\toprule\nCase & Arm & Input tokens & Uncached & Turns & Expand calls & Gates \\\\\n"
             "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")

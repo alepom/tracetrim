@@ -266,3 +266,15 @@ The structural arm is reported against the same outcomes, as exploratory.
 
 Mean Phase B replay cost per case, cache included: 0.45 USD for the five cases, so about 7 USD for 75 replays.
 The spend cap of 40 USD and its stop rule are unchanged.
+
+## Deviations of Study 2
+
+10. **C5 gate, job separator (2026-11-04, after Study 2).** An answer named two valid jobs as
+    `test (3.13) / test (3.12)`; the gate split job names only on `;`, `,` and "and", and counted the pair as one
+    unknown job. `/` is now a separator too. Applied to every run of every phase.
+11. **C4 thermometer, T2 (2026-11-04, after Study 2).** The frozen test for ticket T2 looked for "fondi" or
+    "insufficient" anywhere in the ticket, so advice to the customer ("check that you have sufficient funds") passed
+    it even when the diagnosis omitted the reason. A strict test, reading only the diagnosis, is added and reported
+    beside the frozen one (`correct_diagnoses_strict`, `H5_strict_posthoc`); H5 is evaluated as frozen. Under the strict
+    test the v02 arm loses the decline reason in every replay: the reason arrives in English and the agent translates
+    it, a fourth loss mechanism that safeguard S2 does not cover.

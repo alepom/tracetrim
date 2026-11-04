@@ -1,0 +1,401 @@
+{
+  "cases": {
+    "C1": {
+      "raw": {
+        "runs": [
+          "C-raw-1",
+          "C-raw-2",
+          "C-raw-3"
+        ],
+        "billed_input": [
+          1030387,
+          608678,
+          847304
+        ],
+        "uncached_input": [
+          112714,
+          107274,
+          106701
+        ],
+        "cost_usd": [
+          0.5051,
+          0.4021,
+          0.4555
+        ],
+        "turns": [
+          12,
+          9,
+          10
+        ],
+        "calls": [
+          24,
+          21,
+          23
+        ],
+        "expand_calls": [
+          0,
+          0,
+          0
+        ],
+        "expanded_fields": [
+          0,
+          0,
+          0
+        ],
+        "flags": [
+          [
+            "tool_failure"
+          ],
+          [],
+          []
+        ],
+        "gates_passed": 3,
+        "gates": [
+          {
+            "run": "C1/C-raw-1",
+            "json": true,
+            "structure": true,
+            "facts_ok": 60,
+            "facts": 60,
+            "domain_rule": true
+          },
+          {
+            "run": "C1/C-raw-2",
+            "json": true,
+            "structure": true,
+            "facts_ok": 60,
+            "facts": 60,
+            "domain_rule": true
+          },
+          {
+            "run": "C1/C-raw-3",
+            "json": true,
+            "structure": true,
+            "facts_ok": 60,
+            "facts": 60,
+            "domain_rule": true
+          }
+        ],
+        "thermometers": [
+          {
+            "items": 20,
+            "median_volume": 1600,
+            "long_tail_pct": 10,
+            "notes_with_blog_link_pct": 35
+          },
+          {
+            "items": 20,
+            "median_volume": 260,
+            "long_tail_pct": 10,
+            "notes_with_blog_link_pct": 40
+          },
+          {
+            "items": 20,
+            "median_volume": 1600,
+            "long_tail_pct": 0,
+            "notes_with_blog_link_pct": 40
+          }
+        ]
+      },
+      "prudent": {
+        "runs": [
+          "C-prudent-1",
+          "C-prudent-2",
+          "C-prudent-3"
+        ],
+        "billed_input": [
+          571870,
+          374748,
+          347410
+        ],
+        "uncached_input": [
+          60333,
+          57117,
+          41523
+        ],
+        "cost_usd": [
+          0.324,
+          0.2724,
+          0.2359
+        ],
+        "turns": [
+          12,
+          10,
+          10
+        ],
+        "calls": [
+          29,
+          26,
+          25
+        ],
+        "expand_calls": [
+          1,
+          1,
+          3
+        ],
+        "expanded_fields": [
+          20,
+          20,
+          25
+        ],
+        "flags": [
+          [
+            "tool_failure"
+          ],
+          [],
+          []
+        ],
+        "gates_passed": 3,
+        "gates": [
+          {
+            "run": "C1/C-prudent-1",
+            "json": true,
+            "structure": true,
+            "facts_ok": 22,
+            "facts": 22,
+            "domain_rule": true
+          },
+          {
+            "run": "C1/C-prudent-2",
+            "json": true,
+            "structure": true,
+            "facts_ok": 43,
+            "facts": 43,
+            "domain_rule": true
+          },
+          {
+            "run": "C1/C-prudent-3",
+            "json": true,
+            "structure": true,
+            "facts_ok": 26,
+            "facts": 26,
+            "domain_rule": true
+          }
+        ],
+        "thermometers": [
+          {
+            "items": 20,
+            "median_volume": 1450,
+            "long_tail_pct": 7,
+            "notes_with_blog_link_pct": 40
+          },
+          {
+            "items": 20,
+            "median_volume": 260,
+            "long_tail_pct": 20,
+            "notes_with_blog_link_pct": 30
+          },
+          {
+            "items": 20,
+            "median_volume": 535,
+            "long_tail_pct": 8,
+            "notes_with_blog_link_pct": 45
+          }
+        ]
+      }
+    },
+    "C4": {
+      "raw": {
+        "runs": [
+          "C-raw-1",
+          "C-raw-2",
+          "C-raw-3"
+        ],
+        "billed_input": [
+          49601,
+          47169,
+          47202
+        ],
+        "uncached_input": [
+          23301,
+          22079,
+          22097
+        ],
+        "cost_usd": [
+          0.0867,
+          0.082,
+          0.0828
+        ],
+        "turns": [
+          4,
+          4,
+          4
+        ],
+        "calls": [
+          12,
+          11,
+          11
+        ],
+        "expand_calls": [
+          0,
+          0,
+          0
+        ],
+        "expanded_fields": [
+          0,
+          0,
+          0
+        ],
+        "flags": [
+          [],
+          [],
+          []
+        ],
+        "gates_passed": 3,
+        "gates": [
+          {
+            "run": "C4/C-raw-1",
+            "json": true,
+            "structure": true,
+            "facts_ok": 14,
+            "facts": 14,
+            "domain_rule": true
+          },
+          {
+            "run": "C4/C-raw-2",
+            "json": true,
+            "structure": true,
+            "facts_ok": 12,
+            "facts": 12,
+            "domain_rule": true
+          },
+          {
+            "run": "C4/C-raw-3",
+            "json": true,
+            "structure": true,
+            "facts_ok": 13,
+            "facts": 13,
+            "domain_rule": true
+          }
+        ],
+        "thermometers": [
+          {
+            "tickets": 5,
+            "correct_diagnoses": 4,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.8,
+            "wrong": [
+              "T2"
+            ]
+          },
+          {
+            "tickets": 5,
+            "correct_diagnoses": 5,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.4,
+            "wrong": []
+          },
+          {
+            "tickets": 5,
+            "correct_diagnoses": 4,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.6,
+            "wrong": [
+              "T2"
+            ]
+          }
+        ]
+      },
+      "prudent": {
+        "runs": [
+          "C-prudent-1",
+          "C-prudent-2",
+          "C-prudent-3"
+        ],
+        "billed_input": [
+          22446,
+          32161,
+          34847
+        ],
+        "uncached_input": [
+          9701,
+          10239,
+          10546
+        ],
+        "cost_usd": [
+          0.0604,
+          0.0621,
+          0.0641
+        ],
+        "turns": [
+          4,
+          5,
+          5
+        ],
+        "calls": [
+          15,
+          16,
+          18
+        ],
+        "expand_calls": [
+          5,
+          6,
+          6
+        ],
+        "expanded_fields": [
+          37,
+          87,
+          85
+        ],
+        "flags": [
+          [],
+          [],
+          []
+        ],
+        "gates_passed": 3,
+        "gates": [
+          {
+            "run": "C4/C-prudent-1",
+            "json": true,
+            "structure": true,
+            "facts_ok": 12,
+            "facts": 12,
+            "domain_rule": true
+          },
+          {
+            "run": "C4/C-prudent-2",
+            "json": true,
+            "structure": true,
+            "facts_ok": 13,
+            "facts": 13,
+            "domain_rule": true
+          },
+          {
+            "run": "C4/C-prudent-3",
+            "json": true,
+            "structure": true,
+            "facts_ok": 15,
+            "facts": 15,
+            "domain_rule": true
+          }
+        ],
+        "thermometers": [
+          {
+            "tickets": 5,
+            "correct_diagnoses": 3,
+            "correct_diagnoses_strict": 3,
+            "evidence_per_ticket": 1.4,
+            "wrong": [
+              "T2",
+              "T3"
+            ]
+          },
+          {
+            "tickets": 5,
+            "correct_diagnoses": 5,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.6,
+            "wrong": []
+          },
+          {
+            "tickets": 5,
+            "correct_diagnoses": 5,
+            "correct_diagnoses_strict": 5,
+            "evidence_per_ticket": 2.0,
+            "wrong": []
+          }
+        ]
+      }
+    }
+  }
+}

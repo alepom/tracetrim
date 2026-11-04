@@ -70,11 +70,19 @@ C4_TRUTH = {
 }
 
 
+# Added after Study 2 (deviation 11): the T2 test above looks at the whole
+# ticket, so advice like "check that you have enough funds" passes it even
+# when the diagnosis omits the reason. The strict test reads the diagnosis.
+T2_REASON = re.compile(r"fondi (in)?sufficienti|disponibilit[aà] (di fondi )?insufficiente|insufficient|saldo insufficiente", re.I)
+
+
 def q_c4(a):
     tickets = {str(t.get("id")): t for t in a.get("ticket") or []}
     right = {k: bool(tickets.get(k)) and f(json.dumps(tickets[k], ensure_ascii=False).lower())
              for k, f in C4_TRUTH.items()}
+    strict = dict(right, T2=bool(T2_REASON.search(str((tickets.get("T2") or {}).get("diagnosi", "")))))
     return {"tickets": len(tickets), "correct_diagnoses": sum(right.values()),
+            "correct_diagnoses_strict": sum(strict.values()),
             "evidence_per_ticket": round(sum(len(t.get("evidenze") or []) for t in tickets.values()) / max(len(tickets), 1), 1),
             "wrong": [k for k, v in right.items() if not v]}
 

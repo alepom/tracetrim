@@ -2,6 +2,7 @@
 """Phase B analysis: RQ3 / H2. Does the answer hold when tool outputs are trimmed?
 
   .venv/bin/python -m experiments.analyze_b          # tables + results/phase_b.json
+  .venv/bin/python -m experiments.analyze_b --study D   # Study 2: H5-H8 + results/study2.json
 
 H2, as frozen: an arm holds when it passes every gate in at least as many
 runs as the raw arm, and every thermometer median lies inside the raw arm's
@@ -10,16 +11,34 @@ here means "no large loss seen", not "no loss".
 """
 from __future__ import annotations
 
+import argparse
 import json
 import statistics
 
 from .checks import check
 from .quality import quality
-from .replay import ARMS
+from .replay import PREFIX
 from .run import ROOT, TRACES
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
-OUT = ROOT / "results" / "phase_b.json"
+OUT = {"B": ROOT / "results" / "phase_b.json", "D": ROOT / "results" / "study2.json"}
+
+
+def study2_hypotheses(res) -> dict:
+    """H5-H8 exactly as frozen in protocol-v3, on the v02 arm."""
+    c = res["cases"]
+    v = lambda case: c[case]["arms"]["v02"]
+    raw_tok = lambda case: c[case]["arms"]["raw"]["tool_tokens"]
+    h = {
+        "H5_C4_all_tickets_right": all(t.get("correct_diagnoses") == 5 for t in v("C4")["thermometers"]),
+        # Post hoc (deviation 11), reported beside the frozen test, never instead of it.
+        "H5_strict_posthoc": all(t.get("correct_diagnoses_strict") == 5 for t in v("C4")["thermometers"]),
+        "H6_C3_gates_pass_every_run": v("C3")["gates_passed"] == len(v("C3")["runs"]),
+        "H7_C5_all_links_found": all(t.get("links_found") == 4 for t in v("C5")["thermometers"]),
+        "H8_saving_at_least_30pct": {k: v(k)["tool_tokens"] / raw_tok(k) <= 0.70 for k in ("C1", "C3", "C4", "C5")},
+    }
+    h["H8_saving_at_least_30pct_all"] = all(h["H8_saving_at_least_30pct"].values())
+    return h
 
 
 def gate_pass(r) -> bool:
@@ -27,7 +46,11 @@ def gate_pass(r) -> bool:
 
 
 def main():
-    res = {"rule": "H2 band rule; 2 runs per arm", "cases": {}}
+    a_ = argparse.ArgumentParser()
+    a_.add_argument("--study", choices=list(PREFIX), default="B")
+    study = a_.parse_args().study
+    ARMS = PREFIX[study]
+    res = {"study": study, "rule": "band rule against the raw arm", "cases": {}}
     headroom = {}
     hp = ROOT / "results" / "headroom_baseline.json"
     if hp.exists():
@@ -35,7 +58,8 @@ def main():
     for case in CASES:
         arms = {}
         for arm in ARMS:
-            paths = sorted((TRACES / case).glob(f"B-{arm}-*.jsonl"))
+            # "-[0-9]*": "D-v02-*" would also match "D-v02-structural-*".
+            paths = sorted((TRACES / case).glob(f"{study}-{arm}-[0-9]*.jsonl"))
             if not paths:
                 continue
             metas = [json.loads(p.with_suffix(".meta.json").read_text()) for p in paths]
@@ -56,7 +80,7 @@ def main():
             a["holds"] = a["gates_passed"] >= raw["gates_passed"] and not outside
         res["cases"][case] = {"arms": arms, "band": band, "headroom": headroom.get(case)}
 
-    print("\n  PHASE B — replay of A3, only tool messages changed (2 runs per arm)\n")
+    print(f"\n  {'PHASE B' if study == 'B' else 'STUDY 2'} — replay of A3, only tool messages changed\n")
     for case, r in res["cases"].items():
         arms = r["arms"]
         raw_tok = arms["raw"]["tool_tokens"]
@@ -73,8 +97,14 @@ def main():
             print(f"    {'headroom':<11}{h['headroom']:>12,}{h['headroom'] / h['tool_tokens'] - 1:>+8.0%}   (tokens only, not replayed)")
         print()
     print("  * = median outside the raw arm's [min, max]\n")
-    OUT.write_text(json.dumps(res, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
-    print(f"  written: {OUT.relative_to(ROOT)}\n")
+    if study == "D" and all(k in res["cases"] for k in ("C1", "C3", "C4", "C5")):
+        res["hypotheses"] = study2_hypotheses(res)
+        print("  HYPOTHESES (protocol-v3, v02 arm)")
+        for k, v in res["hypotheses"].items():
+            print(f"    {k:<34} {v}")
+        print()
+    OUT[study].write_text(json.dumps(res, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
+    print(f"  written: {OUT[study].relative_to(ROOT)}\n")
 
 
 if __name__ == "__main__":

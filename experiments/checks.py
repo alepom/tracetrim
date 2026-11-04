@@ -162,7 +162,7 @@ def check_c5(ans, outs):
         for r in c.get("runs") or []:
             items.append((f"run {r}", r in runs))
         # Several jobs may share a cause: "test (3.12); test (3.13)".
-        for j in re.split(r"\s*[;,]\s*|\s+and\s+", str(c.get("job") or "")):
+        for j in re.split(r"\s*[;,/]\s*|\s+and\s+", str(c.get("job") or "")):
             if j:
                 items.append((f"job {j}", j in jobs))
         if c.get("error"):

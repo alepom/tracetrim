@@ -1,0 +1,1719 @@
+{
+  "study": "D",
+  "rule": "band rule against the raw arm",
+  "cases": {
+    "C1": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "D-raw-1",
+            "D-raw-2",
+            "D-raw-3",
+            "D-raw-4",
+            "D-raw-5"
+          ],
+          "tool_tokens": 114712,
+          "billed_input": [
+            121344,
+            121344,
+            121344,
+            121344,
+            121344
+          ],
+          "gates": [
+            {
+              "run": "C1/D-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 60,
+              "facts": 60,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 66,
+              "facts": 66,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-raw-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 60,
+              "facts": 60,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-raw-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 72,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-raw-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 66,
+              "facts": 66,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 20,
+              "median_volume": 355,
+              "long_tail_pct": 5,
+              "notes_with_blog_link_pct": 35
+            },
+            {
+              "items": 22,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 32
+            },
+            {
+              "items": 20,
+              "median_volume": 590,
+              "long_tail_pct": 2,
+              "notes_with_blog_link_pct": 40
+            },
+            {
+              "items": 24,
+              "median_volume": 390,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 46
+            },
+            {
+              "items": 22,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 45
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "items": 22,
+            "median_volume": 590,
+            "long_tail_pct": 3,
+            "notes_with_blog_link_pct": 40
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02": {
+          "runs": [
+            "D-v02-1",
+            "D-v02-2",
+            "D-v02-3",
+            "D-v02-4",
+            "D-v02-5"
+          ],
+          "tool_tokens": 53689,
+          "billed_input": [
+            60321,
+            60321,
+            60321,
+            60321,
+            60321
+          ],
+          "gates": [
+            {
+              "run": "C1/D-v02-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 72,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 72,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 80,
+              "facts": 80,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 80,
+              "facts": 80,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 60,
+              "facts": 60,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 24,
+              "median_volume": 2900,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 33
+            },
+            {
+              "items": 24,
+              "median_volume": 1300,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 33
+            },
+            {
+              "items": 20,
+              "median_volume": 1300,
+              "long_tail_pct": 4,
+              "notes_with_blog_link_pct": 40
+            },
+            {
+              "items": 20,
+              "median_volume": 1300,
+              "long_tail_pct": 1,
+              "notes_with_blog_link_pct": 35
+            },
+            {
+              "items": 20,
+              "median_volume": 1300,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 45
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "items": 20,
+            "median_volume": 1300,
+            "long_tail_pct": 3,
+            "notes_with_blog_link_pct": 35
+          },
+          "outside_band": [
+            "median_volume"
+          ],
+          "holds": false
+        },
+        "v02-structural": {
+          "runs": [
+            "D-v02-structural-1",
+            "D-v02-structural-2",
+            "D-v02-structural-3",
+            "D-v02-structural-4",
+            "D-v02-structural-5"
+          ],
+          "tool_tokens": 52152,
+          "billed_input": [
+            58784,
+            58784,
+            58784,
+            58784,
+            58784
+          ],
+          "gates": [
+            {
+              "run": "C1/D-v02-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 60,
+              "facts": 60,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 99,
+              "facts": 100,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-structural-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 71,
+              "facts": 72,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-structural-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 109,
+              "facts": 110,
+              "domain_rule": true
+            },
+            {
+              "run": "C1/D-v02-structural-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 78,
+              "facts": 78,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "items": 20,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 40
+            },
+            {
+              "items": 20,
+              "median_volume": 1300,
+              "long_tail_pct": 2,
+              "notes_with_blog_link_pct": 35
+            },
+            {
+              "items": 24,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 29
+            },
+            {
+              "items": 22,
+              "median_volume": 390,
+              "long_tail_pct": 5,
+              "notes_with_blog_link_pct": 36
+            },
+            {
+              "items": 20,
+              "median_volume": 590,
+              "long_tail_pct": 3,
+              "notes_with_blog_link_pct": 40
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "items": 20,
+            "median_volume": 590,
+            "long_tail_pct": 3,
+            "notes_with_blog_link_pct": 36
+          },
+          "outside_band": [],
+          "holds": false
+        }
+      },
+      "band": {
+        "items": [
+          20,
+          24
+        ],
+        "median_volume": [
+          355,
+          590
+        ],
+        "long_tail_pct": [
+          2,
+          5
+        ],
+        "notes_with_blog_link_pct": [
+          32,
+          46
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 114712,
+        "headroom": 82991,
+        "saving": 0.27652730315921614
+      }
+    },
+    "C2": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "D-raw-1",
+            "D-raw-2",
+            "D-raw-3",
+            "D-raw-4",
+            "D-raw-5"
+          ],
+          "tool_tokens": 50488,
+          "billed_input": [
+            52197,
+            52197,
+            52197,
+            52197,
+            52197
+          ],
+          "gates": [
+            {
+              "run": "C2/D-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 34,
+              "facts": 34,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 46,
+              "facts": 46,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-raw-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 38,
+              "facts": 43,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-raw-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 33,
+              "facts": 38,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-raw-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 32,
+              "facts": 45,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 12,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 16,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 2,
+          "medians": {
+            "topics": 3,
+            "distinct_sources": 16,
+            "own_pages_read": 3,
+            "gaps": 9,
+            "gaps_with_evidence_pct": 100
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02": {
+          "runs": [
+            "D-v02-1",
+            "D-v02-2",
+            "D-v02-3",
+            "D-v02-4",
+            "D-v02-5"
+          ],
+          "tool_tokens": 46018,
+          "billed_input": [
+            47727,
+            47727,
+            47727,
+            47727,
+            47727
+          ],
+          "gates": [
+            {
+              "run": "C2/D-v02-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 26,
+              "facts": 45,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 26,
+              "facts": 46,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 37,
+              "facts": 37,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 34,
+              "facts": 36,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 34,
+              "facts": 48,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 1,
+          "medians": {
+            "topics": 3,
+            "distinct_sources": 18,
+            "own_pages_read": 3,
+            "gaps": 10,
+            "gaps_with_evidence_pct": 100
+          },
+          "outside_band": [],
+          "holds": false
+        },
+        "v02-structural": {
+          "runs": [
+            "D-v02-structural-1",
+            "D-v02-structural-2",
+            "D-v02-structural-3",
+            "D-v02-structural-4",
+            "D-v02-structural-5"
+          ],
+          "tool_tokens": 45365,
+          "billed_input": [
+            47074,
+            47074,
+            47074,
+            47074,
+            47074
+          ],
+          "gates": [
+            {
+              "run": "C2/D-v02-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 27,
+              "facts": 53,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 29,
+              "facts": 46,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-structural-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 39,
+              "facts": 41,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-structural-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 45,
+              "domain_rule": true
+            },
+            {
+              "run": "C2/D-v02-structural-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 23,
+              "facts": 43,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "topics": 3,
+              "distinct_sources": 18,
+              "own_pages_read": 3,
+              "gaps": 12,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 17,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 9,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 15,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            },
+            {
+              "topics": 3,
+              "distinct_sources": 21,
+              "own_pages_read": 3,
+              "gaps": 10,
+              "gaps_with_evidence_pct": 100
+            }
+          ],
+          "gates_passed": 0,
+          "medians": {
+            "topics": 3,
+            "distinct_sources": 17,
+            "own_pages_read": 3,
+            "gaps": 10,
+            "gaps_with_evidence_pct": 100
+          },
+          "outside_band": [],
+          "holds": false
+        }
+      },
+      "band": {
+        "topics": [
+          3,
+          3
+        ],
+        "distinct_sources": [
+          12,
+          18
+        ],
+        "own_pages_read": [
+          3,
+          3
+        ],
+        "gaps": [
+          9,
+          10
+        ],
+        "gaps_with_evidence_pct": [
+          100,
+          100
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 50488,
+        "headroom": 45624,
+        "saving": 0.09633972429092064
+      }
+    },
+    "C3": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "D-raw-1",
+            "D-raw-2",
+            "D-raw-3",
+            "D-raw-4",
+            "D-raw-5"
+          ],
+          "tool_tokens": 227433,
+          "billed_input": [
+            228350,
+            228350,
+            228350,
+            228350,
+            228350
+          ],
+          "gates": [
+            {
+              "run": "C3/D-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-raw-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-raw-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-raw-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 7
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "works": 11,
+            "distinct_works": 11,
+            "recent_2023_pct": 100,
+            "open_questions": 6
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02": {
+          "runs": [
+            "D-v02-1",
+            "D-v02-2",
+            "D-v02-3",
+            "D-v02-4",
+            "D-v02-5"
+          ],
+          "tool_tokens": 122936,
+          "billed_input": [
+            123853,
+            123853,
+            123853,
+            123853,
+            123853
+          ],
+          "gates": [
+            {
+              "run": "C3/D-v02-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 24,
+              "facts": 24,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 7
+            },
+            {
+              "works": 12,
+              "distinct_works": 12,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "works": 12,
+            "distinct_works": 12,
+            "recent_2023_pct": 100,
+            "open_questions": 6
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02-structural": {
+          "runs": [
+            "D-v02-structural-1",
+            "D-v02-structural-2",
+            "D-v02-structural-3",
+            "D-v02-structural-4",
+            "D-v02-structural-5"
+          ],
+          "tool_tokens": 109477,
+          "billed_input": [
+            110394,
+            110394,
+            110394,
+            110394,
+            110394
+          ],
+          "gates": [
+            {
+              "run": "C3/D-v02-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-structural-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-structural-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            },
+            {
+              "run": "C3/D-v02-structural-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 22,
+              "facts": 22,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 7
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            },
+            {
+              "works": 11,
+              "distinct_works": 11,
+              "recent_2023_pct": 100,
+              "open_questions": 6
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "works": 11,
+            "distinct_works": 11,
+            "recent_2023_pct": 100,
+            "open_questions": 6
+          },
+          "outside_band": [],
+          "holds": true
+        }
+      },
+      "band": {
+        "works": [
+          11,
+          12
+        ],
+        "distinct_works": [
+          11,
+          12
+        ],
+        "recent_2023_pct": [
+          100,
+          100
+        ],
+        "open_questions": [
+          6,
+          7
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 227433,
+        "headroom": 189700,
+        "saving": 0.1659082015362766
+      }
+    },
+    "C4": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "D-raw-1",
+            "D-raw-2",
+            "D-raw-3",
+            "D-raw-4",
+            "D-raw-5"
+          ],
+          "tool_tokens": 16931,
+          "billed_input": [
+            18076,
+            18076,
+            18076,
+            18076,
+            18076
+          ],
+          "gates": [
+            {
+              "run": "C4/D-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-raw-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-raw-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-raw-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "tickets": 5,
+            "correct_diagnoses": 5,
+            "correct_diagnoses_strict": 5,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02": {
+          "runs": [
+            "D-v02-1",
+            "D-v02-2",
+            "D-v02-3",
+            "D-v02-4",
+            "D-v02-5"
+          ],
+          "tool_tokens": 7233,
+          "billed_input": [
+            8378,
+            8378,
+            8378,
+            8378,
+            8378
+          ],
+          "gates": [
+            {
+              "run": "C4/D-v02-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 13,
+              "facts": 13,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.6,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "tickets": 5,
+            "correct_diagnoses": 5,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [
+            "correct_diagnoses_strict"
+          ],
+          "holds": false
+        },
+        "v02-structural": {
+          "runs": [
+            "D-v02-structural-1",
+            "D-v02-structural-2",
+            "D-v02-structural-3",
+            "D-v02-structural-4",
+            "D-v02-structural-5"
+          ],
+          "tool_tokens": 6371,
+          "billed_input": [
+            7516,
+            7516,
+            7516,
+            7516,
+            7516
+          ],
+          "gates": [
+            {
+              "run": "C4/D-v02-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-structural-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-structural-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 14,
+              "facts": 14,
+              "domain_rule": true
+            },
+            {
+              "run": "C4/D-v02-structural-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 13,
+              "facts": 13,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": []
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": [
+                "T2"
+              ]
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.8,
+              "wrong": [
+                "T2"
+              ]
+            },
+            {
+              "tickets": 5,
+              "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 4,
+              "evidence_per_ticket": 1.6,
+              "wrong": [
+                "T2"
+              ]
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "tickets": 5,
+            "correct_diagnoses": 4,
+            "correct_diagnoses_strict": 4,
+            "evidence_per_ticket": 1.8
+          },
+          "outside_band": [
+            "correct_diagnoses",
+            "correct_diagnoses_strict"
+          ],
+          "holds": false
+        }
+      },
+      "band": {
+        "tickets": [
+          5,
+          5
+        ],
+        "correct_diagnoses": [
+          5,
+          5
+        ],
+        "correct_diagnoses_strict": [
+          5,
+          5
+        ],
+        "evidence_per_ticket": [
+          1.8,
+          1.8
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 16931,
+        "headroom": 11378,
+        "saving": 0.3279782647215167
+      }
+    },
+    "C5": {
+      "arms": {
+        "raw": {
+          "runs": [
+            "D-raw-1",
+            "D-raw-2",
+            "D-raw-3",
+            "D-raw-4",
+            "D-raw-5"
+          ],
+          "tool_tokens": 74976,
+          "billed_input": [
+            75942,
+            75942,
+            75942,
+            75942,
+            75942
+          ],
+          "gates": [
+            {
+              "run": "C5/D-raw-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-raw-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-raw-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-raw-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-raw-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "root_causes": 3,
+            "causes_found": 3,
+            "links_found": 4,
+            "failed_runs_covered": 5
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02": {
+          "runs": [
+            "D-v02-1",
+            "D-v02-2",
+            "D-v02-3",
+            "D-v02-4",
+            "D-v02-5"
+          ],
+          "tool_tokens": 29076,
+          "billed_input": [
+            30042,
+            30042,
+            30042,
+            30042,
+            30042
+          ],
+          "gates": [
+            {
+              "run": "C5/D-v02-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 19,
+              "facts": 19,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 4,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "root_causes": 3,
+            "causes_found": 3,
+            "links_found": 4,
+            "failed_runs_covered": 5
+          },
+          "outside_band": [],
+          "holds": true
+        },
+        "v02-structural": {
+          "runs": [
+            "D-v02-structural-1",
+            "D-v02-structural-2",
+            "D-v02-structural-3",
+            "D-v02-structural-4",
+            "D-v02-structural-5"
+          ],
+          "tool_tokens": 27476,
+          "billed_input": [
+            28442,
+            28442,
+            28442,
+            28442,
+            28442
+          ],
+          "gates": [
+            {
+              "run": "C5/D-v02-structural-1",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-structural-2",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-structural-3",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-structural-4",
+              "json": true,
+              "structure": true,
+              "facts_ok": 15,
+              "facts": 15,
+              "domain_rule": true
+            },
+            {
+              "run": "C5/D-v02-structural-5",
+              "json": true,
+              "structure": true,
+              "facts_ok": 16,
+              "facts": 16,
+              "domain_rule": true
+            }
+          ],
+          "thermometers": [
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            },
+            {
+              "root_causes": 3,
+              "causes_found": 3,
+              "links_found": 4,
+              "failed_runs_covered": 5,
+              "missing": []
+            }
+          ],
+          "gates_passed": 5,
+          "medians": {
+            "root_causes": 3,
+            "causes_found": 3,
+            "links_found": 4,
+            "failed_runs_covered": 5
+          },
+          "outside_band": [],
+          "holds": true
+        }
+      },
+      "band": {
+        "root_causes": [
+          3,
+          3
+        ],
+        "causes_found": [
+          3,
+          3
+        ],
+        "links_found": [
+          4,
+          4
+        ],
+        "failed_runs_covered": [
+          5,
+          5
+        ]
+      },
+      "headroom": {
+        "tool_tokens": 74976,
+        "headroom": 51785,
+        "saving": 0.3093123132735809
+      }
+    }
+  },
+  "hypotheses": {
+    "H5_C4_all_tickets_right": true,
+    "H5_strict_posthoc": false,
+    "H6_C3_gates_pass_every_run": true,
+    "H7_C5_all_links_found": true,
+    "H8_saving_at_least_30pct": {
+      "C1": true,
+      "C3": true,
+      "C4": true,
+      "C5": true
+    },
+    "H8_saving_at_least_30pct_all": true
+  }
+}

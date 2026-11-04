@@ -628,12 +628,14 @@
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.6,
           "wrong": []
         },
         {
           "tickets": 5,
           "correct_diagnoses": 4,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.6,
           "wrong": [
             "T2"
@@ -642,18 +644,21 @@
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 5,
           "evidence_per_ticket": 1.8,
           "wrong": []
         },
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.4,
           "wrong": []
         },
         {
           "tickets": 5,
           "correct_diagnoses": 4,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.6,
           "wrong": [
             "T2"
@@ -662,18 +667,21 @@
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 5,
           "evidence_per_ticket": 1.8,
           "wrong": []
         },
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.4,
           "wrong": []
         },
         {
           "tickets": 5,
           "correct_diagnoses": 5,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.8,
           "wrong": []
         }
@@ -774,8 +782,8 @@
           "run": "C5/A6",
           "json": true,
           "structure": true,
-          "facts_ok": 14,
-          "facts": 15,
+          "facts_ok": 16,
+          "facts": 16,
           "domain_rule": true
         },
         {

@@ -1,0 +1,91 @@
+\section{Study 1: what a learned projection removes, and what it breaks}
+\label{sec:study1}
+
+\subsection{How much the agent uses, and how much a projection removes}
+
+Table~\ref{tab:phasea} summarises Phase A. Only a minority of the tool-output tokens carry fields the agent
+visibly used (with the record keys): \PhaseAUsedSharei{} in the editorial plan, \PhaseAUsedShareiii{} in the
+literature scan, \PhaseAUsedShareiv{} and \PhaseAUsedSharev{} in the two simulated cases. On runs it had not seen,
+the prudent projection removed \PhaseAPrudentSavingi, \PhaseAPrudentSavingiii, \PhaseAPrudentSavingiv{} and
+\PhaseAPrudentSavingv{} of the tool-output tokens of these cases, above the threshold of H1. The content-gap
+analyst is the boundary case: it cites most of what search results contain (URLs, titles, snippets) and its page
+parses are prose, which a field projection cannot touch; its projection removed \PhaseAPrudentSavingii.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_phase_a.tex}
+\caption{Phase A, eight live runs per case. \emph{Used}: share of tool-output tokens left by the in-sample
+aggressive projection (used fields and record keys), a lower bound of use. \emph{Prudent}, \emph{Aggressive}:
+change in tool-output tokens on held-out runs. \emph{Misses}: held-out calls in which the aggressive projection
+removes a field the run used later, learning from everything the agent wrote, or only from tool calls.
+$^\dagger$Simulated tools.}
+\label{tab:phasea}
+\end{table}
+
+\subsection{The learner must see the answer}
+
+Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
+misses (H3): from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan, and to every trimmed call in the
+literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv): those agents use what tools return
+only in the final answer. A projection can be \emph{applied} anywhere, a proxy included, but it has to be
+\emph{learned} from traces that contain the answer.
+
+\subsection{Projections are task-specific}
+
+Learned on the editorial plan and applied to the content-gap analyst, on the one tool they share, the projection
+missed a used field in \TransferMisses{} calls, against \WithinMisses{} for the analyst's own projection (H4). What
+an agent needs from a tool depends on the task, not only on the tool.
+
+\subsection{Does the answer survive? (Phase B)}
+
+Replaying the same conversation with projected tool outputs (Table~\ref{tab:phaseb}) removed
+\PhaseBPrudentTokensi, \PhaseBPrudentTokensiii, \PhaseBPrudentTokensiv{} and \PhaseBPrudentTokensv{} of the
+tool-message tokens with the prudent projection, against \PhaseBHeadroomTokensi, \PhaseBHeadroomTokensiii,
+\PhaseBHeadroomTokensiv{} and \PhaseBHeadroomTokensv{} for Headroom on the same conversations. H2, as frozen, was
+rejected in almost every case: with two runs per arm the raw arm's range is often a single value, so any difference
+counts, including improvements. Reading the answers rather than the rule, the losses are concentrated in three
+mechanisms, each traced to a specific field.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_phase_b.tex}
+\caption{Phase B: replay of one run per case, only tool messages changed, two runs per arm. \emph{Tool tokens}:
+raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{Band rule}: H2 as frozen.}
+\label{tab:phaseb}
+\end{table}
+
+\paragraph{Transformed values.} In billing support, the end of the subscription period arrives as a Unix timestamp
+and the agent writes it as a date. Usage detection does not recognise the rewritten value, so the field is judged
+unused and removed; every projected arm then answered the customer who asked until when the service would be
+available with a vague sentence instead of the date. The same mechanism removes amounts given in cents and written
+in euros.
+
+\paragraph{Fields used only to reason.} In CI triage the projection removed issue titles: the agent reads them to
+decide which issue a failure belongs to, but writes only the issue number. Without titles, every projected arm
+failed to link the staging-deployment failure to the issue that reports it.
+
+\paragraph{Invented identifiers.} In the literature scan, the work identifier arrives as a URL and the agent writes
+its last segment, so the identifier field was removed. Asked to report it, the agent did not write \texttt{null}
+as instructed: it wrote sequential identifiers starting from the example in the system prompt. The DOIs it
+reported were correct; the identifiers did not exist. With the full outputs, in all eight live runs, every
+identifier was real. Removing an identifier is therefore not only a loss of information: it can cause the agent to
+fabricate one, the failure mode known for references and package names
+\citep{walters2023fabrication,spracklen2025package}.
+
+\subsection{Live loop with \texttt{expand} (Phase C)}
+
+In live runs with the prudent projection and \texttt{expand} (Table~\ref{tab:phasec}), billed input tokens fell by
+\PhaseCChangeInputi{} in the editorial plan and \PhaseCChangeInputiv{} in billing support, uncached input tokens by
+\PhaseCChangeUncachedi{} and \PhaseCChangeUncachediv, and the cost per run by \PhaseCChangeCosti{} and
+\PhaseCChangeCostiv. Every run passed every gate. The agents did use \texttt{expand}: a median of
+\PhaseCPrudentExpandi{} call per run in the editorial plan and \PhaseCPrudentExpandiv{} in billing support, where
+the agent recovered the hidden period end in two of three runs. The raw arm itself misdiagnosed one ticket in two
+of its three runs, a reminder that run-to-run variation in these tasks is large compared with the effects measured.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_phase_c.tex}
+\caption{Phase C: live runs, raw tools against the prudent projection with \texttt{expand}; medians of three runs.
+Input tokens are billed tokens from the API, cache included.}
+\label{tab:phasec}
+\end{table}

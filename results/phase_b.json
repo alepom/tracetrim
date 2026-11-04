@@ -1,5 +1,6 @@
 {
-  "rule": "H2 band rule; 2 runs per arm",
+  "study": "B",
+  "rule": "band rule against the raw arm",
   "cases": {
     "C1": {
       "arms": {
@@ -780,12 +781,14 @@
             {
               "tickets": 5,
               "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
               "evidence_per_ticket": 1.8,
               "wrong": []
             },
             {
               "tickets": 5,
               "correct_diagnoses": 5,
+              "correct_diagnoses_strict": 5,
               "evidence_per_ticket": 1.8,
               "wrong": []
             }
@@ -794,6 +797,7 @@
           "medians": {
             "tickets": 5.0,
             "correct_diagnoses": 5.0,
+            "correct_diagnoses_strict": 5.0,
             "evidence_per_ticket": 1.8
           },
           "outside_band": [],
@@ -831,6 +835,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 2.4,
               "wrong": [
                 "T3"
@@ -839,6 +844,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 2.4,
               "wrong": [
                 "T3"
@@ -849,10 +855,12 @@
           "medians": {
             "tickets": 5.0,
             "correct_diagnoses": 4.0,
+            "correct_diagnoses_strict": 3.0,
             "evidence_per_ticket": 2.4
           },
           "outside_band": [
             "correct_diagnoses",
+            "correct_diagnoses_strict",
             "evidence_per_ticket"
           ],
           "holds": false
@@ -889,6 +897,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 1.8,
               "wrong": [
                 "T3"
@@ -897,6 +906,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 1.8,
               "wrong": [
                 "T3"
@@ -907,10 +917,12 @@
           "medians": {
             "tickets": 5.0,
             "correct_diagnoses": 4.0,
+            "correct_diagnoses_strict": 3.0,
             "evidence_per_ticket": 1.8
           },
           "outside_band": [
-            "correct_diagnoses"
+            "correct_diagnoses",
+            "correct_diagnoses_strict"
           ],
           "holds": false
         },
@@ -946,6 +958,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 3,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 2.0,
               "wrong": [
                 "T2",
@@ -955,6 +968,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 4,
+              "correct_diagnoses_strict": 3,
               "evidence_per_ticket": 1.6,
               "wrong": [
                 "T3"
@@ -965,10 +979,12 @@
           "medians": {
             "tickets": 5.0,
             "correct_diagnoses": 3.5,
+            "correct_diagnoses_strict": 3.0,
             "evidence_per_ticket": 1.8
           },
           "outside_band": [
-            "correct_diagnoses"
+            "correct_diagnoses",
+            "correct_diagnoses_strict"
           ],
           "holds": false
         }
@@ -979,6 +995,10 @@
           5
         ],
         "correct_diagnoses": [
+          5,
+          5
+        ],
+        "correct_diagnoses_strict": [
           5,
           5
         ],
@@ -1010,8 +1030,8 @@
               "run": "C5/B-raw-1",
               "json": true,
               "structure": true,
-              "facts_ok": 14,
-              "facts": 15,
+              "facts_ok": 16,
+              "facts": 16,
               "domain_rule": true
             },
             {
@@ -1039,7 +1059,7 @@
               "missing": []
             }
           ],
-          "gates_passed": 1,
+          "gates_passed": 2,
           "medians": {
             "root_causes": 3.0,
             "causes_found": 3.0,
