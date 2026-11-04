@@ -1,85 +1,89 @@
-# Guida al video: tracetrim davanti a un agente nel Playground di OpenAI
+# Guida al video: tracetrim davanti all'MCP di un agente, nel Playground di OpenAI
 
-Cosa si vede nel video: un agente di assistenza sulla fatturazione lavora nel Playground su un server
-MCP; tracetrim, in mezzo, alleggerisce le risposte dei tool, e nel terminale si vede in tempo reale
-quanto toglie a ogni chiamata.
+Nel video ci sono **due server MCP**:
 
-Si usa il server simulato del caso C4 dello studio: dati in forma Stripe ma finti, nessuna
-credenziale vera dietro il proxy, e per ogni ticket una risposta giusta nota.
+| | cos'è | ruolo nel video |
+|---|---|---|
+| **billing** | il server di fatturazione che l'agente usa già (simulato, in forma Stripe, dati finti) | "l'MCP dell'agente" |
+| **tracetrim** | il nostro, configurato per stare **davanti** a billing | "il nostro tool" |
+
+Lo script avvia entrambi, li rende raggiungibili dal Playground con due tunnel ngrok e mostra in un
+solo terminale le chiamate che arrivano a ciascuno. Tutto resta acceso dall'inizio alla fine: le scene
+si cambiano nel Playground.
 
 ## Come funziona (da dire nel video)
 
-Il proxy ha due facce. Verso l'agente è un **server MCP**; verso il server vero è un **client MCP**.
-All'avvio chiede al server l'elenco dei suoi tool e lo ripubblica identico, stessi nomi e stessi
-parametri, più `expand`. Quando l'agente chiama un tool, il proxy inoltra la chiamata così com'è,
-riceve la risposta, la filtra con la configurazione e la restituisce. L'agente non sa che c'è un
-proxy: vede gli stessi tool, con risposte più leggere. Se gli serve un campo tolto, lo chiede con
-`expand`.
+tracetrim non affianca billing: **si mette davanti**. Verso l'agente è un server MCP che offre gli
+stessi tool di billing, con gli stessi nomi, più `expand`; verso billing è un client che inoltra ogni
+chiamata così com'è. Quando billing risponde, tracetrim toglie i campi che l'agente non usa e passa
+all'agente una risposta più leggera. Per questo, quando si aggancia tracetrim, il collegamento
+diretto a billing si **spegne**: se restassero accesi entrambi l'agente vedrebbe due copie degli stessi
+tool e potrebbe scavalcare tracetrim.
 
-La configurazione l'ha imparata tracetrim da otto esecuzioni registrate dello stesso agente: per ogni
+Cosa toglie, tracetrim l'ha imparato osservando le esecuzioni precedenti dello stesso agente: per ogni
 tool, quali campi l'agente usa davvero.
 
-## Prima di girare (una volta)
+## Prima di girare
 
-1. Facoltativo ma consigliato: in un terminale WSL fissa token e dominio, così restano uguali tra una
-   scena e l'altra (il dominio statico gratuito si trova nella dashboard di ngrok, alla voce *Domains*):
+1. In un terminale WSL (facoltativo ma consigliato, così token e URL non cambiano tra una prova e
+   l'altra; il dominio statico gratuito è nella dashboard di ngrok, voce *Domains*):
    ```bash
    export DEMO_TOKEN=scegli-un-segreto
    export NGROK_DOMAIN=tuo-dominio.ngrok-free.app
    ```
-   Senza `NGROK_DOMAIN` l'URL cambia a ogni avvio, e va riaggiornato nel Playground.
-2. Nel Playground crea l'agente: modello a tua scelta; **System message** e **User message** sono in
-   [`demo_prompts_IT.md`](demo_prompts_IT.md), pronti da incollare.
+2. Avvia tutto:
+   ```bash
+   cd ~/progetti/tracetrim && docs/demo_playground.sh
+   ```
+   Lo script stampa i due URL e il token, poi mostra le chiamate in arrivo. Lascialo aperto.
+3. Nel Playground crea l'agente: modello a tua scelta, **System message** e **User message** da
+   [`demo_prompts_IT.md`](demo_prompts_IT.md).
+4. Sempre nel Playground, aggiungi **entrambi** i server (*Tools → Add → MCP server*), con l'header
+   `Authorization: Bearer <token>` e approvazione *never*:
+   - `billing` → l'URL "billing" stampato dallo script;
+   - `tracetrim` → l'URL "tracetrim".
 
-## Scena 1 — Il report
+   Tieni acceso solo `billing`.
 
-Apri `~/progetti/tracetrim/out/demo/report.html` (da Windows:
+## Scena 1 — L'agente con il suo MCP
+
+Esegui l'agente. Nel terminale scorrono le righe `[billing]`: sono le chiamate dell'agente al suo
+server. Nel Playground annota i token di input consumati.
+
+## Scena 2 — Il report: cosa ha imparato tracetrim
+
+Apri `out/demo/report.html` (da Windows:
 `\\wsl.localhost\Debian\home\alepom\progetti\tracetrim\out\demo\report.html`). Mostra la cifra in
-alto, il grafico "Dove vanno i token", e la configurazione generata in fondo: è quello che il sistema
-ha imparato.
+alto, "Dove vanno i token", i campi che l'agente non usa mai, e in fondo le **azioni**: quelle
+automatiche, già nella configurazione che tracetrim sta usando, e quelle manuali, da valutare.
 
-## Scena 2 — L'agente senza filtro (facoltativa, per il confronto)
+## Scena 3 — Aggancio tracetrim
 
-```bash
-cd ~/progetti/tracetrim && docs/demo_playground.sh raw
-```
-
-Lo script avvia ngrok e il proxy e stampa i valori da inserire nel Playground:
-**Tools → Add → MCP server**, URL `https://…/mcp`, header `Authorization: Bearer …`, approvazione
-*never*. Esegui l'agente: nel terminale scorrono le chiamate a pieno peso.
-
-## Scena 3 — L'agente con tracetrim
-
-Ferma con Ctrl+C e rilancia:
-
-```bash
-docs/demo_playground.sh trim
-```
-
-Se URL e token non sono cambiati (punto 1 di "Prima di girare"), nel Playground basta aggiornare
-l'elenco dei tool: compare `expand`. Esegui di nuovo. Nel terminale, una riga per chiamata:
+Nel Playground spegni `billing` e accendi `tracetrim`. Esegui di nuovo. Nel terminale, per ogni
+chiamata, due righe:
 
 ```
+[billing] stripe_list_charges {"customer": "cus_..."}
 [tracetrim] stripe_list_charges                   1,579 ->      783 tokens (-50%)  hidden: 18 groups
 [tracetrim]   session: 2 calls, 2,227 -> 1,074 (-52%), 0 expand
 ```
 
-Da mostrare: le percentuali per chiamata, il totale della sessione, e le risposte ai cinque ticket,
-che restano corrette (la tabella delle risposte giuste è in `demo_prompts_IT.md`). Nel Playground,
-aprendo una chiamata, si vede la risposta filtrata con la riga finale `[trimmed] … hidden: …`.
+La prima riga mostra che la chiamata arriva comunque a billing; la seconda quanto tracetrim ha
+tolto prima di passarla all'agente. Da mostrare anche: i token di input nel Playground, confrontati con
+la scena 1, e le risposte ai cinque ticket, che restano corrette (la tabella delle risposte giuste è in
+`demo_prompts_IT.md`).
 
-## Scena 4 — Con Headroom (facoltativa)
+## Variante con Headroom (facoltativa)
 
-```bash
-docs/demo_playground.sh trim-headroom
-```
-
-Dopo la proiezione, Headroom comprime ancora la struttura. Il primo avvio è più lento. Da dire:
-combinazione sperimentale, che lo studio non ha validato sulla qualità delle risposte.
+Avvia lo script con `docs/demo_playground.sh --headroom`: tracetrim applica anche Headroom dopo la
+proiezione. È una combinazione sperimentale, che lo studio non ha validato sulla qualità delle
+risposte; il primo avvio è più lento.
 
 ## Attenzioni
 
-- Il proxy filtra solo ciò che passa da lui: non tocca la ricerca web nativa del Playground.
-- Il token protegge il proxy finché il tunnel è aperto; a fine registrazione Ctrl+C chiude entrambi.
-- Una sola esecuzione non è una misura: presenta i numeri del video come dimostrazione del
-  meccanismo, non come risultato. I risultati sono nel paper.
+- I due server sono protetti dal token finché i tunnel sono aperti; Ctrl+C chiude tutto.
+- tracetrim filtra solo ciò che passa da lui: non tocca la ricerca web nativa del Playground.
+- Una sola esecuzione per scena non è una misura: presenta i numeri come dimostrazione del meccanismo.
+  I risultati sono nel paper.
+- Se lo script si ferma con "ngrok did not open both tunnels", il piano ngrok non consente due tunnel
+  insieme: guarda `out/demo/ngrok.log` e scrivimi.

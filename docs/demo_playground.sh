@@ -1,68 +1,89 @@
 #!/usr/bin/env bash
-# Demo: the tracetrim proxy in front of the simulated billing server (C4),
-# exposed with ngrok so that the OpenAI Playground can reach it.
+# Demo with two MCP servers, both reachable by the OpenAI Playground:
 #
-#   docs/demo_playground.sh trim             # the 0.2 configuration (default)
-#   docs/demo_playground.sh raw              # same server, nothing trimmed: the baseline
-#   docs/demo_playground.sh trim-headroom    # 0.2 configuration, then Headroom (experimental)
+#   billing    the server the agent already uses (simulated, Stripe-shaped, C4)
+#   tracetrim  our proxy, placed in front of billing, with the 0.2 configuration
 #
-# Environment (both optional, both recommended so that nothing changes between modes):
-#   DEMO_TOKEN    the secret the Playground sends as "Authorization: Bearer ..."
-#   NGROK_DOMAIN  your static ngrok domain, e.g. something.ngrok-free.app
+#   docs/demo_playground.sh             # start both, print the two URLs, show both logs
+#   docs/demo_playground.sh --headroom  # tracetrim also applies Headroom (experimental)
 #
-# The proxy prints one line per tool call while the agent works: keep this
-# terminal next to the Playground.
+# Environment (optional, recommended): DEMO_TOKEN (same token for both servers),
+# NGROK_DOMAIN (static domain, used for the tracetrim URL so it never changes).
+#
+# Everything stays up until Ctrl+C: the scenes are switched in the Playground,
+# not here. In this terminal, [billing] lines show each call reaching the
+# server the agent already used; [tracetrim] lines show what the proxy removed.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-MODE=${1:-trim}
-PORT=8799
+BILLING_PORT=8798
+TRACETRIM_PORT=8799
 TOKEN=${DEMO_TOKEN:-$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')}
-
-case "$MODE" in
-  raw)           ARGS=() ;;
-  trim)          ARGS=(--config out/demo/report.config.json) ;;
-  trim-headroom) ARGS=(--config out/demo/report.config.json --structural headroom) ;;
-  *) echo "mode: raw | trim | trim-headroom"; exit 2 ;;
-esac
-
-# The configuration is learned from the eight Phase A runs of C4.
+EXTRA=()
+[ "${1:-}" = "--headroom" ] && EXTRA=(--structural headroom)
+mkdir -p out/demo
 [ -f out/demo/report.config.json ] || .venv/bin/tracetrim report traces/C4/A*.jsonl -o out/demo/report.html
 
-if [ -n "${NGROK_DOMAIN:-}" ]; then
-  ngrok http "$PORT" --url="$NGROK_DOMAIN" --log stdout > out/demo/ngrok.log 2>&1 &
-else
-  ngrok http "$PORT" --log stdout > out/demo/ngrok.log 2>&1 &
-fi
-NGROK_PID=$!
-trap 'kill $NGROK_PID 2>/dev/null || true' EXIT
+PIDS=()
+cleanup() { kill "${PIDS[@]}" 2>/dev/null || true; }
+trap cleanup EXIT
 
-URL=""
-for _ in $(seq 30); do
-  URL=$(curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null | python3 -c '
+# Two tunnels from one ngrok agent: the user's config (authtoken) plus ours.
+{
+  echo 'version: "3"'
+  echo 'tunnels:'
+  echo '  billing:'
+  echo '    proto: http'
+  echo "    addr: $BILLING_PORT"
+  echo '  tracetrim:'
+  echo '    proto: http'
+  echo "    addr: $TRACETRIM_PORT"
+  [ -n "${NGROK_DOMAIN:-}" ] && echo "    domain: $NGROK_DOMAIN"
+} > out/demo/ngrok-demo.yml
+ngrok start --config "$HOME/.config/ngrok/ngrok.yml" --config out/demo/ngrok-demo.yml billing tracetrim \
+  --log stdout > out/demo/ngrok.log 2>&1 &
+PIDS+=($!)
+
+url_of() {
+  curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null | python3 -c '
 import json, sys
 try:
-    t = json.load(sys.stdin)["tunnels"]
-    print(next((x["public_url"] for x in t if x["public_url"].startswith("https")), ""))
+    for t in json.load(sys.stdin)["tunnels"]:
+        if t["name"] == sys.argv[1] and t["public_url"].startswith("https"):
+            print(t["public_url"]); break
 except Exception:
-    print("")' || true)
-  [ -n "$URL" ] && break
+    pass' "$1"
+}
+BILLING_URL="" ; TRACETRIM_URL=""
+for _ in $(seq 30); do
+  BILLING_URL=$(url_of billing); TRACETRIM_URL=$(url_of tracetrim)
+  [ -n "$BILLING_URL" ] && [ -n "$TRACETRIM_URL" ] && break
   sleep 1
 done
-[ -n "$URL" ] || { echo "ngrok did not start: see out/demo/ngrok.log"; exit 1; }
+if [ -z "$BILLING_URL" ] || [ -z "$TRACETRIM_URL" ]; then
+  echo "ngrok did not open both tunnels: see out/demo/ngrok.log"; exit 1
+fi
+
+.venv/bin/python -m experiments.simulated.serve_http --port "$BILLING_PORT" --token "$TOKEN" \
+  --allowed-host "${BILLING_URL#https://}" --allowed-host "127.0.0.1:$BILLING_PORT" > out/demo/billing.log 2>&1 &
+PIDS+=($!)
+sleep 2
+.venv/bin/tracetrim proxy --upstream-url "http://127.0.0.1:$BILLING_PORT/mcp" --header "Authorization=Bearer $TOKEN" \
+  --config out/demo/report.config.json "${EXTRA[@]}" \
+  --http "$TRACETRIM_PORT" --token "$TOKEN" --allowed-host "${TRACETRIM_URL#https://}" > out/demo/tracetrim.log 2>&1 &
+PIDS+=($!)
 
 cat <<EOF
 
-  Playground -> Tools -> Add -> MCP server
-    URL       $URL/mcp
-    Header    Authorization: Bearer $TOKEN
-    Approval  never
-  System message  experiments/prompts/c4-system.md
-  User message    experiments/prompts/c4-user.md
+  Playground -> Tools -> Add -> MCP server   (header for both: Authorization: Bearer $TOKEN)
 
-  mode: $MODE      (Ctrl+C to stop proxy and tunnel)
+    billing    $BILLING_URL/mcp       the MCP the agent already uses
+    tracetrim  $TRACETRIM_URL/mcp       in front of billing
+
+  Scene 1: connect only billing, run the agent.
+  Scene 2: add tracetrim, switch billing off, run again.
+
+  Ctrl+C stops servers and tunnels.
 
 EOF
-
-.venv/bin/tracetrim proxy --upstream-cmd "$PWD/.venv/bin/python -m experiments.simulated.server_c4" \
-  "${ARGS[@]}" --http "$PORT" --token "$TOKEN" --allowed-host "${URL#https://}"
+tail -n +1 -f out/demo/billing.log out/demo/tracetrim.log | grep --line-buffered -E '^\[(billing|tracetrim)\]'
