@@ -22,6 +22,17 @@ $^\dagger$Simulated tools.}
 \label{tab:phasea}
 \end{table}
 
+\begin{figure}[t]
+\centering
+\input{generated/fig_tools.tex}
+\caption{Where the tokens go, per tool, in the two cases with simulated tools (released in full): tool-output
+tokens on held-out runs, split into what the prudent projection keeps and what it removes. The projection here has
+the 0.2 safeguards on (Section~\ref{sec:study2}), as the library now does by default, so it removes less than the 0.1
+projection of Table~\ref{tab:phasea}. This is the breakdown the telemetry report shows for every agent; generated from
+the traces by \texttt{experiments/paper\_figures.py}.}
+\label{fig:tools}
+\end{figure}
+
 \subsection{The learner must see the answer}
 
 Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
@@ -88,3 +99,11 @@ of its three runs, a reminder that run-to-run variation in these tasks is large 
 Input tokens are billed tokens from the API, cache included.}
 \label{tab:phasec}
 \end{table}
+
+\begin{figure}[t]
+\centering
+\input{generated/fig_live.tex}
+\caption{Phase C, every run: billed input tokens per run with raw tools (orange) and with the prudent projection
+and \texttt{expand} (blue); the bar marks the median. Three runs per arm: the spread is part of the result.}
+\label{fig:live}
+\end{figure}

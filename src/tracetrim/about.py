@@ -5,7 +5,7 @@ Identifiers that do not exist yet stay None and are not shown anywhere: a
 report must never link to a repository or a DOI that is not there.
 """
 NAME = "tracetrim"
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 DESCRIPTION = "Learn which fields of tool outputs an agent actually uses, from its traces, and trim the rest."
 
 AUTHOR = "Alessio Pomaro"

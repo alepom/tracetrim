@@ -1,0 +1,66 @@
+% Where tracetrim acts. Schematic, no data. Colours as in the data figures.
+\definecolor{ttblue}{HTML}{2A78D6}\definecolor{ttorange}{HTML}{EB6834}\definecolor{ttmuted}{HTML}{52514E}
+\definecolor{ttpale}{HTML}{EAF2FC}\definecolor{ttpaleo}{HTML}{FDEDE6}\definecolor{ttline}{HTML}{BDBBB5}
+\begin{tikzpicture}[font=\footnotesize, >=Stealth,
+  col/.style={draw=ttline, rounded corners=3pt, fill=white},
+  inner/.style={draw=ttline, rounded corners=2pt, fill=white, align=center, font=\scriptsize, minimum height=0.62cm},
+  lbl/.style={font=\scriptsize, text=ttmuted, align=center},
+  call/.style={->, line width=0.8pt},
+  ret/.style={->, line width=0.8pt, draw=ttblue},
+  lrn/.style={->, line width=0.8pt, draw=ttorange, dashed}]
+
+% ===== (a) MCP ================================================================
+\node[anchor=west, font=\footnotesize\bfseries] at (0,4.35) {(a) In front of the agent's MCP servers: no change to the agent's code};
+
+% columns
+\draw[col] (0,-0.5) rectangle (2.4,3.85);
+\node[font=\footnotesize\bfseries] at (1.2,3.55) {Agent};
+\node[lbl] at (1.2,1.5) {model and loop;\\sees the same\\tool names, plus\\\texttt{expand} and\\\texttt{tracetrim\_done}};
+
+\draw[col, draw=ttblue, fill=ttpale] (5.0,-0.5) rectangle (11.0,3.85);
+\node[font=\footnotesize\bfseries] at (8.0,3.55) {tracetrim proxy};
+
+\draw[col] (13.0,-0.5) rectangle (15.4,3.85);
+\node[font=\footnotesize\bfseries] at (14.2,3.55) {MCP servers};
+\node[lbl] at (14.2,1.4) {billing, code,\\search\ldots\\[3pt]stdio or HTTP;\\headers, env\\or OAuth};
+
+% inner boxes
+\node[inner, draw=ttblue, minimum width=2.0cm] (proj) at (9.6,1.9) {projection};
+\node[inner, minimum width=2.0cm] (orig) at (6.6,0.95) {originals};
+\node[inner, draw=ttorange, fill=ttpaleo, minimum width=2.0cm] (lrn) at (9.6,0.05) {learner};
+
+% 1. the call goes through unchanged
+\draw[call] (2.4,3.0) -- node[lbl, above] {tool call} (5.0,3.0);
+\draw[call] (5.0,3.0) -- node[lbl, below] {forwarded unchanged} (11.0,3.0);
+\draw[call] (11.0,3.0) -- node[lbl, above] {same call} (13.0,3.0);
+% 2. the result comes back, trimmed
+\draw[call] (13.0,1.9) -- node[lbl, above] {full output} (proj.east);
+\draw[ret] (proj.west) -- (5.0,1.9) -- node[lbl, above] {trimmed output\\+ \texttt{[trimmed]} line} (2.4,1.9);
+\draw[->, ttline, line width=0.6pt] (proj.south west) ++(0.3,0) -- node[lbl, below right=-2pt] {stores} (orig.north east);
+% 3. expand: answered from the stored original, no new server call
+\draw[call] (2.4,1.1) -- node[lbl, above] {\texttt{expand}} (orig.west |- 0,1.1);
+\draw[ret] (orig.west |- 0,0.8) -- node[lbl, below] {hidden fields} (2.4,0.8);
+% 4. learning
+\draw[lrn] (2.4,0.05) -- node[lbl, below] {\texttt{tracetrim\_done}\\(final answer)} (lrn.west);
+\draw[lrn] (lrn.north) -- node[lbl, right] {reload} (proj.south);
+
+% ===== learner, shared =========================================================
+\node[draw=ttorange, fill=ttpaleo, rounded corners=3pt, text width=15.0cm, align=left, anchor=north west, inner sep=5pt,
+      font=\scriptsize] (pipe) at (0,-0.85) {%
+\textbf{Learner} (automatic mode). Each run is kept as a trace (calls, then the final answer) $\rightarrow$ usage
+detection (Figure~\ref{fig:usage}) $\rightarrow$ telemetry report with suggestions, from the first run $\rightarrow$
+after \texttt{min\_runs} runs, the automatic actions only: prudent projection, identifiers kept, \texttt{expand} on.
+A tool whose outputs are expanded too often is no longer trimmed. Everything else stays in the report as a manual action.};
+
+% ===== (b) function calling ====================================================
+\node[anchor=west, font=\footnotesize\bfseries] at (0,-2.85) {(b) Function calling: three calls in the agent's own loop};
+\node[inner, minimum width=2.4cm, minimum height=0.8cm, font=\footnotesize] (model) at (1.2,-3.65) {\textbf{Model}};
+\node[inner, minimum width=2.9cm, minimum height=0.8cm] (loop) at (4.85,-3.65) {your loop runs\\the tool};
+\node[inner, draw=ttblue, fill=ttpale, minimum width=3.6cm, minimum height=0.8cm] (auto) at (9.0,-3.65)
+  {\texttt{AutoTrim.output()}\\\texttt{.expand()}\quad\texttt{.done(answer)}};
+\node[inner, draw=ttorange, fill=ttpaleo, minimum width=2.4cm, minimum height=0.8cm] (l2) at (14.2,-3.65) {same learner};
+\draw[call] (model.east) -- node[lbl, above] {tool call} (loop.west);
+\draw[call] (loop.east) -- node[lbl, above] {full output} (auto.west);
+\draw[lrn] (auto.east) -- (l2.west);
+\draw[ret] (auto.south) -- ++(0,-0.35) -| node[lbl, below, pos=0.25] {trimmed output (no proxy, no \texttt{tracetrim\_done}: the loop has the answer)} (model.south);
+\end{tikzpicture}

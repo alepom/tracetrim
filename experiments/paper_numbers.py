@@ -57,6 +57,10 @@ def main():
         f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{about.SOFTWARE_DOI}}}{{{about.SOFTWARE_DOI}}}}}\n"
         f"\\newcommand{{\\RepositoryURL}}{{\\url{{{about.REPOSITORY}}}}}\n", encoding="utf-8")
 
+    h = load("headroom_baseline.json")
+    if h:
+        m("HeadroomVersion", h["headroom_version"])     # the version that produced the numbers
+
     # ---- Phase A (Study 1) ------------------------------------------------
     a = load("phase_a.json")
     rows = []

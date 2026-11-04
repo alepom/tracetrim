@@ -1,0 +1,48 @@
+% How usage is detected, on an illustrative billing call (simplified values).
+\definecolor{ttblue}{HTML}{2A78D6}\definecolor{ttorange}{HTML}{EB6834}\definecolor{ttmuted}{HTML}{52514E}
+\definecolor{ttpale}{HTML}{EAF2FC}\definecolor{ttpaleo}{HTML}{FDEDE6}\definecolor{ttline}{HTML}{BDBBB5}
+\begin{tikzpicture}[font=\footnotesize, >=Stealth,
+  row/.style={anchor=west, inner sep=1pt, font=\ttfamily\scriptsize},
+  tag/.style={anchor=west, inner sep=1pt, font=\scriptsize, text=ttmuted},
+  hit/.style={->, line width=0.7pt, draw=ttblue}]
+
+\node[anchor=west, font=\footnotesize\bfseries] at (0,4.0) {Tool output: one charge (simplified)};
+\node[anchor=west, font=\footnotesize\bfseries] at (10.0,4.0) {What the agent writes after the call};
+
+\draw[draw=ttline, rounded corners=3pt] (0,-0.75) rectangle (6.3,3.7);
+\foreach \y/\t in {3.35/{id: "ch\_3QxB7"}, 2.85/{amount: 2900}, 2.35/{currency: "eur"},
+                   1.85/{created: 1761897600}, 1.35/{status: "succeeded"},
+                   0.85/{outcome.network\_status: "approved"}, 0.35/{billing\_details.address.* (6)},
+                   -0.15/{payment\_method\_details.card.* (11)}}
+  \node[row] at (0.15,\y) {\t};
+\node[row, text=ttmuted] at (0.15,-0.5) {\ldots};
+
+\node[tag, text=ttblue]   (t1) at (6.5,3.35) {used, as written};
+\node[tag, text=ttblue]   (t2) at (6.5,2.85) {used, as \emph{29,00\,\texteuro} (S2)};
+\node[tag]                     at (6.5,2.35) {never written};
+\node[tag, text=ttblue]   (t4) at (6.5,1.85) {used, as a date (S2)};
+\node[tag, text=ttorange]      at (6.5,1.35) {translated: \emph{not seen}};
+\node[tag]                     at (6.5,0.85) {never written};
+\node[tag]                     at (6.5,0.35) {never written};
+\node[tag]                     at (6.5,-0.15) {never written};
+
+\node[draw=ttline, rounded corners=3pt, fill=white, text width=5.0cm, align=left, anchor=north west, inner sep=5pt,
+      font=\scriptsize] (ans) at (10.0,3.7) {%
+  \emph{Final answer.} Two \emph{successful} charges of \textbf{29,00\,\texteuro} on \textbf{31 October 2025}, 47
+  seconds apart (\textbf{ch\_3QxB7}, ch\_3QxC2): a double charge. Refund one of them.\\[4pt]
+  \emph{Later call.} \texttt{list\_refunds(charge=}\\\texttt{"\textbf{ch\_3QxB7}")}};
+\draw[hit] (t1.east) -- ($(ans.north west)+(0,-0.75)$);
+\draw[hit] (t2.east) -- ($(ans.north west)+(0,-0.45)$);
+\draw[hit] (t4.east) -- ($(ans.north west)+(0,-0.6)$);
+
+\node[draw=ttblue, fill=ttpale, rounded corners=3pt, text width=15.0cm, align=left, anchor=north west, inner sep=5pt,
+      font=\scriptsize] at (0,-1.05) {%
+  \textbf{Matching.} A field is \emph{used} when one of its values appears, as a word $n$-gram ($n\le4$), in what the
+  agent writes \emph{after} the call: later call arguments and the final answer. S2 also matches Unix times written as
+  dates and minor units written as amounts.\\[2pt]
+  \textbf{Projection} (prudent). Keep the fields used in any training run, the fields never judgeable, the identifying
+  fields (S1: \texttt{id}, \texttt{*\_id}, \texttt{url}, \texttt{name}\ldots) and fields never seen; drop the rest. On a
+  new run the dropped fields are listed in the \texttt{[trimmed]} line, and \texttt{expand} brings them back. A value
+  the agent translates (\emph{succeeded} $\rightarrow$ \emph{successful}) is not matched: one of the failure
+  mechanisms discussed in Section~\ref{sec:discussion}.};
+\end{tikzpicture}

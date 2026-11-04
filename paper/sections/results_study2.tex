@@ -13,6 +13,15 @@ Columns as in Table~\ref{tab:phaseb}.}
 \label{tab:study2}
 \end{table}
 
+\begin{figure}[t]
+\centering
+\input{generated/fig_savings.tex}
+\caption{Tool-output tokens removed on the same conversations, per case: the learned projection without safeguards
+(0.1, Phase B), with them (0.2, Study 2), and Headroom \HeadroomVersion{} configured to compress everything. Token
+counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
+\label{fig:savings}
+\end{figure}
+
 \paragraph{Pre-registered hypotheses.} All four held as frozen. \emph{H5}: in billing support the \texttt{v02} arm
 diagnosed all five tickets correctly in \StudyTwoFrozenAllRightVtwo{} runs, the period end included, where the
 0.1 projection had lost it. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
@@ -21,7 +30,7 @@ diagnosed all five tickets correctly in \StudyTwoFrozenAllRightVtwo{} runs, the 
 including the one lost in Phase B. \emph{H8}: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
 \StudyTwoVtwoTokensiii, \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} of the tool-message tokens in the
 editorial plan, the literature scan, billing support and CI triage, against \StudyTwoHeadroomTokensi, \StudyTwoHeadroomTokensiii, \StudyTwoHeadroomTokensiv{} and
-\StudyTwoHeadroomTokensv{} for Headroom. The safeguards cost part of the saving (compare
+\StudyTwoHeadroomTokensv{} for Headroom (Figure~\ref{fig:savings}). The safeguards cost part of the saving (compare
 \PhaseBPrudentTokensiii{} with \StudyTwoVtwoTokensiii{} in the literature scan) and bought back the three lost
 pieces of information.
 

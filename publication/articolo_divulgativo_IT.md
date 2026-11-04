@@ -48,13 +48,15 @@ poi è servito.
 
 **Gli agenti usano una piccola parte di ciò che ricevono.** In quattro casi su cinque, i campi usati valgono tra il
 17% e il 32% dei token restituiti dai tool. Il filtro imparato, provato su esecuzioni nuove, ha tolto **tra il 63% e il
-77%** dei token. Headroom, una libreria open source di compressione strutturale, sulle stesse conversazioni ne toglie
-tra il 17% e il 33%.
+77%** dei token. Sulle stesse conversazioni degli stessi quattro agenti, Headroom, una libreria open source di
+compressione strutturale, ne toglie tra il 17% e il 33%; il filtro imparato tra il 59% e il 77% (tra il 46% e il 61%
+con le protezioni della versione 0.2).
 
 **Il filtro va imparato dalle tracce complete.** Se si osservano solo le chiamate ai tool, cioè quello che vedrebbe
 un proxy MCP messo tra agente e server, i campi persi esplodono: in due casi su cinque il filtro sbaglia in **tutte**
 le chiamate, perché quegli agenti usano i dati solo nella risposta finale. Il filtro si può *applicare* in un proxy,
-ma va *imparato* da tracce che contengono la risposta.
+ma va *imparato* da tracce che contengono la risposta. Per questo, nella libreria, il proxy chiede all'agente
+un ultimo passo: consegnargli la risposta finale.
 
 **Quello che serve dipende dal compito, non solo dal tool.** Lo stesso tool usato da due agenti diversi richiede
 campi diversi: un filtro imparato su un compito, applicato all'altro, sbaglia molto di più.
@@ -95,9 +97,9 @@ E gli agenti hanno usato `expand` quando serviva.
 ## Cosa portarsi a casa
 
 - Il problema è reale e misurabile: la maggior parte di ciò che un agente legge non gli serve.
-- Imparare cosa togliere funziona, ma il filtro è una **proposta**, non un interruttore automatico: va rivisto da
-  chi conosce il compito, perché i suoi punti ciechi sono esattamente i campi che contano in modi che il testo non
-  mostra.
+- Imparare cosa togliere funziona, ma il filtro è una **proposta**: i suoi punti ciechi sono esattamente i campi che
+  contano in modi che il testo non mostra. Da sola, una macchina dovrebbe applicarne solo la parte prudente, con
+  gli identificativi protetti e la via di ritorno sempre aperta; il resto va rivisto da chi conosce il compito.
 - Gli identificativi non si toccano. Mai.
 - Serve sempre una via di ritorno: se un campo è stato tolto per errore, l'agente deve poterlo chiedere.
 
@@ -107,8 +109,15 @@ Dallo studio è nata **tracetrim**, una libreria open source che:
 - genera un **report di telemetria** in italiano e inglese (quali tool riempiono il contesto, quali chiamate
   falliscono e con quale errore, quali campi l'agente non usa mai), utile anche senza filtrare nulla;
 - propone una **configurazione** leggibile, da rivedere prima di applicarla;
-- la applica con un **proxy MCP** davanti a qualunque server, senza modificare l'agente, con `expand` sempre
-  disponibile.
+- la applica con un **proxy MCP** davanti ai server dell'agente, senza modificarne il codice, con `expand` sempre
+  disponibile;
+- in **modalità automatica** fa tutto da sola: osserva le prime esecuzioni, impara e poi applica solo le azioni
+  sicure, lasciando le altre nel report; se l'agente chiede troppo spesso un campo tolto, smette di filtrare quel
+  tool. All'agente si aggiunge una riga nelle istruzioni;
+- funziona anche con il **function calling**, senza MCP, con tre chiamate nel ciclo dell'agente.
+
+La modalità automatica è successiva agli studi descritti qui: è stata verificata con un agente vero, non misurata con
+un protocollo.
 
 Il codice, la guida rapida e le istruzioni per rifare ogni misura sono nel
 [repository](https://github.com/alepom/tracetrim).

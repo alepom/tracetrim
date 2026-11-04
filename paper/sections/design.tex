@@ -29,7 +29,7 @@ own domain; a gate in the tool wrapper rejects any other domain for page parsing
 learning source and transfer between C1 and C2 (on the tools they share). \emph{Phase B}: the third run of each
 case, chosen before looking at the data, is replayed up to the final answer, changing only the tool messages:
 raw, prudent, aggressive, and prudent plus structural compression; two runs per arm; projections learned from the
-other seven runs. Headroom is applied to the same conversations as a token-only baseline. \emph{Phase C}: live
+other seven runs. Headroom (\texttt{headroom-ai} \HeadroomVersion) is applied to the same conversations as a token-only baseline, configured to compress everything with no protection of recent messages and a target ratio of 0.2: the setting most favourable to it, so that the comparison does not depend on a cautious default. \emph{Phase C}: live
 runs on C1 and C4 with the prudent projection and \texttt{expand}, against raw runs, three per arm.
 
 \paragraph{Study 2.} The Phase B conversations are replayed again with the safeguards on (arm \texttt{v02}, and

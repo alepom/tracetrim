@@ -2,7 +2,7 @@
 
 Questa cartella contiene tutto quello che serve per pubblicare lo studio
 **"Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"**
-e la libreria **tracetrim 0.3.2**. Nulla è stato pubblicato: repository, record Zenodo e release li crei tu.
+e la libreria **tracetrim 0.3.3**. Nulla è stato pubblicato: repository, record Zenodo e release li crei tu.
 
 ## In che ordine leggere
 
@@ -23,4 +23,5 @@ e la libreria **tracetrim 0.3.2**. Nulla è stato pubblicato: repository, record
 ```
 
 Il paper si ricompila con `cd paper && ~/.local/bin/tectonic -X compile main.tex`, dopo aver
-rigenerato i numeri con `.venv/bin/python -m experiments.paper_numbers`.
+rigenerato numeri e grafici con `.venv/bin/python -m experiments.paper_numbers` e
+`.venv/bin/python -m experiments.paper_figures`.
