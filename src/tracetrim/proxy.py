@@ -1,27 +1,35 @@
-"""An MCP proxy: the same tools as an upstream server, with trimmed outputs.
+"""An MCP proxy: the same tools as the upstream servers, with trimmed outputs.
 
+  tracetrim proxy --servers mcp.json --auto workdir/        # all your servers, learns on its own
   tracetrim proxy --upstream-cmd "python -m my_server" --config report.config.json
   tracetrim proxy --upstream-url https://example.test/mcp --header "Authorization=Bearer ..." \
                   --config report.config.json --record traces/session.jsonl
-  tracetrim proxy --upstream-url https://example.test/mcp --auto workdir/      # learns and applies on its own
 
-The client (Claude Desktop, Claude Code, Cursor, an agent SDK) launches the
-proxy instead of the server: no code changes. The proxy
+`--servers` reads the `mcpServers` block clients already use (Claude Desktop,
+Claude Code, Cursor): `command`/`args`/`env` for local servers, `url`/`headers`
+for remote ones, `${VAR}` expanded from the environment. One proxy stands in
+for all of them, so the agent sees one `expand`, one `tracetrim_done`, and the
+report covers every tool. Tool names are kept; only when two servers expose the
+same name are both prefixed with their server name (`billing__search`).
+
+The client launches (or connects to) the proxy instead of the servers: no
+code changes. The proxy
 
   - lists the upstream tools with their original names and schemas,
   - applies the runtime config to every output (projection, unescape),
   - adds an `expand` tool, so a hidden field is one call away,
   - optionally records each call to a trace file for `tracetrim report`.
 
-What it cannot do is LEARN: it never sees the agent's final answer, and the
-study behind this library found that learning from tool calls alone misses
-most of what agents use. Learn from full traces; apply here.
+Learning needs the agent's final answer, which tool calls alone do not show:
+in automatic mode (tracetrim.auto) the agent passes it to `tracetrim_done`.
 """
 from __future__ import annotations
 
 import json
+import os
+import shlex
 import sys
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -153,15 +161,59 @@ class Options:
     auto_dir: str | None = None      # automatic mode: learn, apply, report (see tracetrim.auto)
     min_runs: int = 5
     idle_seconds: int = 300          # a run without tracetrim_done is closed after this pause
+    servers: dict = field(default_factory=dict)   # name -> {command, args, env} | {url, headers}
+
+    def upstreams(self) -> dict:
+        """Every upstream as a named spec, `${VAR}` expanded."""
+        if self.servers:
+            servers = self.servers
+        elif self.upstream_cmd:
+            argv = shlex.split(self.upstream_cmd)
+            servers = {"upstream": {"command": argv[0], "args": argv[1:]}}
+        else:
+            servers = {"upstream": {"url": self.upstream_url, "headers": self.headers}}
+        return {name: _expand_vars(spec) for name, spec in servers.items()}
+
+
+def _expand_vars(x):
+    if isinstance(x, str):
+        return os.path.expandvars(x)
+    if isinstance(x, list):
+        return [_expand_vars(v) for v in x]
+    if isinstance(x, dict):
+        return {k: _expand_vars(v) for k, v in x.items()}
+    return x
+
+
+def load_servers(path: str | Path) -> dict:
+    """The `mcpServers` block of a client config, or the bare mapping."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    servers = data.get("mcpServers", data)
+    for name, spec in servers.items():
+        if not ("command" in spec or "url" in spec):
+            raise SystemExit(f"server {name!r}: needs 'command' (stdio) or 'url' (streamable HTTP)")
+        if spec.get("type") == "sse":
+            raise SystemExit(f"server {name!r}: SSE transport is not supported, use streamable HTTP")
+    return servers
+
+
+def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
+    """Exposed tool name -> (server, upstream name). Names stay as they are,
+    unless two servers share one: then each copy is prefixed with its server."""
+    count: dict[str, int] = {}
+    for tools in listed.values():
+        for t in tools:
+            count[t] = count.get(t, 0) + 1
+    return {(t if count[t] == 1 else f"{server}__{t}"): (server, t)
+            for server, tools in listed.items() for t in tools}
 
 
 def _server(o: Options):
     import asyncio
-    import shlex
     import time
 
     from mcp import ClientSession, types
-    from mcp.client.stdio import StdioServerParameters, stdio_client
+    from mcp.client.stdio import StdioServerParameters, get_default_environment, stdio_client
     from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
     from mcp.server.lowlevel import Server
 
@@ -207,22 +259,39 @@ def _server(o: Options):
                else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
             + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
 
+    routes: dict[str, tuple[str, str]] = {}
+
     @asynccontextmanager
     async def upstream(_server):
-        if o.upstream_cmd:
-            argv = shlex.split(o.upstream_cmd)
-            transport = stdio_client(StdioServerParameters(command=argv[0], args=argv[1:]))
-        else:
-            transport = streamable_http_client(o.upstream_url, http_client=create_mcp_http_client(headers=o.headers))
-        async with transport as (read, write), ClientSession(read, write) as session:
-            await session.initialize()
-            yield {"session": session}
+        async with AsyncExitStack() as stack:
+            sessions = {}
+            for name, spec in o.upstreams().items():
+                if "url" in spec:
+                    transport = streamable_http_client(
+                        spec["url"], http_client=create_mcp_http_client(headers=spec.get("headers") or {}))
+                else:
+                    env = {**get_default_environment(), **spec["env"]} if spec.get("env") else None
+                    transport = stdio_client(StdioServerParameters(
+                        command=spec["command"], args=spec.get("args") or [], env=env, cwd=spec.get("cwd")))
+                read, write, *_ = await stack.enter_async_context(transport)
+                session = await stack.enter_async_context(ClientSession(read, write))
+                await session.initialize()
+                sessions[name] = session
+            log(f"upstream: {', '.join(sessions)}")
+            yield {"sessions": sessions}
+
+    async def upstream_tools(sessions):
+        listed = {name: (await s.list_tools()).tools for name, s in sessions.items()}
+        routes.clear()
+        routes.update(route_names({n: [t.name for t in ts] for n, ts in listed.items()}))
+        exposed = {v: k for k, v in routes.items()}
+        return [t.model_copy(update={"name": exposed[(n, t.name)]}) for n, ts in listed.items() for t in ts]
 
     async def list_tools(ctx, params):
-        up = await ctx.lifespan_context["session"].list_tools()
+        up = await upstream_tools(ctx.lifespan_context["sessions"])
         # The proxy rewrites outputs, so an upstream output schema no longer
         # describes them: clients that validate results would reject them.
-        tools = [t.model_copy(update={"output_schema": None}) for t in up.tools]
+        tools = [t.model_copy(update={"output_schema": None}) for t in up]
         # In automatic mode expand is listed from the start: clients may cache
         # the tool list, and trimming begins only after the first runs.
         if trimmer.policy is not None or learner:
@@ -247,7 +316,14 @@ def _server(o: Options):
             if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
                 await close_run(None)
             last_call[0] = time.time()
-            r = await ctx.lifespan_context["session"].call_tool(params.name, args)
+            sessions = ctx.lifespan_context["sessions"]
+            if params.name not in routes:           # a client that calls before listing
+                await upstream_tools(sessions)
+            if params.name not in routes:
+                return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
+                                            isError=True)
+            server, name = routes[params.name]
+            r = await sessions[server].call_tool(name, args)
             raw = "".join(getattr(c, "text", "") or "" for c in (r.content or []))
             if rec:
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
@@ -325,8 +401,12 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
     if learner:
         print(f"[tracetrim] live report: http://{host}:{port}/report" + (f"?token={token}" if token else ""),
               file=sys.stderr, flush=True)
-    try:
-        await uvicorn.Server(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()
-    finally:
-        if learner:
-            learner.flush()
+    class FlushingServer(uvicorn.Server):
+        # uvicorn re-raises SIGTERM/SIGINT once it has shut down, which ends the
+        # process before any `finally`: the unfinished run is kept here instead.
+        async def shutdown(self, sockets=None):
+            await super().shutdown(sockets=sockets)
+            if learner:
+                learner.flush()
+
+    await FlushingServer(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()

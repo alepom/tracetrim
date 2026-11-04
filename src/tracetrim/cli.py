@@ -4,7 +4,7 @@
   tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
-  tracetrim proxy   --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
+  tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
 
 `measure` always starts by showing what it read: a parser that fails
@@ -132,13 +132,15 @@ def cmd_report(a):
 def cmd_proxy(a):
     import asyncio
     from .proxy import Options, serve, serve_http
-    if bool(a.upstream_cmd) == bool(a.upstream_url):
-        raise SystemExit("give exactly one of --upstream-cmd or --upstream-url")
+    from .proxy import load_servers
+    if sum(map(bool, (a.upstream_cmd, a.upstream_url, a.servers))) != 1:
+        raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
     if a.auto and a.config:
         raise SystemExit("--auto manages its own config: do not pass --config")
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
-                quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs)
+                quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
+                servers=load_servers(a.servers) if a.servers else {})
     if a.http:
         asyncio.run(serve_http(o, host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
     else:
@@ -181,7 +183,9 @@ def main(argv=None):
                    help="tracetrim 0.1 behaviour (for comparisons): no identifier protection, no transformed values")
     s.set_defaults(func=cmd_report)
 
-    s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand (stdio)")
+    s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand")
+    s.add_argument("--servers", metavar="FILE",
+                   help="JSON with your mcpServers (as in Claude Desktop / Claude Code / Cursor): one proxy for all")
     s.add_argument("--upstream-cmd", help="command that starts the upstream MCP server over stdio")
     s.add_argument("--upstream-url", help="URL of an upstream streamable-HTTP MCP server")
     s.add_argument("--header", action="append", default=[], help="K=V header for the upstream URL")

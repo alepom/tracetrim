@@ -17,7 +17,7 @@ where this works and where it fails. In short:
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
-adds an automatic mode: put the proxy in front of your MCP server and it observes, learns and
+adds an automatic mode: put one proxy in front of your MCP servers and it observes, learns and
 trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
 anything that matters.
 
@@ -32,20 +32,32 @@ Python 3.10+. From a clone: `pip install -e ".[measure,proxy,test]"`. Not on PyP
 
 ## The short way: automatic mode
 
-Your agent already uses an MCP server. Put tracetrim in front of it, point the agent at tracetrim
-instead, and add one line to the agent's instructions:
+Your agent already uses one or more MCP servers. Copy their `mcpServers` block — the same JSON
+Claude Desktop, Claude Code and Cursor use — into a file:
+
+```json
+{"mcpServers": {
+  "billing": {"url": "https://billing.example/mcp", "headers": {"Authorization": "Bearer ${BILLING_TOKEN}"}},
+  "code":    {"command": "python", "args": ["-m", "my_code_server"], "env": {"API_KEY": "${CODE_KEY}"}}}}
+```
+
+Start one tracetrim in front of all of them:
 
 ```bash
-tracetrim proxy --upstream-url https://mcp.example.com/mcp --header "Authorization=Bearer UPSTREAM_TOKEN" \
-  --auto tracetrim-data/ --http 8799 --token CHOOSE_A_SECRET
+tracetrim proxy --servers mcp.json --auto tracetrim-data/                       # stdio, for local clients
+tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799 --token CHOOSE_A_SECRET   # over HTTP
 ```
+
+In the agent, **replace** those servers with tracetrim (one entry instead of N; keeping both would
+show the agent two copies of every tool), and add one line to its instructions:
 
 ```text
 Last step, required if the tool tracetrim_done is available: when your final answer is ready,
 call tracetrim_done once with the complete answer, before you show it; then show the same answer.
 ```
 
-(or `--upstream-cmd "python -m my_server"` for a local server over stdio.) Then use the agent as usual:
+The agent sees the same tools with the same names (prefixed with the server name only if two
+servers share one), plus `expand` and `tracetrim_done`. Then use the agent as usual:
 
 - **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
   (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
@@ -126,7 +138,7 @@ recording, and regenerate the report from time to time.
 How it wraps another server: the proxy is an MCP *server* towards your agent and an MCP *client*
 towards the upstream. At start it asks the upstream for its tools and publishes the same names and
 input schemas as its own (plus `expand`); each call is forwarded unchanged, and only the result is
-rewritten on its way back. One proxy per upstream server.
+rewritten on its way back. One proxy can stand in front of several servers (`--servers`).
 
 While it runs, the proxy prints one line per call on stderr — tokens from the tool, tokens to the
 agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). Add
