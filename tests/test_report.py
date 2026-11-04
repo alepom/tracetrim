@@ -38,3 +38,29 @@ def test_html_is_bilingual_and_deterministic_apart_from_the_date():
     assert a == b
     assert 'lang="en"' in a and 'lang="it"' in a
     json.dumps(d)            # the JSON twin must serialise
+
+
+def test_every_suggestion_has_an_action_and_manual_ones_carry_evidence():
+    d = _data()
+    sugg = suggestions(d)
+    assert all(s["action"]["kind"] in ("auto", "manual") for s in sugg)
+    err = next(s for s in sugg if s["rule"] == "errors")["action"]
+    assert err["type"] == "fix_tool_description" and err["examples"] == ["Error: quota exceeded"]
+
+
+def test_config_from_auto_actions_applies_through_policy(tmp_path):
+    from tracetrim.report import build_config
+    from tracetrim.runtime import Policy
+    d = _data()
+    sugg = suggestions(d)
+    # Force a trim action, as a large tool would get one.
+    sugg.append({"rule": "trim", "level": "saving", "tool": "search_volume",
+                 "action": {"kind": "auto", "type": "trim", "tool": "search_volume", "mode": "prudent"}})
+    traces = [trace(f"t{i}", "spa weekend 1600") for i in range(3)]
+    config, proj = build_config(d, sugg, [analyse(t) for t in traces], "p.json")
+    proj.save(tmp_path / "p.json")
+    (tmp_path / "c.json").write_text(json.dumps(config))
+    pol = Policy.load(tmp_path / "c.json")
+    out = json.loads(pol.apply("search_volume", json.dumps(VOLUMES)))
+    assert "location_code" not in out["items"][0] and out["items"][0]["keyword"] == "spa weekend"
+    assert pol.apply("other", '{"a": "\\u00e0"}') == '{"a": "à"}'

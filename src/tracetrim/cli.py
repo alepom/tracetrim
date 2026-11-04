@@ -1,9 +1,9 @@
 """tracetrim — learn from agent traces which tool-output fields are used.
 
   tracetrim learn   traces/*.jsonl -o projection.json [--mode prudent|aggressive] [--source full|calls]
-  tracetrim apply   projection.json TOOL < output.json
+  tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
-  tracetrim report  traces/*.jsonl -o report.html     (also writes report.json)
+  tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -48,7 +48,12 @@ def cmd_learn(a):
 
 
 def cmd_apply(a):
-    sys.stdout.write(Projection.load(a.projection).apply(a.tool, sys.stdin.read()))
+    fmt_ = json.loads(Path(a.projection).read_text(encoding="utf-8")).get("format", "")
+    if fmt_.startswith("tracetrim/config"):
+        from .runtime import Policy
+        sys.stdout.write(Policy.load(a.projection).apply(a.tool, sys.stdin.read()))
+    else:
+        sys.stdout.write(Projection.load(a.projection).apply(a.tool, sys.stdin.read()))
 
 
 def cmd_measure(a):
@@ -107,12 +112,18 @@ def cmd_report(a):
     traces, usages = _read(a.traces)
     d = rp.compute([t.name for t in traces], usages, a.unseen)
     sugg = rp.suggestions(d)
-    d["suggestions"] = sugg
     out = Path(a.output)
+    cfg_path, proj_path = out.with_suffix(".config.json"), out.with_suffix(".projection.json")
+    config, projection = rp.build_config(d, sugg, usages, proj_path.name)
+    projection.save(proj_path)
+    cfg_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    d["suggestions"], d["config"], d["config_file"] = sugg, config, cfg_path.name
     out.write_text(rp.render_html(d, sugg), encoding="utf-8")
     out.with_suffix(".json").write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"{out} and {out.with_suffix('.json').name}: {d['totals']['traces']} traces, "
-          f"{d['totals']['calls']} calls, {len(sugg)} suggestions")
+    auto = sum(s["action"]["kind"] == "auto" for s in sugg)
+    print(f"{out}, {out.with_suffix('.json').name}, {cfg_path.name}, {proj_path.name}: "
+          f"{d['totals']['traces']} traces, {d['totals']['calls']} calls, "
+          f"{len(sugg)} suggestions ({auto} automatic)")
 
 
 def main(argv=None):

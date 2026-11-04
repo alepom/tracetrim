@@ -56,7 +56,7 @@ def compute(names, usages, unseen="keep") -> dict:
     tools = defaultdict(lambda: {
         "calls": 0, "raw": 0, "unescaped": 0, "prose_calls": 0, "prose_tokens": 0,
         "errors": 0, "duplicates": 0, "loo_raw": 0, "loo_prudent": 0, "loo_aggressive": 0,
-        "loo_trimmed_calls": 0, "loo_misses": 0, "fields": {}})
+        "loo_trimmed_calls": 0, "loo_misses": 0, "error_examples": [], "fields": {}})
     field_stats = defaultdict(lambda: defaultdict(lambda: {"tokens": 0, "seen": 0, "used": 0, "echo": 0}))
     judgeable = defaultdict(set)
     missed_fields = defaultdict(Counter)
@@ -68,7 +68,13 @@ def compute(names, usages, unseen="keep") -> dict:
             raw = count(c.output)
             t["calls"] += 1
             t["raw"] += raw
-            t["errors"] += _is_error(c)
+            if _is_error(c):
+                t["errors"] += 1
+                # The provider's own message usually names the bad parameter:
+                # it is what the tool description needs to prevent.
+                msg = " ".join(c.output.split())[:200]
+                if msg not in t["error_examples"] and len(t["error_examples"]) < 3:
+                    t["error_examples"].append(msg)
             key = (c.tool, c.arguments)
             t["duplicates"] += key in seen_args
             seen_args.add(key)
@@ -187,12 +193,15 @@ def suggestions(d: dict) -> list[dict]:
         share = t["raw"] / total
         if t["loo_raw"] and t["loo_trimmed_calls"]:
             saving = 1 - t["loo_prudent"] / t["loo_raw"]
-            if share >= TRIM_MIN_SHARE and saving >= TRIM_MIN_SAVING:
+            # Only tools the generated config will trim: a miss on a tool
+            # left untouched is not a risk, and `expand` would have nothing to do.
+            trimmed_by_config = share >= TRIM_MIN_SHARE and saving >= TRIM_MIN_SAVING
+            if trimmed_by_config:
                 add("trim", "saving", tool,
                     f"`{tool}` carries {_p(share, 'en')} of all tool-output tokens. On runs it was not learned from, the prudent projection removes {_p(saving, 'en')} of them ({_n(t['loo_raw'] - t['loo_prudent'], 'en')} tokens over {t['calls']} calls).",
                     f"`{tool}` porta {_il(share)} di tutti i token restituiti dai tool. Sui run da cui non ha imparato, la proiezione prudente ne toglie {_il(saving)} ({_n(t['loo_raw'] - t['loo_prudent'], 'it')} token su {t['calls']} chiamate).")
             rate = t["loo_misses"] / t["loo_trimmed_calls"]
-            if rate >= MISS_RATE and t["loo_trimmed_calls"] >= MIN_CALLS:
+            if trimmed_by_config and rate >= MISS_RATE and t["loo_trimmed_calls"] >= MIN_CALLS:
                 top = [f for f, v in sorted(t["fields"].items(), key=lambda x: -x[1]["missed"]) if v["missed"]][:4]
                 add("misses", "risk", tool,
                     f"The aggressive projection of `{tool}` hid a field that a later step used in {t['loo_misses']} of {_calls(t['loo_trimmed_calls'], 'en')} held-out ({', '.join(f'`{f}`' for f in top)}). Use the prudent projection, enable `expand`, and collect more traces before trimming aggressively.",
@@ -215,8 +224,74 @@ def suggestions(d: dict) -> list[dict]:
                 f"{t['errors']} of {_calls(t['calls'], 'en')} to `{tool}` returned an error. Each one costs a full turn: check the arguments the agent sends, and state the constraint in the tool description.",
                 f"{_calls(t['errors'], 'it')} su {t['calls']} a `{tool}` {'ha' if t['errors'] == 1 else 'hanno'} restituito un errore. Ognuna costa un turno intero: controlla gli argomenti che l'agente invia e scrivi il vincolo nella descrizione del tool.")
 
+    for x in out:
+        x["action"] = _action(x, d)
     order = {"warning": 0, "risk": 1, "saving": 2, "quick-win": 3, "review": 4, "limit": 5}
     return sorted(out, key=lambda s: order[s["level"]])
+
+
+def _action(s: dict, d: dict) -> dict:
+    """What to do about a suggestion. `auto` actions go into the generated
+    config; `manual` ones need a person, and carry what that person needs."""
+    tool = s["tool"]
+    t = d["tools"].get(tool, {}) if tool else {}
+    if s["rule"] == "trim":
+        return {"kind": "auto", "type": "trim", "tool": tool, "mode": "prudent"}
+    if s["rule"] == "misses":
+        return {"kind": "auto", "type": "expand", "tool": tool}
+    if s["rule"] == "escapes":
+        return {"kind": "auto", "type": "unescape"}
+    if s["rule"] == "duplicates":
+        return {"kind": "auto", "type": "cache"}
+    if s["rule"] == "errors":
+        return {"kind": "manual", "type": "fix_tool_description", "tool": tool,
+                "examples": t.get("error_examples", [])}
+    if s["rule"] == "unjudged":
+        unj = [f for f, v in sorted(t["fields"].items(), key=lambda x: -x[1]["tokens"]) if v["status"] == "unjudged"]
+        return {"kind": "manual", "type": "review_fields", "tool": tool, "fields": unj[:10]}
+    if s["rule"] == "prose":
+        return {"kind": "manual", "type": "limit_text_output", "tool": tool}
+    return {"kind": "manual", "type": "collect_traces", "min": MIN_TRACES}
+
+
+ACTION_TEXT = {
+    "trim": ("The generated config applies the prudent projection to this tool.",
+             "La configurazione generata applica la proiezione prudente a questo tool."),
+    "expand": ("The generated config enables `expand` for this tool, so a hidden field can be fetched back.",
+               "La configurazione generata attiva `expand` per questo tool, così un campo nascosto si può recuperare."),
+    "unescape": ("The generated config re-serialises every JSON output as UTF-8.",
+                 "La configurazione generata riserializza ogni output JSON in UTF-8."),
+    "cache": ("The generated config caches identical calls within a run.",
+              "La configurazione generata mette in cache le chiamate identiche all'interno di un run."),
+    "fix_tool_description": ("Rewrite the tool description with the constraint these errors reveal:",
+                             "Riscrivi la descrizione del tool con il vincolo che questi errori rivelano:"),
+    "review_fields": ("Review these fields and add the ones the task does not need to the projection's dropped list:",
+                      "Rivedi questi campi e aggiungi alla lista dei campi tagliati quelli che al compito non servono:"),
+    "limit_text_output": ("Reduce how often this tool is called, or how much text it returns.",
+                          "Riduci quante volte viene chiamato questo tool, o quanto testo restituisce."),
+    "collect_traces": ("Collect more runs of the same task, then generate the report again.",
+                       "Raccogli altre esecuzioni dello stesso compito, poi rigenera il report."),
+}
+
+
+def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
+    """The runtime config and the projection it points to, from `auto` actions only."""
+    trim = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "trim"}
+    expand = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "expand"} & trim
+    p = learn(usages, "prudent", unseen=d["unseen"])
+    p.keep = {t: v for t, v in p.keep.items() if t in trim}
+    p.seen = {t: v for t, v in p.seen.items() if t in trim}
+    config = {
+        "format": "tracetrim/config@1",
+        "generated": d["generated"],
+        "projection": projection_file,
+        # Lossless, so on by default even when the saving is below the
+        # report's threshold.
+        "unescape": True,
+        "cache_identical_calls": any(s["action"]["type"] == "cache" for s in sugg),
+        "tools": {t: {"trim": "prudent", "expand": t in expand} for t in sorted(trim)},
+    }
+    return config, p
 
 
 L = {
@@ -229,6 +304,12 @@ L = {
     "aggressive": ("after aggressive projection", "dopo la proiezione aggressiva"),
     "misses": ("held-out misses", "mancati sui run esclusi"),
     "suggestions": ("Suggestions", "Suggerimenti"), "none": ("No suggestion.", "Nessun suggerimento."),
+    "auto": ("AUTOMATIC", "AUTOMATICA"), "manual": ("MANUAL", "MANUALE"),
+    "actions": ("Automatic actions", "Azioni automatiche"),
+    "config_text": ("The automatic actions are collected in a runtime config, written next to this report together with "
+                    "the projection it uses. Apply it as it is, or edit it first: it is plain JSON.",
+                    "Le azioni automatiche sono raccolte in una configurazione di runtime, scritta accanto a questo report "
+                    "insieme alla proiezione che usa. Puoi applicarla così com'è o modificarla prima: è un semplice JSON."),
     "per_tool": ("Per tool", "Per tool"), "tool": ("tool", "tool"), "share": ("share", "quota"),
     "errors": ("errors", "errori"), "prose": ("text tokens", "token di testo"),
     "fields": ("Fields", "Campi"), "field": ("field", "campo"), "tokens": ("tokens", "token"),
@@ -278,10 +359,24 @@ def render_html(d: dict, sugg: list[dict]) -> str:
     tiles_html += (f'<div class="tile"><div class="v">{T["loo_misses"]}/{T["loo_trimmed_calls"]}</div>'
                    f'<div class="k">{_t("misses")}</div></div>')
 
+    def act(a):
+        en, it = ACTION_TEXT[a["type"]]
+        extra = a.get("examples") or a.get("fields") or []
+        items = "".join(f"<li><code>{html.escape(x)}</code></li>" for x in extra)
+        badge = _t("auto") if a["kind"] == "auto" else _t("manual")
+        return (f'<div class="act {a["kind"]}"><span class="badge">{badge}</span>'
+                f'<span lang="en">{_md(en)}</span><span lang="it">{_md(it)}</span>'
+                f'{f"<ul>{items}</ul>" if items else ""}</div>')
+
     sugg_html = "".join(
         f'<li class="s {s["level"]}"><span class="lvl">{_t("level", s["level"])}</span>'
-        f'<span lang="en">{_md(s["en"])}</span><span lang="it">{_md(s["it"])}</span></li>' for s in sugg
+        f'<span lang="en">{_md(s["en"])}</span><span lang="it">{_md(s["it"])}</span>{act(s["action"])}</li>'
+        for s in sugg
     ) or f"<li>{_t('none')}</li>"
+    cfg = d.get("config")
+    cfg_html = (f'<p>{_t("config_text")}</p><pre><code>{html.escape(json.dumps(cfg, indent=2, ensure_ascii=False))}</code></pre>'
+                f'<pre><code>tracetrim apply {html.escape(d.get("config_file", "report.config.json"))} TOOL &lt; output.json</code></pre>'
+                if cfg else "")
 
     total = T["raw"] or 1
     rows, details = [], []
@@ -339,6 +434,12 @@ details {{ background:var(--card); border:1px solid var(--line); border-radius:6
 summary {{ cursor:pointer; }}
 code {{ font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }}
 .method {{ color:var(--mut); font-size:14px; }}
+.act {{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); font-size:14px; }}
+.act ul {{ margin:6px 0 0; padding-left:18px; }}
+.badge {{ display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:1px 6px; border-radius:4px; margin-right:8px; }}
+.act.auto .badge {{ background:var(--ok); color:var(--card); }}
+.act.manual .badge {{ background:var(--rev); color:var(--card); }}
+pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px 12px; overflow-x:auto; }}
 </style></head>
 <body class="en"><main>
 <div class="bar"><button class="en" onclick="document.body.className='en'">EN</button>
@@ -346,6 +447,7 @@ code {{ font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }}
 <h1>{_t("title")}</h1><p class="sub">{_t("subtitle")}</p>
 <div class="tiles">{tiles_html}</div>
 <h2>{_t("suggestions")}</h2><ul class="sugg">{sugg_html}</ul>
+<h2>{_t("actions")}</h2>{cfg_html}
 <h2>{_t("per_tool")}</h2>
 <div class="scroll"><table><thead><tr><th>{_t("tool")}</th><th>{_t("calls")}</th><th>{_t("tokens")}</th><th>{_t("share")}</th>
 <th>{_t("prudent")}</th><th>{_t("aggressive")}</th><th>{_t("misses")}</th><th>{_t("errors")}</th><th>{_t("prose")}</th></tr></thead>
