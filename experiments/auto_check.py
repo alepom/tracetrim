@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """End-to-end check of the automatic mode with a real agent (not part of the study).
 
-  .venv/bin/python -m experiments.auto_check --runs 4 --min-runs 3
+  .venv/bin/python -m experiments.auto_check --runs 4 --min-runs 3                    # MCP: through the proxy
+  .venv/bin/python -m experiments.auto_check --runs 4 --min-runs 3 --mode function    # function calling: AutoTrim
 
 An agent (Responses API, the demo prompt for billing support) talks MCP to the
 tracetrim proxy in automatic mode, which sits in front of the simulated
 billing server. Expected: the first `min-runs` runs only teach (no trimming),
 the next ones are trimmed; the agent calls tracetrim_done; answers stay right.
+
+With --mode function there is no proxy: the loop runs the billing tools
+itself (as an agent with function calling does) and passes every result
+through tracetrim.auto.AutoTrim, and the final answer to AutoTrim.done.
 Spend is printed, and is not counted in the study's ledger.
 """
 import argparse
@@ -28,7 +33,7 @@ PROMPTS = (ROOT / "docs" / "demo_prompts_IT.md").read_text(encoding="utf-8")
 SYSTEM, USER = re.findall(r"```\n(.*?)\n```", PROMPTS, re.S)[:2]
 
 
-async def one_run(client, model, session, schemas):
+async def one_run(client, model, session, schemas, tt=None):
     usage = {"input": 0, "cached": 0, "output": 0}
     calls, done = 0, False
     kwargs = {"model": model, "instructions": SYSTEM, "tools": schemas, "input": [{"role": "user", "content": USER}]}
@@ -46,12 +51,21 @@ async def one_run(client, model, session, schemas):
             if item.type == "function_call":
                 calls += 1
                 done |= item.name == "tracetrim_done"
-                res = await session.call_tool(item.name, json.loads(item.arguments or "{}"))
-                outs.append({"type": "function_call_output", "call_id": item.call_id,
-                             "output": "".join(getattr(c, "text", "") or "" for c in res.content)})
+                args = json.loads(item.arguments or "{}")
+                if tt is not None and item.name == "expand":
+                    text = tt.expand(args)
+                else:
+                    res = await session.call_tool(item.name, args)
+                    text = "".join(getattr(c, "text", "") or "" for c in res.content)
+                    if tt is not None:
+                        text = tt.output(item.name, args, text)
+                outs.append({"type": "function_call_output", "call_id": item.call_id, "output": text})
         if not outs:
             break
         kwargs = {"model": model, "instructions": SYSTEM, "tools": schemas, "previous_response_id": r.id, "input": outs}
+    if tt is not None:
+        tt.done(answer)
+        done = True
     return usage, calls, done, answer
 
 
@@ -71,23 +85,33 @@ async def main():
     a.add_argument("--runs", type=int, default=4)
     a.add_argument("--min-runs", type=int, default=3)
     a.add_argument("--model", default=PRICES["model"])
+    a.add_argument("--mode", choices=["mcp", "function"], default="mcp")
     o = a.parse_args()
-    work = ROOT / "out" / "auto_check"
+    work = ROOT / "out" / ("auto_check" if o.mode == "mcp" else "auto_check_function")
     shutil.rmtree(work, ignore_errors=True)
-    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
-        "-m", "tracetrim.cli", "proxy", "--upstream-cmd", f"{sys.executable} -m experiments.simulated.server_c4",
-        "--auto", str(work), "--min-runs", str(o.min_runs)])
+    tt = None
+    if o.mode == "mcp":
+        params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+            "-m", "tracetrim.cli", "proxy", "--upstream-cmd", f"{sys.executable} -m experiments.simulated.server_c4",
+            "--auto", str(work), "--min-runs", str(o.min_runs)])
+    else:
+        from tracetrim.auto import AutoTrim
+        params = StdioServerParameters(command=sys.executable, cwd=str(ROOT),
+                                       args=["-m", "experiments.simulated.server_c4"])
+        tt = AutoTrim(work, min_runs=o.min_runs)
     client = AsyncOpenAI(timeout=600.0, max_retries=1)
     total = 0.0
     print(f"\n  {'run':<5}{'input':>9}{'uncached':>10}{'output':>8}{'calls':>7}  done  right  trimming  USD")
-    async with stdio_client(params, errlog=open(work.parent / "auto_check.log", "w")) as (r, w), ClientSession(r, w) as s:
+    async with stdio_client(params, errlog=open(work.parent / f"{work.name}.log", "w")) as (r, w), ClientSession(r, w) as s:
         await s.initialize()
         for i in range(1, o.runs + 1):
             listed = (await s.list_tools()).tools
             schemas = [{"type": "function", "name": t.name, "description": t.description or "",
                         "parameters": dict(t.input_schema or {"type": "object", "properties": {}}), "strict": False}
                        for t in listed]
-            usage, calls, done, answer = await one_run(client, o.model, s, schemas)
+            if tt is not None:
+                schemas.append({"type": "function", **tt.expand_tool, "strict": False})
+            usage, calls, done, answer = await one_run(client, o.model, s, schemas, tt)
             c = cost(usage)
             total += c
             cfg = work / "report.config.json"

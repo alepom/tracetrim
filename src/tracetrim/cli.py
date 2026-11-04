@@ -243,7 +243,7 @@ def main(argv=None):
     s.add_argument("--quiet", action="store_true", help="no per-call log on stderr")
     s.add_argument("--auto", metavar="WORKDIR",
                    help="automatic mode: record runs, learn, apply safe actions, keep the report (see tracetrim.auto)")
-    s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto)")
+    s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto; at least 2)")
     s.add_argument("--structural", choices=["toon", "headroom"],
                    help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
     s.set_defaults(func=cmd_proxy)

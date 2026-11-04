@@ -52,7 +52,10 @@ class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5):
         self.dir = Path(workdir)
         (self.dir / "traces").mkdir(parents=True, exist_ok=True)
-        self.min_runs = min_runs
+        # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
+        # as in `tracetrim measure`): with fewer than two there is nothing to
+        # hold out, and nothing would ever be trimmed.
+        self.min_runs = max(2, min_runs)
         self.state_path = self.dir / "state.json"
         self.state = {"runs": 0, "complete_runs": 0, "trimmed": {}, "expanded": {}, "off": [],
                       "config_from_runs": 0}
@@ -153,3 +156,76 @@ class Learner:
 
     def _save(self) -> None:
         self.state_path.write_text(json.dumps(self.state, indent=2) + "\n")
+
+
+class AutoTrim:
+    """Automatic mode for agents that run their own tools (function calling, no MCP).
+
+        tt = AutoTrim("tracetrim-data/", min_runs=5)
+        tools = my_tools + [tt.expand_tool]        # adapt the schema to your provider
+        ...
+        # in the loop, for every tool call the model makes:
+        if name == "expand":
+            result = tt.expand(arguments)
+        else:
+            result = tt.output(name, arguments, run_my_tool(name, arguments))
+        ...
+        # when the run is over:
+        tt.done(final_answer)
+
+    The same rules as the proxy's automatic mode, without `tracetrim_done`:
+    the code that runs the loop already has the final answer.
+    """
+
+    def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None):
+        from .proxy import EXPAND, Trimmer
+        self.learner = Learner(workdir, min_runs)
+        self.structural = structural
+        self.trimmer = Trimmer(self._with_structural(self.learner.initial_policy()))
+        self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
+                            "parameters": EXPAND["inputSchema"]}
+
+    def _with_structural(self, policy: Policy | None) -> Policy | None:
+        if policy is not None and self.structural:
+            policy.structural = self.structural
+        return policy
+
+    @property
+    def trimming(self) -> bool:
+        p = self.trimmer.policy
+        return p is not None and bool(p.tools)
+
+    @property
+    def report(self) -> Path:
+        return self.learner.dir / "report.html"
+
+    def output(self, tool: str, arguments: dict | str | None, raw: str) -> str:
+        """Record the call; return what the model should receive."""
+        if isinstance(arguments, str):
+            try:
+                arguments = json.loads(arguments or "{}")
+            except json.JSONDecodeError:
+                arguments = {"_raw": arguments}
+        self.learner.call(tool, arguments or {}, raw)
+        text = self.trimmer.output(tool, raw)
+        if "\n[trimmed] " in text:
+            self.learner.trimmed(tool)
+        return text
+
+    def expand(self, arguments: dict | str | None) -> str:
+        """Answer an `expand` call: the hidden fields the model asked for."""
+        if isinstance(arguments, str):
+            arguments = json.loads(arguments or "{}")
+        arguments = arguments or {}
+        cid = str(arguments.get("call_id", ""))
+        if cid in self.trimmer.tool_of:
+            self.learner.expanded(self.trimmer.tool_of[cid])
+        return self.trimmer.expand(cid, [str(f) for f in arguments.get("fields") or []])
+
+    def done(self, answer: str | None) -> None:
+        """Close the run with the final answer: report updated, policy reloaded when ready."""
+        if self.learner.done(answer) is None:
+            return
+        new = self.learner.relearn()
+        if new is not None:
+            self.trimmer.policy = self._with_structural(new)

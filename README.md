@@ -118,6 +118,40 @@ URL `https://your-tunnel.example/mcp`, header `Authorization: Bearer CHOOSE_A_SE
 report is at `http://127.0.0.1:8799/report?token=CHOOSE_A_SECRET` on the machine running the proxy.
 `docs/demo_playground.sh` does all of this for the demo.
 
+### Function calling, without MCP
+
+If your agent runs its own tools (function calling), there is no proxy to put in between: the
+loop that runs the tools is yours, so tracetrim goes in there, in three places. No
+`tracetrim_done` either: your code already has the final answer.
+
+```python
+from tracetrim.auto import AutoTrim
+
+tt = AutoTrim("tracetrim-data/", min_runs=5)
+tools = my_tools + [{"type": "function", **tt.expand_tool}]      # 1. offer expand
+
+# 2. in the loop, for every tool call the model makes
+if call.name == "expand":
+    result = tt.expand(call.arguments)
+else:
+    result = tt.output(call.name, call.arguments, run_my_tool(call.name, call.arguments))
+
+# 3. when the run is over
+tt.done(final_answer)
+```
+
+`tt.output` records the call and returns what the model should receive: the raw result during the
+first runs, the trimmed one after. `tt.done` closes the run, updates the report
+(`tt.report`, `tracetrim-data/report.html`) and, once `min_runs` runs exist, starts trimming; what
+was learned survives restarts. The rules are those of the proxy's automatic mode. Arguments can be
+a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a description and a JSON
+schema, to adapt to your provider's tool format (`{"type": "function", ...}` for OpenAI, `name` /
+`description` / `input_schema` for Anthropic).
+
+Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: uncached
+input tokens about halved after learning, no field asked back, every answer correct (a check, not a
+measurement: `python -m experiments.auto_check --mode function`).
+
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
 treat the data: local, not shared, not committed.
