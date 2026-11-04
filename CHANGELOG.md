@@ -6,7 +6,7 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## 0.3.4
 
-Fixes from two independent pre-publication reviews.
+Fixes from three independent pre-publication reviews.
 
 - **Proxy security**: DNS-rebinding protection always on (local addresses on the proxy's port, plus
   `--allowed-host`), also for `/report`; tokens compared in constant time; `--token` can come from
@@ -25,7 +25,11 @@ Fixes from two independent pre-publication reviews.
   search-data cases from the released records.
 - OAuth token files are created readable by the owner only; `tracetrim learn --v01`; Python 3.10
   compatibility of `tracetrim login`; `AutoTrim.expand` tolerates malformed arguments.
-- Paper: the Phase C gate is described as it worked, with a post-hoc re-check (deviation 13);
+- Experiments: the gates did not parse projected outputs (they end with the `[trimmed]` line); the line
+  is now cut and every Phase C run re-checked, with no gate result changed; a post-hoc re-check finds one
+  editorial-plan volume of 180 written without a source (deviation 13).
+- Paper: real-API and simulated cases are reported separately in every range; the editorial-plan
+  measure outside the band is reported without reading a direction into it;
   the lossless part of the savings (re-serialisation alone) is reported; H3 fails in one case;
   misses are reported as calls, and real-API and simulated cases are no longer pooled; the Study 2 band
   uses the frozen thermometers only, and the shift in the editorial plan's keyword choice is reported;

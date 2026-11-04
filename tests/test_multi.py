@@ -46,7 +46,7 @@ def _runs(n, traces):
     return runs
 
 
-def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path, traces):
+def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path, traces, specs):
     from mcp import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
 

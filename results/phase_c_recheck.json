@@ -19,8 +19,7 @@
       "other": 0,
       "mismatch": 0,
       "unknown": 0,
-      "unverified_in_own_text": 0,
-      "unverified_volume_in_expand": 0
+      "mismatches": []
     },
     "C-raw-2": {
       "pairs": 60,
@@ -28,8 +27,7 @@
       "other": 0,
       "mismatch": 0,
       "unknown": 0,
-      "unverified_in_own_text": 0,
-      "unverified_volume_in_expand": 0
+      "mismatches": []
     },
     "C-raw-3": {
       "pairs": 60,
@@ -37,35 +35,39 @@
       "other": 0,
       "mismatch": 0,
       "unknown": 0,
-      "unverified_in_own_text": 0,
-      "unverified_volume_in_expand": 0
+      "mismatches": []
     },
     "C-prudent-1": {
       "pairs": 60,
-      "own": 22,
-      "other": 28,
+      "own": 60,
+      "other": 0,
       "mismatch": 0,
-      "unknown": 10,
-      "unverified_in_own_text": 10,
-      "unverified_volume_in_expand": 8
+      "unknown": 0,
+      "mismatches": []
     },
     "C-prudent-2": {
       "pairs": 60,
-      "own": 43,
-      "other": 14,
+      "own": 59,
+      "other": 0,
       "mismatch": 1,
-      "unknown": 2,
-      "unverified_in_own_text": 2,
-      "unverified_volume_in_expand": 2
+      "unknown": 0,
+      "mismatches": [
+        {
+          "written": 0,
+          "in_own_outputs": [],
+          "in_other_runs": [
+            40
+          ]
+        }
+      ]
     },
     "C-prudent-3": {
       "pairs": 60,
-      "own": 26,
-      "other": 26,
+      "own": 60,
+      "other": 0,
       "mismatch": 0,
-      "unknown": 8,
-      "unverified_in_own_text": 8,
-      "unverified_volume_in_expand": 7
+      "unknown": 0,
+      "mismatches": []
     }
   }
 }

@@ -9,6 +9,7 @@ returns, so that in a demo one can see the calls reach this server whether
 the agent talks to it directly or through the tracetrim proxy.
 """
 import argparse
+import os
 import json
 import sys
 
@@ -22,7 +23,8 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument("--port", type=int, default=8798)
     a.add_argument("--host", default="127.0.0.1")
-    a.add_argument("--token", required=True, help="required as 'Authorization: Bearer TOKEN'")
+    a.add_argument("--token", default=os.environ.get("BILLING_TOKEN"), required=not os.environ.get("BILLING_TOKEN"),
+                   help="required as 'Authorization: Bearer TOKEN' (default: $BILLING_TOKEN)")
     a.add_argument("--allowed-host", action="append", default=[])
     o = a.parse_args()
 

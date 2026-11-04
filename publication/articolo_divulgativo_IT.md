@@ -46,12 +46,14 @@ poi è servito.
 
 ## Cosa abbiamo trovato
 
-**Gli agenti usano una piccola parte di ciò che ricevono.** In quattro casi su cinque, i campi usati valgono tra il
-17% e il 32% dei token restituiti dai tool. Il filtro imparato, provato su esecuzioni nuove, ha tolto **tra il 63% e il
-77%** dei token. Una parte di questo risparmio non toglie nulla: i tool restituiscono JSON indentato, e riscriverlo
-compatto vale da solo fino al 17%. Sulle stesse conversazioni degli stessi quattro agenti, Headroom, una libreria
-open source di compressione del contesto, ne toglie tra il 17% e il 33%; il filtro imparato tra il 59% e il 77% (tra
-il 46% e il 61% con le protezioni della versione 0.2); la sola riscrittura compatta tra lo 0% e il 17%.
+**Gli agenti usano una piccola parte di ciò che ricevono.** In due dei tre casi su API reali, i campi usati valgono il
+19% e il 32% dei token restituiti dai tool (17% e 18% nei due casi simulati). Il filtro imparato, provato su esecuzioni
+nuove, ha tolto **il 63% e il 70%** dei token in quei due casi reali (il 69% e il 77% nei simulati). Una parte di
+questo risparmio non toglie nulla: i tool restituiscono JSON indentato, e riscriverlo compatto vale da solo fino al 13%
+nei casi reali (fino al 17% nei simulati). Sulle stesse conversazioni, nei due casi reali, Headroom, una libreria open
+source di compressione del contesto, toglie il 17% e il 28%; il filtro imparato il 59% e il 68% (il 46% e il 53% con
+le protezioni della versione 0.2); la sola riscrittura compatta lo 0% e il 12%. Il terzo caso reale è l'eccezione:
+l'agente usa quasi tutto quello che riceve, e il filtro toglie il 12%.
 
 **Il filtro va imparato dalle tracce complete.** Se si osservano solo le chiamate ai tool, cioè quello che vedrebbe
 un proxy MCP messo tra agente e server, i campi persi esplodono: nel complesso il filtro toglie un campo usato nel
@@ -91,15 +93,16 @@ Tre cose non sono andate bene, e il paper le riporta:
 - la **compressione strutturale** (riscrivere il JSON in un formato più compatto, TOON) non toglie dati, ma ha
   cambiato il modo in cui il modello ha risolto un caso ambiguo. Un formato meno familiare al modello non è una
   scelta neutra;
-- nel **piano editoriale**, anche con le protezioni, l'agente ha scelto parole chiave con più ricerche di quelle che
-  sceglie con i dati completi (mediana 1.300 contro 355–590): i numeri erano giusti, ma la scelta è cambiata.
+- nel **piano editoriale**, con le protezioni, una delle misure di qualità è uscita dall'intervallo delle esecuzioni
+  senza filtro: il volume mediano delle parole chiave scelte (1.300 contro 355–590). Non è una tendenza chiara (in
+  altre varianti la stessa misura resta nell'intervallo), ma va tenuta d'occhio.
 
 Nelle esecuzioni dal vivo, con uno strumento `expand` che permette all'agente di recuperare un campo nascosto, i
 token in input fatturati sono scesi del **56%** e del **32%** nei due casi provati, e ogni esecuzione ha superato i
 controlli previsti dal protocollo. Gli agenti hanno usato `expand`, ma non sempre: in un'esecuzione l'agente non ha
-recuperato un dato nascosto e ha sbagliato un ticket in più rispetto alle esecuzioni senza filtro. E in uno dei due
-casi i controlli potevano verificare solo i dati che l'agente vedeva: ricontrollati a posteriori sui dati completi,
-dei 180 volumi riportati 159 sono confermati, uno è sbagliato e 20 non si possono abbinare in automatico.
+recuperato un dato nascosto e ha sbagliato un ticket in più rispetto alle esecuzioni senza filtro. E ricontrollando a
+posteriori i 180 volumi riportati nel piano editoriale, 179 sono confermati e uno è stato scritto senza che nessuno
+strumento l'avesse restituito: i controlli automatici non potevano accorgersene.
 
 ## Cosa portarsi a casa
 

@@ -161,24 +161,24 @@
             "run": "C1/C-prudent-1",
             "json": true,
             "structure": true,
-            "facts_ok": 22,
-            "facts": 22,
+            "facts_ok": 60,
+            "facts": 60,
             "domain_rule": true
           },
           {
             "run": "C1/C-prudent-2",
             "json": true,
             "structure": true,
-            "facts_ok": 43,
-            "facts": 43,
+            "facts_ok": 59,
+            "facts": 59,
             "domain_rule": true
           },
           {
             "run": "C1/C-prudent-3",
             "json": true,
             "structure": true,
-            "facts_ok": 26,
-            "facts": 26,
+            "facts_ok": 60,
+            "facts": 60,
             "domain_rule": true
           }
         ],

@@ -1,7 +1,7 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{What the agent uses can be learned, but only from complete traces.} Across five agents, most of what
+\paragraph{What the agent uses can be learned, but only from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
 of it on a new run. The learner must see the final answer: an MCP gateway placed between agent and tools can
 \emph{apply} a projection, but learning from what it sees alone misses far more of what the agent uses
@@ -32,5 +32,5 @@ task with full outputs; generate the telemetry report, which is useful on its ow
 proposed configuration, a plain list of kept and dropped fields; apply it with identifier protection and
 \texttt{expand}; and keep recording, so that a field the agent starts needing shows up in the next report. The
 library implements each step, including an MCP proxy that applies a configuration in front of any server without
-changes to the agent. Reported savings should also be read against re-serialisation alone, which removes up to
-\ReserialAiv{} of these outputs without removing anything.
+changes to the agent. Reported savings should also be read against re-serialisation alone, which removes up to \ReserialAi{} of the
+real-API outputs and \ReserialAiv{} of the simulated ones without removing anything.

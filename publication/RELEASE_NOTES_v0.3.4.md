@@ -18,10 +18,11 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
 
 ### What the study found
 
-- On held-out runs of five agents, a learned projection removed 63–77% of tool-output tokens in four
-  of them (12% in the fifth); up to 17 points of that come from re-serialising the JSON alone, which
-  removes nothing. On the same conversations of those four agents: 59–77% (0.1), 46–61% with the 0.2
-  safeguards, 17–33% for Headroom, 0–17% for re-serialisation alone.
+- On held-out runs, a learned projection removed 63% and 70% of tool-output tokens on two of the three
+  agents with real APIs (12% on the third) and 69% and 77% on the two simulated ones; re-serialising the
+  JSON alone, which removes nothing, accounts for up to 13% (real) and 17% (simulated). On the same
+  conversations, the same two real-API agents: 59–68% (0.1), 46–53% (0.2), 17–28% for Headroom, 0–12% for
+  re-serialisation alone; simulated: 69–77%, 57–61%, 31–33%, 7–17%.
 - Learning from tool calls alone (what a gateway sees) missed a used field in 49% of held-out calls of
   the three agents on real APIs, against 4% when the learner also sees the final answer.
 - Where it fails: values the agent transforms, fields used only to reason, and — without an id
@@ -30,7 +31,7 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
 The studies ran on 0.1 and 0.2; the automatic mode, the multi-server proxy, OAuth and function calling
 came after them and were checked end to end with a real agent, not evaluated under a protocol.
 
-0.3.4 includes the fixes of an independent pre-publication review (proxy security, correctness, and
+0.3.4 includes the fixes of three independent pre-publication reviews (proxy security, correctness, and
 the paper): see the changelog.
 
 See [CHANGELOG.md](CHANGELOG.md) for the changes by version.

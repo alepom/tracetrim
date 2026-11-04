@@ -10,9 +10,10 @@ where this works and where it fails. In short:
 
 | | |
 |---|---|
-| Tool-output tokens removed on unseen runs (4 of 5 agents, 0.1) | 63–77%, of which up to 17 points from re-serialising the JSON alone |
-| Same conversations, same 4 agents | tracetrim 59–77% (0.1), 46–61% (0.2); Headroom 17–33%; re-serialisation alone 0–17% |
-| Live runs with `expand`: billed input tokens | −56% and −32%; gates passed as frozen (one wrong volume found by a later re-check) |
+| Tool-output tokens removed on unseen runs (0.1) | real APIs: 63% and 70% (12% on the third agent); simulated: 69% and 77% |
+| …of which re-serialising the JSON alone, removing nothing | up to 13% (real APIs), up to 17% (simulated) |
+| Same conversations: tracetrim 0.1 / 0.2 / Headroom / re-serialisation alone | the same two real-API agents: 59–68% / 46–53% / 17–28% / 0–12%; simulated: 69–77% / 57–61% / 31–33% / 7–17% |
+| Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates, one volume of 180 written without a source |
 | Learning from tool calls only (what a gateway sees) | a used field missed in 49% of held-out calls (3 agents on real APIs), against 4% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 

@@ -27,4 +27,4 @@ Zenodo e repository.
 ## Azioni esterne
 
 Repository e bozze Zenodo sono creati, i DOI riservati e inseriti ovunque. I passi che restano sono in
-[`ULTIMI_PASSI_IT.md`](ULTIMI_PASSI_IT.md).
+`.private/ULTIMI_PASSI_IT.md` (file locale, non pubblicato).

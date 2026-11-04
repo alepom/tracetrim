@@ -31,7 +31,8 @@ from .tools import ROOT, to_args, toolset
 PROMPTS = ROOT / "experiments" / "prompts"
 # Traces live in traces/ where they were recorded; from the Zenodo dataset they
 # are in dataset/traces/ (C3, C4 and C5 only: C1 and C2 are not redistributable).
-TRACES = ROOT / "traces" if (ROOT / "traces").exists() else ROOT / "dataset" / "traces"
+TRACES = next((p for p in (ROOT / "traces", ROOT / "dataset" / "traces") if any(p.glob("C*/A*.jsonl"))),
+              ROOT / "traces")
 
 
 def keep_missing(res: dict, out_path, order) -> dict:

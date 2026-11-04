@@ -282,13 +282,15 @@ The spend cap of 40 USD and its stop rule are unchanged.
     search-data API, with "the same analysis results". Pseudonymising the values that matter (volumes are numbers)
     would change those results, so the promise cannot be kept as written. Instead: traces of C3 (CC0 catalogue), C4
     and C5 (simulated) are released in full; for C1 and C2 only derived per-call records are released (tool, field
-    paths used, echoed and judgeable, token counts), which reproduce the usage analysis without redistributing the
-    provider's data.
+    paths used, echoed, judgeable and seen, token counts), which reproduce the usage analysis and the misses
+    (`experiments/misses_from_derived.py`) without redistributing the provider's data.
 ## Deviation found in the pre-publication review (Study 1)
 
-13. **Phase C, editorial-plan gate (2026-11-04, after publication review).** The live loop stores the outputs the
-    agent received, so in the prudent arm the frozen C1 gate checked only the (keyword, volume) pairs still visible
-    in the projected outputs (22, 43 and 26 of 60) and skipped the rest. The frozen result is kept; every pair is also
-    re-checked against the raw outputs of all the other C1 runs of the same day
-    (`experiments/recheck_phase_c.py`, `results/phase_c_recheck.json`) and reported beside it. The sensitivity
+13. **Phase C gates (2026-11-04, after the pre-publication reviews).** The live loop stores the outputs the agent
+    received; a projected output ends with the line listing the hidden fields, and the gates parsed the output as a
+    whole, so they read none of the projected outputs and, in the editorial plan, checked only the volumes returned
+    by `expand`. `checks.outputs` now cuts that line, and every Phase C run is re-checked: no gate result changes. The
+    C1 gate skips a keyword for which the run's outputs give no volume; every (keyword, volume) pair is therefore also
+    re-checked against the raw outputs of all the other C1 runs of the same day (`experiments/recheck_phase_c.py`,
+    `results/phase_c_recheck.json`), which finds one volume written without a source. The sensitivity
     analysis promised in deviation 6 (without runs with a failed tool call) is reported for Phases A and C.

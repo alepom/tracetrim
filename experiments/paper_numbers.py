@@ -177,11 +177,13 @@ def main():
         c1 = s2["cases"]["C1"]
         lo, hi = c1["band"]["median_volume"]
         m("StudyTwoRawBandVolumei", f"{lo:g}--{hi:g}")
-        m("StudyTwoVtwoMedianVolumei", f"{c1['arms']['v02']['medians']['median_volume']:g}")
+        for arm, key in (("v02", "Vtwo"), ("v02-structural", "Vtwostructural")):
+            m(f"StudyTwo{key}MedianVolumei", f"{c1['arms'][arm]['medians']['median_volume']:g}")
         m("StudyTwoVtwoHoldsi", "holds" if c1["arms"]["v02"]["holds"] else "does not hold")
     pb = load("phase_b.json")
     if pb and "C1" in pb["cases"]:
         meds = {a: x["medians"]["median_volume"] for a, x in pb["cases"]["C1"]["arms"].items()}
+        m("PhaseBPrudentMedianVolumei", f"{meds['prudent']:g}")
         m("PhaseBAggressiveMedianVolumei", f"{meds['aggressive']:g}")
         m("PhaseBStructuralMedianVolumei", f"{meds['structural']:g}")
     if s2 and "C4" in s2["cases"]:
@@ -225,17 +227,17 @@ def main():
         rc = load("phase_c_recheck.json")
         if rc:
             pr = [rc["runs"][f"C-prudent-{i}"] for i in (1, 2, 3)]
-            words = {1: "one", 2: "two", 3: "three"}
+            total = sum(r["pairs"] for r in pr)
             m("RecheckPairs", str(pr[0]["pairs"]))
+            m("RecheckPairsTotal", str(total))
             m("RecheckGateChecked", ", ".join(str(r["own"]) for r in pr))
-            m("RecheckVerified", ", ".join(str(r["own"] + r["other"]) for r in pr))
-            m("RecheckUnknown", ", ".join(str(r["unknown"]) for r in pr))
-            m("RecheckUnknownTotal", str(sum(r["unknown"] for r in pr)))
-            in_text = sum(r["unverified_in_own_text"] for r in pr)
-            m("RecheckUnknownInText", "all" if in_text == sum(r["unknown"] for r in pr) else str(in_text))
-            m("RecheckUnknownInExpand", str(sum(r["unverified_volume_in_expand"] for r in pr)))
-            n_mis = sum(r["mismatch"] for r in pr)
-            m("RecheckMismatch", words.get(n_mis, str(n_mis)) if n_mis else "no")
+            m("RecheckConfirmed", str(sum(r["own"] + r["other"] for r in pr)))
+            mis = [x for r in pr for x in r["mismatches"]]
+            m("RecheckMismatch", word(len(mis)))
+            m("RecheckUnknownTotal", word(sum(r["unknown"] for r in pr)))
+            if len(mis) == 1:
+                m("RecheckMismatchWritten", f"{mis[0]['written']}")
+                m("RecheckMismatchOther", ", ".join(str(v) for v in mis[0]["in_other_runs"]))
         pr_ = json.loads((ROOT / "experiments" / "prices.json").read_text())
         m("PriceInput", f"{pr_['input_per_mtok']:.2f}")
         m("PriceCached", f"{pr_['cached_input_per_mtok']:.2f}")

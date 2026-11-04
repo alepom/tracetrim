@@ -18,9 +18,11 @@
   spots that are known.
 \item \textbf{Post hoc decisions.} Three measurement corrections were made after seeing data (deviations 8, 10 and
   11); each is applied to every run, and the strict test of deviation 11 is reported beside the frozen one. The
-  re-check of the Phase C volumes (deviation 13) was also added afterwards.
-\item \textbf{Gates in the live loop.} In Phase C the gates could only check facts against what the agent was shown;
-  in the editorial plan this left part of the reported volumes to a post-hoc re-check (Section~\ref{sec:phasec}).
+  gates' reading of projected outputs and the re-check of the Phase C volumes (deviation 13) were also fixed or added
+  afterwards.
+\item \textbf{What the gates cannot see.} The editorial-plan gate checks a volume only when the run's outputs give
+  one for that keyword, so a volume written without a source passes it; a post-hoc re-check found one in the live
+  runs (Section~\ref{sec:phasec}).
 \item \textbf{Lossless part of the savings.} Every saving reported includes re-serialisation (compact JSON without
   escapes), which removes nothing; it is reported separately so that the projection is credited only with the rest.
 \item \textbf{Number formats.} Usage detection in the studies matched numbers written plainly or with dot thousands

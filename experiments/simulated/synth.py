@@ -35,14 +35,17 @@ def spec_path(name: str) -> Path:
     import sys
     import urllib.request
     path = SPECS / name
-    if not path.exists():
-        url, digest = PINNED[name]
-        print(f"[simulated] downloading the pinned OpenAPI description {name} (once)", file=sys.stderr, flush=True)
-        data = urllib.request.urlopen(url, timeout=120).read()
-        if hashlib.sha256(data).hexdigest() != digest:
-            raise RuntimeError(f"{name}: downloaded file does not match the pinned sha256 (SOURCES.md)")
-        SPECS.mkdir(exist_ok=True)
-        path.write_bytes(data)
+    url, digest = PINNED[name]
+    if path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == digest:
+        return path
+    print(f"[simulated] downloading the pinned OpenAPI description {name}", file=sys.stderr, flush=True)
+    data = urllib.request.urlopen(url, timeout=120).read()
+    if hashlib.sha256(data).hexdigest() != digest:
+        raise RuntimeError(f"{name}: downloaded file does not match the pinned sha256 (SOURCES.md)")
+    SPECS.mkdir(exist_ok=True)
+    tmp = path.with_suffix(".part")
+    tmp.write_bytes(data)
+    tmp.replace(path)                    # never a half-written spec under the real name
     return path
 BASE_TIME = datetime(2026, 10, 27, 9, 0, tzinfo=timezone.utc)   # scenarios live in late Oct 2026
 WORDS = ("account", "update", "review", "request", "service", "release", "config", "payment",

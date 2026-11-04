@@ -106,14 +106,13 @@ reached the long-context tier), the cost per run fell by \PhaseCChangeCosti{} an
 \PhaseCFailedRunsi{} editorial-plan runs in which a search call failed after the retries (one per arm), billed input
 fell by \PhaseCChangeInputNoFaili.
 
-Every run passed its gates as frozen, but in this phase the gates could see less. The live loop stores what the
-agent received, so in the editorial plan only the volumes still visible in the projected outputs could be checked:
-\RecheckGateChecked{} of the \RecheckPairs{} reported in the three prudent runs, against all \RecheckPairs{} in
-every raw run. Checked after the fact against the raw outputs of all the other runs of the same day, \RecheckVerified{}
-were confirmed; \RecheckMismatch{} contradicted them (a volume of zero for a keyword that has a volume); the rest
-(\RecheckUnknown) could not be paired automatically. For \RecheckUnknownInText{} of these \RecheckUnknownTotal{} the
-keyword and the number both appear in the run's own outputs, and for \RecheckUnknownInExpand{} the number is in what
-\texttt{expand} returned: what cannot be checked is the pairing, not the presence (deviation 13).
+Every run passed its gates. In the editorial plan the gate checks each reported volume against the volumes in the
+run's own tool outputs: it verified \RecheckGateChecked{} of the \RecheckPairs{} volumes of the three prudent runs, and
+all \RecheckPairs{} of every raw run. It skips a keyword for which the run's outputs give no volume, and one such
+pair was skipped: a volume of \RecheckMismatchWritten{} for a keyword that no tool output of that run gave a volume
+for, and that has \RecheckMismatchOther{} in the other runs of the same day. Checked after the fact against those
+runs, \RecheckConfirmed{} of the \RecheckPairsTotal{} prudent volumes are confirmed and \RecheckMismatch{} is not:
+a value written without a source, which a gate of this design cannot catch (deviation 13).
 
 The agents did use \texttt{expand}: a median of \PhaseCPrudentExpandi{} call per run in the editorial plan and
 \PhaseCPrudentExpandiv{} in billing support, where the agent recovered the hidden period end in two of three runs.

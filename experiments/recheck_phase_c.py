@@ -4,24 +4,20 @@
   PYTHONPATH=src .venv/bin/python -m experiments.recheck_phase_c
 
 The frozen gate of the editorial plan checks each (keyword, volume) the agent
-reports against the tool outputs stored in the trace. In the prudent arm of
-Phase C those outputs are the trimmed ones the agent saw (plus what `expand`
-returned), so a keyword whose volume had been hidden had no truth to be checked
-against, and the gate skipped it. This script checks every reported pair
+reports against the tool outputs of its own run, and skips a keyword that does
+not appear there with a volume. This script checks every reported pair also
 against the raw outputs of all the other runs of the same case, collected the
 same day with the same tool (Phase A runs A1-A8 and the Phase C raw runs):
 
   own        verified against the run's own outputs (what the gate counted)
   other      not in the run's own outputs, verified against the other runs
-  mismatch   the keyword appears in the raw outputs with different volumes only
-  unknown    the keyword appears in no raw output: cannot be verified
+  mismatch   the keyword has volumes in the outputs, none equal to the one written
+  unknown    the keyword has a volume in no output: cannot be verified
 
-For the unknown pairs, two more columns say whether the keyword and the number
-both appear somewhere in the run's own outputs, and whether the number appears
-in what `expand` returned.
-
-The same is done for the raw arm, as a control. Nothing here changes the
-frozen result; it reports what that result did not cover.
+For each mismatch the volume written and those in the other runs are kept,
+not the keyword (search data are not redistributed). The outputs are read with
+experiments.checks.outputs, which cuts the `[trimmed]` line of projected
+outputs: without that cut they do not parse (the review found this).
 """
 import json
 from pathlib import Path
@@ -75,7 +71,7 @@ def main():
         return
     reference = [C1 / f"A{i}.jsonl" for i in range(1, 9)] + [C1 / f"C-raw-{i}.jsonl" for i in (1, 2, 3)]
     res = {"reference_runs": [p.stem for p in reference], "runs": {}}
-    print(f"\n  {'run':<14}{'pairs':>6}{'own':>6}{'other':>7}{'mismatch':>10}{'unknown':>9}{'in own text':>13}{'in expand':>11}")
+    print(f"\n  {'run':<14}{'pairs':>6}{'own':>6}{'other':>7}{'mismatch':>10}{'unknown':>9}   mismatches")
     for arm in ("raw", "prudent"):
         for i in (1, 2, 3):
             path = C1 / f"C-{arm}-{i}.jsonl"
@@ -87,26 +83,23 @@ def main():
                     continue
                 for kw, vols in truth_of(outputs(load(ref))).items():
                     other.setdefault(kw, set()).update(vols)
-            counts = {"pairs": 0, "own": 0, "other": 0, "mismatch": 0, "unknown": 0,
-                      "unverified_in_own_text": 0, "unverified_volume_in_expand": 0}
-            own_text = " ".join(o for _, o in outputs(trace)).lower()
-            expand_text = " ".join(o for t, o in outputs(trace) if t == "expand")
+            counts = {"pairs": 0, "own": 0, "other": 0, "mismatch": 0, "unknown": 0, "mismatches": []}
             for kw, vol in pairs(final_json(trace) or {}):
                 counts["pairs"] += 1
                 if kw in own and vol in own[kw]:
                     counts["own"] += 1
                 elif vol in other.get(kw, set()):
                     counts["other"] += 1
+                elif kw in own or kw in other:
+                    counts["mismatch"] += 1
+                    counts["mismatches"].append({"written": vol, "in_own_outputs": sorted(own.get(kw, [])),
+                                                 "in_other_runs": sorted(other.get(kw, []))})
                 else:
-                    known = kw in own or kw in other
-                    counts["mismatch" if known else "unknown"] += 1
-                    if not known:
-                        counts["unverified_in_own_text"] += kw in own_text and str(vol) in own_text
-                        counts["unverified_volume_in_expand"] += str(vol) in expand_text
+                    counts["unknown"] += 1
             res["runs"][path.stem] = counts
             print(f"  {path.stem:<14}" + "".join(f"{counts[k]:>{w}}" for k, w in
-                                                    (("pairs", 6), ("own", 6), ("other", 7), ("mismatch", 10), ("unknown", 9),
-                                                     ("unverified_in_own_text", 13), ("unverified_volume_in_expand", 11))))
+                                                    (("pairs", 6), ("own", 6), ("other", 7), ("mismatch", 10), ("unknown", 9)))
+                  + f"   {counts['mismatches'] or ''}")
     (ROOT / "results" / "phase_c_recheck.json").write_text(json.dumps(res, indent=2) + "\n")
     print("\n  written: results/phase_c_recheck.json\n")
 

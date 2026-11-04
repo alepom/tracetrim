@@ -11,6 +11,20 @@ TRACES = next((p for p in (ROOT / "traces", ROOT / "dataset" / "traces") if (p /
 
 
 @pytest.fixture
+def specs():
+    """The simulated servers need their pinned OpenAPI descriptions: downloaded
+    on first use; without network and without a copy, the test is skipped."""
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from experiments.simulated.synth import PINNED, spec_path
+    try:
+        for name in PINNED:
+            spec_path(name)
+    except Exception as e:                     # no network, proxy, ...
+        pytest.skip(f"OpenAPI descriptions not available: {e}")
+
+
+@pytest.fixture
 def traces():
     if TRACES is None:
         pytest.skip("recorded traces not available: unzip the Zenodo dataset at the repository root")

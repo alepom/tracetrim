@@ -7,7 +7,8 @@
                              (CC0 catalogue; simulated servers whose payloads are ours)
   dataset/derived/C1|C2/     one record per tool call, no text and no values:
                              tool, raw token count, field paths used / used by
-                             later calls / echoed / judgeable (analysed as in Study 1)
+                             later calls / echoed / judgeable, every field path seen
+                             (analysed as in Study 1)
   dataset/MANIFEST.json      every file with its sha256
 
 Pilot runs are excluded, as in every analysis. The C1/C2 metadata files keep

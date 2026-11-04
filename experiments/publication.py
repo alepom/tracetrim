@@ -74,10 +74,10 @@ def check() -> int:
             for name in zf.namelist():
                 if name.endswith((".pdf", ".png", ".zip")):
                     continue
-                low = zf.read(name).decode("utf-8", errors="replace").lower()
-                if any(t in low for t in terms):
+                text = zf.read(name).decode("utf-8", errors="replace")
+                if any(t in text.lower() for t in terms):
                     problems.append(f"{z.relative_to(ROOT)}:{name}: a name from {PRIVATE.relative_to(ROOT)}")
-                if SECRET.search(low) and not name.endswith("publication.py"):
+                if SECRET.search(text) and not name.endswith("publication.py"):     # case matters for keys
                     problems.append(f"{z.relative_to(ROOT)}:{name}: looks like a secret")
     pdfs = [ROOT / "paper" / "main.pdf"] + (sorted(PKG.rglob("*.pdf")) if PKG.exists() else [])
     try:
@@ -107,6 +107,8 @@ def zipdir(out: Path, base: Path, paths: list[Path]) -> None:
 
 
 def package() -> None:
+    if not private_terms():
+        raise SystemExit(f"{PRIVATE.relative_to(ROOT)} is missing: packages are never built without the private-name check")
     if check():
         sys.exit("fix the problems above before packaging")
     if PKG.exists():

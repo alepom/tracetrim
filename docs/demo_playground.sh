@@ -25,6 +25,9 @@ BILLING_PORT=8798
 TRACETRIM_PORT=8799
 ROUTER_PORT=8800
 TOKEN=${DEMO_TOKEN:-$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')}
+# What the banner shows: a token you chose stays off the screen (the terminal may
+# be recorded); a generated one has to be shown once, or nobody could use it.
+if [ -n "${DEMO_TOKEN:-}" ]; then SHOWN='$DEMO_TOKEN'; else SHOWN=$TOKEN; fi
 EXTRA=()
 MIN_RUNS=3
 while [ $# -gt 0 ]; do
@@ -83,7 +86,7 @@ HOST=${URL#https://}
 .venv/bin/python docs/demo_router.py --port "$ROUTER_PORT" \
   --route /billing="$BILLING_PORT" --route /tracetrim="$TRACETRIM_PORT" > out/demo/router.log 2>&1 &
 PIDS+=($!)
-.venv/bin/python -m experiments.simulated.serve_http --port "$BILLING_PORT" --token "$TOKEN" \
+BILLING_TOKEN=$TOKEN .venv/bin/python -m experiments.simulated.serve_http --port "$BILLING_PORT" \
   --allowed-host "$HOST" --allowed-host "127.0.0.1:$BILLING_PORT" > out/demo/billing.log 2>&1 &
 PIDS+=($!)
 sleep 2
@@ -100,15 +103,15 @@ PIDS+=($!)
 
 cat <<EOF
 
-  Playground -> Tools -> Add -> MCP server   (header for both: Authorization: Bearer $TOKEN)
+  Playground -> Tools -> Add -> MCP server   (header for both: Authorization: Bearer $SHOWN)
 
     billing    $URL/billing/mcp       the MCP the agent already uses
     tracetrim  $URL/tracetrim/mcp     in front of billing
 
   Live report (refreshes by itself), from this PC:
-    http://127.0.0.1:$TRACETRIM_PORT/report?token=$TOKEN
+    http://127.0.0.1:$TRACETRIM_PORT/report?token=$SHOWN
   or from anywhere (ngrok shows a warning page first: click "Visit Site"):
-    $URL/tracetrim/report?token=$TOKEN
+    $URL/tracetrim/report?token=$SHOWN
 
   Scene 1: connect only billing, run the agent.
   Scene 2: switch billing off, tracetrim on. Run $MIN_RUNS times (clear the chat each time):

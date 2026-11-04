@@ -39,8 +39,16 @@ def final_json(trace):
     return None
 
 
+TRAILER = "\n[trimmed] "
+
+
 def outputs(trace):
-    return [(e.tool, e.output or "") for e in trace.events if e.kind == "call" and e.output is not None]
+    """What each tool returned, as the agent received it. In Phase C a projected
+    output ends with the `[trimmed] call_id=... hidden: ...` line: it is cut
+    here, otherwise the JSON does not parse and the gate silently sees nothing
+    (found in the pre-publication review, deviation 13)."""
+    return [(e.tool, (e.output or "").split(TRAILER)[0]) for e in trace.events
+            if e.kind == "call" and e.output is not None]
 
 
 def _norm(s) -> str:
