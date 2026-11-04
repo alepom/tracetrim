@@ -1,0 +1,5 @@
+{"mcpServers": {
+  "dataforseo": {"url": "https://mcp.dataforseo.com/mcp"},
+  "billing":    {"url": "https://billing.example/mcp", "headers": {"Authorization": "Bearer ${BILLING_TOKEN}"}},
+  "files":      {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/srv/docs"]}
+}}

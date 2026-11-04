@@ -65,10 +65,10 @@ The author set the research question and the constraints of the study; an AI cod
 |---|---|
 | Files | `2_software_and_data/tracetrim_software.zip`, `2_software_and_data/tracetrim_dataset.zip`, `SHA256SUMS.txt` |
 | Resource type | Software |
-| Title | `tracetrim 0.3.1: learn which fields of tool outputs an agent uses, and trim the rest (code, protocols and data)` |
+| Title | `tracetrim 0.3.2: learn which fields of tool outputs an agent uses, and trim the rest (code, protocols and data)` |
 | Creators | come sopra |
 | License | MIT (codice); nel campo descrizione si indica CC BY 4.0 per dati e documentazione (vedi `LICENSES.md`) |
-| Version | `0.3.1` |
+| Version | `0.3.2` |
 | Related works | *is supplement to* → il DOI della bozza 1 |
 
 **Description**: il primo paragrafo del README, più: "The dataset contains full traces of the literature-scan case
@@ -93,7 +93,7 @@ Sostituisci i file nelle due bozze Zenodo con quelli nuovi (il PDF ora riporta i
 
 ## 5. Pubblicare
 
-1. Su GitHub crea la release `v0.3.1` dal tag omonimo, allegando `tracetrim_dataset.zip`.
+1. Su GitHub crea la release `v0.3.2` dal tag omonimo, allegando `tracetrim_dataset.zip`.
 2. Su Zenodo premi **Publish** sulla bozza 2, poi sulla bozza 1.
 3. Pubblica l'articolo con i link definitivi.
 

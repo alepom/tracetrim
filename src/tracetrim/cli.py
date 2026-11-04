@@ -4,6 +4,7 @@
   tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
+  tracetrim login   --servers mcp.json                 (once, for servers that use OAuth)
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
 
@@ -147,6 +148,49 @@ def cmd_proxy(a):
         asyncio.run(serve(o))
 
 
+def _upstreams(a) -> dict:
+    from .proxy import Options, load_servers
+    if bool(a.servers) == bool(a.upstream_url):
+        raise SystemExit("give --servers FILE or --upstream-url URL")
+    o = Options(upstream_url=a.upstream_url, servers=load_servers(a.servers) if a.servers else {})
+    ups = {n: s for n, s in o.upstreams().items() if (not a.server or n in a.server)}
+    from .oauth import wants_oauth
+    return {n: s for n, s in ups.items() if wants_oauth(s)}
+
+
+def cmd_login(a):
+    """Log in to every OAuth server now, so the proxy never waits for a browser."""
+    import asyncio
+    from mcp import ClientSession
+    from .oauth import token_path
+    from .proxy import transport_for
+
+    async def one(name, spec):
+        async with transport_for(name, spec) as (read, write, *_), ClientSession(read, write) as s:
+            await s.initialize()
+            return len((await s.list_tools()).tools)
+
+    ups = _upstreams(a)
+    if not ups:
+        print("no OAuth server (a remote server with 'url' and no 'headers', or \"auth\": \"oauth\")")
+    for name, spec in ups.items():
+        try:
+            n = asyncio.run(one(name, spec))
+            print(f"{name}: logged in, {n} tools · token in {token_path(name, spec['url'])}")
+        except Exception as e:
+            while isinstance(e, BaseExceptionGroup) and e.exceptions:    # anyio wraps the real cause
+                e = e.exceptions[0]
+            raise SystemExit(f"{name}: login failed: {e}")
+
+
+def cmd_logout(a):
+    from .oauth import token_path
+    for name, spec in _upstreams(a).items():
+        p = token_path(name, spec["url"])
+        print(f"{name}: {'token removed' if p.exists() else 'no token'}")
+        p.unlink(missing_ok=True)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tracetrim", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -203,6 +247,14 @@ def main(argv=None):
     s.add_argument("--structural", choices=["toon", "headroom"],
                    help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
     s.set_defaults(func=cmd_proxy)
+
+    for cmd, func, text in (("login", cmd_login, "log in to the OAuth servers (browser), once"),
+                            ("logout", cmd_logout, "forget the OAuth tokens")):
+        s = sub.add_parser(cmd, help=text)
+        s.add_argument("--servers", metavar="FILE", help="the same mcpServers file given to the proxy")
+        s.add_argument("--upstream-url", help="a single OAuth server")
+        s.add_argument("--server", action="append", help="only this server of the file (repeatable)")
+        s.set_defaults(func=func)
 
     a = p.parse_args(argv)
     a.func(a)

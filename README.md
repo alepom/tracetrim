@@ -76,6 +76,35 @@ delete it to start again. In a check with a real agent on the billing case (5 ru
 outputs shrank by about half after learning, no field was asked back, and every answer stayed
 correct: a check, not a measurement — the measurements are in the paper.
 
+### Servers that need credentials
+
+Two separate links, two separate credentials: **agent → tracetrim** is protected by the token you
+choose with `--token` (only when tracetrim is reachable over HTTP); **tracetrim → your servers**
+uses your servers' own credentials, which tracetrim holds and the agent no longer sees.
+
+| how your server authenticates | in `mcp.json` |
+|---|---|
+| API key or bearer token in a header | `"headers": {"Authorization": "Bearer ${MY_TOKEN}"}` (any header name) |
+| local server reading a key from the environment | `"env": {"API_KEY": "${MY_KEY}"}` |
+| OAuth, with a browser login (as in Claude Code or Cursor) | just `"url"`: no headers needed |
+
+`${VAR}` is read from the environment when the proxy starts, so keys stay out of the file. For
+OAuth servers, log in once:
+
+```bash
+tracetrim login --servers mcp.json     # opens the login page of each OAuth server
+```
+
+Discovery, client registration, PKCE and token renewal follow the MCP authorization spec (through
+the MCP SDK); tokens are kept in `~/.config/tracetrim/oauth/`, readable only by you, and renewed on
+their own, so the proxy never waits for a browser. `tracetrim logout --servers mcp.json` forgets them.
+Not supported: a different identity per end user (the proxy uses one identity for everyone) and the
+legacy SSE transport.
+
+**Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
+`tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
+treat the data: local, not shared, not committed.
+
 ## Quickstart: five runs, one report, one config
 
 The manual way, with a review step before anything is applied.

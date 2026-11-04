@@ -175,6 +175,22 @@ class Options:
         return {name: _expand_vars(spec) for name, spec in servers.items()}
 
 
+def transport_for(name: str, spec: dict):
+    """The MCP client transport for one upstream: stdio, HTTP with fixed
+    headers, or HTTP with OAuth (tracetrim.oauth)."""
+    from mcp.client.stdio import StdioServerParameters, get_default_environment, stdio_client
+    from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
+
+    if "url" in spec:
+        from .oauth import provider, wants_oauth
+        auth = provider(name, spec["url"]) if wants_oauth(spec) else None
+        http = create_mcp_http_client(headers=spec.get("headers") or {}, auth=auth)
+        return streamable_http_client(spec["url"], http_client=http)
+    env = {**get_default_environment(), **spec["env"]} if spec.get("env") else None
+    return stdio_client(StdioServerParameters(command=spec["command"], args=spec.get("args") or [], env=env,
+                                              cwd=spec.get("cwd")))
+
+
 def _expand_vars(x):
     if isinstance(x, str):
         return os.path.expandvars(x)
@@ -192,6 +208,8 @@ def load_servers(path: str | Path) -> dict:
     for name, spec in servers.items():
         if not ("command" in spec or "url" in spec):
             raise SystemExit(f"server {name!r}: needs 'command' (stdio) or 'url' (streamable HTTP)")
+        if spec.get("auth") not in (None, "oauth", "none"):
+            raise SystemExit(f"server {name!r}: 'auth' is 'oauth' or 'none'")
         if spec.get("type") == "sse":
             raise SystemExit(f"server {name!r}: SSE transport is not supported, use streamable HTTP")
     return servers
@@ -213,8 +231,6 @@ def _server(o: Options):
     import time
 
     from mcp import ClientSession, types
-    from mcp.client.stdio import StdioServerParameters, get_default_environment, stdio_client
-    from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
     from mcp.server.lowlevel import Server
 
     from .auto import DONE, Learner
@@ -266,14 +282,7 @@ def _server(o: Options):
         async with AsyncExitStack() as stack:
             sessions = {}
             for name, spec in o.upstreams().items():
-                if "url" in spec:
-                    transport = streamable_http_client(
-                        spec["url"], http_client=create_mcp_http_client(headers=spec.get("headers") or {}))
-                else:
-                    env = {**get_default_environment(), **spec["env"]} if spec.get("env") else None
-                    transport = stdio_client(StdioServerParameters(
-                        command=spec["command"], args=spec.get("args") or [], env=env, cwd=spec.get("cwd")))
-                read, write, *_ = await stack.enter_async_context(transport)
+                read, write, *_ = await stack.enter_async_context(transport_for(name, spec))
                 session = await stack.enter_async_context(ClientSession(read, write))
                 await session.initialize()
                 sessions[name] = session
