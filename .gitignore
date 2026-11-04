@@ -16,3 +16,6 @@ paper/*.log
 paper/*.blg
 paper/*.bbl
 paper/*.out
+# Published on Zenodo as research data, not in git
+dataset/
+publication/packages/

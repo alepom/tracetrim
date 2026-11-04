@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper (preferred citation)."
+title: "tracetrim: learn which fields of tool outputs an agent uses, and trim the rest"
+type: software
+version: "0.2.0"
+license: MIT
+authors:
+  - family-names: "Pomaro"
+    given-names: "Alessio"
+    affiliation: "Independent Researcher"
+    email: "info@alessiopomaro.it"
+    orcid: "https://orcid.org/0009-0008-6975-996X"
+# repository-code and doi are added when the author creates the repository and the Zenodo records
+preferred-citation:
+  type: report
+  title: "Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"
+  authors:
+    - family-names: "Pomaro"
+      given-names: "Alessio"
+      orcid: "https://orcid.org/0009-0008-6975-996X"
+  year: 2026
+  publisher:
+    name: "Zenodo"
