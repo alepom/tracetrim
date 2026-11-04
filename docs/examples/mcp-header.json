@@ -1,0 +1,3 @@
+{"mcpServers": {
+  "seo": {"url": "https://your-mcp-server.example/mcp", "headers": {"X-MCP-Token": "${SEO_MCP_TOKEN}"}}
+}}

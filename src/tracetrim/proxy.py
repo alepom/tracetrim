@@ -47,6 +47,7 @@ EXPAND = {
         "fields": {"type": "array", "items": {"type": "string"}}}},
 }
 MAX_GROUPS = 25
+MAX_SSE_EVENT = 16 * 1024 * 1024
 
 
 class Live:
@@ -185,7 +186,9 @@ def transport_for(name: str, spec: dict):
         from .oauth import provider, wants_oauth
         auth = provider(name, spec["url"]) if wants_oauth(spec) else None
         http = create_mcp_http_client(headers=spec.get("headers") or {}, auth=auth)
-        return streamable_http_client(spec["url"], http_client=http)
+        # The SDK's default (1 MB per event) is too small for some tools: a SERP
+        # with many items exceeds it. 16 MB is what the study's client used.
+        return streamable_http_client(spec["url"], http_client=http, max_sse_event_size=MAX_SSE_EVENT)
     env = {**get_default_environment(), **spec["env"]} if spec.get("env") else None
     return stdio_client(StdioServerParameters(command=spec["command"], args=spec.get("args") or [], env=env,
                                               cwd=spec.get("cwd")))

@@ -101,6 +101,23 @@ their own, so the proxy never waits for a browser. `tracetrim logout --servers m
 Not supported: a different identity per end user (the proxy uses one identity for everyone) and the
 legacy SSE transport.
 
+### Hosted agents (OpenAI Playground, Responses API)
+
+There is no `mcpServers` file in the Playground: each MCP server is added in the UI (*Tools → Add →
+MCP server*) with a URL and, if needed, a header. Write `mcp.json` from those same values — one
+entry per server, URL and header as you typed them — and run tracetrim over HTTP where OpenAI can
+reach it (a server of yours, or a tunnel such as ngrok):
+
+```bash
+tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799 \
+  --token CHOOSE_A_SECRET --allowed-host your-tunnel.example
+```
+
+Then, in the Playground, switch off the servers tracetrim now stands in for and add one MCP server:
+URL `https://your-tunnel.example/mcp`, header `Authorization: Bearer CHOOSE_A_SECRET`. The live
+report is at `http://127.0.0.1:8799/report?token=CHOOSE_A_SECRET` on the machine running the proxy.
+`docs/demo_playground.sh` does all of this for the demo.
+
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
 treat the data: local, not shared, not committed.
