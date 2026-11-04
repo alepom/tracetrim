@@ -12,7 +12,8 @@ comes from the schema; values are synthetic, produced by a seeded generator
 | C4 billing support | Stripe API | `stripe/openapi`, `openapi/spec3.json` | `b213739d4879835a5af50f15daaa3a41ae267985` (2026-11-03) | `2026-09-30.endive` | MIT | `7cff4cc46d0654101a36a3302f7544640f5f73e4f3cad6f264f0e23c19fa1776` |
 | C5 CI and issue triage | GitHub REST API | `github/rest-api-description`, `descriptions/api.github.com/api.github.com.json` | `99b1432b55b9a71d0881fd792a87f1807cf4c8f2` (2026-11-04) | `1.1.4` | MIT | `25c06a5ada7843db70fc54f8888df8f616e8689206c5da4bc60badf9bc577594` |
 
-The spec files are downloaded into `specs/` (git-ignored, 22 MB) by:
+The spec files are downloaded into `specs/` (git-ignored, 22 MB) on first use, and checked against the sha256 above
+(`synth.spec_path`); by hand:
 
 ```
 curl -sLo specs/stripe-spec3.json https://raw.githubusercontent.com/stripe/openapi/b213739d4879835a5af50f15daaa3a41ae267985/openapi/spec3.json

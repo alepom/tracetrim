@@ -18,7 +18,7 @@ import statistics
 from .checks import check
 from .quality import quality
 from .replay import PREFIX
-from .run import ROOT, TRACES
+from .run import ROOT, TRACES, keep_missing
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
 # Thermometers added after the freeze (deviation 11). They are reported, but
@@ -85,6 +85,7 @@ def main():
             a["outside_band_posthoc"] = [k for k in nums if k in POSTHOC and not band[k][0] <= med[k] <= band[k][1]]
         res["cases"][case] = {"arms": arms, "band": band, "headroom": headroom.get(case)}
 
+    res = keep_missing(res, OUT[study], CASES)
     print(f"\n  {'PHASE B' if study == 'B' else 'STUDY 2'} — replay of A3, only tool messages changed\n")
     for case, r in res["cases"].items():
         arms = r["arms"]

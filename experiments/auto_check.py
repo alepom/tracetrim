@@ -15,7 +15,8 @@ through tracetrim.auto.AutoTrim, and the final answer to AutoTrim.done.
 Spend is printed, and is not counted in the study's ledger. The table is also
 written to results/checks/auto_check_<mode>.json: the README quotes it. Tool
 tokens are counted with tiktoken: "raw" from the run's trace in the work
-directory (what the tools returned), "sent" from what the model received.
+directory (what the tools returned), "sent" from what the model received,
+`expand` results included.
 """
 import argparse
 import asyncio
@@ -37,7 +38,7 @@ SYSTEM, USER = re.findall(r"```\n(.*?)\n```", PROMPTS, re.S)[:2]
 
 
 async def one_run(client, model, session, schemas, tt=None, count=None):
-    usage = {"input": 0, "cached": 0, "output": 0, "tool_sent": 0}
+    usage = {"input": 0, "cached": 0, "output": 0, "tool_sent": 0, "expand_calls": 0}
     calls, done = 0, False
     kwargs = {"model": model, "instructions": SYSTEM, "tools": schemas, "input": [{"role": "user", "content": USER}]}
     answer = ""
@@ -62,8 +63,10 @@ async def one_run(client, model, session, schemas, tt=None, count=None):
                     text = "".join(getattr(c, "text", "") or "" for c in res.content)
                     if tt is not None:
                         text = tt.output(item.name, args, text)
-                if item.name not in ("tracetrim_done", "expand"):
+                # What the model read from tools, expanded fields included.
+                if item.name != "tracetrim_done":
                     usage["tool_sent"] += count(text)
+                usage["expand_calls"] += item.name == "expand"
                 outs.append({"type": "function_call_output", "call_id": item.call_id, "output": text})
         if not outs:
             break
@@ -134,7 +137,8 @@ async def main():
             rows.append({"run": i, "input": usage["input"], "uncached": usage["input"] - usage["cached"],
                          "output": usage["output"], "calls": calls, "done": done, "right": tickets_right(answer),
                          "trimming_after": trimming, "tool_tokens_raw": raw_tools,
-                         "tool_tokens_sent": usage["tool_sent"], "usd_estimate": round(c, 4)})
+                         "tool_tokens_sent": usage["tool_sent"], "expand_calls": usage["expand_calls"],
+                         "usd_estimate": round(c, 4)})
     out = ROOT / "results" / "checks" / f"auto_check_{o.mode}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"mode": o.mode, "model": o.model, "min_runs": o.min_runs,

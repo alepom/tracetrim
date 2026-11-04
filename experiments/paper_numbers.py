@@ -97,7 +97,8 @@ def main():
     ser = load("reserialize.json")
     rows = []
     if a:
-        pooled = {"full": [0, 0], "calls": [0, 0]}
+        # Real-API and simulated cases are never pooled together (protocol, A1).
+        pooled = {g: {"full": [0, 0], "calls": [0, 0]} for g in ("Real", "Sim")}
         for c, r in a["cases"].items():
             R = ROMAN[c]
             full, calls, strict, rq1 = r["loo_full"], r["loo_calls"], r["loo_strict"], r["rq1"]
@@ -114,9 +115,10 @@ def main():
                 m(f"PhaseASensExcluded{R}", word(len(sens["excluded"])))
                 m(f"PhaseASensSaving{R}", apct(-sens["loo_full"]["prudent_saving"]))
                 m(f"PhaseASensMisses{R}", f"{sens['loo_full']['misses']}/{sens['loo_full']['trimmed_calls']}")
+            group = "Sim" if c in ("C4", "C5") else "Real"
             for k, x in (("full", full), ("calls", calls)):
-                pooled[k][0] += x["misses"]
-                pooled[k][1] += x["trimmed_calls"]
+                pooled[group][k][0] += x["misses"]
+                pooled[group][k][1] += x["trimmed_calls"]
             # H3, as frozen: calls-only misses more than three times the full-trace misses.
             ratio = calls["misses"] / full["misses"] if full["misses"] else float("inf")
             m(f"HThreeRatio{R}", f"{ratio:.1f}")
@@ -132,9 +134,10 @@ def main():
                         f"{pct(rq1['share'], False)} & {pct(-rs) if rs is not None else '--'} & "
                         f"{pct(-full['prudent_saving'])} & {pct(-full['aggressive_saving'])} & "
                         f"{full['misses']}/{full['trimmed_calls']} & {calls['misses']}/{calls['trimmed_calls']} \\\\")
-        for k, (mi, tr) in pooled.items():
-            m(f"MissesPooled{k.capitalize()}", f"{mi}/{tr}")
-            m(f"MissesPooledShare{k.capitalize()}", apct(mi / tr, False))
+        for g, kinds in pooled.items():
+            for k, (mi, tr) in kinds.items():
+                m(f"MissesPooled{g}{k.capitalize()}", f"{mi}/{tr}")
+                m(f"MissesPooledShare{g}{k.capitalize()}", apct(mi / tr, False))
         t = a.get("rq5")
         if t:
             m("TransferMisses", f"{t['transfer']['misses']}/{t['transfer']['calls']}")
@@ -170,6 +173,17 @@ def main():
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     s2 = load("study2.json")
+    if s2 and "C1" in s2["cases"]:
+        c1 = s2["cases"]["C1"]
+        lo, hi = c1["band"]["median_volume"]
+        m("StudyTwoRawBandVolumei", f"{lo:g}--{hi:g}")
+        m("StudyTwoVtwoMedianVolumei", f"{c1['arms']['v02']['medians']['median_volume']:g}")
+        m("StudyTwoVtwoHoldsi", "holds" if c1["arms"]["v02"]["holds"] else "does not hold")
+    pb = load("phase_b.json")
+    if pb and "C1" in pb["cases"]:
+        meds = {a: x["medians"]["median_volume"] for a, x in pb["cases"]["C1"]["arms"].items()}
+        m("PhaseBAggressiveMedianVolumei", f"{meds['aggressive']:g}")
+        m("PhaseBStructuralMedianVolumei", f"{meds['structural']:g}")
     if s2 and "C4" in s2["cases"]:
         for arm, key in (("raw", "Raw"), ("v02", "Vtwo"), ("v02-structural", "Vtwostructural")):
             th = s2["cases"]["C4"]["arms"][arm]["thermometers"]
@@ -216,6 +230,10 @@ def main():
             m("RecheckGateChecked", ", ".join(str(r["own"]) for r in pr))
             m("RecheckVerified", ", ".join(str(r["own"] + r["other"]) for r in pr))
             m("RecheckUnknown", ", ".join(str(r["unknown"]) for r in pr))
+            m("RecheckUnknownTotal", str(sum(r["unknown"] for r in pr)))
+            in_text = sum(r["unverified_in_own_text"] for r in pr)
+            m("RecheckUnknownInText", "all" if in_text == sum(r["unknown"] for r in pr) else str(in_text))
+            m("RecheckUnknownInExpand", str(sum(r["unverified_volume_in_expand"] for r in pr)))
             n_mis = sum(r["mismatch"] for r in pr)
             m("RecheckMismatch", words.get(n_mis, str(n_mis)) if n_mis else "no")
         pr_ = json.loads((ROOT / "experiments" / "prices.json").read_text())

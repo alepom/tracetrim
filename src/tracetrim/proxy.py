@@ -355,7 +355,8 @@ def _server(o: Options):
             is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
             if is_error or any(getattr(c, "type", "text") != "text" for c in content):
                 live.call(params.name, "", "")
-                return types.CallToolResult(content=content, isError=is_error)
+                return types.CallToolResult(content=content, isError=is_error,
+                                            structuredContent=getattr(r, "structured_content", None))
             raw = "".join(getattr(c, "text", "") or "" for c in content)
             if rec:
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
@@ -410,7 +411,10 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
     hosts = list(dict.fromkeys(list(allowed_hosts) + local))
     security = TransportSecuritySettings(
         enable_dns_rebinding_protection=True, allowed_hosts=hosts,
-        allowed_origins=[f"http://{h}" for h in local] + [f"https://{h}" for h in allowed_hosts])
+        # Local browser clients (MCP Inspector, a local web UI) run on their own
+        # port: any local origin is accepted, no remote one unless allowed.
+        allowed_origins=["http://localhost:*", "http://127.0.0.1:*", "http://[::1]:*"]
+                        + [f"https://{h}" for h in allowed_hosts])
 
     def same(given: str, expected: str) -> bool:
         return hmac.compare_digest(given.encode(), expected.encode())
@@ -422,7 +426,7 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
 
     async def guarded(scope, receive, send):
         if scope["type"] == "http" and learner and scope.get("path") == "/report":
-            host = dict(scope.get("headers") or []).get(b"host", b"").decode()
+            host = dict(scope.get("headers") or []).get(b"host", b"").decode("latin-1")
             if host not in hosts:
                 return await respond(send, 421, b"invalid Host header: add it with --allowed-host")
             q = parse_qs(scope.get("query_string", b"").decode())
@@ -437,13 +441,18 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
                 html = page.read_bytes().replace(b"<head>", b"<head><meta http-equiv=\"refresh\" content=\"10\">", 1)
             return await respond(send, 200, html, b"text/html; charset=utf-8")
         if token and scope["type"] == "http":
-            auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode()
+            auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode("latin-1")
             if not same(auth, f"Bearer {token}"):
                 return await respond(send, 401, b"unauthorized")
         await app(scope, receive, send)
 
+    if allowed_hosts and not token:
+        print("[tracetrim] WARNING: reachable through " + ", ".join(allowed_hosts) + " with no token: anyone with the "
+              "URL can call your tools with your credentials. Set $TRACETRIM_TOKEN or --token.",
+              file=sys.stderr, flush=True)
     if learner:
-        print(f"[tracetrim] live report: http://{host}:{port}/report" + (f"?token={token}" if token else ""),
+        # The token is not printed: it would end up in logs and terminal recordings.
+        print(f"[tracetrim] live report: http://{host}:{port}/report" + ("?token=<your token>" if token else ""),
               file=sys.stderr, flush=True)
     class FlushingServer(uvicorn.Server):
         # uvicorn re-raises SIGTERM/SIGINT once it has shut down, which ends the

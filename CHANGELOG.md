@@ -6,7 +6,7 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## 0.3.4
 
-Fixes from an independent pre-publication review.
+Fixes from two independent pre-publication reviews.
 
 - **Proxy security**: DNS-rebinding protection always on (local addresses on the proxy's port, plus
   `--allowed-host`), also for `/report`; tokens compared in constant time; `--token` can come from
@@ -17,12 +17,19 @@ Fixes from an independent pre-publication review.
   lists and objects that were already empty are kept, so "no results" does not look like "hidden".
   Both are off in the scripts that reproduce the studies.
 - The report's suggestion to cache repeated calls is now a manual action: the config never cached.
+- The proxy accepts local browser origins on any port (MCP Inspector), never prints the token, warns when
+  it is reachable from outside without one, and passes `structuredContent` through with errors.
+- The simulated servers download their pinned OpenAPI descriptions on first use and check the hash, so
+  a fresh clone runs the demo and the tests; analyses run on the released dataset keep the cases whose
+  traces are not released; `experiments/misses_from_derived.py` recomputes the misses of the two
+  search-data cases from the released records.
 - OAuth token files are created readable by the owner only; `tracetrim learn --v01`; Python 3.10
   compatibility of `tracetrim login`; `AutoTrim.expand` tolerates malformed arguments.
 - Paper: the Phase C gate is described as it worked, with a post-hoc re-check (deviation 13);
   the lossless part of the savings (re-serialisation alone) is reported; H3 fails in one case;
-  misses are reported as calls; the Study 2 band uses the frozen thermometers only; related work on
-  Headroom and mcp-compressor corrected; prices verified.
+  misses are reported as calls, and real-API and simulated cases are no longer pooled; the Study 2 band
+  uses the frozen thermometers only, and the shift in the editorial plan's keyword choice is reported;
+  related work on Headroom and mcp-compressor corrected; prices verified.
 
 ## 0.3.3
 
@@ -40,12 +47,11 @@ Fixes from an independent pre-publication review.
 
 - **OAuth** towards upstream MCP servers (discovery, dynamic registration, PKCE, refresh), with
   `tracetrim login` / `logout`; tokens in `~/.config/tracetrim/oauth/`.
-- Custom headers and `${VAR}` expansion in `mcp.json`.
 
 ## 0.3.1
 
 - **One proxy in front of several MCP servers** (`--servers mcp.json`, the `mcpServers` block clients
-  already use): one `expand`, one `tracetrim_done`, one report.
+  already use, with custom headers and `${VAR}` expansion): one `expand`, one `tracetrim_done`, one report.
 - An unfinished run is kept on shutdown, over HTTP too.
 
 ## 0.3.0

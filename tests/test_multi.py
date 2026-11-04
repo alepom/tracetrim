@@ -34,19 +34,19 @@ def test_servers_file_is_the_clients_mcpServers_block(tmp_path, monkeypatch):
     assert up["code"] == {"command": "python", "args": ["-m", "code_server"]}
 
 
-def _runs(n):
+def _runs(n, traces):
     """Run i = the calls of C4 run Ai, then those of C5 run Ai; the answer is both answers."""
     runs = []
     for i in range(1, n + 1):
         events = [json.loads(line) for case in ("C4", "C5")
-                  for line in (ROOT / "traces" / case / f"A{i}.jsonl").open(encoding="utf-8")]
+                  for line in (traces / case / f"A{i}.jsonl").open(encoding="utf-8")]
         calls = [e for e in events if e["kind"] == "call"]
         answer = "\n".join(e["text"] for e in events if e["kind"] == "message")
         runs.append((calls, answer))
     return runs
 
 
-def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path):
+def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path, traces):
     from mcp import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
@@ -63,7 +63,7 @@ def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path):
         async with stdio_client(params) as (r, w), ClientSession(r, w) as s:
             await s.initialize()
             names = [t.name for t in (await s.list_tools()).tools]
-            for calls, answer in _runs(3):
+            for calls, answer in _runs(3, traces):
                 last = []
                 for c in calls:
                     args = c["arguments"]
@@ -72,6 +72,9 @@ def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path):
                 await s.call_tool("tracetrim_done", {"answer": answer})
             cid = next(t.split("call_id=")[1].split()[0] for _, t in last if "\n[trimmed] " in t)
             expanded = (await s.call_tool("expand", {"call_id": cid, "fields": ["*"]})).content[0].text
+            # An upstream error comes back as an error, untouched.
+            bad = await s.call_tool("stripe_search_customers", {"unexpected": True})
+            assert getattr(bad, "is_error", None) or getattr(bad, "isError", None)
         return names, last, expanded
 
     names, last, expanded = asyncio.run(main())

@@ -3,7 +3,9 @@
 
   .venv/bin/python -m experiments.analyze_a              # tables + results/phase_a.json
 
-Everything here is recomputed from the traces in traces/<case>/A*.jsonl.
+Everything here is recomputed from the traces in traces/<case>/A*.jsonl (or
+dataset/traces/ from the Zenodo dataset; a case whose traces are not there
+keeps its entry in the results file).
 """
 from __future__ import annotations
 
@@ -17,7 +19,7 @@ from tracetrim.usage import analyse
 
 from .checks import check
 from .quality import quality
-from .run import ROOT, TRACES
+from .run import ROOT, TRACES, keep_missing
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
 REAL, SIMULATED = ("C1", "C2", "C3"), ("C4", "C5")
@@ -124,7 +126,9 @@ def main():
         print(f"  {case:<5} json {sum(x['json'] for x in g)}/{len(g)} · structure {sum(x['structure'] for x in g)}/{len(g)}"
               f" · facts {facts_ok}/{facts}" + (f" ({facts_ok / facts:.0%})" if facts else ""))
 
-    if "C1" in res["cases"] and "C2" in res["cases"]:
+    have_c1_c2 = "C1" in res["cases"] and "C2" in res["cases"]
+    res = keep_missing(res, OUT, CASES)
+    if have_c1_c2:
         t = rq5_transfer(count)
         res["rq5"] = t
         print(f"\n  RQ5 transfer C1 → C2 on shared tools {t['shared_tools']}")

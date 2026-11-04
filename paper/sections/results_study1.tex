@@ -44,8 +44,9 @@ the traces by \texttt{experiments/paper\_figures.py}.}
 \subsection{The learner must see the answer}
 
 Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
-misses: over the five cases, held-out calls in which a used field would have been removed went from
-\MissesPooledFull{} to \MissesPooledCalls; from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan,
+misses: held-out calls in which a used field would have been removed went from \MissesPooledRealFull{} to
+\MissesPooledRealCalls{} over the three cases with real APIs, and from \MissesPooledSimFull{} to \MissesPooledSimCalls{}
+over the two simulated ones; from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan,
 and to every trimmed call in the literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv):
 those agents use what tools return only in the final answer. H3 (more than three times as many) holds in four cases
 and fails in the content-gap analysis, by a narrow margin (\PhaseAMissesii{} against \PhaseAMissesCallsii, a ratio of
@@ -110,8 +111,9 @@ agent received, so in the editorial plan only the volumes still visible in the p
 \RecheckGateChecked{} of the \RecheckPairs{} reported in the three prudent runs, against all \RecheckPairs{} in
 every raw run. Checked after the fact against the raw outputs of all the other runs of the same day, \RecheckVerified{}
 were confirmed; \RecheckMismatch{} contradicted them (a volume of zero for a keyword that has a volume); the rest
-(\RecheckUnknown) could not be paired automatically, although the keyword and the number both appear in the run's
-own outputs, the volume having come back through \texttt{expand} (deviation 13).
+(\RecheckUnknown) could not be paired automatically. For \RecheckUnknownInText{} of these \RecheckUnknownTotal{} the
+keyword and the number both appear in the run's own outputs, and for \RecheckUnknownInExpand{} the number is in what
+\texttt{expand} returned: what cannot be checked is the pairing, not the presence (deviation 13).
 
 The agents did use \texttt{expand}: a median of \PhaseCPrudentExpandi{} call per run in the editorial plan and
 \PhaseCPrudentExpandiv{} in billing support, where the agent recovered the hidden period end in two of three runs.

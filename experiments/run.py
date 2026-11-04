@@ -32,6 +32,26 @@ PROMPTS = ROOT / "experiments" / "prompts"
 # Traces live in traces/ where they were recorded; from the Zenodo dataset they
 # are in dataset/traces/ (C3, C4 and C5 only: C1 and C2 are not redistributable).
 TRACES = ROOT / "traces" if (ROOT / "traces").exists() else ROOT / "dataset" / "traces"
+
+
+def keep_missing(res: dict, out_path, order) -> dict:
+    """Cases whose traces are not here (C1 and C2 outside the machine that
+    recorded them) keep their entry from the existing results file instead of
+    disappearing from it: re-running an analysis on the released data must
+    never shrink the results."""
+    import json as _json
+    old = _json.loads(Path(out_path).read_text()) if Path(out_path).exists() else {"cases": {}}
+    merged = {}
+    for case in order:
+        if case in res["cases"]:
+            merged[case] = res["cases"][case]
+        elif case in old.get("cases", {}):
+            merged[case] = old["cases"][case]
+            print(f"  {case}: traces not available here, kept from {Path(out_path).name}")
+    res["cases"] = merged
+    for key, value in old.items():
+        res.setdefault(key, value)       # e.g. the transfer analysis, which needs C1 and C2
+    return res
 LEDGER = ROOT / "out" / "ledger.jsonl"
 PRICES = json.loads((ROOT / "experiments" / "prices.json").read_text())
 
@@ -173,7 +193,7 @@ async def _loop(case, run_id, model, arm, before, system, user, trace_path, meta
         "arm": arm, "learned_from": learned_from,
         "expand_calls": getattr(tools, "expand_calls", None),
         "expanded_fields": getattr(tools, "expanded_fields", None),
-        "cost_usd": round(cost(total), 4), "prices": "experiments/prices.json (assumed, to be verified)",
+        "cost_usd": round(cost(total), 4), "prices": "experiments/prices.json",
     }
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
@@ -193,7 +213,7 @@ def main():
                    help="Phase C: prudent = projection learned from Phase A, plus expand")
     a = p.parse_args()
     if a.spend or not a.case:
-        print(f"spent: {spent():.3f} USD of {PRICES['stop_usd']} (prices assumed)")
+        print(f"spent: {spent():.3f} USD of {PRICES['stop_usd']} (list prices, experiments/prices.json)")
         return
     m = asyncio.run(run(a.case, a.run_id, a.model, a.arm))
     print(f"\n  {m['case']} {m['run']}: {m['turns']} turns, {m['calls']} calls, "

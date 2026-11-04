@@ -34,8 +34,8 @@ course project `~/progetti/accademia-server-mcp` (scripts `misura-riuso.py`,
 - **Search goes through DataForSEO, not Tavily.** Tavily's Platform Terms
   §3.2(x) forbid disclosing "performance information or analysis relating to
   the Services". DataForSEO's terms allow aggregates and field names; raw
-  responses are not licensed for redistribution, so traces are published only
-  pseudonymised (see `protocol.md`).
+  responses are not licensed for redistribution, so for those cases only derived
+  per-call records are published (field paths, no values: deviation 12 in `protocol.md`).
 - `traces/` and `out/` are git-ignored: real traces contain third-party API
   payloads and stay local until the providers' terms are checked.
 - The course exports contain a client domain: usable for local measurement,

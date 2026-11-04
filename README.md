@@ -12,8 +12,8 @@ where this works and where it fails. In short:
 |---|---|
 | Tool-output tokens removed on unseen runs (4 of 5 agents, 0.1) | 63–77%, of which up to 17 points from re-serialising the JSON alone |
 | Same conversations, same 4 agents | tracetrim 59–77% (0.1), 46–61% (0.2); Headroom 17–33%; re-serialisation alone 0–17% |
-| Live runs with `expand`: billed input tokens | −56% and −32%; every run passed its gates as frozen |
-| Learning from tool calls only (what a gateway sees) | a used field missed in 60% of held-out calls, against 6% with the answer |
+| Live runs with `expand`: billed input tokens | −56% and −32%; gates passed as frozen (one wrong volume found by a later re-check) |
+| Learning from tool calls only (what a gateway sees) | a used field missed in 49% of held-out calls (3 agents on real APIs), against 4% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
@@ -45,7 +45,8 @@ Start one tracetrim in front of all of them:
 
 ```bash
 tracetrim proxy --servers mcp.json --auto tracetrim-data/                       # stdio, for local clients
-tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799 --token CHOOSE_A_SECRET   # over HTTP
+export TRACETRIM_TOKEN=CHOOSE_A_SECRET                                          # over HTTP: clients must send it
+tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799
 ```
 
 In the agent, **replace** those servers with tracetrim (one entry instead of N; keeping both would
@@ -64,7 +65,7 @@ servers share one), plus `expand` and `tracetrim_done`. Then use the agent as us
   never uses, with suggestions;
 - **during the first runs** (5 by default, `--min-runs`) nothing is changed: the proxy only observes.
   `tracetrim_done` is how it sees the answer — in the study, learning from tool calls alone missed a
-  used field in 60% of held-out calls, against 6% with the answer;
+  used field in 49% of held-out calls (three agents on real APIs), against 4% with the answer;
 - **after that**, it applies the report's automatic actions on its own: the prudent projection, with
   identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
   report as a manual action for you to review;
@@ -74,14 +75,17 @@ servers share one), plus `expand` and `tracetrim_done`. Then use the agent as us
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
 delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
-tool outputs of the two runs after learning went from 33,122 to 18,197 tokens (−45%), no field was
-asked back, and all five tickets were right in every run: a check, not a measurement
-(`results/checks/auto_check_mcp.json`) — the measurements are in the paper.
+tool outputs of the two runs after learning went from 33,492 to 18,725 tokens (−44%, fields asked back
+included), the agent asked for a hidden field once in each, and all five tickets were right in every
+run: a check, not a measurement (`results/checks/auto_check_mcp.json`) — the measurements are in the
+paper.
 
 ### Servers that need credentials
 
 Two separate links, two separate credentials: **agent → tracetrim** is protected by the token you
-choose with `--token` (only when tracetrim is reachable over HTTP); **tracetrim → your servers**
+choose, in `$TRACETRIM_TOKEN` (or `--token`, which other users of the machine can see in the process
+list), only when tracetrim is reachable over HTTP; requests whose Host is not local or listed with
+`--allowed-host` are refused. **tracetrim → your servers**
 uses your servers' own credentials, which tracetrim holds and the agent no longer sees.
 
 | how your server authenticates | in `mcp.json` |
@@ -111,8 +115,8 @@ entry per server, URL and header as you typed them — and run tracetrim over HT
 reach it (a server of yours, or a tunnel such as ngrok):
 
 ```bash
-tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799 \
-  --token CHOOSE_A_SECRET --allowed-host your-tunnel.example
+export TRACETRIM_TOKEN=CHOOSE_A_SECRET
+tracetrim proxy --servers mcp.json --auto tracetrim-data/ --http 8799 --allowed-host your-tunnel.example
 ```
 
 Then, in the Playground, switch off the servers tracetrim now stands in for and add one MCP server:
@@ -151,9 +155,10 @@ schema, to adapt to your provider's tool format (`{"type": "function", ...}` for
 `description` / `input_schema` for Anthropic).
 
 Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
-tool outputs went from 33,862 to 19,261 tokens (−43%), the agent asked for a hidden field twice, and all
-five tickets were right in every run (a check, not a measurement:
-`results/checks/auto_check_function.json`, from `python -m experiments.auto_check --mode function`).
+tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a
+hidden field once, and all five tickets were right in every run (a check, not a measurement:
+`results/checks/auto_check_function.json`, from
+`python -m experiments.auto_check --runs 5 --min-runs 3 --mode function`).
 
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
@@ -213,9 +218,12 @@ Cursor):
 or over HTTP, for hosted clients such as the OpenAI Playground:
 
 ```bash
+export TRACETRIM_TOKEN=CHOOSE_A_SECRET
 tracetrim proxy --upstream-url https://mcp.example.com/mcp --header "Authorization=Bearer UPSTREAM_TOKEN" \
-  --config report.config.json --http 8799 --token CHOOSE_A_SECRET --allowed-host your-tunnel.example
+  --config report.config.json --http 8799 --allowed-host your-tunnel.example
 ```
+
+(`--header` puts the upstream credential in the process list; `--servers mcp.json` with `${VAR}` does not.)
 
 The proxy exposes the same tools plus `expand`: every trimmed output ends with a line listing the
 hidden fields, and the agent can fetch any of them back. Add `--record traces/live.jsonl` to keep
@@ -260,7 +268,9 @@ generated by `python -m experiments.paper_numbers` from `results/`, and every ch
 with `PYTHONPATH=src`. The traces are in the Zenodo dataset: unzip it at the root, and the scripts read
 `dataset/traces/` (C3, C4 and C5; C1 and C2 are released as derived records only, since the search
 data cannot be redistributed, so their analyses run where they were recorded and their results are in
-`results/`). Changes by version are in [CHANGELOG.md](CHANGELOG.md).
+`results/`; `python -m experiments.misses_from_derived` recomputes their misses from the records). The simulated
+servers download their pinned OpenAPI descriptions on first use. Changes by version are in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Citation
 

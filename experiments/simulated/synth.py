@@ -17,6 +17,33 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 SPECS = Path(__file__).resolve().parent / "specs"
+# The OpenAPI descriptions are not in git (22 MB): pinned to a commit and a
+# hash (SOURCES.md), they are downloaded on first use and verified, so that a
+# fresh clone runs the simulated servers, the demo and the tests as they ran.
+PINNED = {
+    "stripe-spec3.json": ("https://raw.githubusercontent.com/stripe/openapi/b213739d4879835a5af50f15daaa3a41ae267985/"
+                          "openapi/spec3.json",
+                          "7cff4cc46d0654101a36a3302f7544640f5f73e4f3cad6f264f0e23c19fa1776"),
+    "github-api.json": ("https://raw.githubusercontent.com/github/rest-api-description/"
+                        "99b1432b55b9a71d0881fd792a87f1807cf4c8f2/descriptions/api.github.com/api.github.com.json",
+                        "25c06a5ada7843db70fc54f8888df8f616e8689206c5da4bc60badf9bc577594"),
+}
+
+
+def spec_path(name: str) -> Path:
+    import hashlib
+    import sys
+    import urllib.request
+    path = SPECS / name
+    if not path.exists():
+        url, digest = PINNED[name]
+        print(f"[simulated] downloading the pinned OpenAPI description {name} (once)", file=sys.stderr, flush=True)
+        data = urllib.request.urlopen(url, timeout=120).read()
+        if hashlib.sha256(data).hexdigest() != digest:
+            raise RuntimeError(f"{name}: downloaded file does not match the pinned sha256 (SOURCES.md)")
+        SPECS.mkdir(exist_ok=True)
+        path.write_bytes(data)
+    return path
 BASE_TIME = datetime(2026, 10, 27, 9, 0, tzinfo=timezone.utc)   # scenarios live in late Oct 2026
 WORDS = ("account", "update", "review", "request", "service", "release", "config", "payment",
          "billing", "monthly", "standard", "support", "checkout", "storage", "report", "access")
@@ -25,7 +52,7 @@ WORDS = ("account", "update", "review", "request", "service", "release", "config
 class Synth:
     def __init__(self, spec_file: str, seed: int, id_prefixes: dict[str, str] | None = None,
                  max_depth: int = 4, top_level_optional: str | set = "all"):
-        self.spec = json.loads((SPECS / spec_file).read_text(encoding="utf-8"))
+        self.spec = json.loads(spec_path(spec_file).read_text(encoding="utf-8"))
         self.schemas = self.spec["components"]["schemas"]
         self.rng = random.Random(seed)
         self.prefixes = id_prefixes or {}

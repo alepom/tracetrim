@@ -16,6 +16,10 @@ same day with the same tool (Phase A runs A1-A8 and the Phase C raw runs):
   mismatch   the keyword appears in the raw outputs with different volumes only
   unknown    the keyword appears in no raw output: cannot be verified
 
+For the unknown pairs, two more columns say whether the keyword and the number
+both appear somewhere in the run's own outputs, and whether the number appears
+in what `expand` returned.
+
 The same is done for the raw arm, as a control. Nothing here changes the
 frozen result; it reports what that result did not cover.
 """
@@ -66,9 +70,12 @@ def pairs(ans):
 
 
 def main():
+    if not (C1 / "C-raw-1.jsonl").exists():
+        print("\n  the editorial-plan traces are not here: results/phase_c_recheck.json left as it is\n")
+        return
     reference = [C1 / f"A{i}.jsonl" for i in range(1, 9)] + [C1 / f"C-raw-{i}.jsonl" for i in (1, 2, 3)]
     res = {"reference_runs": [p.stem for p in reference], "runs": {}}
-    print(f"\n  {'run':<14}{'pairs':>6}{'own':>6}{'other':>7}{'mismatch':>10}{'unknown':>9}")
+    print(f"\n  {'run':<14}{'pairs':>6}{'own':>6}{'other':>7}{'mismatch':>10}{'unknown':>9}{'in own text':>13}{'in expand':>11}")
     for arm in ("raw", "prudent"):
         for i in (1, 2, 3):
             path = C1 / f"C-{arm}-{i}.jsonl"
@@ -80,20 +87,26 @@ def main():
                     continue
                 for kw, vols in truth_of(outputs(load(ref))).items():
                     other.setdefault(kw, set()).update(vols)
-            counts = {"pairs": 0, "own": 0, "other": 0, "mismatch": 0, "unknown": 0}
+            counts = {"pairs": 0, "own": 0, "other": 0, "mismatch": 0, "unknown": 0,
+                      "unverified_in_own_text": 0, "unverified_volume_in_expand": 0}
+            own_text = " ".join(o for _, o in outputs(trace)).lower()
+            expand_text = " ".join(o for t, o in outputs(trace) if t == "expand")
             for kw, vol in pairs(final_json(trace) or {}):
                 counts["pairs"] += 1
                 if kw in own and vol in own[kw]:
                     counts["own"] += 1
                 elif vol in other.get(kw, set()):
                     counts["other"] += 1
-                elif kw in own or kw in other:
-                    counts["mismatch"] += 1
                 else:
-                    counts["unknown"] += 1
+                    known = kw in own or kw in other
+                    counts["mismatch" if known else "unknown"] += 1
+                    if not known:
+                        counts["unverified_in_own_text"] += kw in own_text and str(vol) in own_text
+                        counts["unverified_volume_in_expand"] += str(vol) in expand_text
             res["runs"][path.stem] = counts
             print(f"  {path.stem:<14}" + "".join(f"{counts[k]:>{w}}" for k, w in
-                                                    (("pairs", 6), ("own", 6), ("other", 7), ("mismatch", 10), ("unknown", 9))))
+                                                    (("pairs", 6), ("own", 6), ("other", 7), ("mismatch", 10), ("unknown", 9),
+                                                     ("unverified_in_own_text", 13), ("unverified_volume_in_expand", 11))))
     (ROOT / "results" / "phase_c_recheck.json").write_text(json.dumps(res, indent=2) + "\n")
     print("\n  written: results/phase_c_recheck.json\n")
 

@@ -68,6 +68,27 @@ def check() -> int:
                 if not any(o in u for o in OWN):
                     problems.append(f"{rel}: third-party URL {u[:60]}")
                     break
+    # What will actually be uploaded: the text inside the packages and the PDF.
+    for z in sorted(PKG.rglob("*.zip")) if PKG.exists() else []:
+        with zipfile.ZipFile(z) as zf:
+            for name in zf.namelist():
+                if name.endswith((".pdf", ".png", ".zip")):
+                    continue
+                low = zf.read(name).decode("utf-8", errors="replace").lower()
+                if any(t in low for t in terms):
+                    problems.append(f"{z.relative_to(ROOT)}:{name}: a name from {PRIVATE.relative_to(ROOT)}")
+                if SECRET.search(low) and not name.endswith("publication.py"):
+                    problems.append(f"{z.relative_to(ROOT)}:{name}: looks like a secret")
+    pdfs = [ROOT / "paper" / "main.pdf"] + (sorted(PKG.rglob("*.pdf")) if PKG.exists() else [])
+    try:
+        import pymupdf
+        for pdf in pdfs:
+            if pdf.exists():
+                low = "".join(page.get_text() for page in pymupdf.open(pdf)).lower()
+                if any(t in low for t in terms):
+                    problems.append(f"{pdf.relative_to(ROOT)}: a name from {PRIVATE.relative_to(ROOT)}")
+    except ImportError:
+        print("warning: pymupdf not installed: PDF text not checked")
     for f in (ROOT / "publication").glob("*.md"):
         if re.search(r"\bTODO\b|XXXX", f.read_text(encoding="utf-8")):
             problems.append(f"{f.relative_to(ROOT)}: placeholder left")

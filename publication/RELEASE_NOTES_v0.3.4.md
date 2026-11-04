@@ -22,8 +22,8 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
   of them (12% in the fifth); up to 17 points of that come from re-serialising the JSON alone, which
   removes nothing. On the same conversations of those four agents: 59–77% (0.1), 46–61% with the 0.2
   safeguards, 17–33% for Headroom, 0–17% for re-serialisation alone.
-- Learning from tool calls alone (what a gateway sees) missed a used field in 60% of held-out calls,
-  against 6% when the learner also sees the final answer.
+- Learning from tool calls alone (what a gateway sees) missed a used field in 49% of held-out calls of
+  the three agents on real APIs, against 4% when the learner also sees the final answer.
 - Where it fails: values the agent transforms, fields used only to reason, and — without an id
   field — agents inventing ids. Identifiers are always kept since 0.2.
 

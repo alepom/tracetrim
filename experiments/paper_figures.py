@@ -57,7 +57,7 @@ def savings():
     names = ",".join(f"{{{n}}}" for n, *_ in rows)
 
     def plot(i, color, label):
-        coords = " ".join(f"({r[i]:.1f},{{{r[0]}}})" for r in rows)
+        coords = " ".join(f"({r[i]:.4f},{{{r[0]}}})" for r in rows)     # rounded once, by pgf
         return (f"\\addplot[xbar, bar width=6.5pt, fill={color}, draw=white, line width=0.6pt, "
                 f"nodes near coords={{\\pgfmathprintnumber[fixed,precision=0]{{\\pgfplotspointmeta}}\\%}}, "
                 f"nodes near coords style={{font=\\scriptsize, text=black, anchor=west}}] "

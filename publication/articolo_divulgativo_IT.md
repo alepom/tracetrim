@@ -55,7 +55,7 @@ il 46% e il 61% con le protezioni della versione 0.2); la sola riscrittura compa
 
 **Il filtro va imparato dalle tracce complete.** Se si osservano solo le chiamate ai tool, cioè quello che vedrebbe
 un proxy MCP messo tra agente e server, i campi persi esplodono: nel complesso il filtro toglie un campo usato nel
-**60%** delle chiamate, contro il 6% di quando vede anche la risposta; in due casi su cinque sbaglia in **tutte** le
+**49%** delle chiamate dei tre agenti su API reali, contro il 4% di quando vede anche la risposta; in due casi su cinque sbaglia in **tutte** le
 chiamate, perché quegli agenti usano i dati solo nella risposta finale. Il filtro si può *applicare* in un proxy,
 ma va *imparato* da tracce che contengono la risposta. Per questo, nella libreria, il proxy chiede all'agente
 un ultimo passo: consegnargli la risposta finale.
@@ -85,12 +85,14 @@ titoli) e **riconoscere i valori trasformati** (date, importi in centesimi, URL 
 secondo studio, anche questo con protocollo congelato prima, ha verificato che le protezioni eliminano tutte e tre
 le perdite, mantenendo un risparmio **tra il 46% e il 61%**.
 
-Due cose non sono andate bene, e il paper le riporta:
+Tre cose non sono andate bene, e il paper le riporta:
 - un **quarto meccanismo**: il motivo di un pagamento rifiutato arriva in inglese e l'agente lo traduce in italiano;
   il filtro non riconosce la traduzione e lo toglie. Le protezioni non lo coprono;
 - la **compressione strutturale** (riscrivere il JSON in un formato più compatto, TOON) non toglie dati, ma ha
   cambiato il modo in cui il modello ha risolto un caso ambiguo. Un formato meno familiare al modello non è una
-  scelta neutra.
+  scelta neutra;
+- nel **piano editoriale**, anche con le protezioni, l'agente ha scelto parole chiave con più ricerche di quelle che
+  sceglie con i dati completi (mediana 1.300 contro 355–590): i numeri erano giusti, ma la scelta è cambiata.
 
 Nelle esecuzioni dal vivo, con uno strumento `expand` che permette all'agente di recuperare un campo nascosto, i
 token in input fatturati sono scesi del **56%** e del **32%** nei due casi provati, e ogni esecuzione ha superato i

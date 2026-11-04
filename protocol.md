@@ -284,6 +284,8 @@ The spend cap of 40 USD and its stop rule are unchanged.
     and C5 (simulated) are released in full; for C1 and C2 only derived per-call records are released (tool, field
     paths used, echoed and judgeable, token counts), which reproduce the usage analysis without redistributing the
     provider's data.
+## Deviation found in the pre-publication review (Study 1)
+
 13. **Phase C, editorial-plan gate (2026-11-04, after publication review).** The live loop stores the outputs the
     agent received, so in the prudent arm the frozen C1 gate checked only the (keyword, volume) pairs still visible
     in the projected outputs (22, 43 and 26 of 60) and skipped the rest. The frozen result is kept; every pair is also

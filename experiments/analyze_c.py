@@ -15,7 +15,7 @@ import statistics
 from .analyze_b import gate_pass
 from .checks import check
 from .quality import quality
-from .run import ROOT, TRACES, cost
+from .run import ROOT, TRACES, cost, keep_missing
 
 OUT = ROOT / "results" / "phase_c.json"
 
@@ -46,6 +46,8 @@ def main():
                 "gates_passed": sum(gate_pass(g) for g in gates), "gates": gates,
                 "thermometers": [quality(p) for p in paths],
             }
+        if not arms:
+            continue                     # traces not here: kept from the results file below
         res["cases"][case] = arms
 
         def mm(v):
@@ -62,6 +64,7 @@ def main():
             for p, t in zip(a["runs"], a["thermometers"]):
                 print(f"      {a_name:<8}{p:<14}{json.dumps(t, ensure_ascii=False)}")
         print()
+    res = keep_missing(res, OUT, ("C1", "C4"))
     OUT.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"  written: {OUT.relative_to(ROOT)}  (prices assumed: experiments/prices.json)\n")
 

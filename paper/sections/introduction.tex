@@ -9,8 +9,8 @@ context, is paid for at every subsequent turn, and competes for the model's atte
 
 Practitioners handle this by hand: a wrapper function per tool that keeps the fields the task uses. This works,
 but it requires knowing which fields those are, for each tool and each task, and keeping the wrappers in step
-with the APIs. Generic compressors avoid the per-tool work but do not know what the task needs, so they remove
-structural redundancy and leave the semantic one.
+with the APIs. Generic compressors avoid the per-tool work, but they mostly remove structural redundancy; those that learn
+per tool learn from what the model asks back, not from what the task's answers use.
 
 This paper asks whether the hand-written selection can be \emph{learned}. The agent's own execution traces show
 what it did with each tool output: which values reappear in the arguments of later calls and in the final answer.

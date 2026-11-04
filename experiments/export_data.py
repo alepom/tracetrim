@@ -22,7 +22,7 @@ import shutil
 
 from tracetrim.measure import tokenizer
 from tracetrim.traces import load
-from tracetrim.usage import analyse
+from tracetrim.usage import analyse, leaves
 
 from .run import ROOT, TRACES
 
@@ -60,6 +60,9 @@ def main():
                         "raw_tokens": count(u.output),
                         "used": sorted(u.used), "used_by_calls": sorted(u.used_by_calls),
                         "echo": sorted(u.echo), "judgeable": sorted(u.judgeable),
+                        # Every field path of the output (paths only, no values): the
+                        # projection keeps unseen fields, so misses depend on what was seen.
+                        "seen": sorted({q for q, _ in leaves(u.payload)}) if u.structured else [],
                     }) + "\n")
             meta = json.loads(p.with_suffix(".meta.json").read_text())
             meta.pop("tool_failures", None)

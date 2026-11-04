@@ -3,6 +3,7 @@ aggregate results and the scripts that generate every number and table of this p
 \RepositoryURL{} and archived on Zenodo with the dataset (DOI \SoftwareDOI). Traces of the literature-scan case (CC0 catalogue) and of the two
 simulated cases are released in full. For the two cases built on the search-data API, whose terms do not license
 redistribution of results, only derived per-call records are released: tool, field paths used, echoed and
-judgeable, and token counts of the raw outputs. They are enough to recompute which fields were used and the misses
-without the provider's data, but not the token savings of those two cases, which need the payloads. The simulated servers
+judgeable, every field path seen, and token counts of the raw outputs. They are enough to recompute which fields
+were used and the misses without the provider's data (\texttt{experiments/misses\_from\_derived.py} does, and checks
+the result against Table~\ref{tab:phasea}), but not the token savings of those two cases, which need the payloads. The simulated servers
 and the payload generator are included, with the exact versions of the OpenAPI descriptions they follow.

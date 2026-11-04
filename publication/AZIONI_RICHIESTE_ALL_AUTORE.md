@@ -24,10 +24,7 @@ Zenodo e repository.
 | 10 | `protocol.md` cita il tetto di spesa | il paper non riporta il budget; nel repository il protocollo resta com'era quando è stato congelato (consigliato: lasciarlo, è il documento storico) |
 | 11 | Dove pubblicare il dataset | nel record Zenodo del software (consigliato), non in git |
 
-## Azioni esterne (le fai tu, seguendo la guida)
+## Azioni esterne
 
-- Creare il repository GitHub e pubblicare la release `v0.3.4`.
-- Creare le due bozze Zenodo (paper e software+dati) e riservare i DOI.
-- Inserire i DOI: `src/tracetrim/about.py` (`PAPER_DOI`, `SOFTWARE_DOI`, `REPOSITORY`, `LICENSE`), `CITATION.cff`,
-  l'articolo; poi ricompilare il paper e rifare i pacchetti.
-- Premere *Publish* sui due record Zenodo.
+Repository e bozze Zenodo sono creati, i DOI riservati e inseriti ovunque. I passi che restano sono in
+[`ULTIMI_PASSI_IT.md`](ULTIMI_PASSI_IT.md).

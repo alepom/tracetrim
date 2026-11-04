@@ -4,7 +4,8 @@
 
 How a run is observed. The proxy sees every tool call but not the agent's
 answer, and in the study behind this library learning without the answer
-missed a used field in 60% of held-out calls, against 6% with it. So the
+missed a used field in 49% of held-out calls (the three agents on real APIs),
+against 4% with it. So the
 proxy offers one more tool,
 `tracetrim_done`, and the agent is told (one line in its instructions) to
 pass its final answer to it. A run is closed by that call. A run that never

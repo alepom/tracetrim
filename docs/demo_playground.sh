@@ -93,9 +93,9 @@ cat > out/demo/mcp.json <<EOF2
   "billing": {"url": "http://127.0.0.1:$BILLING_PORT/mcp", "headers": {"Authorization": "Bearer \${DEMO_TOKEN}"}}
 }}
 EOF2
-DEMO_TOKEN=$TOKEN .venv/bin/tracetrim proxy --servers out/demo/mcp.json \
+DEMO_TOKEN=$TOKEN TRACETRIM_TOKEN=$TOKEN .venv/bin/tracetrim proxy --servers out/demo/mcp.json \
   --auto out/demo/auto --min-runs "$MIN_RUNS" "${EXTRA[@]}" \
-  --http "$TRACETRIM_PORT" --token "$TOKEN" --allowed-host "$HOST" > out/demo/tracetrim.log 2>&1 &
+  --http "$TRACETRIM_PORT" --allowed-host "$HOST" > out/demo/tracetrim.log 2>&1 &
 PIDS+=($!)
 
 cat <<EOF

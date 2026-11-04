@@ -6,13 +6,14 @@ removed \PhaseAPrudentSavingi{} to \PhaseAPrudentSavingv{} of tool-output tokens
 \PhaseAPrudentSavingii{} in the fifth (re-serialising the JSON alone, with no field removed, already removes up to
 \ReserialAiv); in live
 runs with an \texttt{expand} tool for hidden fields, billed input tokens fell by \PhaseCChangeInputi{} and
-\PhaseCChangeInputiv{}, and every run passed its gates as frozen. Learning only from tool calls, as a gateway would,
-missed a used field in \MissesPooledShareCalls{} of held-out calls, against \MissesPooledShareFull{} when learning
-from complete traces. Replays with projected outputs, under a
+\PhaseCChangeInputiv{}; every run passed its gates as frozen, although in one case those gates could check only what
+the agent was shown, and a later re-check against the raw outputs found one wrong volume. Learning only from tool
+calls, as a gateway would, missed a used field in \MissesPooledShareRealCalls{} of held-out calls on the three agents
+with real APIs, against \MissesPooledShareRealFull{} when learning from complete traces. Replays with projected outputs, under a
 protocol frozen in advance, located the failures precisely: values the agent transforms before writing them,
 fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second
 pre-registered study showed that two safeguards, keeping identifying fields and recognising transformed values,
 removed those losses while keeping savings of \StudyTwoVtwoTokensiii{} to \StudyTwoVtwoTokensv{} on four of the five
-agents; a post-hoc check
+agents, although in one of them the agent's choice of keywords still shifted; a post-hoc check
 found a fourth mechanism, translated values, not covered. We release the library, with a bilingual telemetry report
 and an MCP proxy that applies a reviewed projection in front of any server.

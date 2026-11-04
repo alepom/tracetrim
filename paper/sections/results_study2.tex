@@ -19,8 +19,8 @@ test, not under the strict one.}
 \input{generated/fig_savings.tex}
 \caption{Tool-output tokens removed on the same conversations, per case: the learned projection without safeguards
 (0.1, Phase B), with them (0.2, Study 2), Headroom \HeadroomVersion{} configured to compress everything and run once
-per conversation, and re-serialisation alone (compact JSON, no field removed), the lossless part included in every
-other bar. Token counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
+per conversation, and re-serialisation alone (compact JSON, no field removed), the lossless part included in the
+tracetrim bars. Token counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
 \label{fig:savings}
 \end{figure}
 
@@ -38,9 +38,16 @@ editorial plan, the literature scan, billing support and CI triage, against \Stu
 \PhaseBPrudentTokensiii{} with \StudyTwoVtwoTokensiii{} in the literature scan) and bought back the three lost
 pieces of information.
 
+\paragraph{Outside the hypotheses.} In the editorial plan the \texttt{v02} arm \StudyTwoVtwoHoldsi{} under the band rule
+(Table~\ref{tab:study2}): its gates passed in every run, but the median search volume of the keywords it chose was
+\StudyTwoVtwoMedianVolumei, above the raw arm's range (\StudyTwoRawBandVolumei); the aggressive and structural arms of
+Phase B had reached the same median (\PhaseBAggressiveMedianVolumei). With projected outputs the agent leaned towards
+keywords with more searches. Whether that makes a worse editorial plan is a judgement the thermometer does not make,
+but it is a change in what the agent does, and it is not covered by the safeguards.
+
 \paragraph{A fourth mechanism, found after the fact.} Reading the billing-support answers, we found that the
-frozen test for one ticket was too lenient: it accepted the diagnosis when ``fondi'' (funds) or ``insufficient''
-appeared anywhere in the ticket, so advice such as ``check that you have sufficient funds'' passed it even when the diagnosis did not
+frozen test for one ticket was too lenient: it accepted the diagnosis when ``fondi'' (funds) or the stem
+``insufficien'' appeared anywhere in the ticket, so advice such as ``check that you have sufficient funds'' passed it even when the diagnosis did not
 give the reason for the declined payment. With a strict test on the diagnosis alone (added after the data were
 seen, and reported beside the frozen result rather than instead of it), the raw arm gave the reason in
 \StudyTwoStrictAllRightRaw{} runs and the \texttt{v02} arm in \StudyTwoStrictAllRightVtwo. The reason arrives as an
