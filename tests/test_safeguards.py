@@ -16,7 +16,7 @@ def test_timestamp_written_as_a_date_is_seen_with_normalize():
     # C4: the period end arrived as a Unix timestamp, the agent wrote "20 novembre 2026".
     t = one_call({"items": [{"current_period_end": 1795168800, "noise": "x" * 10}]},
                  "Potrai usare il servizio fino al 20 novembre 2026.")
-    [plain] = analyse(t)
+    [plain] = analyse(t, normalize=False)
     [norm] = analyse(t, normalize=True)
     assert "items[].current_period_end" not in plain.used
     assert "items[].current_period_end" in norm.used
@@ -46,7 +46,7 @@ def test_identifying_fields_are_kept_even_when_never_seen_used():
     kept = p.keep["t"]
     assert {"items[].id", "items[].title", "items[].html_url"} <= kept
     assert "items[].body" not in kept and "items[].followers_url" not in kept
-    assert not learn([[u]], "aggressive").keep["t"] & {"items[].id", "items[].title"}
+    assert not learn([[u]], "aggressive", protect_ids=False).keep["t"] & {"items[].id", "items[].title"}
 
 
 def test_identifying_pattern():

@@ -26,11 +26,12 @@ OUT = ROOT / "results" / "phase_a.json"
 
 def traces_of(case):
     paths = sorted((TRACES / case).glob("A*.jsonl"))
-    return paths, [analyse(load(p)) for p in paths]
+    # Study 1 measured tracetrim 0.1: pinned, whatever the library defaults.
+    return paths, [analyse(load(p), normalize=False) for p in paths]
 
 
 def loo_totals(names, usages, source, unseen):
-    rows = leave_one_out(names, usages, source=source, unseen=unseen)
+    rows = leave_one_out(names, usages, source=source, unseen=unseen, protect_ids=False)
     t = {k: sum(getattr(r, k) for r in rows) for k in
          ("raw", "prudent", "aggressive", "trimmed_calls", "misses", "misses_text", "misses_prudent")}
     t["prudent_saving"] = 1 - t["prudent"] / t["raw"] if t["raw"] else 0
@@ -41,7 +42,7 @@ def loo_totals(names, usages, source, unseen):
 def rq1_used_share(usages, count):
     """Share of tool-output tokens left by the in-sample aggressive projection:
     what the agent visibly used, plus record keys (a lower bound of use)."""
-    p = learn(usages, "aggressive")
+    p = learn(usages, "aggressive", protect_ids=False)
     raw = kept = 0
     for calls in usages:
         for c in calls:
@@ -56,11 +57,11 @@ def rq5_transfer(count):
     _, u1 = traces_of("C1")
     _, u2 = traces_of("C2")
     shared = {c.tool for calls in u1 for c in calls} & {c.tool for calls in u2 for c in calls}
-    cross = learn(u1, "aggressive")
+    cross = learn(u1, "aggressive", protect_ids=False)
     out = {"shared_tools": sorted(shared), "transfer": {"calls": 0, "misses": 0, "raw": 0, "kept": 0},
            "within": {"calls": 0, "misses": 0, "raw": 0, "kept": 0}}
     for i, calls in enumerate(u2):
-        own = learn(u2[:i] + u2[i + 1:], "aggressive")
+        own = learn(u2[:i] + u2[i + 1:], "aggressive", protect_ids=False)
         for c in calls:
             if c.tool not in shared or not c.structured:
                 continue

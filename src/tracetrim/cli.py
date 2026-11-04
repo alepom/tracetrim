@@ -36,9 +36,9 @@ def row(cols, widths) -> str:
                           for i, (c, w) in enumerate(zip(cols, widths)))
 
 
-def _read(paths):
+def _read(paths, v01=False):
     traces = [load(p) for p in paths]
-    return traces, [analyse(t) for t in traces]
+    return traces, [analyse(t, normalize=not v01) for t in traces]
 
 
 def cmd_learn(a):
@@ -59,7 +59,7 @@ def cmd_apply(a):
 
 
 def cmd_measure(a):
-    traces, usages = _read(a.traces)
+    traces, usages = _read(a.traces, a.v01)
 
     print("\n  TRACES READ\n")
     w = [28, 8, 8, 8, 10, 8]
@@ -71,7 +71,7 @@ def cmd_measure(a):
         print(row([t.name[:27], len(us), js, len(us) - js, fmt(lv), sum(len(u.used) for u in us)], w))
     print("  json = structured output · other = prose, errors, empty")
 
-    rows = m.leave_one_out([t.name for t in traces], usages, a.source, a.unseen)
+    rows = m.leave_one_out([t.name for t in traces], usages, a.source, a.unseen, protect_ids=not a.v01)
     seen = "everything the agent wrote" if a.source == "full" else "tool calls only (MCP proxy)"
     print(f"\n\n  LEAVE-ONE-OUT PROJECTION   learned from: {seen} · unseen fields: {a.unseen}\n")
     w = [28, 12, 12, 7, 12, 7, 9, 7]
@@ -166,6 +166,8 @@ def main(argv=None):
     s.add_argument("--per-tool", action="store_true")
     s.add_argument("--unseen", choices=UNSEEN, default="keep",
                    help="drop reproduces the original measurements")
+    s.add_argument("--v01", action="store_true",
+                   help="tracetrim 0.1 behaviour: no identifier protection, no transformed values")
     s.set_defaults(func=cmd_measure)
 
     s = sub.add_parser("report", help="bilingual telemetry report (HTML + JSON)")

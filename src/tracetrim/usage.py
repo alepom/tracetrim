@@ -158,9 +158,9 @@ class CallUsage:
         return isinstance(self.payload, (dict, list))
 
 
-def analyse(trace: Trace, normalize: bool = False) -> list[CallUsage]:
+def analyse(trace: Trace, normalize: bool = True) -> list[CallUsage]:
     """`normalize`: also look for transformed forms of each value (dates,
-    amounts in minor units, short ids from URLs). Off by default in 0.1."""
+    amounts in minor units, short ids from URLs). On by default since 0.2."""
     texts = [e.text for e in trace.events]
 
     # First event where each n-gram is written. Two versions: a proxy in front

@@ -108,7 +108,7 @@ def project(node, keep: set[str], path="", drop: set[str] | None = None):
 
 
 def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="keep",
-          protect_ids: bool = False) -> Projection:
+          protect_ids: bool = True) -> Projection:
     """`usages`: one list of CallUsage per trace (see usage.analyse)."""
     if mode not in MODES or source not in SOURCES or unseen not in UNSEEN:
         raise ValueError(f"mode in {MODES}, source in {SOURCES}, unseen in {UNSEEN}")

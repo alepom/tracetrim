@@ -54,13 +54,13 @@ def removes(p, tool: str, path: str) -> bool:
 
 
 def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full",
-                  unseen="keep") -> list[Row]:
+                  unseen="keep", protect_ids: bool = True) -> list[Row]:
     count = tokenizer()
     rows = []
     for i, (name, calls) in enumerate(zip(names, usages)):
         others = usages[:i] + usages[i + 1:]
-        prudent = learn(others, "prudent", source, unseen)
-        aggressive = learn(others, "aggressive", source, unseen)
+        prudent = learn(others, "prudent", source, unseen, protect_ids)
+        aggressive = learn(others, "aggressive", source, unseen, protect_ids)
         r = Row(name)
         for c in calls:
             raw = count(c.output)
