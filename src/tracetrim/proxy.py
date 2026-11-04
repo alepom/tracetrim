@@ -38,6 +38,48 @@ EXPAND = {
 MAX_GROUPS = 25
 
 
+class Live:
+    """One line per call on stderr: what the tool sent, what the agent got.
+
+    stderr, because in stdio mode stdout is the MCP channel. Tokens are counted
+    with tiktoken when it is installed, otherwise characters are shown and
+    labelled as such: never a token estimate.
+    """
+
+    def __init__(self, quiet: bool = False):
+        self.quiet = quiet
+        try:
+            import tiktoken
+            enc = tiktoken.get_encoding("o200k_base")
+            self.count, self.unit = (lambda t: len(enc.encode(t or ""))), "tokens"
+        except ImportError:
+            self.count, self.unit = (lambda t: len(t or "")), "chars"
+        self.raw = self.sent = self.calls = self.expands = 0
+
+    def call(self, tool: str, raw: str, sent: str) -> None:
+        r, s = self.count(raw), self.count(sent)
+        self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
+        hidden = sent.rsplit("\n[trimmed] ", 1)[1].split("hidden: ", 1)[1] if "\n[trimmed] " in sent else ""
+        groups = len(hidden.split(", ")) if hidden else 0
+        self._print(f"{tool:<34} {r:>8,} -> {s:>8,} {self.unit} ({self._pct(s, r)})"
+                    + (f"  hidden: {groups} group{'s' if groups != 1 else ''}" if groups else ""))
+
+    def expand(self, call_id: str, fields: list[str], got: str) -> None:
+        self.expands += 1
+        self._print(f"{'expand ' + call_id:<34} the agent asked for {', '.join(fields)[:60]}"
+                    f" ({self.count(got):,} {self.unit})")
+
+    def _pct(self, s, r):
+        return f"{(s / r - 1) * 100:+.0f}%" if r else "  —"
+
+    def _print(self, line: str) -> None:
+        if self.quiet:
+            return
+        import sys
+        total = f"session: {self.calls} calls, {self.raw:,} -> {self.sent:,} ({self._pct(self.sent, self.raw)}), {self.expands} expand"
+        print(f"[tracetrim] {line}\n[tracetrim]   {total}", file=sys.stderr, flush=True)
+
+
 class Trimmer:
     """The part of the proxy that does not depend on MCP: testable alone."""
 
@@ -80,7 +122,7 @@ class Trimmer:
         return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False)
 
 
-def _server(upstream_cmd, upstream_url, headers, config, record):
+def _server(upstream_cmd, upstream_url, headers, config, record, quiet=False, structural=None):
     import shlex
 
     from mcp import ClientSession, types
@@ -88,8 +130,15 @@ def _server(upstream_cmd, upstream_url, headers, config, record):
     from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
     from mcp.server.lowlevel import Server
 
-    trimmer = Trimmer(Policy.load(config) if config else None)
+    policy = Policy.load(config) if config else None
+    if structural:
+        # Override from the command line: "toon" or "headroom" after the projection
+        # (or alone, when no config is given).
+        policy = policy or Policy({"format": "tracetrim/config@1", "tools": {}}, None)
+        policy.structural = structural
+    trimmer = Trimmer(policy)
     rec = Path(record).open("a", encoding="utf-8") if record else None
+    live = Live(quiet)
 
     @asynccontextmanager
     async def upstream(_server):
@@ -114,7 +163,9 @@ def _server(upstream_cmd, upstream_url, headers, config, record):
     async def call_tool(ctx, params):
         args = params.arguments or {}
         if params.name == "expand":
-            text = trimmer.expand(str(args.get("call_id", "")), [str(f) for f in args.get("fields") or []])
+            fields = [str(f) for f in args.get("fields") or []]
+            text = trimmer.expand(str(args.get("call_id", "")), fields)
+            live.expand(str(args.get("call_id", "")), fields, text)
         else:
             r = await ctx.lifespan_context["session"].call_tool(params.name, args)
             raw = "".join(getattr(c, "text", "") or "" for c in (r.content or []))
@@ -123,22 +174,24 @@ def _server(upstream_cmd, upstream_url, headers, config, record):
                                      ensure_ascii=False) + "\n")
                 rec.flush()
             text = trimmer.output(params.name, raw)
+            live.call(params.name, raw, text)
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
     return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool)
 
 
 async def serve(upstream_cmd: str | None, upstream_url: str | None, headers: dict[str, str],
-                config: str | None, record: str | None) -> None:
+                config: str | None, record: str | None, quiet: bool = False, structural: str | None = None) -> None:
     """stdio: the client launches the proxy as a local process."""
     from mcp.server.stdio import stdio_server
-    server = _server(upstream_cmd, upstream_url, headers, config, record)
+    server = _server(upstream_cmd, upstream_url, headers, config, record, quiet, structural)
     async with stdio_server() as (read, write):
         await server.run(read, write, server.create_initialization_options())
 
 
 async def serve_http(upstream_cmd, upstream_url, headers, config, record, *, host: str, port: int,
-                     token: str | None, allowed_hosts: list[str]) -> None:
+                     token: str | None, allowed_hosts: list[str], quiet: bool = False,
+                     structural: str | None = None) -> None:
     """Streamable HTTP at /mcp, for hosted clients (e.g. the OpenAI Playground)
     that call the server from their own infrastructure.
 
@@ -149,7 +202,7 @@ async def serve_http(upstream_cmd, upstream_url, headers, config, record, *, hos
     import uvicorn
     from mcp.server.transport_security import TransportSecuritySettings
 
-    server = _server(upstream_cmd, upstream_url, headers, config, record)
+    server = _server(upstream_cmd, upstream_url, headers, config, record, quiet, structural)
     security = TransportSecuritySettings(
         enable_dns_rebinding_protection=bool(allowed_hosts),
         allowed_hosts=allowed_hosts, allowed_origins=[])

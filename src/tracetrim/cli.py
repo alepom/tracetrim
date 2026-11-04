@@ -138,9 +138,10 @@ def cmd_proxy(a):
     if a.http:
         from .proxy import serve_http
         asyncio.run(serve_http(a.upstream_cmd, a.upstream_url, headers, a.config, a.record,
-                               host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
+                               host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host,
+                               quiet=a.quiet, structural=a.structural))
     else:
-        asyncio.run(serve(a.upstream_cmd, a.upstream_url, headers, a.config, a.record))
+        asyncio.run(serve(a.upstream_cmd, a.upstream_url, headers, a.config, a.record, a.quiet, a.structural))
 
 
 def main(argv=None):
@@ -190,6 +191,9 @@ def main(argv=None):
     s.add_argument("--token", help="require 'Authorization: Bearer TOKEN' on every HTTP request")
     s.add_argument("--allowed-host", action="append", default=[],
                    help="Host header accepted over HTTP (repeatable), e.g. the tunnel's public host")
+    s.add_argument("--quiet", action="store_true", help="no per-call log on stderr")
+    s.add_argument("--structural", choices=["toon", "headroom"],
+                   help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
     s.set_defaults(func=cmd_proxy)
 
     a = p.parse_args(argv)

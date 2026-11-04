@@ -86,6 +86,16 @@ The proxy exposes the same tools plus `expand`: every trimmed output ends with a
 hidden fields, and the agent can fetch any of them back. Add `--record traces/live.jsonl` to keep
 recording, and regenerate the report from time to time.
 
+How it wraps another server: the proxy is an MCP *server* towards your agent and an MCP *client*
+towards the upstream. At start it asks the upstream for its tools and publishes the same names and
+input schemas as its own (plus `expand`); each call is forwarded unchanged, and only the result is
+rewritten on its way back. One proxy per upstream server.
+
+While it runs, the proxy prints one line per call on stderr — tokens from the tool, tokens to the
+agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). Add
+`--structural toon` or `--structural headroom` to re-encode outputs after the projection
+(experimental; Headroom needs `tracetrim[headroom]`).
+
 **5. Measure before you trust it.**
 
 ```bash

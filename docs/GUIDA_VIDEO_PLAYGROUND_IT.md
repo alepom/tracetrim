@@ -12,6 +12,24 @@ il proxy non ci sono credenziali vere, e lo scenario ha una risposta giusta nota
 - `ngrok` (già installato in `/usr/local/bin/ngrok`, con il tuo dominio statico in `ngrok.yml`);
 - il Playground di OpenAI con il modello che vuoi mostrare.
 
+## Come funziona il proxy (da dire nel video)
+
+Il proxy ha due facce. Verso l'agente è un **server MCP**; verso il server vero è un **client MCP**.
+All'avvio chiede al server vero l'elenco dei suoi tool e lo ripubblica identico, stessi nomi e stessi
+parametri, aggiungendo `expand`. Quando l'agente chiama un tool, il proxy inoltra la chiamata così
+com'è, riceve la risposta, la filtra e la restituisce. L'agente non sa che c'è un proxy: vede gli
+stessi tool di sempre, con risposte più leggere. Un proxy per ogni server.
+
+Mentre l'agente lavora, nel terminale del proxy compare una riga per ogni chiamata:
+
+```
+[tracetrim] stripe_list_charges                   1,579 ->      783 tokens (-50%)  hidden: 18 groups
+[tracetrim]   session: 2 calls, 2,227 -> 1,074 (-52%), 0 expand
+[tracetrim] expand c3                          the agent asked for data[].items (282 tokens)
+```
+
+È la scena in cui si vede il sistema lavorare: tieni il terminale accanto al Playground.
+
 ## 1. La configurazione (una volta sola)
 
 Dalle 8 esecuzioni della fase A di C4, due configurazioni: quella attuale (0.2) e quella
@@ -78,6 +96,13 @@ Nel Playground aggiorna l'elenco dei tool (compare `expand`) ed esegui di nuovo.
 Rilancia il proxy con `--config out/demo/report.config.json`. La 0.2 riconosce che il timestamp
 è usato come data e non lo taglia: T3 ha la sua data senza `expand`, e il filtro toglie comunque
 la maggior parte del payload.
+
+## 5b. Scena C — con Headroom (facoltativa)
+
+Headroom è installato nell'ambiente di tracetrim. Aggiungi `--structural headroom` al comando della
+scena B: il proxy applica prima la proiezione e poi la compressione di Headroom, e il registro mostra
+i token dopo entrambe. Da dire nel video: è una combinazione **sperimentale**, che lo studio non ha
+validato sulla qualità delle risposte; il primo avvio è più lento perché Headroom si inizializza.
 
 ## 6. Chiudere il cerchio (facoltativo)
 
