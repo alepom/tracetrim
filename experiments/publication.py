@@ -27,7 +27,7 @@ URL = re.compile(r"https?://[^\s\"'<>)]+")
 OWN = ("alessiopomaro.it", "example.test", "example.com", "example-org", "openalex.org", "doi.org", "orcid.org",
        "github.com", "pypi.org", "creativecommons.org", "apache.org", "zenodo.org", "dataforseo.com",
        "tavily.com", "modelcontextprotocol.io", "proceedings.mlr.press", "arxiv.org", "aclanthology.org",
-       "pypi.example.test", "mcp.example.com", "dfs.mcp.REDACTED.it", "www.anthropic.com", "raw.githubusercontent.com",
+       "pypi.example.test", "mcp.example.com", "www.anthropic.com", "raw.githubusercontent.com",
        "claude.com")
 
 

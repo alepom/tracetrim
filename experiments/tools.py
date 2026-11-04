@@ -27,7 +27,9 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
 
 ROOT = Path(__file__).resolve().parent.parent
-DFS_URL = "https://dfs.mcp.REDACTED.it/mcp"
+# The search-data MCP server is the author's own deployment: its address is not
+# published, and is read from .env (DFS_MCP_URL) like the token.
+DFS_URL_ENV = "DFS_MCP_URL"
 OWN_DOMAIN = "alessiopomaro.it"
 BLOCKED = ("Error: blocked by the study's domain rule. Only alessiopomaro.it may be "
            "parsed, used as a target or used in site: queries.")
@@ -95,11 +97,11 @@ class DataForSEO:
         if self.module:
             return stdio_client(StdioServerParameters(command=sys.executable, args=["-m", self.module],
                                                       cwd=str(ROOT)))
-        token = env("DFS_MCP_TOKEN")
-        if not token:
-            raise SystemExit("DFS_MCP_TOKEN missing in .env")
+        token, url = env("DFS_MCP_TOKEN"), env(DFS_URL_ENV)
+        if not token or not url:
+            raise SystemExit("DFS_MCP_TOKEN and DFS_MCP_URL are needed in .env")
         http = create_mcp_http_client(headers={"X-MCP-Token": token})
-        return streamable_http_client(DFS_URL, http_client=http, max_sse_event_size=16 * 1024 * 1024)
+        return streamable_http_client(url, http_client=http, max_sse_event_size=16 * 1024 * 1024)
 
     async def _connect(self):
         self._cm = self._transport()
