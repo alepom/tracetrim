@@ -20,7 +20,7 @@ ha lavorato nelle esecuzioni precedenti?**
 ## Il paper
 
 **"Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"**
-DOI: *(da inserire)*
+DOI: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934)
 
 In breve:
 - cinque agenti: tre su API reali (un piano editoriale e un'analisi dei contenuti mancanti con DataForSEO, una
@@ -29,7 +29,8 @@ In breve:
 - **due studi con protocollo congelato prima** di ogni esecuzione: ipotesi, metriche e regole fissate in anticipo,
   ogni modifica successiva dichiarata con data e motivo;
 - ogni numero del paper è generato dai dati, e codice, protocolli e dati pubblicabili sono disponibili
-  ([GitHub](#) · [Zenodo](#)).
+  ([GitHub](https://github.com/alepom/tracetrim) ·
+  [Zenodo](https://doi.org/10.5281/zenodo.23954125)).
 
 È un preprint: non è passato dalla revisione di una rivista.
 
@@ -109,4 +110,5 @@ Dallo studio è nata **tracetrim**, una libreria open source che:
 - la applica con un **proxy MCP** davanti a qualunque server, senza modificare l'agente, con `expand` sempre
   disponibile.
 
-Il codice, la guida rapida e le istruzioni per rifare ogni misura sono nel repository.
+Il codice, la guida rapida e le istruzioni per rifare ogni misura sono nel
+[repository](https://github.com/alepom/tracetrim).

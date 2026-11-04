@@ -14,9 +14,9 @@ ORCID = "0009-0008-6975-996X"
 WEBSITE = "https://www.alessiopomaro.it/"
 
 REPOSITORY = "https://github.com/alepom/tracetrim"
-PAPER_DOI = None      # set when the Zenodo record is reserved
-SOFTWARE_DOI = None
-LICENSE = None        # set when the author confirms it
+PAPER_DOI = "10.5281/zenodo.23953934"
+SOFTWARE_DOI = "10.5281/zenodo.23954125"
+LICENSE = "MIT"
 
 
 def as_dict() -> dict:

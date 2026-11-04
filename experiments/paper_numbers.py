@@ -52,7 +52,10 @@ def main():
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
         f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version {about.VERSION} of {about.NAME}}}\n"
-        f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed.}}\n", encoding="utf-8")
+        f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
+        + (f" DOI \\href{{https://doi.org/{about.PAPER_DOI}}}{{{about.PAPER_DOI}}}." if about.PAPER_DOI else "") + "}\n"
+        f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{about.SOFTWARE_DOI}}}{{{about.SOFTWARE_DOI}}}}}\n"
+        f"\\newcommand{{\\RepositoryURL}}{{\\url{{{about.REPOSITORY}}}}}\n", encoding="utf-8")
 
     # ---- Phase A (Study 1) ------------------------------------------------
     a = load("phase_a.json")
