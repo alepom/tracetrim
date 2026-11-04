@@ -72,6 +72,25 @@ def test_apply_leaves_prose_and_unknown_tools_alone_but_unescapes_json():
     assert p.apply("other_tool", '{"city": "Forl\\u00ec"}') == '{"city": "Forlì"}'
 
 
+def test_fields_never_seen_pass_through_unless_strict():
+    # An API that adds a field must not have it hidden silently.
+    p = learn([analyse(trace("t", "spa weekend 1600"))], mode="aggressive")
+    new = dict(VOLUMES, items=[dict(VOLUMES["items"][0], seasonality="high")])
+    assert json.loads(p.apply("search_volume", json.dumps(new)))["items"][0]["seasonality"] == "high"
+    strict = learn([analyse(trace("t", "spa weekend 1600"))], mode="aggressive", unseen="drop")
+    assert "seasonality" not in json.loads(strict.apply("search_volume", json.dumps(new)))["items"][0]
+
+
+def test_saved_projection_lists_what_it_drops_and_loads_back(tmp_path):
+    from tracetrim import Projection
+    p = learn([analyse(trace("t", "spa weekend 1600"))], mode="aggressive")
+    p.save(tmp_path / "p.json")
+    d = json.loads((tmp_path / "p.json").read_text())
+    assert "items[].cpc" in d["dropped"]["search_volume"]
+    q = Projection.load(tmp_path / "p.json")
+    assert q.apply("search_volume", json.dumps(VOLUMES)) == p.apply("search_volume", json.dumps(VOLUMES))
+
+
 def test_leave_one_out_counts_a_miss_when_the_held_out_trace_uses_a_new_field():
     a = analyse(trace("a", "spa weekend 1600"))
     b = analyse(trace("b", "spa weekend 1600, location 2380"))

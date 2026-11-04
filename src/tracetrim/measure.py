@@ -45,27 +45,36 @@ class Row:
     per_tool: dict = field(default_factory=lambda: defaultdict(lambda: [0, 0, 0, 0, 0, 0]))
 
 
-def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full") -> list[Row]:
+def removes(p, tool: str, path: str) -> bool:
+    """Does projection `p` actually remove this field? A miss is a used field
+    that is removed; with unseen="keep", a field never seen is not."""
+    if path in p.keep[tool]:
+        return False
+    return p.unseen == "drop" or path in p.seen[tool]
+
+
+def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full",
+                  unseen="keep") -> list[Row]:
     count = tokenizer()
     rows = []
     for i, (name, calls) in enumerate(zip(names, usages)):
         others = usages[:i] + usages[i + 1:]
-        prudent = learn(others, "prudent", source)
-        aggressive = learn(others, "aggressive", source)
+        prudent = learn(others, "prudent", source, unseen)
+        aggressive = learn(others, "aggressive", source, unseen)
         r = Row(name)
         for c in calls:
             raw = count(c.output)
             pr = count(prudent.apply(c.tool, c.output))
             ag = count(aggressive.apply(c.tool, c.output))
             trimmed = c.structured and c.tool in aggressive.keep
-            missed = (c.used - aggressive.keep[c.tool]) if trimmed else set()
+            missed = {f for f in c.used if removes(aggressive, c.tool, f)} if trimmed else set()
             r.raw += raw
             r.prudent += pr
             r.aggressive += ag
             r.trimmed_calls += trimmed
             r.misses += bool(missed)
             r.misses_text += bool(missed & c.used_as_text)
-            r.misses_prudent += trimmed and bool(c.used - prudent.keep[c.tool])
+            r.misses_prudent += trimmed and any(removes(prudent, c.tool, f) for f in c.used)
             t = r.per_tool[c.tool]
             for k, v in enumerate((1, raw, pr, ag, int(trimmed), int(bool(missed)))):
                 t[k] += v

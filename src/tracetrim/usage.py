@@ -90,6 +90,7 @@ class CallUsage:
     tool: str
     output: str
     payload: object                                  # parsed JSON, or None
+    arguments: str = ""                              # as the agent wrote them
     used: set[str] = field(default_factory=set)        # seen in any later text
     used_by_calls: set[str] = field(default_factory=set)  # seen in later call arguments only
     used_as_text: set[str] = field(default_factory=set)   # confirmed by a string, not a number
@@ -117,7 +118,7 @@ def analyse(trace: Trace) -> list[CallUsage]:
     for i, e in enumerate(trace.events):
         if e.kind != "call" or e.output is None:
             continue
-        u = CallUsage(e.tool, e.output, parse_output(e.output))
+        u = CallUsage(e.tool, e.output, parse_output(e.output), e.text)
         result.append(u)
         if not u.structured:
             continue

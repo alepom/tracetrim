@@ -1,0 +1,1 @@
+Topic: methods to reduce the token cost of tool outputs and of the context in LLM-based agents (context compression, pruning or filtering of tool results, context management in agent loops), 2023-2026.

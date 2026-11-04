@@ -3,6 +3,7 @@
   tracetrim learn   traces/*.jsonl -o projection.json [--mode prudent|aggressive] [--source full|calls]
   tracetrim apply   projection.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
+  tracetrim report  traces/*.jsonl -o report.html     (also writes report.json)
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -10,10 +11,12 @@ silently produces plausible, wrong numbers.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 
 from . import measure as m
-from .projection import MODES, SOURCES, Projection, learn
+from .projection import MODES, SOURCES, UNSEEN, Projection, learn
 from .traces import load
 from .usage import analyse, leaves
 
@@ -38,7 +41,7 @@ def _read(paths):
 
 def cmd_learn(a):
     _, usages = _read(a.traces)
-    p = learn(usages, a.mode, a.source)
+    p = learn(usages, a.mode, a.source, a.unseen)
     p.save(a.output)
     fields = sum(len(v) for v in p.keep.values())
     print(f"{a.output}: {len(p.keep)} tools, {fields} fields kept ({a.mode}, source={a.source})")
@@ -61,9 +64,9 @@ def cmd_measure(a):
         print(row([t.name[:27], len(us), js, len(us) - js, fmt(lv), sum(len(u.used) for u in us)], w))
     print("  json = structured output · other = prose, errors, empty")
 
-    rows = m.leave_one_out([t.name for t in traces], usages, a.source)
+    rows = m.leave_one_out([t.name for t in traces], usages, a.source, a.unseen)
     seen = "everything the agent wrote" if a.source == "full" else "tool calls only (MCP proxy)"
-    print(f"\n\n  LEAVE-ONE-OUT PROJECTION   learned from: {seen}\n")
+    print(f"\n\n  LEAVE-ONE-OUT PROJECTION   learned from: {seen} · unseen fields: {a.unseen}\n")
     w = [28, 12, 12, 7, 12, 7, 9, 7]
     print(row(["", "", "prudent", "", "aggressive", "", "misses", ""], w))
     print(row(["trace", "raw", "", "", "", "", "all", "text"], w))
@@ -99,6 +102,19 @@ def cmd_measure(a):
     print()
 
 
+def cmd_report(a):
+    from . import report as rp
+    traces, usages = _read(a.traces)
+    d = rp.compute([t.name for t in traces], usages, a.unseen)
+    sugg = rp.suggestions(d)
+    d["suggestions"] = sugg
+    out = Path(a.output)
+    out.write_text(rp.render_html(d, sugg), encoding="utf-8")
+    out.with_suffix(".json").write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"{out} and {out.with_suffix('.json').name}: {d['totals']['traces']} traces, "
+          f"{d['totals']['calls']} calls, {len(sugg)} suggestions")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tracetrim", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -109,6 +125,7 @@ def main(argv=None):
     s.add_argument("-o", "--output", default="projection.json")
     s.add_argument("--mode", choices=MODES, default="prudent")
     s.add_argument("--source", choices=SOURCES, default="full")
+    s.add_argument("--unseen", choices=UNSEEN, default="keep")
     s.set_defaults(func=cmd_learn)
 
     s = sub.add_parser("apply", help="trim one tool output read from stdin")
@@ -120,7 +137,15 @@ def main(argv=None):
     s.add_argument("traces", nargs="+")
     s.add_argument("--source", choices=SOURCES, default="full")
     s.add_argument("--per-tool", action="store_true")
+    s.add_argument("--unseen", choices=UNSEEN, default="keep",
+                   help="drop reproduces the original measurements")
     s.set_defaults(func=cmd_measure)
+
+    s = sub.add_parser("report", help="bilingual telemetry report (HTML + JSON)")
+    s.add_argument("traces", nargs="+")
+    s.add_argument("-o", "--output", default="report.html")
+    s.add_argument("--unseen", choices=UNSEEN, default="keep")
+    s.set_defaults(func=cmd_report)
 
     a = p.parse_args(argv)
     a.func(a)

@@ -18,7 +18,12 @@ course project `~/progetti/accademia-server-mcp` (scripts `misura-riuso.py`,
   Zenodo and GitHub materials.
 - **Nothing is published by Claude.** GitHub, Zenodo records and releases are
   created and published by the author.
-- API budget for the preprint experiments: **30 USD**, warn before exceeding.
+- **The paper does not report the budget** (author's decision, 2026-11-04): it
+  describes the design that results from it (runs, arms, traces) and its
+  limitations. Token counts and per-run costs measured by the study can appear.
+- API budget for the preprint experiments: **40 USD** (raised from 30 on 2026-11-04),
+  warned at 35, stopped at 40 by `experiments/run.py`. Recompute plans with
+  `python -m experiments.budget`, never by hand.
 
 ## Data constraints
 

@@ -1,0 +1,10 @@
+{
+  "_status": "ASSUMED, TO BE VERIFIED on the provider's price list before reporting any cost. Used for the stop rule and for estimates only.",
+  "_source": "author's listing for gpt-5.6-terra, as used in the course slides (SLIDE-CAMBIO-MODELLO.md)",
+  "model": "gpt-5.6-terra",
+  "input_per_mtok": 2.0,
+  "cached_input_per_mtok": 0.2,
+  "output_per_mtok": 12.0,
+  "warn_usd": 35.0,
+  "stop_usd": 40.0
+}
