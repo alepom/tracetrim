@@ -45,8 +45,11 @@ so that a field added to an API is not hidden silently. Projected outputs are re
 \paragraph{Leave-one-out evaluation.} For each trace, the projection is learned from the other traces of the same
 task and applied to it. Two quantities are reported: the tool-output tokens left (counted with the
 \texttt{o200k\_base} tokenizer, each output once), and the \emph{misses}: calls in which the projection removes a
-field that this trace used later. Usage is a lower bound: a field read only while reasoning leaves no trace in the
-text, and reasoning is encrypted in the APIs used here.
+field that this trace used later. Usage is \emph{detected textual reuse}, neither a lower nor an upper bound of what
+the agent uses: a field read only while reasoning leaves no trace in the text (reasoning is encrypted in the APIs
+used here), and a value that coincides with another field's value, or a field kept for one element of a list, is
+counted as used where it was not. ``After'' means a later model turn: calls emitted together in one turn are
+generated before any of their outputs exist (deviation 14).
 
 \paragraph{Learning source.} Usage can be learned from everything the agent wrote (\emph{full}) or only from the
 arguments of later tool calls (\emph{calls}), which is what a proxy between the agent and its tools can observe.

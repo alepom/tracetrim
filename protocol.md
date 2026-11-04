@@ -284,7 +284,7 @@ The spend cap of 40 USD and its stop rule are unchanged.
     and C5 (simulated) are released in full; for C1 and C2 only derived per-call records are released (tool, field
     paths used, echoed, judgeable and seen, token counts), which reproduce the usage analysis and the misses
     (`experiments/misses_from_derived.py`) without redistributing the provider's data.
-## Deviation found in the pre-publication review (Study 1)
+## Deviations found in the pre-publication reviews
 
 13. **Phase C gates (2026-11-04, after the pre-publication reviews).** The live loop stores the outputs the agent
     received; a projected output ends with the line listing the hidden fields, and the gates parsed the output as a
@@ -294,3 +294,18 @@ The spend cap of 40 USD and its stop rule are unchanged.
     re-checked against the raw outputs of all the other C1 runs of the same day (`experiments/recheck_phase_c.py`,
     `results/phase_c_recheck.json`), which finds one volume written without a source. The sensitivity
     analysis promised in deviation 6 (without runs with a failed tool call) is reported for Phases A and C.
+14. **Usage compared by model turn (2026-11-05, external review).** The detector compared positions in the trace;
+    when the model emitted several calls in one turn, a later call's arguments counted as written after an earlier
+    sibling's output, although they were generated before it. Turns are rebuilt from each run's metadata
+    (`experiments/turns.py`) and the analysis recomputed (`experiments/turns_sensitivity.py`): detected usage changes
+    in 18 of 558 Phase A calls, every Study 1 figure is unchanged, and the replay projections are identical. The
+    library compares turns whenever a trace records them.
+15. **Thermometers, gates and the billing keyword test (2026-11-05, external review).** The thermometers were
+    implemented after the freeze and before Phase A, and differ from the list in Measures: C1 lacked the mean volume
+    (added now) and its "topics covered" relied on the course's list of expected themes, which does not exist for this
+    task; the C1 note-link metric comes from the pilot's script. H2 is also evaluated on the protocol's list, with the
+    same outcome in every arm. The gates are narrower than the wording above (C2 checks URLs, not titles; C1 skips
+    keywords without a volume; C3 checks titles through the identifier), and the C4 thermometer is a keyword test;
+    `experiments/gates_audit.py` and `experiments/c4_audit.py` measure what this leaves out, reported beside the
+    frozen results. The strict T2 pattern of deviation 11 also accepted "fondi sufficienti"; fixed, which changes
+    one Phase A run.

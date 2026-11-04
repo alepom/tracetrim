@@ -5,60 +5,80 @@
       "phase_a": {
         "raw": 817865,
         "reserialized": 714797,
-        "saving": 0.12602079805346844
+        "saving": 0.12602079805346844,
+        "minified": 616929,
+        "minified_saving": 0.24568357858570788
       },
       "replay": {
         "raw": 114712,
         "reserialized": 100932,
-        "saving": 0.12012692656391655
+        "saving": 0.12012692656391655,
+        "minified": 87608,
+        "minified_saving": 0.23627868052165424
       }
     },
     "C2": {
       "phase_a": {
         "raw": 527542,
         "reserialized": 504282,
-        "saving": 0.044091276144837765
+        "saving": 0.044091276144837765,
+        "minified": 479838,
+        "minified_saving": 0.09042692335396996
       },
       "replay": {
         "raw": 50488,
         "reserialized": 48118,
-        "saving": 0.04694184756773889
+        "saving": 0.04694184756773889,
+        "minified": 45624,
+        "minified_saving": 0.09633972429092064
       }
     },
     "C3": {
       "phase_a": {
         "raw": 2262885,
         "reserialized": 2260071,
-        "saving": 0.0012435452972643368
+        "saving": 0.0012435452972643368,
+        "minified": 1908725,
+        "minified_saving": 0.15650817429962194
       },
       "replay": {
         "raw": 227433,
         "reserialized": 227301,
-        "saving": 0.0005803907084723781
+        "saving": 0.0005803907084723781,
+        "minified": 190435,
+        "minified_saving": 0.162676480545919
       }
     },
     "C4": {
       "phase_a": {
         "raw": 154833,
         "reserialized": 127925,
-        "saving": 0.1737872417378724
+        "saving": 0.1737872417378724,
+        "minified": 103366,
+        "minified_saving": 0.33240329903831867
       },
       "replay": {
         "raw": 16931,
         "reserialized": 14054,
-        "saving": 0.1699249896639301
+        "saving": 0.1699249896639301,
+        "minified": 11378,
+        "minified_saving": 0.3279782647215167
       }
     },
     "C5": {
       "phase_a": {
         "raw": 599808,
         "reserialized": 555104,
-        "saving": 0.07453051643192488
+        "saving": 0.07453051643192488,
+        "minified": 490304,
+        "minified_saving": 0.18256508749466493
       },
       "replay": {
         "raw": 74976,
         "reserialized": 69388,
-        "saving": 0.07453051643192488
+        "saving": 0.07453051643192488,
+        "minified": 61288,
+        "minified_saving": 0.18256508749466493
       }
     }
   }

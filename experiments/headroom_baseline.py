@@ -17,11 +17,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))
 
 import tiktoken  # noqa: E402
 from headroom import CompressConfig, compress  # noqa: E402
 
 from tracetrim.traces import load  # noqa: E402
+
+from experiments.paths import TRACES  # noqa: E402
 
 CONFIG = CompressConfig(protect_recent=0, protect_analysis_context=False, target_ratio=0.2,
                         compress_user_messages=True)
@@ -36,8 +39,9 @@ def main():
     from importlib.metadata import version
     res = {"headroom_version": version("headroom-ai"), "cases": {}}
     for case in ("C1", "C2", "C3", "C4", "C5"):
-        p = ROOT / "traces" / case / "A3.jsonl"
+        p = TRACES / case / "A3.jsonl"
         if not p.exists():
+            print(f"  {case}: traces not available here")
             continue
         t = load(p)
         prompts = [e.text for e in t.events if e.kind == "prompt"]
@@ -53,6 +57,10 @@ def main():
         after = sum(tok(m["content"]) for m in r.messages if m.get("role") == "tool")
         res["cases"][case] = {"tool_tokens": before, "headroom": after, "saving": 1 - after / before if before else 0}
         print(f"  {case}: {before:>9,} -> {after:>9,} tokens ({after / before - 1:+.1%})")
+    if len(res["cases"]) < 5:
+        # Never shrink the published baseline: C1 and C2 are not released.
+        print("  not every case is available: results/headroom_baseline.json left as it is")
+        return
     out = ROOT / "results" / "headroom_baseline.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps(res, indent=2) + "\n")

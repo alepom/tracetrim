@@ -38,6 +38,8 @@ def q_c1(a):
     note = [str(v.get("note_di_redazione", "")) for v in voci]
     return {"items": len(voci),
             "median_volume": int(statistics.median(vol)) if vol else 0,
+            # Listed in the protocol, missing from the first implementation (deviation 15).
+            "mean_volume": int(statistics.mean(vol)) if vol else 0,
             "long_tail_pct": round(100 * sum(len(str(k.get("keyword", "")).split()) >= 4 for k in kw) / max(len(kw), 1)),
             "notes_with_blog_link_pct": round(100 * sum(BLOG in n for n in note) / max(len(note), 1))}
 
@@ -73,7 +75,7 @@ C4_TRUTH = {
 # Added after Study 2 (deviation 11): the T2 test above looks at the whole
 # ticket, so advice like "check that you have enough funds" passes it even
 # when the diagnosis omits the reason. The strict test reads the diagnosis.
-T2_REASON = re.compile(r"fondi (in)?sufficienti|disponibilit[aà] (di fondi )?insufficiente|insufficient|saldo insufficiente", re.I)
+T2_REASON = re.compile(r"fondi insufficienti|disponibilit[aà] (di fondi )?insufficiente|insufficient|saldo insufficiente", re.I)
 
 
 def q_c4(a):

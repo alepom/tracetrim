@@ -1,0 +1,288 @@
+{
+  "A": [
+    {
+      "run": "A1",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "A2",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    },
+    {
+      "run": "A3",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "A4",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "A5",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    },
+    {
+      "run": "A6",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    },
+    {
+      "run": "A7",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "A8",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    }
+  ],
+  "B-aggressive": [
+    {
+      "run": "B-aggressive-1",
+      "frozen": 4,
+      "audit": 3,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "B-aggressive-2",
+      "frozen": 4,
+      "audit": 3,
+      "frozen_only": [
+        "T2"
+      ]
+    }
+  ],
+  "B-prudent": [
+    {
+      "run": "B-prudent-1",
+      "frozen": 4,
+      "audit": 2,
+      "frozen_only": [
+        "T1",
+        "T2"
+      ]
+    },
+    {
+      "run": "B-prudent-2",
+      "frozen": 4,
+      "audit": 2,
+      "frozen_only": [
+        "T1",
+        "T2"
+      ]
+    }
+  ],
+  "B-raw": [
+    {
+      "run": "B-raw-1",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    },
+    {
+      "run": "B-raw-2",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    }
+  ],
+  "B-structural": [
+    {
+      "run": "B-structural-1",
+      "frozen": 3,
+      "audit": 3,
+      "frozen_only": []
+    },
+    {
+      "run": "B-structural-2",
+      "frozen": 4,
+      "audit": 3,
+      "frozen_only": [
+        "T2"
+      ]
+    }
+  ],
+  "C-prudent": [
+    {
+      "run": "C-prudent-1",
+      "frozen": 3,
+      "audit": 3,
+      "frozen_only": []
+    },
+    {
+      "run": "C-prudent-2",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "C-prudent-3",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    }
+  ],
+  "C-raw": [
+    {
+      "run": "C-raw-1",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    },
+    {
+      "run": "C-raw-2",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "C-raw-3",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    }
+  ],
+  "D-raw": [
+    {
+      "run": "D-raw-1",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-raw-2",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    },
+    {
+      "run": "D-raw-3",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    },
+    {
+      "run": "D-raw-4",
+      "frozen": 5,
+      "audit": 5,
+      "frozen_only": []
+    },
+    {
+      "run": "D-raw-5",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    }
+  ],
+  "D-v02": [
+    {
+      "run": "D-v02-1",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-2",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-3",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-4",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-5",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    }
+  ],
+  "D-v02-structural": [
+    {
+      "run": "D-v02-structural-1",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-structural-2",
+      "frozen": 5,
+      "audit": 4,
+      "frozen_only": [
+        "T2"
+      ]
+    },
+    {
+      "run": "D-v02-structural-3",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    },
+    {
+      "run": "D-v02-structural-4",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    },
+    {
+      "run": "D-v02-structural-5",
+      "frozen": 4,
+      "audit": 4,
+      "frozen_only": []
+    }
+  ]
+}

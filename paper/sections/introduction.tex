@@ -30,8 +30,9 @@ adds two safeguards motivated by those failures and tests, again with a protocol
 remove the losses while keeping most of the saving.
 
 The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
-that estimates savings and misses on runs the projection has never seen; (ii) evidence that the learner must see
-the agent's final answer, so a proxy placed only between agent and tools (an MCP gateway) cannot learn by itself;
+that estimates savings and misses on runs the projection has never seen; (ii) evidence that, in these agents,
+learning without the final answer misses far more of what is used, so a proxy placed only between agent and tools
+(an MCP gateway) learns poorly by itself;
 (iii) a characterisation of the failure modes, including identifier fabrication; (iv) safeguards and their test;
 (v) an open-source implementation with a bilingual telemetry report that is useful on its own, independently of
 any trimming.

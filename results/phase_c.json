@@ -85,18 +85,21 @@
           {
             "items": 20,
             "median_volume": 1600,
+            "mean_volume": 21655,
             "long_tail_pct": 10,
             "notes_with_blog_link_pct": 35
           },
           {
             "items": 20,
             "median_volume": 260,
+            "mean_volume": 1051,
             "long_tail_pct": 10,
             "notes_with_blog_link_pct": 40
           },
           {
             "items": 20,
             "median_volume": 1600,
+            "mean_volume": 12550,
             "long_tail_pct": 0,
             "notes_with_blog_link_pct": 40
           }
@@ -186,18 +189,21 @@
           {
             "items": 20,
             "median_volume": 1450,
+            "mean_volume": 465808,
             "long_tail_pct": 7,
             "notes_with_blog_link_pct": 40
           },
           {
             "items": 20,
             "median_volume": 260,
+            "mean_volume": 514,
             "long_tail_pct": 20,
             "notes_with_blog_link_pct": 30
           },
           {
             "items": 20,
             "median_volume": 535,
+            "mean_volume": 1486,
             "long_tail_pct": 8,
             "notes_with_blog_link_pct": 45
           }

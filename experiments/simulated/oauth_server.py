@@ -92,10 +92,18 @@ def build(port: int, ttl: int) -> MCPServer:
                                                               default_scopes=["read"]),
         required_scopes=["read"], validate_token_resource=True))
 
+    from pydantic import BaseModel
+
+    class Who(BaseModel):
+        user: str
+        plan: str
+        internal: dict
+
     @server.tool()
-    def whoami(ctx: Context) -> dict:
-        """Which client is calling, with a payload of fields the agent does not need."""
-        return {"user": "demo", "plan": "pro", "internal": {f"note_{i}": f"remark {i}" for i in range(10)}}
+    def whoami(ctx: Context) -> Who:
+        """Which client is calling, with a payload of fields the agent does not need. Typed, so that the
+        server also sends structured content (the proxy must pass it through)."""
+        return Who(user="demo", plan="pro", internal={f"note_{i}": f"remark {i}" for i in range(10)})
 
     return server
 

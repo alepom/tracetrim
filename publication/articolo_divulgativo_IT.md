@@ -51,8 +51,9 @@ poi è servito.
 nuove, ha tolto **il 63% e il 70%** dei token in quei due casi reali (il 69% e il 77% nei simulati). Una parte di
 questo risparmio non toglie nulla: i tool restituiscono JSON indentato, e riscriverlo compatto vale da solo fino al 13%
 nei casi reali (fino al 17% nei simulati). Sulle stesse conversazioni, nei due casi reali, Headroom, una libreria open
-source di compressione del contesto, toglie il 17% e il 28%; il filtro imparato il 59% e il 68% (il 46% e il 53% con
-le protezioni della versione 0.2); la sola riscrittura compatta lo 0% e il 12%. Il terzo caso reale è l'eccezione:
+source di compressione del contesto (usata senza storia, in una configurazione aggressiva), toglie il 17% e il 28%; il
+filtro imparato il 59% e il 68% (il 46% e il 53% con le protezioni della versione 0.2). Un semplice minificatore, che
+non toglie nessun campo, arriva già al 16% e al 24%: è il termine di paragone minimo per qualunque compressione. Il terzo caso reale è l'eccezione:
 l'agente usa quasi tutto quello che riceve, e il filtro toglie il 12%.
 
 **Il filtro va imparato dalle tracce complete.** Se si osservano solo le chiamate ai tool, cioè quello che vedrebbe

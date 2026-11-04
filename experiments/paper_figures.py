@@ -82,7 +82,7 @@ def tools():
     from tracetrim.usage import analyse
     panels = []
     for c in ("C4", "C5"):
-        from .run import TRACES
+        from .paths import TRACES
         paths = sorted((TRACES / c).glob("A*.jsonl"))
         traces = [load_trace(p) for p in paths]
         d = rp.compute([t.name for t in traces], [analyse(t, comma_grouping=False) for t in traces], protect_ids=True)

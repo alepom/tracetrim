@@ -115,6 +115,7 @@ class Trimmer:
     def __init__(self, policy: Policy | None):
         self.policy = policy
         self.originals: dict[str, object] = {}
+        self.hidden: dict[str, set] = {}
         self.tool_of: dict[str, str] = {}
         self.n = 0
 
@@ -137,8 +138,10 @@ class Trimmer:
             old = next(iter(self.originals))
             self.originals.pop(old)
             self.tool_of.pop(old, None)
+            self.hidden.pop(old, None)
         self.originals[cid] = payload
         self.tool_of[cid] = tool
+        self.hidden[cid] = set(hidden)
         groups: dict[str, int] = {}
         for h in hidden:
             g = ".".join(h.split(".")[:2])
@@ -152,8 +155,16 @@ class Trimmer:
         payload = self.originals.get(call_id)
         if payload is None:
             return "Error: unknown call_id."
-        fields = {p for p, _ in leaves(payload)
-                  if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in wanted)}
+        hidden = self.hidden.get(call_id, set())
+        if "*" in wanted:
+            fields = set(hidden)
+        else:
+            fields = {p for p, _ in leaves(payload)
+                      if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in wanted)}
+        if not fields:
+            groups = sorted({".".join(h.split(".")[:2]) for h in hidden})
+            return ("Error: no field matches " + ", ".join(wanted)[:200] + ". Hidden groups: "
+                    + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else "."))
         got = project(payload, fields)
         return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False)
 
@@ -238,8 +249,17 @@ def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
             count[t] = count.get(t, 0) + 1
     # A server's own `expand` or `tracetrim_done` would be shadowed by the
     # proxy's: it is prefixed like a clash between servers.
-    return {(t if count[t] == 1 and t not in OWN_TOOLS else f"{server}__{t}"): (server, t)
-            for server, tools in listed.items() for t in tools}
+    routes: dict[str, tuple[str, str]] = {}
+    for server, tools in listed.items():
+        for t in tools:
+            name = t if count[t] == 1 and t not in OWN_TOOLS else f"{server}__{t}"
+            # A prefixed name can still meet another server's own tool name
+            # (a: search, b: search, c: a__search): never let one hide the other.
+            if name in routes or name in OWN_TOOLS:
+                raise SystemExit(f"tool name clash on {name!r} ({routes.get(name, ('?',))[0]} and {server}): "
+                                 "rename one of the servers in mcp.json")
+            routes[name] = (server, t)
+    return routes
 
 
 def _server(o: Options):
@@ -353,10 +373,23 @@ def _server(o: Options):
             # An error, or anything that is not plain text (images, resources),
             # goes back exactly as the server sent it: nothing to learn or trim.
             is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
+            structured = getattr(r, "structured_content", None)
             if is_error or any(getattr(c, "type", "text") != "text" for c in content):
-                live.call(params.name, "", "")
-                return types.CallToolResult(content=content, isError=is_error,
-                                            structuredContent=getattr(r, "structured_content", None))
+                # Passed back exactly as sent, and still recorded: errors are
+                # what the report's error analysis is about.
+                text_part = "".join(getattr(c, "text", "") or "" for c in content if getattr(c, "type", "") == "text")
+                kinds = sorted({getattr(c, "type", "?") for c in content if getattr(c, "type", "") != "text"})
+                note = text_part if text_part else f"[non-text content: {', '.join(kinds)}]"
+                if is_error and not note.lower().startswith("error"):
+                    note = "Error: " + note
+                if rec:
+                    rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": note},
+                                         ensure_ascii=False) + "\n")
+                    rec.flush()
+                if learner:
+                    learner.call(params.name, args, note)
+                live.call(params.name, note, note)
+                return types.CallToolResult(content=content, isError=is_error, structuredContent=structured)
             raw = "".join(getattr(c, "text", "") or "" for c in content)
             if rec:
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
@@ -368,6 +401,20 @@ def _server(o: Options):
                 if "\n[trimmed] " in text:
                     learner.trimmed(params.name)
             live.call(params.name, raw, text)
+            if text == raw:
+                # Nothing trimmed: the server's result goes back untouched,
+                # structured content included.
+                return types.CallToolResult(content=content, structuredContent=structured)
+            if structured is not None and trimmer.policy is not None:
+                # The structured copy is trimmed like the text, or it would carry
+                # back everything the projection removed.
+                projected = trimmer.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
+                try:
+                    structured = json.loads(projected)
+                except ValueError:
+                    structured = None
+            return types.CallToolResult(content=[types.TextContent(type="text", text=text)],
+                                        structuredContent=structured)
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
     return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool), learner

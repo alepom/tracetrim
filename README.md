@@ -12,9 +12,9 @@ where this works and where it fails. In short:
 |---|---|
 | Tool-output tokens removed on unseen runs (0.1) | real APIs: 63% and 70% (12% on the third agent); simulated: 69% and 77% |
 | …of which re-serialising the JSON alone, removing nothing | up to 13% (real APIs), up to 17% (simulated) |
-| Same conversations: tracetrim 0.1 / 0.2 / Headroom / re-serialisation alone | the same two real-API agents: 59–68% / 46–53% / 17–28% / 0–12%; simulated: 69–77% / 57–61% / 31–33% / 7–17% |
+| Same conversations: tracetrim 0.1 / 0.2 / Headroom (stateless) / full minifier, no field removed | the same two real-API agents: 59–68% / 46–53% / 17–28% / 16–24%; simulated: 69–77% / 57–61% / 31–33% / 18–33% |
 | Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates, one volume of 180 written without a source |
-| Learning from tool calls only (what a gateway sees) | a used field missed in 49% of held-out calls (3 agents on real APIs), against 4% with the answer |
+| Learning from tool calls only (what a gateway sees) | a used field missed in 49% of the held-out structured calls it trims (156/317, 3 agents on real APIs), against 4% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
@@ -29,7 +29,9 @@ pip install "tracetrim[measure,proxy] @ git+https://github.com/alepom/tracetrim"
 pip install "tracetrim[headroom] @ git+https://github.com/alepom/tracetrim"   # + Headroom backend (experimental, heavy)
 ```
 
-Python 3.10+. From a clone: `pip install -e ".[measure,proxy,test]"`. Not on PyPI yet.
+Python 3.10+. From a clone: `pip install -e ".[measure,proxy,test]"`. Not on PyPI yet. To reproduce the
+study's numbers, figures and analyses: `pip install -e ".[measure,proxy,test]"` is enough (they need no agent SDK);
+to run new agent sessions, also `pip install -r requirements-study.txt` (the versions used, OpenAI SDK included).
 
 ## The short way: automatic mode
 
@@ -77,7 +79,7 @@ servers share one), plus `expand` and `tracetrim_done`. Then use the agent as us
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
 delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
 tool outputs of the two runs after learning went from 33,492 to 18,725 tokens (−44%, fields asked back
-included), the agent asked for a hidden field once in each, and all five tickets were right in every
+included), the agent asked for a hidden field once in each, and all five tickets passed the keyword test in every
 run: a check, not a measurement (`results/checks/auto_check_mcp.json`) — the measurements are in the
 paper.
 
@@ -157,7 +159,7 @@ schema, to adapt to your provider's tool format (`{"type": "function", ...}` for
 
 Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
 tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a
-hidden field once, and all five tickets were right in every run (a check, not a measurement:
+hidden field once, and all five tickets passed the keyword test in every run (a check, not a measurement:
 `results/checks/auto_check_function.json`, from
 `python -m experiments.auto_check --runs 5 --min-runs 3 --mode function`).
 
@@ -178,8 +180,10 @@ The manual way, with a review step before anything is applied.
 ```
 
 `output` is the raw text the tool returned; the last `message` is the agent's answer. The
-answer matters: without it the learner cannot see what the agent used. OpenAI Playground Python
-exports are also read directly (`.py`).
+answer matters: without it the learner cannot see what the agent used. An optional `"turn"` on
+every event (the model turn that produced it; the prompt is `-1`) lets the learner tell calls
+emitted together apart: their arguments were written before any of their outputs existed. OpenAI
+Playground Python exports are also read directly (`.py`).
 
 **2. Generate the report.** It changes nothing; it is useful on its own.
 
@@ -227,8 +231,11 @@ tracetrim proxy --upstream-url https://mcp.example.com/mcp --header "Authorizati
 (`--header` puts the upstream credential in the process list; `--servers mcp.json` with `${VAR}` does not.)
 
 The proxy exposes the same tools plus `expand`: every trimmed output ends with a line listing the
-hidden fields, and the agent can fetch any of them back. Add `--record traces/live.jsonl` to keep
-recording, and regenerate the report from time to time.
+hidden fields, and the agent can fetch any of them back (`"*"` for all of them) while the proxy keeps the original:
+the last 256 trimmed results; at most 25 groups are listed, the rest summarised. `--record traces/live.jsonl`
+records calls and outputs for telemetry; it does not record the agent's answer, so a report learned from it misses
+most of what the agent uses (the study's central finding). To learn while running, use `--auto`, which receives
+the answer through `tracetrim_done`.
 
 How it wraps another server: the proxy is an MCP *server* towards your agent and an MCP *client*
 towards the upstream. At start it asks the upstream for its tools and publishes the same names and

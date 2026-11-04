@@ -25,7 +25,7 @@ from tracetrim.measure import tokenizer
 from tracetrim.traces import load
 from tracetrim.usage import analyse, leaves
 
-from .run import ROOT, TRACES
+from .paths import ROOT, TRACES
 
 OUT = ROOT / "dataset"
 FULL = ("C3", "C4", "C5")

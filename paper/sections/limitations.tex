@@ -13,9 +13,14 @@
   on two cases only.
 \item \textbf{Simulated cases.} Two of the five cases use payloads we generated from public OpenAPI descriptions.
   Their shape is realistic, their content is not, and because we designed them they are reported separately.
-\item \textbf{Usage is a lower bound.} Reasoning is not observable in the APIs used, so fields used only while
-  reasoning are invisible; this is the root of the failures reported, and safeguards can only cover the blind
-  spots that are known.
+\item \textbf{Usage is detected reuse.} Reasoning is not observable in the APIs used, so fields used only while
+  reasoning are invisible (the root of the failures reported, and safeguards cover only the blind spots that are
+  known); coincident values can also make a field look used. The detector's precision and recall were not measured
+  against an annotated sample.
+\item \textbf{Study 2 is not an independent validation.} The safeguards were designed on the Phase B failures and
+  tested on the same conversations; new tasks, runs and seeds would be needed to show that they generalise.
+\item \textbf{Keyword tests.} The thermometers of billing support and CI triage test for keywords and numbers; they
+  accept a negated or contradictory sentence. A stricter audit of the billing diagnoses is reported beside them.
 \item \textbf{Post hoc decisions.} Three measurement corrections were made after seeing data (deviations 8, 10 and
   11); each is applied to every run, and the strict test of deviation 11 is reported beside the frozen one. The
   gates' reading of projected outputs and the re-check of the Phase C volumes (deviation 13) were also fixed or added

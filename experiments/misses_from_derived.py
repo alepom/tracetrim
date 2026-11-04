@@ -17,7 +17,7 @@ from collections import defaultdict
 from tracetrim.traces import load
 from tracetrim.usage import analyse, leaves
 
-from .run import ROOT, TRACES
+from .paths import ROOT, TRACES
 
 DERIVED = ROOT / "dataset" / "derived"
 

@@ -29,18 +29,29 @@ own domain; a gate in the tool wrapper rejects any other domain for page parsing
 learning source and transfer between C1 and C2 (on the tools they share). \emph{Phase B}: the third run of each
 case, chosen before looking at the data, is replayed up to the final answer, changing only the tool messages:
 raw, prudent, aggressive, and prudent plus structural compression; two runs per arm; projections learned from the
-other seven runs. Headroom (\texttt{headroom-ai} \HeadroomVersion) is applied to the same conversations as a token-only baseline, configured to compress everything with no protection of recent messages and a target ratio of 0.2: the setting most favourable to it, so that the comparison does not depend on a cautious default. Each conversation was compressed once, so Headroom's per-tool learning had no history of these tools. \emph{Phase C}: live
+other seven runs. Headroom (\texttt{headroom-ai} \HeadroomVersion) is applied to the same conversations as a token-only baseline,
+\emph{stateless}: each conversation compressed once, so its per-tool learning had no history of these tools, while
+the projection learned from seven runs. It was configured to compress everything, with no protection of recent
+messages and a target ratio of 0.2 (an aggressive setting, not one tuned for these tasks); its input was the
+conversation's user message, tool calls and tool messages, without the system prompt, with the model parameter set to
+\texttt{gpt-4o}. \emph{Phase C}: live
 runs on C1 and C4 with the prudent projection and \texttt{expand}, against raw runs, three per arm.
 
 \paragraph{Study 2.} The Phase B conversations are replayed again with the safeguards on (arm \texttt{v02}, and
 \texttt{v02} plus structural compression) against the raw arm, five runs per arm.
 
-\paragraph{Measures.} \emph{Gates} are binary: the answer parses, has the required structure, and every fact it
-attributes to a tool (volumes, URLs, identifiers, run and issue numbers, quoted error lines) matches the tool
-outputs stored in the trace. In Phases A and B and in Study 2 these are the raw outputs, whatever the agent was
-shown; in Phase C, where the live loop stores what the agent received, they are the projected outputs and what
-\texttt{expand} returned (Section~\ref{sec:phasec}). \emph{Thermometers} are graded: editorial metrics for C1, coverage metrics
-for C2 and C3, and the number of correct diagnoses and links for C4 and C5, whose correct answers are known.
-Results are reported as medians with ranges; with two to five runs per arm no significance test is claimed. Under
-the pre-registered rule for quality (H2), an arm \emph{holds} when it passes every gate in at least as many runs as
-the raw arm and its median on every thermometer lies within the raw arm's range.
+\paragraph{Measures.} \emph{Gates} are binary: the answer parses, has the required structure, and the facts it
+attributes to tools match the tool outputs stored in the trace. As implemented they are narrower than the
+protocol's wording: C1 checks each reported volume against the volumes the run's outputs give for that keyword,
+and skips a keyword that has none; C2 checks that each cited URL was returned by the search tool, not its title;
+C3 checks each work's title through its identifier, and that a declared identifier exists; C4 checks that every
+object identifier cited exists; C5 checks run, job and issue numbers. Appendix~\ref{app:supplementary} measures
+what this leaves unchecked. In Phases A and B and in Study 2 the stored outputs are the raw ones, whatever the agent
+was shown; in Phase C, where the live loop stores what the agent received, they are the projected outputs and what
+\texttt{expand} returned (Section~\ref{sec:phasec}). \emph{Thermometers} are graded: editorial metrics for C1,
+coverage metrics for C2 and C3, and, for C4 and C5, keyword tests for the diagnoses and links whose correct answers
+are known. Results are reported as medians with ranges (Appendix~\ref{app:supplementary}); with two to five runs
+per arm no significance test is claimed. The pre-registered rule for quality (H2) is relative: an arm \emph{meets}
+it when it passes every gate in at least as many runs as the raw arm and its median on every thermometer lies
+within the raw arm's range. It says nothing about absolute quality: where no raw run passes the gates, an arm meets
+it with none passing either.

@@ -82,6 +82,7 @@ def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path, traces, specs
     assert any(n.startswith("stripe_") for n in names) and any(n.startswith("gh_") for n in names)
     trimmed = {tool for tool, text in last if "\n[trimmed] " in text}
     assert any(t.startswith("stripe_") for t in trimmed) and any(t.startswith("gh_") for t in trimmed)
-    assert not expanded.startswith("Error")
+    # "*" brings back every hidden field of that call, not an empty object.
+    assert not expanded.startswith("Error") and len(json.loads(expanded)) > 0
     report = json.loads((work / "report.json").read_text())
     assert report["auto"]["applied"] is True

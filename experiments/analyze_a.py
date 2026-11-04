@@ -19,7 +19,7 @@ from tracetrim.usage import analyse
 
 from .checks import check
 from .quality import quality
-from .run import ROOT, TRACES, keep_missing
+from .paths import ROOT, TRACES, keep_missing
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
 REAL, SIMULATED = ("C1", "C2", "C3"), ("C4", "C5")

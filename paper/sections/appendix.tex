@@ -21,10 +21,56 @@ All are dated and explained in full in the repository's \texttt{protocol.md}; no
   next to an invented identifier).
 \item Phase C was delayed by a faulty resume script; no run was altered.
 \item Post hoc: the CI-triage gate also splits job names on ``/''.
-\item Post hoc: a strict test for one billing ticket, reported beside the frozen one.
+\item Post hoc: a strict test for one billing ticket, reported beside the frozen one; a defect in its pattern
+  (it also accepted ``fondi sufficienti'') was fixed in the publication review, which changes one Phase A run.
 \item Traces of the search-data cases are released as derived per-call records instead of pseudonymised traces,
   which could not have preserved the analysis.
 \item Post hoc: the gates did not read projected outputs, which end with the line of hidden fields; the line is now
   cut and every Phase C run re-checked (no gate result changed). The editorial-plan volumes are also re-checked
   against the raw outputs of the other runs of the same day (Section~\ref{sec:phasec}).
+\item Post hoc, publication review: usage compared by model turn. Calls emitted in one turn were compared by their
+  position in the trace, so a later call's arguments could count as using an earlier sibling's output. Recomputed by
+  turn, the detected usage changes in \TurnsCallsChanged{} of \TurnsCalls{} Phase A calls and every Study~1 figure is
+  \TurnsFiguresUnchanged; the replay projections are identical.
+\item Post hoc, publication review: thermometers and audits. The thermometers were implemented after the protocol was
+  frozen and before Phase A, and differ from its list (C1 lacked the mean volume; its ``topics covered'' relied on the
+  course's list of expected themes and cannot be computed here). H2 is also evaluated on the protocol's list
+  (Tables~\ref{tab:phaseb} and~\ref{tab:study2}), with the same outcome in every arm. The gates are narrower than the
+  protocol's wording, and the billing thermometer is a keyword test: both are measured in
+  Appendix~\ref{app:supplementary}.
 \end{enumerate}
+
+\section{Supplementary results}
+\label{app:supplementary}
+
+\paragraph{What the gates do not check.} Over all runs, the editorial-plan gate skipped \AuditCOneSkipped{} of
+\AuditCOnePairs{} reported keyword--volume pairs (keywords without a volume in the run's outputs); in the content-gap
+analysis \AuditCTwoDiffers{} of the \AuditCTwoFound{} cited results found in the search output carry a title different
+from the one returned (the gate checks only the URL); in the literature scan \AuditCThreeDoi{} declared DOI differs from
+the DOI of the work with that identifier. The literature-scan gate in its original form, before deviation 8, passed
+the prudent, aggressive and structural arms of Phase B in \PhaseBOriginalGatesPrudentiii,
+\PhaseBOriginalGatesAggressiveiii{} and \PhaseBOriginalGatesStructuraliii{} runs, against
+\PhaseBNowGatesPrudentiii, \PhaseBNowGatesAggressiveiii{} and \PhaseBNowGatesStructuraliii{} with the corrected gate
+(\texttt{experiments/gates\_audit.py}).
+
+\begin{table}[h]
+\centering\small
+\input{generated/table_c4_audit.tex}
+\caption{Billing support: tickets passing the frozen keyword test and the stricter audit of the diagnosis against the
+scenario's facts, with negations rejected (\texttt{experiments/c4\_audit.py}, deviation 15).}
+\label{tab:c4audit}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\input{generated/table_savings_detail.tex}
+\caption{Tool-output tokens on the replayed conversations, change against the raw outputs: re-serialised as tracetrim
+writes JSON (default separators), fully minified, the 0.1 prudent projection, the 0.2 projection, the 0.2 projection
+against the re-serialised outputs (what removing fields adds), and Headroom.}
+\label{tab:savingsdetail}
+\end{table}
+
+{\small
+\input{generated/table_thermometers.tex}
+}
+\noindent{\small Thermometers per arm, median [min--max]: B is Phase B, 2 is Study~2, C is Phase C.}

@@ -23,26 +23,29 @@ from tracetrim.measure import tokenizer
 from tracetrim.traces import load
 from tracetrim.usage import parse_output
 
-from .run import ROOT, TRACES
+from .paths import ROOT, TRACES
 
 RES = ROOT / "results"
 
 
-def reserialize(output: str) -> str:
+def reserialize(output: str, minify: bool = False) -> str:
     p = parse_output(output)
     if not isinstance(p, (dict, list)):
         return output                      # prose and logs are left as they are, as the projection does
-    return json.dumps(p, ensure_ascii=False)
+    # As tracetrim writes JSON (default separators ", " and ": "), or fully
+    # minified: what a plain minifier would save, with no field removed.
+    return json.dumps(p, ensure_ascii=False, separators=(",", ":") if minify else None)
 
 
 def totals(paths, count):
-    raw = res = 0
+    raw = res = mini = 0
     for path in paths:
         for e in load(path).events:
             if e.kind == "call" and e.output is not None:
                 raw += count(e.output)
                 res += count(reserialize(e.output))
-    return raw, res
+                mini += count(reserialize(e.output, minify=True))
+    return raw, res, mini
 
 
 def main():
@@ -58,14 +61,17 @@ def main():
             out["cases"][case] = old["cases"].get(case)
             print(f"  {case:<6}traces not released: kept from results/reserialize.json")
             continue
-        a_raw, a_res = totals(runs, count)
+        a_raw, a_res, a_min = totals(runs, count)
         assert a_raw == phase_a["cases"][case]["loo_full"]["raw"], f"{case}: Phase A total differs from results"
-        b_raw, b_res = totals([TRACES / case / "A3.jsonl"], count)
+        b_raw, b_res, b_min = totals([TRACES / case / "A3.jsonl"], count)
         assert b_raw == phase_b["cases"][case]["arms"]["raw"]["tool_tokens"], f"{case}: replay total differs"
-        out["cases"][case] = {"phase_a": {"raw": a_raw, "reserialized": a_res, "saving": 1 - a_res / a_raw},
-                              "replay": {"raw": b_raw, "reserialized": b_res, "saving": 1 - b_res / b_raw}}
+        out["cases"][case] = {"phase_a": {"raw": a_raw, "reserialized": a_res, "saving": 1 - a_res / a_raw,
+                                          "minified": a_min, "minified_saving": 1 - a_min / a_raw},
+                              "replay": {"raw": b_raw, "reserialized": b_res, "saving": 1 - b_res / b_raw,
+                                         "minified": b_min, "minified_saving": 1 - b_min / b_raw}}
         print(f"  {case:<6}{a_raw:>14,}{a_res:>15,}{f'-{100 * (1 - a_res / a_raw):.1f}%':>7}"
-              f"{b_raw:>13,}{b_res:>15,}{f'-{100 * (1 - b_res / b_raw):.1f}%':>8}")
+              f"{b_raw:>13,}{b_res:>15,}{f'-{100 * (1 - b_res / b_raw):.1f}%':>8}"
+              f"   minified: -{100 * (1 - a_min / a_raw):.1f}% / -{100 * (1 - b_min / b_raw):.1f}%")
     (RES / "reserialize.json").write_text(json.dumps(out, indent=2) + "\n")
     print("\n  written: results/reserialize.json\n")
 

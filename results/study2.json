@@ -66,30 +66,35 @@
             {
               "items": 20,
               "median_volume": 355,
+              "mean_volume": 2509,
               "long_tail_pct": 5,
               "notes_with_blog_link_pct": 35
             },
             {
               "items": 22,
               "median_volume": 590,
+              "mean_volume": 2813,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 32
             },
             {
               "items": 20,
               "median_volume": 590,
+              "mean_volume": 2874,
               "long_tail_pct": 2,
               "notes_with_blog_link_pct": 40
             },
             {
               "items": 24,
               "median_volume": 390,
+              "mean_volume": 2464,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 46
             },
             {
               "items": 22,
               "median_volume": 590,
+              "mean_volume": 2829,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 45
             }
@@ -98,12 +103,15 @@
           "medians": {
             "items": 22,
             "median_volume": 590,
+            "mean_volume": 2813,
             "long_tail_pct": 3,
             "notes_with_blog_link_pct": 40
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02": {
           "runs": [
@@ -167,30 +175,35 @@
             {
               "items": 24,
               "median_volume": 2900,
+              "mean_volume": 3345,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 33
             },
             {
               "items": 24,
               "median_volume": 1300,
+              "mean_volume": 2970,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 33
             },
             {
               "items": 20,
               "median_volume": 1300,
+              "mean_volume": 3155,
               "long_tail_pct": 4,
               "notes_with_blog_link_pct": 40
             },
             {
               "items": 20,
               "median_volume": 1300,
+              "mean_volume": 2740,
               "long_tail_pct": 1,
               "notes_with_blog_link_pct": 35
             },
             {
               "items": 20,
               "median_volume": 1300,
+              "mean_volume": 2736,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 45
             }
@@ -199,6 +212,7 @@
           "medians": {
             "items": 20,
             "median_volume": 1300,
+            "mean_volume": 2970,
             "long_tail_pct": 3,
             "notes_with_blog_link_pct": 35
           },
@@ -206,7 +220,12 @@
             "median_volume"
           ],
           "holds": false,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [
+            "median_volume",
+            "mean_volume"
+          ],
+          "holds_protocol_list": false
         },
         "v02-structural": {
           "runs": [
@@ -270,30 +289,35 @@
             {
               "items": 20,
               "median_volume": 590,
+              "mean_volume": 2401,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 40
             },
             {
               "items": 20,
               "median_volume": 1300,
+              "mean_volume": 2967,
               "long_tail_pct": 2,
               "notes_with_blog_link_pct": 35
             },
             {
               "items": 24,
               "median_volume": 590,
+              "mean_volume": 2710,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 29
             },
             {
               "items": 22,
               "median_volume": 390,
+              "mean_volume": 2429,
               "long_tail_pct": 5,
               "notes_with_blog_link_pct": 36
             },
             {
               "items": 20,
               "median_volume": 590,
+              "mean_volume": 2634,
               "long_tail_pct": 3,
               "notes_with_blog_link_pct": 40
             }
@@ -302,12 +326,15 @@
           "medians": {
             "items": 20,
             "median_volume": 590,
+            "mean_volume": 2634,
             "long_tail_pct": 3,
             "notes_with_blog_link_pct": 36
           },
           "outside_band": [],
           "holds": false,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": false
         }
       },
       "band": {
@@ -318,6 +345,10 @@
         "median_volume": [
           355,
           590
+        ],
+        "mean_volume": [
+          2464,
+          2874
         ],
         "long_tail_pct": [
           2,
@@ -441,7 +472,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02": {
           "runs": [
@@ -548,7 +581,9 @@
           },
           "outside_band": [],
           "holds": false,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": false
         },
         "v02-structural": {
           "runs": [
@@ -655,7 +690,9 @@
           },
           "outside_band": [],
           "holds": false,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": false
         }
       },
       "band": {
@@ -787,7 +824,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02": {
           "runs": [
@@ -888,7 +927,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02-structural": {
           "runs": [
@@ -989,7 +1030,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         }
       },
       "band": {
@@ -1080,7 +1123,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 5,
-              "correct_diagnoses_strict": 5,
+              "correct_diagnoses_strict": 4,
               "evidence_per_ticket": 1.8,
               "wrong": []
             },
@@ -1108,7 +1151,7 @@
             {
               "tickets": 5,
               "correct_diagnoses": 5,
-              "correct_diagnoses_strict": 5,
+              "correct_diagnoses_strict": 4,
               "evidence_per_ticket": 1.8,
               "wrong": []
             }
@@ -1122,7 +1165,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02": {
           "runs": [
@@ -1228,9 +1273,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": [
-            "correct_diagnoses_strict"
-          ]
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02-structural": {
           "runs": [
@@ -1344,9 +1389,11 @@
             "correct_diagnoses"
           ],
           "holds": false,
-          "outside_band_posthoc": [
-            "correct_diagnoses_strict"
-          ]
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [
+            "correct_diagnoses"
+          ],
+          "holds_protocol_list": false
         }
       },
       "band": {
@@ -1359,7 +1406,7 @@
           5
         ],
         "correct_diagnoses_strict": [
-          5,
+          4,
           5
         ],
         "evidence_per_ticket": [
@@ -1479,7 +1526,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02": {
           "runs": [
@@ -1585,7 +1634,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         },
         "v02-structural": {
           "runs": [
@@ -1691,7 +1742,9 @@
           },
           "outside_band": [],
           "holds": true,
-          "outside_band_posthoc": []
+          "outside_band_posthoc": [],
+          "outside_band_protocol_list": [],
+          "holds_protocol_list": true
         }
       },
       "band": {

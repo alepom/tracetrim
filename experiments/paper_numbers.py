@@ -15,7 +15,7 @@ from pathlib import Path
 
 from tracetrim import about
 
-from .run import ROOT
+from .paths import ROOT
 
 RES = ROOT / "results"
 GEN = ROOT / "paper" / "generated"
@@ -48,7 +48,7 @@ def plain(tex_path, macros) -> str:
         v = macros[k].replace("\\%", "%").replace("$-$", "-").replace("{,}", ",")
         t = t.replace("\\" + k + "{}", v).replace("\\" + k, v)
     t = re.sub(r"\\(?:texttt|emph|textbf)\{([^}]*)\}", r"\1", t)
-    t = t.replace("\\%", "%").replace("~", " ")
+    t = t.replace("\\%", "%").replace("~", " ").replace("--", "\u2013")
     assert "\\" not in t, f"unexpanded LaTeX left in the abstract: {t[t.index(chr(92)):][:40]}"
     return " ".join(t.split())
 
@@ -162,14 +162,15 @@ def main():
                 m(f"{label}{key}Gates{R}", f"{x['gates_passed']}/{len(x['runs'])}")
                 meds = ", ".join(f"{k.replace('_', ' ')} {v:g}" for k, v in x["medians"].items())
                 rows.append(f"{CASE_NAME[c] if arm == 'raw' else ''} & {arm} & {pct(x['tool_tokens'] / raw_tok - 1) if arm != 'raw' else num(raw_tok)} & "
-                            f"{x['gates_passed']}/{len(x['runs'])} & {'' if arm == 'raw' else ('holds' if x['holds'] else 'does not hold') + ('$^{\\ast}$' if x.get('outside_band_posthoc') else '')} \\\\")
+                            f"{x['gates_passed']}/{len(x['runs'])} & {'' if arm == 'raw' else ('meets' if x['holds'] else 'fails') + ('$^{\\ast}$' if x.get('outside_band_posthoc') else '')} & "
+                            f"{'' if arm == 'raw' else ('meets' if x.get('holds_protocol_list') else 'fails')} \\\\")
             if r.get("headroom"):
                 h = r["headroom"]
                 m(f"{label}HeadroomTokens{R}", apct(h["headroom"] / h["tool_tokens"] - 1))
-                rows.append(f" & Headroom (tokens only) & {pct(h['headroom'] / h['tool_tokens'] - 1)} & -- & -- \\\\")
+                rows.append(f" & Headroom (tokens only) & {pct(h['headroom'] / h['tool_tokens'] - 1)} & -- & -- & -- \\\\")
             rows.append("\\addlinespace")
         (GEN / f"table_{name.removesuffix('.json')}.tex").write_text(
-            "\\begin{tabular}{llrrl}\n\\toprule\nCase & Arm & Tool tokens & Gates passed & Band rule \\\\\n\\midrule\n"
+            "\\begin{tabular}{llrrll}\n\\toprule\nCase & Arm & Tool tokens & Gates passed & H2 (implemented) & H2 (protocol list) \\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     s2 = load("study2.json")
@@ -245,6 +246,81 @@ def main():
         (GEN / "table_phase_c.tex").write_text(
             "\\begin{tabular}{llrrrrr}\n\\toprule\nCase & Arm & Input tokens & Uncached & Turns & Expand calls & Gates \\\\\n"
             "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    # ---- Supplementary material (appendix) -----------------------------------
+    def rng(vals):
+        vals = [v for v in vals if isinstance(v, (int, float)) and not isinstance(v, bool)]
+        if not vals:
+            return "--"
+        return f"{statistics.median(vals):g} [{min(vals):g}--{max(vals):g}]"
+
+    sup = []
+    for name, label in (("phase_b.json", "B"), ("study2.json", "2"), ("phase_c.json", "C")):
+        d = load(name)
+        if not d:
+            continue
+        for c, r in d["cases"].items():
+            arms = r["arms"] if "arms" in r else r
+            for arm, x in arms.items():
+                th = [t for t in x.get("thermometers") or [] if t]
+                keys = [k for k in (th[0] if th else {}) if isinstance(th[0][k], (int, float)) and not isinstance(th[0][k], bool)]
+                cells = "; ".join(f"{k.replace('_', ' ')} {rng([t.get(k) for t in th])}" for k in keys)
+                sup.append(f"{label} & {CASE_NAME[c]} & {arm.replace('-', ' ')} & {len(th)} & {cells} \\\\")
+    (GEN / "table_thermometers.tex").write_text(
+        "\\begin{longtable}{lllrp{8.0cm}}\n\\toprule\nStudy & Case & Arm & Runs & Thermometers: median [min--max] \\\\\n\\midrule\n"
+        "\\endhead\n" + "\n".join(sup) + "\n\\bottomrule\n\\end{longtable}\n", encoding="utf-8")
+
+    ser, b, s2 = load("reserialize.json"), load("phase_b.json"), load("study2.json")
+    if ser and b and s2:
+        rows = []
+        for c in ("C1", "C2", "C3", "C4", "C5"):
+            R, sr = ROMAN[c], ser["cases"][c]
+            raw = b["cases"][c]["arms"]["raw"]["tool_tokens"]
+            v02 = s2["cases"][c]["arms"]["v02"]["tool_tokens"]
+            m(f"ReserialMinA{R}", apct(-sr["phase_a"]["minified_saving"]))
+            m(f"ReserialMinReplay{R}", apct(-sr["replay"]["minified_saving"]))
+            m(f"VtwoNet{R}", apct(v02 / sr["replay"]["reserialized"] - 1))
+            rows.append(f"{CASE_NAME[c]} & {pct(-sr['replay']['saving'])} & {pct(-sr['replay']['minified_saving'])} & "
+                        f"{pct(b['cases'][c]['arms']['prudent']['tool_tokens'] / raw - 1)} & {pct(v02 / raw - 1)} & "
+                        f"{pct(v02 / sr['replay']['reserialized'] - 1)} & {pct(b['cases'][c]['headroom']['headroom'] / raw - 1)} \\\\")
+        (GEN / "table_savings_detail.tex").write_text(
+            "\\begin{tabular}{lrrrrrr}\n\\toprule\nCase & Re-serialised & Minified & 0.1 prudent & 0.2 & 0.2 vs re-serialised & Headroom \\\\\n"
+            "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    ga = load("gates_audit.json")
+    if ga:
+        cs = ga["cases"]
+        c1 = [r for g in cs["C1"].values() for r in g]
+        c2 = [r for g in cs["C2"].values() for r in g]
+        c3 = [r for g in cs["C3"].values() for r in g]
+        m("AuditCOneSkipped", word(sum(r["skipped_by_gate"] for r in c1)))
+        m("AuditCOnePairs", num(sum(r["pairs"] for r in c1)))
+        m("AuditCTwoDiffers", str(sum(r["title_differs"] for r in c2)))
+        m("AuditCTwoFound", num(sum(r["url_found"] for r in c2)))
+        m("AuditCThreeDoi", word(sum(r["doi_differs"] for r in c3)))
+        for arm in ("prudent", "aggressive", "structural"):
+            rows3 = cs["C3"].get(f"B-{arm}", [])
+            m(f"PhaseBOriginalGates{arm.capitalize()}iii", f"{sum(r['gate_original'] for r in rows3)}/{len(rows3)}")
+            m(f"PhaseBNowGates{arm.capitalize()}iii", f"{sum(r['gate_now'] for r in rows3)}/{len(rows3)}")
+
+    au = load("c4_audit.json")
+    if au:
+        rows = []
+        for g, rr in au.items():
+            key = "".join(w.capitalize() for w in g.replace("-", " ").replace("v02", "vtwo").split())
+            m(f"AuditCFour{key}", f"{sum(r['audit'] for r in rr)}/{5 * len(rr)}")
+            m(f"FrozenCFour{key}", f"{sum(r['frozen'] for r in rr)}/{5 * len(rr)}")
+            rows.append(f"{g.replace('-', ' ')} & {len(rr)} & {sum(r['frozen'] for r in rr)}/{5 * len(rr)} & "
+                        f"{sum(r['audit'] for r in rr)}/{5 * len(rr)} \\\\")
+        (GEN / "table_c4_audit.tex").write_text(
+            "\\begin{tabular}{lrrr}\n\\toprule\nRuns & n & Frozen test & Audit \\\\\n\\midrule\n" + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    ts = load("turns_sensitivity.json")
+    if ts:
+        m("TurnsCallsChanged", str(sum(v["calls_changed"] for v in ts.values())))
+        m("TurnsCalls", str(sum(v["calls"] for v in ts.values())))
+        m("TurnsFiguresUnchanged", "unchanged" if all(v["turn_aware"] == v["published"] for v in ts.values()) else "changed")
 
     (GEN / "abstract.txt").write_text(plain(ROOT / "paper" / "sections" / "abstract.tex", macros) + "\n",
                                       encoding="utf-8")

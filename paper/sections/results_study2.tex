@@ -3,11 +3,12 @@
 
 Study~2 replayed the Phase B conversations again, \StudyTwoRunsPerArm{} runs per arm, with the projection learned
 with both safeguards (arm \texttt{v02}) and with the same projection followed by structural compression
-(Table~\ref{tab:study2}).
+(Table~\ref{tab:study2}). It is a pre-registered check that the safeguards repair the failures observed, on the
+same conversations that showed them, not an independent validation on new tasks, runs or seeds.
 
 \begin{table}[t]
 \centering\small
-\input{generated/table_study2.tex}
+\resizebox{\textwidth}{!}{\input{generated/table_study2.tex}}
 \caption{Study 2: replay of the same runs as Phase B, \StudyTwoRunsPerArm{} runs per arm, safeguards S1 and S2 on.
 Columns and $^{\ast}$ as in Table~\ref{tab:phaseb}: in billing support the \texttt{v02} arm holds under the frozen
 test, not under the strict one.}
@@ -25,8 +26,11 @@ tracetrim bars. Token counts only: the effect on answers is in Tables~\ref{tab:p
 \end{figure}
 
 \paragraph{Pre-registered hypotheses.} All four held as frozen. \emph{H5}: in billing support the \texttt{v02} arm
-diagnosed all five tickets correctly in \StudyTwoFrozenAllRightVtwo{} runs, the period end included, where the
-0.1 projection had lost it. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
+passed the frozen keyword test on all five tickets in \StudyTwoFrozenAllRightVtwo{} runs, the period end included,
+where the 0.1 projection had lost it. The keyword tests accept a negated or contradictory sentence; a stricter
+audit of every diagnosis against the scenario's facts, added afterwards (deviation 15, Table~\ref{tab:c4audit}),
+confirms \AuditCFourDVtwo{} \texttt{v02} diagnoses against \AuditCFourDRaw{} raw ones, every \texttt{v02} miss
+being the decline reason discussed below. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
 (\StudyTwoVtwoGatesiii), so no identifier was invented; with 0.1 the prudent arm had passed in
 \PhaseBPrudentGatesiii{} runs. \emph{H7}: in CI triage every \texttt{v02} run found all four expected links,
 including the one lost in Phase B. \emph{H8} is a token count on fixed replays, so it is
@@ -55,13 +59,16 @@ seen, and reported beside the frozen result rather than instead of it), the raw 
 English sentence and the agent writes it in Italian: a \emph{translated} value, which neither usage detection nor
 safeguard S2 recognises. The \texttt{v02} answers were not wrong (``the card was declined'') but less informative.
 
-\paragraph{Format changes behaviour.} Cleaning and TOON encoding remove no information, yet adding them to the
-\texttt{v02} projection changed answers. In the editorial plan the gates passed in \StudyTwoVtwostructuralGatesi{}
+\paragraph{Cleaning and format change behaviour.} The structural arm adds two things to the \texttt{v02} projection:
+cleaning, which removes nulls and empty values (inside lists too, which shifts the positions of the remaining
+elements), and the TOON-style encoding. Together they changed answers. In the editorial plan the gates passed in \StudyTwoVtwostructuralGatesi{}
 runs instead of \StudyTwoVtwoGatesi, each time on the same keyword: the search-volume tool, which the prompt names as
 the source of all volumes, returned that keyword without a volume, while another tool gave one. With JSON the agent
-used the other tool's figure; with the denser format it wrote zero. In billing support the arm had all tickets
-right, under the frozen test, in \StudyTwoFrozenAllRightVtwostructural{} runs. The format did not hide data: it
-shifted how the model resolved an ambiguity. The evidence is thin (one keyword, five runs), and the encoder is the
+used the other tool's figure, against the prompt's instruction to take volumes from the search-volume tool (the gate
+checks the number, not its source); with the cleaned and encoded outputs it wrote zero. In billing support the arm had all tickets
+right, under the frozen test, in \StudyTwoFrozenAllRightVtwostructural{} runs. The two changes cannot be told apart here (an arm
+for each would be needed): what the data show is that the combined treatment shifted how the model resolved an
+ambiguity. The evidence is thin (one keyword, five runs), and the encoder is the
 library's own minimal TOON-style implementation, not the reference one \citep{schopplich2026toon}; but it is a
 reminder that a format the model reads less often is not a neutral choice, and its saving has to be validated like
 any other change to what the agent reads.

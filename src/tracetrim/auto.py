@@ -66,8 +66,11 @@ class Learner:
         self.events: list[dict] = []
 
     # -- observation ------------------------------------------------------
-    def call(self, tool: str, arguments: dict, output: str) -> None:
-        self.events.append({"kind": "call", "tool": tool, "arguments": arguments, "output": output})
+    def call(self, tool: str, arguments: dict, output: str, turn: int | None = None) -> None:
+        e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
+        if turn is not None:
+            e["turn"] = turn             # calls of one turn do not use each other's outputs
+        self.events.append(e)
 
     def trimmed(self, tool: str) -> None:
         self.state["trimmed"][tool] = self.state["trimmed"].get(tool, 0) + 1
@@ -87,7 +90,11 @@ class Learner:
             for e in self.events:
                 fh.write(json.dumps(e, ensure_ascii=False) + "\n")
             if complete:
-                fh.write(json.dumps({"kind": "message", "text": answer}, ensure_ascii=False) + "\n")
+                msg = {"kind": "message", "text": answer}
+                turns = [e["turn"] for e in self.events if "turn" in e]
+                if turns and len(turns) == len(self.events):
+                    msg["turn"] = max(turns) + 1
+                fh.write(json.dumps(msg, ensure_ascii=False) + "\n")
         self.events = []
         if complete:
             self.state["complete_runs"] += 1
@@ -201,14 +208,16 @@ class AutoTrim:
     def report(self) -> Path:
         return self.learner.dir / "report.html"
 
-    def output(self, tool: str, arguments: dict | str | None, raw: str) -> str:
-        """Record the call; return what the model should receive."""
+    def output(self, tool: str, arguments: dict | str | None, raw: str, turn: int | None = None) -> str:
+        """Record the call; return what the model should receive. `turn`: the
+        model turn that emitted the call, if you run several calls per turn
+        (pass it for every call, or for none)."""
         if isinstance(arguments, str):
             try:
                 arguments = json.loads(arguments or "{}")
             except json.JSONDecodeError:
                 arguments = {"_raw": arguments}
-        self.learner.call(tool, arguments or {}, raw)
+        self.learner.call(tool, arguments or {}, raw, turn)
         text = self.trimmer.output(tool, raw)
         if "\n[trimmed] " in text:
             self.learner.trimmed(tool)

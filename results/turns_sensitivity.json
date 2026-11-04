@@ -1,0 +1,147 @@
+{
+  "C1": {
+    "turn_aware": {
+      "used_share": 0.3240436991435017,
+      "prudent_saving": 0.6289827783313873,
+      "misses": [
+        2,
+        166
+      ],
+      "misses_calls": [
+        69,
+        166
+      ]
+    },
+    "published": {
+      "used_share": 0.3240436991435017,
+      "prudent_saving": 0.6289827783313873,
+      "misses": [
+        2,
+        166
+      ],
+      "misses_calls": [
+        69,
+        166
+      ]
+    },
+    "turns_with_several_calls": 50,
+    "calls": 173,
+    "calls_changed": 0
+  },
+  "C2": {
+    "turn_aware": {
+      "used_share": 0.8445829905486198,
+      "prudent_saving": 0.11765508717789297,
+      "misses": [
+        9,
+        90
+      ],
+      "misses_calls": [
+        26,
+        90
+      ]
+    },
+    "published": {
+      "used_share": 0.8445829905486198,
+      "prudent_saving": 0.11765508717789297,
+      "misses": [
+        9,
+        90
+      ],
+      "misses_calls": [
+        26,
+        90
+      ]
+    },
+    "turns_with_several_calls": 22,
+    "calls": 136,
+    "calls_changed": 5
+  },
+  "C3": {
+    "turn_aware": {
+      "used_share": 0.1909540255028426,
+      "prudent_saving": 0.7012287411865826,
+      "misses": [
+        3,
+        61
+      ],
+      "misses_calls": [
+        61,
+        61
+      ]
+    },
+    "published": {
+      "used_share": 0.1909540255028426,
+      "prudent_saving": 0.7012287411865826,
+      "misses": [
+        3,
+        61
+      ],
+      "misses_calls": [
+        61,
+        61
+      ]
+    },
+    "turns_with_several_calls": 16,
+    "calls": 61,
+    "calls_changed": 13
+  },
+  "C4": {
+    "turn_aware": {
+      "used_share": 0.16686365309720796,
+      "prudent_saving": 0.6899110654705392,
+      "misses": [
+        9,
+        84
+      ],
+      "misses_calls": [
+        61,
+        84
+      ]
+    },
+    "published": {
+      "used_share": 0.16686365309720796,
+      "prudent_saving": 0.6899110654705392,
+      "misses": [
+        9,
+        84
+      ],
+      "misses_calls": [
+        61,
+        84
+      ]
+    },
+    "turns_with_several_calls": 16,
+    "calls": 84,
+    "calls_changed": 0
+  },
+  "C5": {
+    "turn_aware": {
+      "used_share": 0.18216495945369185,
+      "prudent_saving": 0.7653115663679044,
+      "misses": [
+        3,
+        64
+      ],
+      "misses_calls": [
+        64,
+        64
+      ]
+    },
+    "published": {
+      "used_share": 0.18216495945369185,
+      "prudent_saving": 0.7653115663679044,
+      "misses": [
+        3,
+        64
+      ],
+      "misses_calls": [
+        64,
+        64
+      ]
+    },
+    "turns_with_several_calls": 16,
+    "calls": 104,
+    "calls_changed": 0
+  }
+}

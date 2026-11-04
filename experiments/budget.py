@@ -13,7 +13,7 @@ Cases without a pilot yet (C4, C5) are assumed to cost like C1, and say so.
 import argparse
 import json
 
-from .run import PRICES, TRACES, cost
+from .paths import PRICES, TRACES, cost
 
 
 def pilot(case):

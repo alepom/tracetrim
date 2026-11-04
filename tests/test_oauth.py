@@ -78,10 +78,13 @@ def test_login_then_the_proxy_renews_the_token_without_a_browser(tmp_path, oauth
     async def call():
         async with stdio_client(params) as (r_, w_), ClientSession(r_, w_) as s:
             await s.initialize()
-            return (await s.call_tool("whoami", {})).content[0].text
+            return await s.call_tool("whoami", {})
 
-    out = asyncio.run(call())
-    assert "demo" in out
+    res = asyncio.run(call())
+    assert "demo" in res.content[0].text
+    # Nothing to trim yet: the server's structured content comes back untouched.
+    structured = getattr(res, "structured_content", None)
+    assert structured is not None and "demo" in json.dumps(structured)
     log = server_log.read_text()
     assert log.count("authorization approved") == 1
     assert "token renewed (refresh token)" in log

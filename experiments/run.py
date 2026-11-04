@@ -28,51 +28,12 @@ from openai import AsyncOpenAI
 
 from .tools import ROOT, to_args, toolset
 
-PROMPTS = ROOT / "experiments" / "prompts"
-# Traces live in traces/ where they were recorded; from the Zenodo dataset they
-# are in dataset/traces/ (C3, C4 and C5 only: C1 and C2 are not redistributable).
-TRACES = next((p for p in (ROOT / "traces", ROOT / "dataset" / "traces") if any(p.glob("C*/A*.jsonl"))),
-              ROOT / "traces")
-
-
-def keep_missing(res: dict, out_path, order) -> dict:
-    """Cases whose traces are not here (C1 and C2 outside the machine that
-    recorded them) keep their entry from the existing results file instead of
-    disappearing from it: re-running an analysis on the released data must
-    never shrink the results."""
-    import json as _json
-    old = _json.loads(Path(out_path).read_text()) if Path(out_path).exists() else {"cases": {}}
-    merged = {}
-    for case in order:
-        if case in res["cases"]:
-            merged[case] = res["cases"][case]
-        elif case in old.get("cases", {}):
-            merged[case] = old["cases"][case]
-            print(f"  {case}: traces not available here, kept from {Path(out_path).name}")
-    res["cases"] = merged
-    for key, value in old.items():
-        res.setdefault(key, value)       # e.g. the transfer analysis, which needs C1 and C2
-    return res
-LEDGER = ROOT / "out" / "ledger.jsonl"
-PRICES = json.loads((ROOT / "experiments" / "prices.json").read_text())
+from .paths import ARMS, ARMS_D, LEDGER, PREFIX, PRICES, PROMPTS, TRACES, cost, keep_missing, spent  # noqa: E402,F401
 
 # A safety guard, not an experimental cap: well above the 50 calls the C1
 # prompt allows. If it fires, the run is flagged and excluded.
 GUARD_CALLS = 80
 GUARD_TURNS = 40
-
-
-def cost(usage: dict) -> float:
-    cached = usage.get("cached", 0)
-    return ((usage["input"] - cached) * PRICES["input_per_mtok"]
-            + cached * PRICES["cached_input_per_mtok"]
-            + usage["output"] * PRICES["output_per_mtok"]) / 1e6
-
-
-def spent() -> float:
-    if not LEDGER.exists():
-        return 0.0
-    return sum(json.loads(l)["cost_usd"] for l in LEDGER.read_text().splitlines() if l.strip())
 
 
 def text_of(item) -> str:

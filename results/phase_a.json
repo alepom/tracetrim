@@ -119,48 +119,56 @@
         {
           "items": 20,
           "median_volume": 260,
+          "mean_volume": 1026,
           "long_tail_pct": 17,
           "notes_with_blog_link_pct": 35
         },
         {
           "items": 20,
           "median_volume": 390,
+          "mean_volume": 3047,
           "long_tail_pct": 0,
           "notes_with_blog_link_pct": 35
         },
         {
           "items": 20,
           "median_volume": 355,
+          "mean_volume": 2800,
           "long_tail_pct": 3,
           "notes_with_blog_link_pct": 50
         },
         {
           "items": 20,
           "median_volume": 390,
+          "mean_volume": 1160,
           "long_tail_pct": 18,
           "notes_with_blog_link_pct": 45
         },
         {
           "items": 20,
           "median_volume": 590,
+          "mean_volume": 2099,
           "long_tail_pct": 3,
           "notes_with_blog_link_pct": 20
         },
         {
           "items": 20,
           "median_volume": 260,
+          "mean_volume": 521,
           "long_tail_pct": 25,
           "notes_with_blog_link_pct": 20
         },
         {
           "items": 20,
           "median_volume": 170,
+          "mean_volume": 1358,
           "long_tail_pct": 13,
           "notes_with_blog_link_pct": 30
         },
         {
           "items": 20,
           "median_volume": 260,
+          "mean_volume": 834,
           "long_tail_pct": 15,
           "notes_with_blog_link_pct": 45
         }
@@ -661,7 +669,7 @@
         {
           "tickets": 5,
           "correct_diagnoses": 5,
-          "correct_diagnoses_strict": 5,
+          "correct_diagnoses_strict": 4,
           "evidence_per_ticket": 1.8,
           "wrong": []
         },

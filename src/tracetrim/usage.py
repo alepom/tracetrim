@@ -169,15 +169,22 @@ def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -
     `comma_grouping`: also match numbers written "1,600". On by default since
     0.3.4; off to reproduce the studies."""
     texts = [e.text for e in trace.events]
+    # When to compare: the event's position, or its model turn when the trace
+    # records turns. With turns, text written in the same turn as a call (its
+    # arguments, the other calls emitted with it) is not "after" its output:
+    # it was generated before the output existed.
+    pos = ([e.turn for e in trace.events] if trace.events and all(e.turn is not None for e in trace.events)
+           else list(range(len(trace.events))))
 
     # First event where each n-gram is written. Two versions: a proxy in front
     # of the model sees everything, an MCP proxy sees tool calls only.
     first, first_in_calls = {}, {}
     for i, e in enumerate(trace.events):
         for g in ngrams(words(e.text)):
-            first.setdefault(g, i)
-            if e.kind != "message":
-                first_in_calls.setdefault(g, i)
+            if g not in first or pos[i] < first[g]:
+                first[g] = pos[i]
+            if e.kind != "message" and (g not in first_in_calls or pos[i] < first_in_calls[g]):
+                first_in_calls[g] = pos[i]
 
     result = []
     for i, e in enumerate(trace.events):
@@ -197,10 +204,10 @@ def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -
             if any(x in own for x in k):
                 u.echo.add(path)
             seen = [first_in_calls[x] for x in k if x in first_in_calls]
-            if seen and min(seen) > i:
+            if seen and min(seen) > pos[i]:
                 u.used_by_calls.add(path)
             seen = [first[x] for x in k if x in first]
-            if seen and min(seen) > i:
+            if seen and min(seen) > pos[i]:
                 u.used.add(path)
                 # Bucketed numbers (search volumes: 1,600, 2,400...) can match
                 # by coincidence. A string cannot.

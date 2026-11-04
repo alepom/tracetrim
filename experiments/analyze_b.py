@@ -17,13 +17,24 @@ import statistics
 
 from .checks import check
 from .quality import quality
-from .replay import PREFIX
-from .run import ROOT, TRACES, keep_missing
+from .paths import PREFIX
+from .paths import ROOT, TRACES, keep_missing
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
 # Thermometers added after the freeze (deviation 11). They are reported, but
 # never enter the band of H2, which is defined on the frozen ones only.
 POSTHOC = {"correct_diagnoses_strict"}
+# Thermometers added after the first implementation (deviation 15): reported, and
+# used only in the band on the protocol's list, never in the band as implemented.
+LATER = {"mean_volume"}
+# The protocol's list (Measures): C1 volume median and mean, long-tail share,
+# items proposed (its "topics covered" relied on the course's list of expected
+# themes and cannot be computed here); C2 distinct sources, own pages, gaps;
+# C3 distinct works, share of recent works. C4 and C5 were added by amendment A1
+# without a list: their implemented thermometers are used.
+PROTOCOL_LIST = {"C1": ["median_volume", "mean_volume", "long_tail_pct", "items"],
+                 "C2": ["distinct_sources", "own_pages_read", "gaps"],
+                 "C3": ["distinct_works", "recent_2023_pct"]}
 OUT = {"B": ROOT / "results" / "phase_b.json", "D": ROOT / "results" / "study2.json"}
 
 
@@ -78,11 +89,14 @@ def main():
         band = {k: (min(t[k] for t in raw["thermometers"]), max(t[k] for t in raw["thermometers"])) for k in nums}
         for arm, a in arms.items():
             med = {k: statistics.median(t[k] for t in a["thermometers"] if k in t) for k in nums}
-            outside = [k for k in nums if k not in POSTHOC and not band[k][0] <= med[k] <= band[k][1]]
+            outside = [k for k in nums if k not in POSTHOC | LATER and not band[k][0] <= med[k] <= band[k][1]]
             a["medians"], a["outside_band"] = med, outside
             a["holds"] = a["gates_passed"] >= raw["gates_passed"] and not outside
             # The post-hoc thermometers, judged by the same rule, kept apart.
             a["outside_band_posthoc"] = [k for k in nums if k in POSTHOC and not band[k][0] <= med[k] <= band[k][1]]
+            plist = [k for k in PROTOCOL_LIST.get(case, nums) if k in nums and k not in POSTHOC]
+            a["outside_band_protocol_list"] = [k for k in plist if not band[k][0] <= med[k] <= band[k][1]]
+            a["holds_protocol_list"] = a["gates_passed"] >= raw["gates_passed"] and not a["outside_band_protocol_list"]
         res["cases"][case] = {"arms": arms, "band": band, "headroom": headroom.get(case)}
 
     res = keep_missing(res, OUT[study], CASES)

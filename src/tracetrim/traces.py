@@ -26,6 +26,10 @@ class Event:
     text: str = ""             # prompt/message text; for calls, the arguments
     tool: str = ""             # calls only
     output: str | None = None  # calls only; None when the output is not exposed
+    # Model turn that produced the event (the prompt: -1). Optional: when every
+    # event has one, "after" means a later turn, so that calls emitted together
+    # do not count as using each other's outputs.
+    turn: int | None = None
 
 
 @dataclass
@@ -65,9 +69,10 @@ def load_jsonl(path: Path) -> Trace:
                 text=args if isinstance(args, str) else json.dumps(args, ensure_ascii=False),
                 tool=d.get("tool") or "?",
                 output=d.get("output"),
+                turn=d.get("turn"),
             ))
         elif kind in ("prompt", "message"):
-            trace.events.append(Event(kind, text=d.get("text") or ""))
+            trace.events.append(Event(kind, text=d.get("text") or "", turn=d.get("turn")))
         else:
             raise ValueError(f"{path.name}:{n}: unknown event kind {kind!r}")
     return trace

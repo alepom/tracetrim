@@ -31,7 +31,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 from openai import AsyncOpenAI
 
 from .quality import q_c4
-from .run import PRICES, ROOT, cost
+from .paths import PRICES, ROOT, cost
 
 PROMPTS = (ROOT / "docs" / "demo_prompts_IT.md").read_text(encoding="utf-8")
 SYSTEM, USER = re.findall(r"```\n(.*?)\n```", PROMPTS, re.S)[:2]

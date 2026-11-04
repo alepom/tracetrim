@@ -1,9 +1,9 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{What the agent uses can be learned, but only from complete traces.} On four of the five agents, most of what
+\paragraph{What the agent uses can be learned, best from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
-of it on a new run. The learner must see the final answer: an MCP gateway placed between agent and tools can
+of it on a new run. In these agents the learner needed the final answer: an MCP gateway placed between agent and tools can
 \emph{apply} a projection, but learning from what it sees alone misses far more of what the agent uses
 (\MissesPooledShareRealCalls{} of held-out calls against \MissesPooledShareRealFull{} with real APIs). The practical
 consequence is an architecture: learn offline from full traces, review, apply anywhere. Version 0.3 of the library
@@ -22,10 +22,12 @@ blind spots are exactly the fields that matter in ways the text does not show.
 identifier it was asked to report, an agent invented plausible ones. Identifiers are cheap to keep and costly to
 lose, so a projection should never remove them, whatever the usage says.
 
-\paragraph{The recovery path matters.} With \texttt{expand}, a wrong cut costs one round trip instead of a wrong
+\paragraph{The recovery path matters.} With \texttt{expand}, a wrong cut can cost one round trip instead of a wrong
 answer: in the live runs the agents asked for hidden fields, and the end-to-end cost still fell. It is not a
-guarantee: in one billing-support run the agent did not ask for the period end and got a ticket wrong. This only works when the agent knows what is hidden, which is why the hidden fields are listed, grouped,
-after every trimmed output.
+guarantee: in one billing-support run the agent did not ask for the period end and got a ticket wrong. It works only
+when the agent knows what is hidden, which is why the hidden fields are listed, grouped, after every trimmed output,
+and only while the original is kept: the library keeps the last 256 originals per proxy and lists at most 25 groups,
+summarising the rest.
 
 \paragraph{How to use it.} These results suggest a workflow rather than an automatic switch: record a few runs of a
 task with full outputs; generate the telemetry report, which is useful on its own and changes nothing; review the

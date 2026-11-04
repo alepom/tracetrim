@@ -14,7 +14,7 @@ import re
 from tracetrim.traces import load
 from tracetrim.usage import leaves, parse_output
 
-from .run import ROOT, TRACES
+from .paths import ROOT, TRACES
 COMMA = re.compile(r"\b\d{1,3}(?:,\d{3})+\b")
 
 

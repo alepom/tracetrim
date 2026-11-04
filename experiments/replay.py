@@ -35,9 +35,7 @@ from tracetrim.usage import analyse
 from .run import LEDGER, PRICES, TRACES, cost, spent
 
 TRACE = "A3"            # chosen before looking at any Phase A content (protocol, Phase B)
-ARMS = ("raw", "prudent", "aggressive", "structural")       # Phase B, tracetrim 0.1
-ARMS_D = ("raw", "v02", "v02-structural")                   # Study 2, safeguards S1 + S2
-PREFIX = {"B": ARMS, "D": ARMS_D}
+from .paths import ARMS, ARMS_D, PREFIX  # noqa: E402,F401  (Phase B: 0.1; Study 2: S1 + S2)
 CLOSE = {
     "it": "Hai raccolto tutti i dati che ti servono. Non chiamare altri strumenti: produci ora la risposta finale nel formato richiesto.",
     "en": "You have collected all the data you need. Do not call any more tools: produce the final answer now, in the required format.",

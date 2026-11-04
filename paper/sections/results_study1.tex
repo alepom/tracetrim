@@ -21,7 +21,7 @@ runs in which a tool call failed (deviation 6), the saving there is \PhaseASensS
 \centering\small
 \resizebox{\textwidth}{!}{\input{generated/table_phase_a.tex}}
 \caption{Phase A, eight live runs per case. \emph{Used}: share of tool-output tokens left by the in-sample
-aggressive projection (used fields and record keys), a lower bound of use. \emph{Re-serialised}: change from
+aggressive projection (used fields and record keys): detected reuse, not an exact measure of use. \emph{Re-serialised}: change from
 re-serialising each JSON output compactly, with no field removed (the lossless part of the next two columns).
 \emph{Prudent}, \emph{Aggressive}:
 change in tool-output tokens on held-out runs. \emph{Misses}: held-out calls in which the aggressive projection
@@ -41,17 +41,18 @@ the traces by \texttt{experiments/paper\_figures.py}.}
 \label{fig:tools}
 \end{figure}
 
-\subsection{The learner must see the answer}
+\subsection{The learner needs the answer}
 
 Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
-misses: held-out calls in which a used field would have been removed went from \MissesPooledRealFull{} to
+misses: held-out structured calls that the projection trims and in which a used field would have been removed went
+from \MissesPooledRealFull{} to
 \MissesPooledRealCalls{} over the three cases with real APIs, and from \MissesPooledSimFull{} to \MissesPooledSimCalls{}
 over the two simulated ones; from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan,
 and to every trimmed call in the literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv):
 those agents use what tools return only in the final answer. H3 (more than three times as many) holds in four cases
 and fails in the content-gap analysis, by a narrow margin (\PhaseAMissesii{} against \PhaseAMissesCallsii, a ratio of
-\HThreeRatioii). A projection can be \emph{applied} anywhere, a proxy included, but it has to be
-\emph{learned} from traces that contain the answer.
+\HThreeRatioii). In these cases a projection can be \emph{applied} anywhere, a proxy included, but learning it
+without the answer misses far more.
 
 \subsection{Projections are task-specific}
 
@@ -59,7 +60,7 @@ Learned on the editorial plan and applied to the content-gap analyst, on the one
 missed a used field in \TransferMisses{} calls, against \WithinMisses{} for the analyst's own projection (H4). What
 an agent needs from a tool depends on the task, not only on the tool.
 
-\subsection{Does the answer survive? (Phase B)}
+\subsection{What changes in the answers (Phase B)}
 
 Replaying the same conversation with projected tool outputs (Table~\ref{tab:phaseb}) removed
 \PhaseBPrudentTokensi, \PhaseBPrudentTokensiii, \PhaseBPrudentTokensiv{} and \PhaseBPrudentTokensv{} of the
@@ -71,10 +72,12 @@ mechanisms, each traced to a specific field.
 
 \begin{table}[t]
 \centering\small
-\input{generated/table_phase_b.tex}
+\resizebox{\textwidth}{!}{\input{generated/table_phase_b.tex}}
 \caption{Phase B: replay of one run per case, only tool messages changed, two runs per arm. \emph{Tool tokens}:
-raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{Band rule}: H2 as frozen, on the frozen thermometers. $^{\ast}$Also outside the band on the strict test added after the
-fact (deviation 11).}
+raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{H2}: the relative rule (gates passed in at least as many runs as raw, every thermometer median within
+the raw range), on the thermometers as implemented and on the protocol's list (deviation 15); \emph{meets} says
+nothing about absolute quality (content gaps: no raw run passes the gates). $^{\ast}$Also outside the band on the
+strict test added after the fact (deviation 11).}
 \label{tab:phaseb}
 \end{table}
 
@@ -116,9 +119,15 @@ a value written without a source, which a gate of this design cannot catch (devi
 
 The agents did use \texttt{expand}: a median of \PhaseCPrudentExpandi{} call per run in the editorial plan and
 \PhaseCPrudentExpandiv{} in billing support, where the agent recovered the hidden period end in two of three runs.
-In the third it did not, and diagnosed \PhaseCMinRightPrudentiv{} tickets of five correctly, fewer than any raw run
-(at least \PhaseCMinRightRawiv). The raw arm itself misdiagnosed one ticket in two of its three runs, a reminder that
-run-to-run variation in these tasks is large compared with the effects measured.
+In the third it did not, and passed the keyword test on \PhaseCMinRightPrudentiv{} tickets of five, fewer than any
+raw run (at least \PhaseCMinRightRawiv); under the stricter audit of the diagnoses both arms confirm
+\AuditCFourCPrudent{} and \AuditCFourCRaw{} (Table~\ref{tab:c4audit}). Run-to-run variation in these tasks is large
+compared with the effects measured.
+
+A limit of this phase: the live loop stored what the agent received, so for the prudent arm the raw outputs of the
+run itself are not available. The re-check against the other runs of the day can show a discrepancy, not prove what
+the agent was given; a harness should store the original output, what was shown, and what \texttt{expand} returned,
+separately.
 
 \begin{table}[t]
 \centering\small

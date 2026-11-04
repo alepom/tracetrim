@@ -147,7 +147,7 @@ risposte; il primo avvio è più lento.
 - I due server sono protetti dal token finché i tunnel sono aperti; Ctrl+C chiude tutto.
 - tracetrim filtra solo ciò che passa da lui: non tocca la ricerca web nativa del Playground.
 - In una prova con un agente vero (5 esecuzioni, 3 di osservazione) i risultati degli strumenti sono
-  scesi del 44% circa dopo l'apprendimento (`results/checks/auto_check_mcp.json`), una richiesta di `expand` per esecuzione, 5 ticket su 5 corretti in
+  scesi del 44% circa dopo l'apprendimento (`results/checks/auto_check_mcp.json`), una richiesta di `expand` per esecuzione, 5 ticket su 5 superano il test a parole chiave in
   ogni esecuzione. Il modello del Playground può comportarsi diversamente: fai una prova prima di girare.
 - Se l'agente non chiama `tracetrim_done`, quell'esecuzione resta solo nella telemetria (si chiude
   dopo 5 minuti di pausa) e non conta per l'apprendimento.

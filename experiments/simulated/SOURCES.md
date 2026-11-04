@@ -30,9 +30,12 @@ curl -sLo specs/github-api.json  https://raw.githubusercontent.com/github/rest-a
 
 ## Generation rules (what is ours, and therefore declared)
 
-- **Every property in the schema is present**, as the real APIs return full objects.
-  Expandable Stripe references (`anyOf: [string, object]`) stay unexpanded ids, the
-  API's default. Nested objects beyond depth 4 are emitted as null when nullable.
+- **Presence rule** (this sets the size of every payload, so the denominator of every saving):
+  at the top level of a resource, the required fields plus the optional ones listed per API
+  (all of them for Stripe, a subset for GitHub); below the top level, only the required
+  fields, plus the one optional branch a discriminator `type` names. Expandable Stripe
+  references (`anyOf: [string, object]`) stay unexpanded ids, the API's default. Nested
+  objects beyond depth 4 are emitted as null when nullable.
 - Values follow the schema type and format; names and enumerations come from the
   schema. A small number of fields that the tasks depend on (amounts, statuses,
   dates, failure messages, job steps, error lines) are set explicitly by the case's

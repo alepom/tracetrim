@@ -6,7 +6,7 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## 0.3.4
 
-Fixes from three independent pre-publication reviews.
+Fixes from three internal reviews and one external review before publication.
 
 - **Proxy security**: DNS-rebinding protection always on (local addresses on the proxy's port, plus
   `--allowed-host`), also for `/report`; tokens compared in constant time; `--token` can come from
@@ -25,6 +25,12 @@ Fixes from three independent pre-publication reviews.
   search-data cases from the released records.
 - OAuth token files are created readable by the owner only; `tracetrim learn --v01`; Python 3.10
   compatibility of `tracetrim login`; `AutoTrim.expand` tolerates malformed arguments.
+- External review: usage compared by model turn when traces record it (`"turn"`, also in `AutoTrim.output`),
+  with no effect on the study's figures (deviation 14); thermometers and gates measured against the protocol's
+  wording, with a stricter audit of the billing diagnoses and of what the gates skip (deviation 15); a full-minifier
+  baseline; the proxy keeps `structuredContent` (trimmed with the text when the text is trimmed), records errors
+  and non-text results for telemetry, refuses tool-name clashes, and `expand` accepts `"*"` and says what is hidden
+  when nothing matches; analyses import without the agent SDKs (`experiments/paths.py`); `requirements-study.txt`.
 - Experiments: the gates did not parse projected outputs (they end with the `[trimmed]` line); the line
   is now cut and every Phase C run re-checked, with no gate result changed; a post-hoc re-check finds one
   editorial-plan volume of 180 written without a source (deviation 13).

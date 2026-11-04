@@ -15,7 +15,7 @@ import statistics
 from .analyze_b import gate_pass
 from .checks import check
 from .quality import quality
-from .run import ROOT, TRACES, cost, keep_missing
+from .paths import ROOT, TRACES, cost, keep_missing
 
 OUT = ROOT / "results" / "phase_c.json"
 

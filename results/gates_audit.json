@@ -1,0 +1,650 @@
+{
+  "cases": {
+    "C1": {
+      "A": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A1"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A2"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A3"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A4"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A5"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A6"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 1,
+          "run": "A7"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "A8"
+        }
+      ],
+      "B-aggressive": [
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "B-aggressive-1"
+        },
+        {
+          "pairs": 66,
+          "skipped_by_gate": 0,
+          "run": "B-aggressive-2"
+        }
+      ],
+      "B-prudent": [
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "B-prudent-1"
+        },
+        {
+          "pairs": 80,
+          "skipped_by_gate": 0,
+          "run": "B-prudent-2"
+        }
+      ],
+      "B-raw": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "B-raw-1"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 1,
+          "run": "B-raw-2"
+        }
+      ],
+      "B-structural": [
+        {
+          "pairs": 80,
+          "skipped_by_gate": 0,
+          "run": "B-structural-1"
+        },
+        {
+          "pairs": 97,
+          "skipped_by_gate": 0,
+          "run": "B-structural-2"
+        }
+      ],
+      "C-prudent": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "C-prudent-1"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 1,
+          "run": "C-prudent-2"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "C-prudent-3"
+        }
+      ],
+      "C-raw": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "C-raw-1"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "C-raw-2"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "C-raw-3"
+        }
+      ],
+      "D-raw": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "D-raw-1"
+        },
+        {
+          "pairs": 66,
+          "skipped_by_gate": 0,
+          "run": "D-raw-2"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "D-raw-3"
+        },
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "D-raw-4"
+        },
+        {
+          "pairs": 66,
+          "skipped_by_gate": 0,
+          "run": "D-raw-5"
+        }
+      ],
+      "D-v02": [
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "D-v02-1"
+        },
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "D-v02-2"
+        },
+        {
+          "pairs": 80,
+          "skipped_by_gate": 0,
+          "run": "D-v02-3"
+        },
+        {
+          "pairs": 80,
+          "skipped_by_gate": 0,
+          "run": "D-v02-4"
+        },
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "D-v02-5"
+        }
+      ],
+      "D-v02-structural": [
+        {
+          "pairs": 60,
+          "skipped_by_gate": 0,
+          "run": "D-v02-structural-1"
+        },
+        {
+          "pairs": 100,
+          "skipped_by_gate": 0,
+          "run": "D-v02-structural-2"
+        },
+        {
+          "pairs": 72,
+          "skipped_by_gate": 0,
+          "run": "D-v02-structural-3"
+        },
+        {
+          "pairs": 110,
+          "skipped_by_gate": 0,
+          "run": "D-v02-structural-4"
+        },
+        {
+          "pairs": 78,
+          "skipped_by_gate": 0,
+          "run": "D-v02-structural-5"
+        }
+      ]
+    },
+    "C2": {
+      "A": [
+        {
+          "results": 15,
+          "url_found": 15,
+          "title_differs": 0,
+          "run": "A1"
+        },
+        {
+          "results": 15,
+          "url_found": 10,
+          "title_differs": 1,
+          "run": "A2"
+        },
+        {
+          "results": 13,
+          "url_found": 13,
+          "title_differs": 0,
+          "run": "A3"
+        },
+        {
+          "results": 16,
+          "url_found": 16,
+          "title_differs": 0,
+          "run": "A4"
+        },
+        {
+          "results": 15,
+          "url_found": 15,
+          "title_differs": 0,
+          "run": "A5"
+        },
+        {
+          "results": 13,
+          "url_found": 13,
+          "title_differs": 0,
+          "run": "A6"
+        },
+        {
+          "results": 13,
+          "url_found": 12,
+          "title_differs": 0,
+          "run": "A7"
+        },
+        {
+          "results": 17,
+          "url_found": 13,
+          "title_differs": 0,
+          "run": "A8"
+        }
+      ],
+      "B-aggressive": [
+        {
+          "results": 18,
+          "url_found": 10,
+          "title_differs": 0,
+          "run": "B-aggressive-1"
+        },
+        {
+          "results": 18,
+          "url_found": 10,
+          "title_differs": 0,
+          "run": "B-aggressive-2"
+        }
+      ],
+      "B-prudent": [
+        {
+          "results": 18,
+          "url_found": 15,
+          "title_differs": 1,
+          "run": "B-prudent-1"
+        },
+        {
+          "results": 18,
+          "url_found": 11,
+          "title_differs": 0,
+          "run": "B-prudent-2"
+        }
+      ],
+      "B-raw": [
+        {
+          "results": 16,
+          "url_found": 15,
+          "title_differs": 0,
+          "run": "B-raw-1"
+        },
+        {
+          "results": 21,
+          "url_found": 12,
+          "title_differs": 0,
+          "run": "B-raw-2"
+        }
+      ],
+      "B-structural": [
+        {
+          "results": 18,
+          "url_found": 9,
+          "title_differs": 1,
+          "run": "B-structural-1"
+        },
+        {
+          "results": 15,
+          "url_found": 8,
+          "title_differs": 0,
+          "run": "B-structural-2"
+        }
+      ],
+      "D-raw": [
+        {
+          "results": 12,
+          "url_found": 12,
+          "title_differs": 0,
+          "run": "D-raw-1"
+        },
+        {
+          "results": 18,
+          "url_found": 16,
+          "title_differs": 0,
+          "run": "D-raw-2"
+        },
+        {
+          "results": 16,
+          "url_found": 14,
+          "title_differs": 0,
+          "run": "D-raw-3"
+        },
+        {
+          "results": 15,
+          "url_found": 13,
+          "title_differs": 0,
+          "run": "D-raw-4"
+        },
+        {
+          "results": 18,
+          "url_found": 11,
+          "title_differs": 0,
+          "run": "D-raw-5"
+        }
+      ],
+      "D-v02": [
+        {
+          "results": 18,
+          "url_found": 9,
+          "title_differs": 1,
+          "run": "D-v02-1"
+        },
+        {
+          "results": 18,
+          "url_found": 9,
+          "title_differs": 1,
+          "run": "D-v02-2"
+        },
+        {
+          "results": 15,
+          "url_found": 15,
+          "title_differs": 0,
+          "run": "D-v02-3"
+        },
+        {
+          "results": 15,
+          "url_found": 14,
+          "title_differs": 2,
+          "run": "D-v02-4"
+        },
+        {
+          "results": 18,
+          "url_found": 12,
+          "title_differs": 1,
+          "run": "D-v02-5"
+        }
+      ],
+      "D-v02-structural": [
+        {
+          "results": 18,
+          "url_found": 8,
+          "title_differs": 0,
+          "run": "D-v02-structural-1"
+        },
+        {
+          "results": 17,
+          "url_found": 10,
+          "title_differs": 1,
+          "run": "D-v02-structural-2"
+        },
+        {
+          "results": 15,
+          "url_found": 14,
+          "title_differs": 1,
+          "run": "D-v02-structural-3"
+        },
+        {
+          "results": 15,
+          "url_found": 7,
+          "title_differs": 0,
+          "run": "D-v02-structural-4"
+        },
+        {
+          "results": 21,
+          "url_found": 10,
+          "title_differs": 1,
+          "run": "D-v02-structural-5"
+        }
+      ]
+    },
+    "C3": {
+      "A": [
+        {
+          "works": 10,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A1"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A2"
+        },
+        {
+          "works": 10,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A3"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A4"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A5"
+        },
+        {
+          "works": 10,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A6"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A7"
+        },
+        {
+          "works": 10,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "A8"
+        }
+      ],
+      "B-aggressive": [
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": false,
+          "gate_original": true,
+          "run": "B-aggressive-1"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": false,
+          "gate_original": true,
+          "run": "B-aggressive-2"
+        }
+      ],
+      "B-prudent": [
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": false,
+          "gate_original": true,
+          "run": "B-prudent-1"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": false,
+          "gate_original": true,
+          "run": "B-prudent-2"
+        }
+      ],
+      "B-raw": [
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "B-raw-1"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "B-raw-2"
+        }
+      ],
+      "B-structural": [
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": false,
+          "gate_original": true,
+          "run": "B-structural-1"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "B-structural-2"
+        }
+      ],
+      "D-raw": [
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-raw-1"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-raw-2"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-raw-3"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-raw-4"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-raw-5"
+        }
+      ],
+      "D-v02": [
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-1"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-2"
+        },
+        {
+          "works": 12,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-3"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-4"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-5"
+        }
+      ],
+      "D-v02-structural": [
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-structural-1"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-structural-2"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-structural-3"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-structural-4"
+        },
+        {
+          "works": 11,
+          "doi_differs": 0,
+          "gate_now": true,
+          "gate_original": true,
+          "run": "D-v02-structural-5"
+        }
+      ]
+    }
+  }
+}

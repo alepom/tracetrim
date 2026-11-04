@@ -57,3 +57,17 @@ def test_a_restart_keeps_what_was_learned(tmp_path, traces):
 def test_min_runs_is_at_least_two(tmp_path):
     # One run leaves nothing to hold out: trimming could never be justified.
     assert AutoTrim(tmp_path, min_runs=1).learner.min_runs == 2
+
+
+def test_calls_of_one_turn_do_not_use_each_other(tmp_path):
+    from tracetrim.traces import load
+    from tracetrim.usage import analyse
+    tt = AutoTrim(tmp_path, min_runs=2)
+    # Two calls emitted together: the second names a customer the first will
+    # return, but it was written before that output existed.
+    tt.output("find", {"q": "a"}, json.dumps({"id": "cus_ZZZ999", "plan": "gold"}), turn=0)
+    tt.output("orders", {"customer": "cus_ZZZ999"}, json.dumps({"n": 3}), turn=0)
+    tt.done("Customer found.")
+    trace = load(next((tmp_path / "traces").glob("run-*.jsonl")))
+    assert all(e.turn is not None for e in trace.events)
+    assert analyse(trace)[0].used == set()

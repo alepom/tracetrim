@@ -35,6 +35,22 @@ def test_call_ids_are_not_guessable_and_the_store_is_bounded():
     assert len(t.originals) == MAX_ORIGINALS and t.expand(ids[0], ["x"]).startswith("Error")
 
 
+def test_expand_without_a_match_says_what_is_hidden():
+    t = Trimmer(policy())
+    out = t.output("search_volume", json.dumps(VOLUMES))
+    cid = out.rsplit("call_id=", 1)[1].split()[0]
+    msg = t.expand(cid, ["no_such_field"])
+    assert msg.startswith("Error: no field matches") and "items[].location_code" in msg
+    assert "location_code" in t.expand(cid, ["*"])
+
+
+def test_a_name_clash_after_prefixing_is_refused():
+    import pytest
+    from tracetrim.proxy import route_names
+    with pytest.raises(SystemExit):
+        route_names({"a": ["search"], "b": ["search"], "c": ["a__search"]})
+
+
 def test_upstream_tools_named_like_ours_are_prefixed():
     from tracetrim.proxy import route_names
     routes = route_names({"a": ["expand", "search"], "b": ["tracetrim_done"]})

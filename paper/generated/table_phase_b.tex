@@ -1,36 +1,36 @@
-\begin{tabular}{llrrl}
+\begin{tabular}{llrrll}
 \toprule
-Case & Arm & Tool tokens & Gates passed & Band rule \\
+Case & Arm & Tool tokens & Gates passed & H2 (implemented) & H2 (protocol list) \\
 \midrule
-Editorial plan & raw & 114{,}712 & 1/2 &  \\
- & prudent & $-$59\% & 1/2 & does not hold \\
- & aggressive & $-$64\% & 2/2 & does not hold \\
- & structural & $-$60\% & 1/2 & does not hold \\
- & Headroom (tokens only) & $-$28\% & -- & -- \\
+Editorial plan & raw & 114{,}712 & 1/2 &  &  \\
+ & prudent & $-$59\% & 1/2 & fails & fails \\
+ & aggressive & $-$64\% & 2/2 & fails & fails \\
+ & structural & $-$60\% & 1/2 & fails & fails \\
+ & Headroom (tokens only) & $-$28\% & -- & -- & -- \\
 \addlinespace
-Content gaps & raw & 50{,}488 & 0/2 &  \\
- & prudent & $-$12\% & 0/2 & does not hold \\
- & aggressive & $-$16\% & 0/2 & does not hold \\
- & structural & $-$13\% & 0/2 & holds \\
- & Headroom (tokens only) & $-$10\% & -- & -- \\
+Content gaps & raw & 50{,}488 & 0/2 &  &  \\
+ & prudent & $-$12\% & 0/2 & fails & fails \\
+ & aggressive & $-$16\% & 0/2 & fails & fails \\
+ & structural & $-$13\% & 0/2 & meets & meets \\
+ & Headroom (tokens only) & $-$10\% & -- & -- & -- \\
 \addlinespace
-Literature scan & raw & 227{,}433 & 2/2 &  \\
- & prudent & $-$68\% & 0/2 & does not hold \\
- & aggressive & $-$79\% & 0/2 & does not hold \\
- & structural & $-$72\% & 1/2 & does not hold \\
- & Headroom (tokens only) & $-$17\% & -- & -- \\
+Literature scan & raw & 227{,}433 & 2/2 &  &  \\
+ & prudent & $-$68\% & 0/2 & fails & fails \\
+ & aggressive & $-$79\% & 0/2 & fails & fails \\
+ & structural & $-$72\% & 1/2 & fails & fails \\
+ & Headroom (tokens only) & $-$17\% & -- & -- & -- \\
 \addlinespace
-Billing support$^\dagger$ & raw & 16{,}931 & 2/2 &  \\
- & prudent & $-$69\% & 2/2 & does not hold$^{\ast}$ \\
- & aggressive & $-$84\% & 2/2 & does not hold$^{\ast}$ \\
- & structural & $-$73\% & 2/2 & does not hold$^{\ast}$ \\
- & Headroom (tokens only) & $-$33\% & -- & -- \\
+Billing support$^\dagger$ & raw & 16{,}931 & 2/2 &  &  \\
+ & prudent & $-$69\% & 2/2 & fails$^{\ast}$ & fails \\
+ & aggressive & $-$84\% & 2/2 & fails$^{\ast}$ & fails \\
+ & structural & $-$73\% & 2/2 & fails$^{\ast}$ & fails \\
+ & Headroom (tokens only) & $-$33\% & -- & -- & -- \\
 \addlinespace
-CI triage$^\dagger$ & raw & 74{,}976 & 2/2 &  \\
- & prudent & $-$77\% & 2/2 & does not hold \\
- & aggressive & $-$82\% & 2/2 & does not hold \\
- & structural & $-$78\% & 2/2 & does not hold \\
- & Headroom (tokens only) & $-$31\% & -- & -- \\
+CI triage$^\dagger$ & raw & 74{,}976 & 2/2 &  &  \\
+ & prudent & $-$77\% & 2/2 & fails & fails \\
+ & aggressive & $-$82\% & 2/2 & fails & fails \\
+ & structural & $-$78\% & 2/2 & fails & fails \\
+ & Headroom (tokens only) & $-$31\% & -- & -- & -- \\
 \addlinespace
 \bottomrule
 \end{tabular}

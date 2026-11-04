@@ -1,0 +1,12 @@
+# Versions used to run the study's agents and analyses (2026-11-04).
+# The library itself needs none of these: see pyproject.toml.
+openai==3.13.0
+mcp==2.3.0
+tiktoken==0.14.0
+httpx==0.28.1
+pydantic==2.14.2
+uvicorn==0.54.0
+pytest==9.2.0
+pymupdf==2.1
+# Optional, heavy (torch): the Headroom baseline.
+# headroom-ai==0.39.1
