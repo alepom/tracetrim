@@ -54,7 +54,7 @@ Publish.**
 ```
 Preprint, not peer reviewed.
 
-Agents built on large language models read tool outputs written for programs: most of what an API returns never informs the agent's answer, yet it is paid for at every turn. We learn, from an agent's own execution traces, which fields of each tool output it uses, and remove the rest. On five agents (three on real APIs, two on simulated servers following public OpenAPI descriptions), a projection learned from seven runs and applied to an unseen one removed 63% to 77% of tool-output tokens in four cases and 12% in the fifth; in live runs with an expand tool for hidden fields, billed input tokens fell by 56% and 32% with every quality gate passed. Learning only from tool calls, as a gateway would, missed most of the fields agents use. Replays with projected outputs, under a protocol frozen in advance, located the failures precisely: values the agent transforms before writing them, fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second pre-registered study showed that two safeguards, keeping identifying fields and recognising transformed values, removed those losses while keeping savings of 46% to 61%; a post-hoc check found a fourth mechanism, translated values, not covered. We release the library, with a bilingual telemetry report and an MCP proxy that applies a reviewed projection in front of any server.
+Agents built on large language models read tool outputs written for programs: most of what an API returns never informs the agent's answer, yet it is paid for at every turn. We learn, from an agent's own execution traces, which fields of each tool output it uses, and remove the rest. On five agents (three on real APIs, two on simulated servers following public OpenAPI descriptions), a projection learned from seven runs and applied to an unseen one removed 63% to 77% of tool-output tokens in four cases and 12% in the fifth (re-serialising the JSON alone, with no field removed, already removes up to 17%); in live runs with an expand tool for hidden fields, billed input tokens fell by 56% and 32%, and every run passed its gates as frozen. Learning only from tool calls, as a gateway would, missed a used field in 60% of held-out calls, against 6% when learning from complete traces. Replays with projected outputs, under a protocol frozen in advance, located the failures precisely: values the agent transforms before writing them, fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second pre-registered study showed that two safeguards, keeping identifying fields and recognising transformed values, removed those losses while keeping savings of 46% to 61% on four of the five agents; a post-hoc check found a fourth mechanism, translated values, not covered. We release the library, with a bilingual telemetry report and an MCP proxy that applies a reviewed projection in front of any server.
 
 The author set the research question and the constraints of the study; an AI coding agent (Claude Code) proposed the protocols, wrote the code, ran the experiments and drafted the manuscript under the author's direction. See the "AI assistance and authorship" section of the paper.
 ```
@@ -65,10 +65,10 @@ The author set the research question and the constraints of the study; an AI cod
 |---|---|
 | Files | `2_software_and_data/tracetrim_software.zip`, `2_software_and_data/tracetrim_dataset.zip`, `SHA256SUMS.txt` |
 | Resource type | Software |
-| Title | `tracetrim 0.3.3: learn which fields of tool outputs an agent uses, and trim the rest (code, protocols and data)` |
+| Title | `tracetrim 0.3.4: learn which fields of tool outputs an agent uses, and trim the rest (code, protocols and data)` |
 | Creators | come sopra |
 | License | MIT (codice); nel campo descrizione si indica CC BY 4.0 per dati e documentazione (vedi `LICENSES.md`) |
-| Version | `0.3.3` |
+| Version | `0.3.4` |
 | Related works | *is supplement to* → il DOI della bozza 1 |
 
 **Description**: il primo paragrafo del README, più: "The dataset contains full traces of the literature-scan case
@@ -94,7 +94,7 @@ Sostituisci i file nelle due bozze Zenodo con quelli nuovi (il PDF ora riporta i
 
 ## 5. Pubblicare
 
-1. Su GitHub crea la release `v0.3.3` dal tag omonimo, allegando `tracetrim_dataset.zip`.
+1. Su GitHub crea la release `v0.3.4` dal tag omonimo, allegando `tracetrim_dataset.zip`.
 2. Su Zenodo premi **Publish** sulla bozza 2, poi sulla bozza 1.
 3. Pubblica l'articolo con i link definitivi.
 

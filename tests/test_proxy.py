@@ -19,10 +19,32 @@ def test_trimmed_output_lists_hidden_groups_and_expand_returns_them():
     t = Trimmer(policy())
     out = t.output("search_volume", json.dumps(VOLUMES))
     body, line = out.rsplit("\n", 1)
-    assert "location_code" not in body and line.startswith("[trimmed] call_id=c1 hidden: ")
+    assert "location_code" not in body and line.startswith("[trimmed] call_id=c") and " hidden: " in line
     assert "items[].location_code" in line
-    back = json.loads(t.expand("c1", ["items[].location_code"]))
+    cid = line.split("call_id=")[1].split()[0]
+    back = json.loads(t.expand(cid, ["items[].location_code"]))
     assert back == {"items": [{"location_code": 2380}, {"location_code": 2380}]}
+
+
+def test_call_ids_are_not_guessable_and_the_store_is_bounded():
+    from tracetrim.proxy import MAX_ORIGINALS
+    t = Trimmer(policy())
+    ids = [t.output("search_volume", json.dumps(VOLUMES)).rsplit("call_id=", 1)[1].split()[0]
+           for _ in range(MAX_ORIGINALS + 5)]
+    assert len(set(ids)) == len(ids) and "c1" not in ids
+    assert len(t.originals) == MAX_ORIGINALS and t.expand(ids[0], ["x"]).startswith("Error")
+
+
+def test_upstream_tools_named_like_ours_are_prefixed():
+    from tracetrim.proxy import route_names
+    routes = route_names({"a": ["expand", "search"], "b": ["tracetrim_done"]})
+    assert routes == {"a__expand": ("a", "expand"), "search": ("a", "search"),
+                      "b__tracetrim_done": ("b", "tracetrim_done")}
+
+
+def test_empty_lists_survive_at_run_time():
+    out = json.loads(policy().apply("search_volume", json.dumps({"items": [], "status_message": "Ok."})))
+    assert out.get("items") == []
 
 
 def test_no_config_means_pass_through_and_unknown_call_id_is_an_error():

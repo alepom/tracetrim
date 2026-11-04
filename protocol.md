@@ -284,3 +284,9 @@ The spend cap of 40 USD and its stop rule are unchanged.
     and C5 (simulated) are released in full; for C1 and C2 only derived per-call records are released (tool, field
     paths used, echoed and judgeable, token counts), which reproduce the usage analysis without redistributing the
     provider's data.
+13. **Phase C, editorial-plan gate (2026-11-04, after publication review).** The live loop stores the outputs the
+    agent received, so in the prudent arm the frozen C1 gate checked only the (keyword, volume) pairs still visible
+    in the projected outputs (22, 43 and 26 of 60) and skipped the rest. The frozen result is kept; every pair is also
+    re-checked against the raw outputs of all the other C1 runs of the same day
+    (`experiments/recheck_phase_c.py`, `results/phase_c_recheck.json`) and reported beside it. The sensitivity
+    analysis promised in deviation 6 (without runs with a failed tool call) is reported for Phases A and C.

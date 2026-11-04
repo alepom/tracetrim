@@ -21,6 +21,9 @@ from .replay import PREFIX
 from .run import ROOT, TRACES
 
 CASES = ("C1", "C2", "C3", "C4", "C5")
+# Thermometers added after the freeze (deviation 11). They are reported, but
+# never enter the band of H2, which is defined on the frozen ones only.
+POSTHOC = {"correct_diagnoses_strict"}
 OUT = {"B": ROOT / "results" / "phase_b.json", "D": ROOT / "results" / "study2.json"}
 
 
@@ -75,9 +78,11 @@ def main():
         band = {k: (min(t[k] for t in raw["thermometers"]), max(t[k] for t in raw["thermometers"])) for k in nums}
         for arm, a in arms.items():
             med = {k: statistics.median(t[k] for t in a["thermometers"] if k in t) for k in nums}
-            outside = [k for k in nums if not band[k][0] <= med[k] <= band[k][1]]
+            outside = [k for k in nums if k not in POSTHOC and not band[k][0] <= med[k] <= band[k][1]]
             a["medians"], a["outside_band"] = med, outside
             a["holds"] = a["gates_passed"] >= raw["gates_passed"] and not outside
+            # The post-hoc thermometers, judged by the same rule, kept apart.
+            a["outside_band_posthoc"] = [k for k in nums if k in POSTHOC and not band[k][0] <= med[k] <= band[k][1]]
         res["cases"][case] = {"arms": arms, "band": band, "headroom": headroom.get(case)}
 
     print(f"\n  {'PHASE B' if study == 'B' else 'STUDY 2'} — replay of A3, only tool messages changed\n")

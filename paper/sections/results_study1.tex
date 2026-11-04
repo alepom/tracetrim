@@ -7,15 +7,23 @@ Table~\ref{tab:phasea} summarises Phase A. Only a minority of the tool-output to
 visibly used (with the record keys): \PhaseAUsedSharei{} in the editorial plan, \PhaseAUsedShareiii{} in the
 literature scan, \PhaseAUsedShareiv{} and \PhaseAUsedSharev{} in the two simulated cases. On runs it had not seen,
 the prudent projection removed \PhaseAPrudentSavingi, \PhaseAPrudentSavingiii, \PhaseAPrudentSavingiv{} and
-\PhaseAPrudentSavingv{} of the tool-output tokens of these cases, above the threshold of H1. The content-gap
-analyst is the boundary case: it cites most of what search results contain (URLs, titles, snippets) and its page
-parses are prose, which a field projection cannot touch; its projection removed \PhaseAPrudentSavingii.
+\PhaseAPrudentSavingv{} of the tool-output tokens of these cases; in the editorial plan this is above the 30\%
+threshold of H1, which holds. Part of each figure involves no removal at all: the tools return indented JSON, and
+writing the same payload compactly and without escapes already removes \ReserialAi{} in the editorial plan,
+\ReserialAiv{} in billing support and \ReserialAv{} in CI triage (column \emph{Re-serialised}), and almost nothing
+in the literature scan, whose outputs were already compact. The content-gap analyst is the boundary case: it cites
+most of what search results contain (URLs, titles, snippets) and its page parses are prose, which a field projection
+cannot touch; its projection removed \PhaseAPrudentSavingii. Without the \PhaseASensExcludedi{} editorial-plan
+runs in which a tool call failed (deviation 6), the saving there is \PhaseASensSavingi{} and the misses
+\PhaseASensMissesi.
 
 \begin{table}[t]
 \centering\small
 \resizebox{\textwidth}{!}{\input{generated/table_phase_a.tex}}
 \caption{Phase A, eight live runs per case. \emph{Used}: share of tool-output tokens left by the in-sample
-aggressive projection (used fields and record keys), a lower bound of use. \emph{Prudent}, \emph{Aggressive}:
+aggressive projection (used fields and record keys), a lower bound of use. \emph{Re-serialised}: change from
+re-serialising each JSON output compactly, with no field removed (the lossless part of the next two columns).
+\emph{Prudent}, \emph{Aggressive}:
 change in tool-output tokens on held-out runs. \emph{Misses}: held-out calls in which the aggressive projection
 removes a field the run used later, learning from everything the agent wrote, or only from tool calls.
 $^\dagger$Simulated tools.}
@@ -36,9 +44,12 @@ the traces by \texttt{experiments/paper\_figures.py}.}
 \subsection{The learner must see the answer}
 
 Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
-misses (H3): from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan, and to every trimmed call in the
-literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv): those agents use what tools return
-only in the final answer. A projection can be \emph{applied} anywhere, a proxy included, but it has to be
+misses: over the five cases, held-out calls in which a used field would have been removed went from
+\MissesPooledFull{} to \MissesPooledCalls; from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan,
+and to every trimmed call in the literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv):
+those agents use what tools return only in the final answer. H3 (more than three times as many) holds in four cases
+and fails in the content-gap analysis, by a narrow margin (\PhaseAMissesii{} against \PhaseAMissesCallsii, a ratio of
+\HThreeRatioii). A projection can be \emph{applied} anywhere, a proxy included, but it has to be
 \emph{learned} from traces that contain the answer.
 
 \subsection{Projections are task-specific}
@@ -61,7 +72,8 @@ mechanisms, each traced to a specific field.
 \centering\small
 \input{generated/table_phase_b.tex}
 \caption{Phase B: replay of one run per case, only tool messages changed, two runs per arm. \emph{Tool tokens}:
-raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{Band rule}: H2 as frozen.}
+raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{Band rule}: H2 as frozen, on the frozen thermometers. $^{\ast}$Also outside the band on the strict test added after the
+fact (deviation 11).}
 \label{tab:phaseb}
 \end{table}
 
@@ -83,14 +95,29 @@ fabricate one, the failure mode known for references and package names
 \citep{walters2023fabrication,spracklen2025package}.
 
 \subsection{Live loop with \texttt{expand} (Phase C)}
+\label{sec:phasec}
 
-In live runs with the prudent projection and \texttt{expand} (Table~\ref{tab:phasec}), billed input tokens fell by
-\PhaseCChangeInputi{} in the editorial plan and \PhaseCChangeInputiv{} in billing support, uncached input tokens by
-\PhaseCChangeUncachedi{} and \PhaseCChangeUncachediv, and the cost per run by \PhaseCChangeCosti{} and
-\PhaseCChangeCostiv. Every run passed every gate. The agents did use \texttt{expand}: a median of
-\PhaseCPrudentExpandi{} call per run in the editorial plan and \PhaseCPrudentExpandiv{} in billing support, where
-the agent recovered the hidden period end in two of three runs. The raw arm itself misdiagnosed one ticket in two
-of its three runs, a reminder that run-to-run variation in these tasks is large compared with the effects measured.
+In live runs with the prudent projection and \texttt{expand} (Table~\ref{tab:phasec}, Figure~\ref{fig:live}), billed
+input tokens fell by \PhaseCChangeInputi{} in the editorial plan and \PhaseCChangeInputiv{} in billing support, and
+uncached input tokens by \PhaseCChangeUncachedi{} and \PhaseCChangeUncachediv. With the model's list prices at the
+time (\PriceInput, \PriceCached{} and \PriceOutput{} USD per million input, cached and output tokens; no request
+reached the long-context tier), the cost per run fell by \PhaseCChangeCosti{} and \PhaseCChangeCostiv. Without the
+\PhaseCFailedRunsi{} editorial-plan runs in which a search call failed after the retries (one per arm), billed input
+fell by \PhaseCChangeInputNoFaili.
+
+Every run passed its gates as frozen, but in this phase the gates could see less. The live loop stores what the
+agent received, so in the editorial plan only the volumes still visible in the projected outputs could be checked:
+\RecheckGateChecked{} of the \RecheckPairs{} reported in the three prudent runs, against all \RecheckPairs{} in
+every raw run. Checked after the fact against the raw outputs of all the other runs of the same day, \RecheckVerified{}
+were confirmed; \RecheckMismatch{} contradicted them (a volume of zero for a keyword that has a volume); the rest
+(\RecheckUnknown) could not be paired automatically, although the keyword and the number both appear in the run's
+own outputs, the volume having come back through \texttt{expand} (deviation 13).
+
+The agents did use \texttt{expand}: a median of \PhaseCPrudentExpandi{} call per run in the editorial plan and
+\PhaseCPrudentExpandiv{} in billing support, where the agent recovered the hidden period end in two of three runs.
+In the third it did not, and diagnosed \PhaseCMinRightPrudentiv{} tickets of five correctly, fewer than any raw run
+(at least \PhaseCMinRightRawiv). The raw arm itself misdiagnosed one ticket in two of its three runs, a reminder that
+run-to-run variation in these tasks is large compared with the effects measured.
 
 \begin{table}[t]
 \centering\small

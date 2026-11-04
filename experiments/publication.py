@@ -20,7 +20,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PKG = ROOT / "publication" / "packages"
 SECRET = re.compile(r"sk-[A-Za-z0-9_-]{20,}|DFS_MCP_TOKEN=\S+|OPENAI_API_KEY=\S+|Bearer [A-Za-z0-9._-]{20,}")
-CLIENT = re.compile(r"REDACTED", re.I)
+# Names that must never appear (client domains and the like) are read from an
+# untracked file, so that the check itself publishes nothing: one term per line.
+PRIVATE = ROOT / ".private" / "never_publish.txt"
 URL = re.compile(r"https?://[^\s\"'<>)]+")
 OWN = ("alessiopomaro.it", "example.test", "example.com", "example-org", "openalex.org", "doi.org", "orcid.org",
        "github.com", "pypi.org", "creativecommons.org", "apache.org", "zenodo.org", "dataforseo.com",
@@ -34,8 +36,18 @@ def tracked() -> list[Path]:
     return [ROOT / p for p in out.splitlines()]
 
 
+def private_terms() -> list[str]:
+    if not PRIVATE.exists():
+        return []
+    return [t.strip().lower() for t in PRIVATE.read_text(encoding="utf-8").splitlines()
+            if t.strip() and not t.startswith("#")]
+
+
 def check() -> int:
     problems = []
+    terms = private_terms()
+    if not terms:
+        print(f"warning: {PRIVATE.relative_to(ROOT)} not found: the check for private names is skipped")
     files = tracked() + sorted((ROOT / "dataset").rglob("*.json*"))
     for f in files:
         if not f.is_file() or f.suffix in (".pdf", ".png", ".zip"):
@@ -45,12 +57,11 @@ def check() -> int:
             problems.append(f"{rel}: must never be published")
             continue
         text = f.read_text(encoding="utf-8", errors="replace")
-        if rel.name == "publication.py":
-            continue            # this file holds the patterns themselves
-        if SECRET.search(text):
+        if SECRET.search(text) and rel.name != "publication.py":    # this file holds the pattern itself
             problems.append(f"{rel}: looks like a secret")
-        if CLIENT.search(text):
-            problems.append(f"{rel}: client domain")
+        low = text.lower()
+        if any(t in low for t in terms):
+            problems.append(f"{rel}: a name from {PRIVATE.relative_to(ROOT)}")
         # Derived records and results must carry no third-party URL.
         if rel.parts[0] in ("results",) or rel.parts[:2] == ("dataset", "derived"):
             for u in URL.findall(text):

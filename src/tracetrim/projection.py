@@ -72,8 +72,12 @@ class Projection:
         seen = {t: keep[t] | set(d.get("dropped", {}).get(t, [])) for t in keep}
         return cls(d["mode"], d["source"], keep, seen, d.get("unseen", "keep"))
 
-    def apply(self, tool: str, output: str) -> str:
+    def apply(self, tool: str, output: str, keep_empty: bool = False) -> str:
         """The trimmed output.
+
+        `keep_empty`: keep lists and objects that were already empty in the
+        output, so that "no results" does not look like "hidden". Used at run
+        time (proxy, AutoTrim) since 0.3.4; the studies measured without it.
 
         Anything that parses as JSON is at least re-serialised without ASCII
         escapes (`\\u00e0` -> `à`): lossless, and it saves tokens on its own.
@@ -85,22 +89,25 @@ class Projection:
         if not isinstance(payload, (dict, list)) or tool not in self.keep:
             return json.dumps(payload, ensure_ascii=False)
         drop = (self.seen.get(tool, set()) - self.keep[tool]) if self.unseen == "keep" else None
-        p = project(payload, self.keep[tool], drop=drop)
+        p = project(payload, self.keep[tool], drop=drop, keep_empty=keep_empty)
         return json.dumps({} if p is _EMPTY else p, ensure_ascii=False)
 
 
-def project(node, keep: set[str], path="", drop: set[str] | None = None):
+def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_empty: bool = False):
     """Keep the leaves in `keep`. With `drop` given, keep every leaf NOT in
-    `drop` instead: fields never seen while learning survive."""
+    `drop` instead: fields never seen while learning survive. `keep_empty`:
+    containers that were empty to begin with are kept as they are."""
+    if keep_empty and isinstance(node, (dict, list)) and not node:
+        return node
     if isinstance(node, dict):
         out = {}
         for k, v in node.items():
-            r = project(v, keep, f"{path}.{k}" if path else k, drop)
+            r = project(v, keep, f"{path}.{k}" if path else k, drop, keep_empty)
             if r is not _EMPTY:
                 out[k] = r
         return out or _EMPTY
     if isinstance(node, list):
-        out = [r for v in node if (r := project(v, keep, path + "[]", drop)) is not _EMPTY]
+        out = [r for v in node if (r := project(v, keep, path + "[]", drop, keep_empty)) is not _EMPTY]
         return out or _EMPTY
     if drop is not None:
         return _EMPTY if path in drop else node

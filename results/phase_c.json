@@ -49,6 +49,11 @@
           [],
           []
         ],
+        "tool_failures": [
+          1,
+          0,
+          0
+        ],
         "gates_passed": 3,
         "gates": [
           {
@@ -145,6 +150,11 @@
           [],
           []
         ],
+        "tool_failures": [
+          4,
+          0,
+          0
+        ],
         "gates_passed": 3,
         "gates": [
           {
@@ -240,6 +250,11 @@
           [],
           [],
           []
+        ],
+        "tool_failures": [
+          0,
+          0,
+          0
         ],
         "gates_passed": 3,
         "gates": [
@@ -341,6 +356,11 @@
           [],
           [],
           []
+        ],
+        "tool_failures": [
+          0,
+          0,
+          0
         ],
         "gates_passed": 3,
         "gates": [

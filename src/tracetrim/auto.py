@@ -3,8 +3,9 @@
   tracetrim proxy --upstream-url ... --auto workdir/ [--min-runs 5]
 
 How a run is observed. The proxy sees every tool call but not the agent's
-answer, and the study behind this library found that learning without the
-answer misses most of what agents use. So the proxy offers one more tool,
+answer, and in the study behind this library learning without the answer
+missed a used field in 60% of held-out calls, against 6% with it. So the
+proxy offers one more tool,
 `tracetrim_done`, and the agent is told (one line in its instructions) to
 pass its final answer to it. A run is closed by that call. A run that never
 calls it is kept for telemetry only.
@@ -215,8 +216,11 @@ class AutoTrim:
     def expand(self, arguments: dict | str | None) -> str:
         """Answer an `expand` call: the hidden fields the model asked for."""
         if isinstance(arguments, str):
-            arguments = json.loads(arguments or "{}")
-        arguments = arguments or {}
+            try:
+                arguments = json.loads(arguments or "{}")
+            except json.JSONDecodeError:
+                return "Error: expand needs JSON arguments with call_id and fields."
+        arguments = arguments if isinstance(arguments, dict) else {}
         cid = str(arguments.get("call_id", ""))
         if cid in self.trimmer.tool_of:
             self.learner.expanded(self.trimmer.tool_of[cid])

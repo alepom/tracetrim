@@ -1,6 +1,6 @@
 {
-  "_status": "ASSUMED, TO BE VERIFIED on the provider's price list before reporting any cost. Used for the stop rule and for estimates only.",
-  "_source": "author's listing for gpt-5.6-terra, as used in the course slides (SLIDE-CAMBIO-MODELLO.md)",
+  "_status": "VERIFIED on 2026-11-04 on developers.openai.com/api/docs/pricing: standard tier, short context. Requests over 272K input tokens bill at 4.00 / 0.40 / 18.00: only some literature-scan requests of Phase A exceeded it (none in Phase C, the only costs reported in the paper), so the ledger underestimates those runs.",
+  "_source": "OpenAI price list, gpt-5.6-terra, standard tier",
   "model": "gpt-5.6-terra",
   "input_per_mtok": 2.0,
   "cached_input_per_mtok": 0.2,

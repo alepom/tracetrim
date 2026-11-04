@@ -19,3 +19,5 @@ paper/*.out
 # Published on Zenodo as research data, not in git
 dataset/
 publication/packages/
+.private/
+build/

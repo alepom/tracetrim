@@ -25,8 +25,10 @@ in automatic mode (tracetrim.auto) the agent passes it to `tracetrim_done`.
 """
 from __future__ import annotations
 
+import hmac
 import json
 import os
+import secrets
 import shlex
 import sys
 from contextlib import AsyncExitStack, asynccontextmanager
@@ -47,6 +49,7 @@ EXPAND = {
         "fields": {"type": "array", "items": {"type": "string"}}}},
 }
 MAX_GROUPS = 25
+MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MAX_SSE_EVENT = 16 * 1024 * 1024
 
 
@@ -127,8 +130,13 @@ class Trimmer:
         hidden = sorted({p for p, _ in leaves(payload) if p in drop})
         if not hidden or not self.policy.expand_enabled(tool) and not self.policy.config.get("expand_all"):
             return trimmed
-        self.n += 1
-        cid = f"c{self.n}"
+        # Random ids: over HTTP several clients share one proxy, and a sequential
+        # id would let one of them expand another's results.
+        cid = "c" + secrets.token_hex(4)
+        while len(self.originals) >= MAX_ORIGINALS:
+            old = next(iter(self.originals))
+            self.originals.pop(old)
+            self.tool_of.pop(old, None)
         self.originals[cid] = payload
         self.tool_of[cid] = tool
         groups: dict[str, int] = {}
@@ -218,6 +226,9 @@ def load_servers(path: str | Path) -> dict:
     return servers
 
 
+OWN_TOOLS = {"expand", "tracetrim_done"}
+
+
 def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
     """Exposed tool name -> (server, upstream name). Names stay as they are,
     unless two servers share one: then each copy is prefixed with its server."""
@@ -225,7 +236,9 @@ def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
     for tools in listed.values():
         for t in tools:
             count[t] = count.get(t, 0) + 1
-    return {(t if count[t] == 1 else f"{server}__{t}"): (server, t)
+    # A server's own `expand` or `tracetrim_done` would be shadowed by the
+    # proxy's: it is prefixed like a clash between servers.
+    return {(t if count[t] == 1 and t not in OWN_TOOLS else f"{server}__{t}"): (server, t)
             for server, tools in listed.items() for t in tools}
 
 
@@ -336,7 +349,14 @@ def _server(o: Options):
                                             isError=True)
             server, name = routes[params.name]
             r = await sessions[server].call_tool(name, args)
-            raw = "".join(getattr(c, "text", "") or "" for c in (r.content or []))
+            content = list(r.content or [])
+            # An error, or anything that is not plain text (images, resources),
+            # goes back exactly as the server sent it: nothing to learn or trim.
+            is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
+            if is_error or any(getattr(c, "type", "text") != "text" for c in content):
+                live.call(params.name, "", "")
+                return types.CallToolResult(content=content, isError=is_error)
+            raw = "".join(getattr(c, "text", "") or "" for c in content)
             if rec:
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
                                      ensure_ascii=False) + "\n")
@@ -382,9 +402,18 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
     from mcp.server.transport_security import TransportSecuritySettings
 
     server, learner = _server(o)
+    # Always on: without it a web page could rebind its domain to 127.0.0.1 and
+    # call the upstream tools with the credentials the proxy holds. Local
+    # addresses on this port are always accepted; public ones (a tunnel) are
+    # added with --allowed-host.
+    local = [f"127.0.0.1:{port}", f"localhost:{port}", f"[::1]:{port}"]
+    hosts = list(dict.fromkeys(list(allowed_hosts) + local))
     security = TransportSecuritySettings(
-        enable_dns_rebinding_protection=bool(allowed_hosts),
-        allowed_hosts=allowed_hosts, allowed_origins=[])
+        enable_dns_rebinding_protection=True, allowed_hosts=hosts,
+        allowed_origins=[f"http://{h}" for h in local] + [f"https://{h}" for h in allowed_hosts])
+
+    def same(given: str, expected: str) -> bool:
+        return hmac.compare_digest(given.encode(), expected.encode())
     app = server.streamable_http_app(host=host, transport_security=security)
 
     async def respond(send, status, body, ctype=b"text/plain; charset=utf-8"):
@@ -393,8 +422,11 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
 
     async def guarded(scope, receive, send):
         if scope["type"] == "http" and learner and scope.get("path") == "/report":
+            host = dict(scope.get("headers") or []).get(b"host", b"").decode()
+            if host not in hosts:
+                return await respond(send, 421, b"invalid Host header: add it with --allowed-host")
             q = parse_qs(scope.get("query_string", b"").decode())
-            if token and q.get("token", [""])[0] != token:
+            if token and not same(q.get("token", [""])[0], token):
                 return await respond(send, 401, b"unauthorized")
             page = learner.dir / "report.html"
             if not page.exists():
@@ -406,7 +438,7 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
             return await respond(send, 200, html, b"text/html; charset=utf-8")
         if token and scope["type"] == "http":
             auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode()
-            if auth != f"Bearer {token}":
+            if not same(auth, f"Bearer {token}"):
                 return await respond(send, 401, b"unauthorized")
         await app(scope, receive, send)
 

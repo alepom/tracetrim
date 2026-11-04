@@ -27,7 +27,7 @@ OUT = ROOT / "results" / "phase_a.json"
 def traces_of(case):
     paths = sorted((TRACES / case).glob("A*.jsonl"))
     # Study 1 measured tracetrim 0.1: pinned, whatever the library defaults.
-    return paths, [analyse(load(p), normalize=False) for p in paths]
+    return paths, [analyse(load(p), normalize=False, comma_grouping=False) for p in paths]
 
 
 def loo_totals(names, usages, source, unseen):
@@ -100,6 +100,15 @@ def main():
         res["cases"][case] = {"runs": names, "loo_full": full, "loo_calls": calls_only, "loo_strict": strict,
                               "rq1": rq1, "gates": gates, "thermometers": therm,
                               "calls": sum(len(u) for u in usages)}
+        # Sensitivity (deviation 6): the same, without runs in which a tool call
+        # failed after the retries.
+        failed = [n for n, p in zip(names, paths)
+                  if json.loads(p.with_suffix(".meta.json").read_text()).get("tool_failures")]
+        if failed:
+            keep = [i for i, n in enumerate(names) if n not in failed]
+            res["cases"][case]["sensitivity_no_failures"] = {
+                "excluded": failed,
+                "loo_full": loo_totals([names[i] for i in keep], [usages[i] for i in keep], "full", "keep")}
         print(f"  {case:<5}{len(paths):>5}{res['cases'][case]['calls']:>7}{full['raw']:>13,}{rq1['share']:>10.0%}"
               f"{-full['prudent_saving']:>9.0%}{-full['aggressive_saving']:>8.0%}"
               f"{full['misses']:>5}/{full['trimmed_calls']:<3}{calls_only['misses']:>12}/{calls_only['trimmed_calls']:<6}"

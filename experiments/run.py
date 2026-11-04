@@ -29,7 +29,9 @@ from openai import AsyncOpenAI
 from .tools import ROOT, to_args, toolset
 
 PROMPTS = ROOT / "experiments" / "prompts"
-TRACES = ROOT / "traces"
+# Traces live in traces/ where they were recorded; from the Zenodo dataset they
+# are in dataset/traces/ (C3, C4 and C5 only: C1 and C2 are not redistributable).
+TRACES = ROOT / "traces" if (ROOT / "traces").exists() else ROOT / "dataset" / "traces"
 LEDGER = ROOT / "out" / "ledger.jsonl"
 PRICES = json.loads((ROOT / "experiments" / "prices.json").read_text())
 
@@ -65,7 +67,7 @@ def phase_c_projection(case: str):
     if len(paths) < 2:
         sys.exit(f"{case}: Phase C needs Phase A traces, found {len(paths)}")
     # 0.1 behaviour pinned: Phase C tests the projection of Phases A-B.
-    return (learn([analyse(load(p), normalize=False) for p in paths], "prudent", protect_ids=False),
+    return (learn([analyse(load(p), normalize=False, comma_grouping=False) for p in paths], "prudent", protect_ids=False),
             [p.stem for p in paths])
 
 

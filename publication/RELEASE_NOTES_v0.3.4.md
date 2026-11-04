@@ -19,14 +19,18 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
 ### What the study found
 
 - On held-out runs of five agents, a learned projection removed 63–77% of tool-output tokens in four
-  of them (12% in the fifth). On the same conversations of those four agents: 59–77% (0.1), 46–61%
-  with the 0.2 safeguards, 17–33% for Headroom.
-- Learning from tool calls alone (what a gateway sees) misses most of what agents use: the learner
-  needs the final answer.
+  of them (12% in the fifth); up to 17 points of that come from re-serialising the JSON alone, which
+  removes nothing. On the same conversations of those four agents: 59–77% (0.1), 46–61% with the 0.2
+  safeguards, 17–33% for Headroom, 0–17% for re-serialisation alone.
+- Learning from tool calls alone (what a gateway sees) missed a used field in 60% of held-out calls,
+  against 6% when the learner also sees the final answer.
 - Where it fails: values the agent transforms, fields used only to reason, and — without an id
   field — agents inventing ids. Identifiers are always kept since 0.2.
 
 The studies ran on 0.1 and 0.2; the automatic mode, the multi-server proxy, OAuth and function calling
 came after them and were checked end to end with a real agent, not evaluated under a protocol.
+
+0.3.4 includes the fixes of an independent pre-publication review (proxy security, correctness, and
+the paper): see the changelog.
 
 See [CHANGELOG.md](CHANGELOG.md) for the changes by version.

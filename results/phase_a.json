@@ -165,7 +165,24 @@
           "notes_with_blog_link_pct": 45
         }
       ],
-      "calls": 173
+      "calls": 173,
+      "sensitivity_no_failures": {
+        "excluded": [
+          "A7",
+          "A8"
+        ],
+        "loo_full": {
+          "raw": 626473,
+          "prudent": 232126,
+          "aggressive": 202528,
+          "trimmed_calls": 124,
+          "misses": 3,
+          "misses_text": 2,
+          "misses_prudent": 3,
+          "prudent_saving": 0.62947166118891,
+          "aggressive_saving": 0.6767171131078275
+        }
+      }
     },
     "C2": {
       "runs": [

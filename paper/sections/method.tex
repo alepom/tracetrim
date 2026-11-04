@@ -32,7 +32,8 @@ library reads a neutral JSONL format and the Python exports of the OpenAI Playgr
 \paragraph{Usage.} Each structured output is flattened into leaves identified by a path in which list indices are
 collapsed (\texttt{items[].keyword\_info.search\_volume}). A leaf is \emph{used} when one of its values appears in
 something the agent wrote \emph{after} receiving it and not before. Values are matched as word $n$-grams
-($n \le 4$): short strings as a whole, prose by any 4-gram, numbers in their plain and grouped forms. Values too
+($n \le 4$): short strings as a whole, prose by any 4-gram, numbers in their plain form and with dot thousands separators, as Italian writes them (the library
+matches comma separators too since version 0.3.4; the studies did not). Values too
 generic to attribute (booleans, integers below 100, one-word strings shorter than four characters) are not
 \emph{judgeable}. A value that already appears in the call's own arguments is an \emph{echo}: not a use, but the
 record's key (the keyword next to its volume), and it is always kept.

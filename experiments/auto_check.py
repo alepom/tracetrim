@@ -12,7 +12,10 @@ the next ones are trimmed; the agent calls tracetrim_done; answers stay right.
 With --mode function there is no proxy: the loop runs the billing tools
 itself (as an agent with function calling does) and passes every result
 through tracetrim.auto.AutoTrim, and the final answer to AutoTrim.done.
-Spend is printed, and is not counted in the study's ledger.
+Spend is printed, and is not counted in the study's ledger. The table is also
+written to results/checks/auto_check_<mode>.json: the README quotes it. Tool
+tokens are counted with tiktoken: "raw" from the run's trace in the work
+directory (what the tools returned), "sent" from what the model received.
 """
 import argparse
 import asyncio
@@ -33,8 +36,8 @@ PROMPTS = (ROOT / "docs" / "demo_prompts_IT.md").read_text(encoding="utf-8")
 SYSTEM, USER = re.findall(r"```\n(.*?)\n```", PROMPTS, re.S)[:2]
 
 
-async def one_run(client, model, session, schemas, tt=None):
-    usage = {"input": 0, "cached": 0, "output": 0}
+async def one_run(client, model, session, schemas, tt=None, count=None):
+    usage = {"input": 0, "cached": 0, "output": 0, "tool_sent": 0}
     calls, done = 0, False
     kwargs = {"model": model, "instructions": SYSTEM, "tools": schemas, "input": [{"role": "user", "content": USER}]}
     answer = ""
@@ -59,6 +62,8 @@ async def one_run(client, model, session, schemas, tt=None):
                     text = "".join(getattr(c, "text", "") or "" for c in res.content)
                     if tt is not None:
                         text = tt.output(item.name, args, text)
+                if item.name not in ("tracetrim_done", "expand"):
+                    usage["tool_sent"] += count(text)
                 outs.append({"type": "function_call_output", "call_id": item.call_id, "output": text})
         if not outs:
             break
@@ -100,6 +105,10 @@ async def main():
                                        args=["-m", "experiments.simulated.server_c4"])
         tt = AutoTrim(work, min_runs=o.min_runs)
     client = AsyncOpenAI(timeout=600.0, max_retries=1)
+    from tracetrim.measure import tokenizer
+    from tracetrim.traces import load
+    count = tokenizer()
+    rows = []
     total = 0.0
     print(f"\n  {'run':<5}{'input':>9}{'uncached':>10}{'output':>8}{'calls':>7}  done  right  trimming  USD")
     async with stdio_client(params, errlog=open(work.parent / f"{work.name}.log", "w")) as (r, w), ClientSession(r, w) as s:
@@ -111,15 +120,28 @@ async def main():
                        for t in listed]
             if tt is not None:
                 schemas.append({"type": "function", **tt.expand_tool, "strict": False})
-            usage, calls, done, answer = await one_run(client, o.model, s, schemas, tt)
+            usage, calls, done, answer = await one_run(client, o.model, s, schemas, tt, count)
             c = cost(usage)
+            last = sorted((work / "traces").glob("run-*.jsonl"))[-1]
+            raw_tools = sum(count(e.output) for e in load(last).events if e.kind == "call" and e.output)
             total += c
             cfg = work / "report.config.json"
             trimming = bool(cfg.exists() and json.loads(cfg.read_text())["tools"])
             print(f"  {i:<5}{usage['input']:>9,}{usage['input'] - usage['cached']:>10,}{usage['output']:>8,}{calls:>7}"
-                  f"  {'yes' if done else 'NO':<5} {tickets_right(answer)}/5    {'on' if trimming else 'off':<8}  {c:.3f}",
+                  f"  {'yes' if done else 'NO':<5} {tickets_right(answer)}/5    {'on' if trimming else 'off':<8}  {c:.3f}"
+                  f"   tools {raw_tools:,} -> {usage['tool_sent']:,}",
                   flush=True)
-    print(f"\n  total {total:.3f} USD (prices assumed; not in the study ledger)")
+            rows.append({"run": i, "input": usage["input"], "uncached": usage["input"] - usage["cached"],
+                         "output": usage["output"], "calls": calls, "done": done, "right": tickets_right(answer),
+                         "trimming_after": trimming, "tool_tokens_raw": raw_tools,
+                         "tool_tokens_sent": usage["tool_sent"], "usd_estimate": round(c, 4)})
+    out = ROOT / "results" / "checks" / f"auto_check_{o.mode}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"mode": o.mode, "model": o.model, "min_runs": o.min_runs,
+                               "note": "an end-to-end check, not a measurement under a protocol",
+                               "runs": rows}, indent=2) + "\n")
+    print(f"\n  total {total:.3f} USD (list prices, experiments/prices.json; not in the study ledger)")
+    print(f"  written: {out.relative_to(ROOT)}")
     print(f"  report: {work / 'report.html'}\n")
 
 

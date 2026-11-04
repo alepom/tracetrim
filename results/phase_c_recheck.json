@@ -1,0 +1,59 @@
+{
+  "reference_runs": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "C-raw-1",
+    "C-raw-2",
+    "C-raw-3"
+  ],
+  "runs": {
+    "C-raw-1": {
+      "pairs": 60,
+      "own": 60,
+      "other": 0,
+      "mismatch": 0,
+      "unknown": 0
+    },
+    "C-raw-2": {
+      "pairs": 60,
+      "own": 60,
+      "other": 0,
+      "mismatch": 0,
+      "unknown": 0
+    },
+    "C-raw-3": {
+      "pairs": 60,
+      "own": 60,
+      "other": 0,
+      "mismatch": 0,
+      "unknown": 0
+    },
+    "C-prudent-1": {
+      "pairs": 60,
+      "own": 22,
+      "other": 28,
+      "mismatch": 0,
+      "unknown": 10
+    },
+    "C-prudent-2": {
+      "pairs": 60,
+      "own": 43,
+      "other": 14,
+      "mismatch": 1,
+      "unknown": 2
+    },
+    "C-prudent-3": {
+      "pairs": 60,
+      "own": 26,
+      "other": 26,
+      "mismatch": 0,
+      "unknown": 8
+    }
+  }
+}

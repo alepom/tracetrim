@@ -55,10 +55,10 @@ def arms_for(case: str):
     if len(others) < 2:
         sys.exit(f"{case}: need Phase A traces besides {TRACE}, found {len(others)}")
     loaded = [load(p) for p in others]
-    usages = [analyse(t, normalize=False) for t in loaded]
+    usages = [analyse(t, normalize=False, comma_grouping=False) for t in loaded]
     prudent = learn(usages, "prudent", protect_ids=False)
     aggressive = learn(usages, "aggressive", protect_ids=False)
-    v02 = learn([analyse(t, normalize=True) for t in loaded], "prudent", protect_ids=True)
+    v02 = learn([analyse(t, normalize=True, comma_grouping=False) for t in loaded], "prudent", protect_ids=True)
     return {
         "raw": lambda tool, out: out,
         "prudent": prudent.apply,

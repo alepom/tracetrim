@@ -2,7 +2,7 @@
 
 Questa cartella contiene tutto quello che serve per pubblicare lo studio
 **"Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"**
-e la libreria **tracetrim 0.3.3**. Nulla è stato pubblicato: repository, record Zenodo e release li crei tu.
+e la libreria **tracetrim 0.3.4**. Nulla è stato pubblicato: repository, record Zenodo e release li crei tu.
 
 ## In che ordine leggere
 

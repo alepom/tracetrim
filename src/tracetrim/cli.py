@@ -14,7 +14,9 @@ silently produces plausible, wrong numbers.
 from __future__ import annotations
 
 import argparse
+import builtins
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -39,12 +41,12 @@ def row(cols, widths) -> str:
 
 def _read(paths, v01=False):
     traces = [load(p) for p in paths]
-    return traces, [analyse(t, normalize=not v01) for t in traces]
+    return traces, [analyse(t, normalize=not v01, comma_grouping=not v01) for t in traces]
 
 
 def cmd_learn(a):
-    _, usages = _read(a.traces)
-    p = learn(usages, a.mode, a.source, a.unseen)
+    _, usages = _read(a.traces, a.v01)
+    p = learn(usages, a.mode, a.source, a.unseen, protect_ids=not a.v01)
     p.save(a.output)
     fields = sum(len(v) for v in p.keep.values())
     print(f"{a.output}: {len(p.keep)} tools, {fields} fields kept ({a.mode}, source={a.source})")
@@ -178,7 +180,8 @@ def cmd_login(a):
             n = asyncio.run(one(name, spec))
             print(f"{name}: logged in, {n} tools · token in {token_path(name, spec['url'])}")
         except Exception as e:
-            while isinstance(e, BaseExceptionGroup) and e.exceptions:    # anyio wraps the real cause
+            group = getattr(builtins, "BaseExceptionGroup", None)       # Python 3.11+
+            while group and isinstance(e, group) and e.exceptions:    # anyio wraps the real cause
                 e = e.exceptions[0]
             raise SystemExit(f"{name}: login failed: {e}")
 
@@ -202,6 +205,8 @@ def main(argv=None):
     s.add_argument("--mode", choices=MODES, default="prudent")
     s.add_argument("--source", choices=SOURCES, default="full")
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
+    s.add_argument("--v01", action="store_true",
+                   help="tracetrim 0.1 behaviour: no identifier protection, no transformed values")
     s.set_defaults(func=cmd_learn)
 
     s = sub.add_parser("apply", help="trim one tool output read from stdin")
@@ -237,7 +242,9 @@ def main(argv=None):
     s.add_argument("--record", help="append every call (raw output) to this JSONL trace")
     s.add_argument("--http", type=int, metavar="PORT", help="serve streamable HTTP at /mcp instead of stdio")
     s.add_argument("--host", default="127.0.0.1")
-    s.add_argument("--token", help="require 'Authorization: Bearer TOKEN' on every HTTP request")
+    s.add_argument("--token", default=os.environ.get("TRACETRIM_TOKEN"),
+                   help="require 'Authorization: Bearer TOKEN' on every HTTP request "
+                        "(default: $TRACETRIM_TOKEN, which keeps it out of the process list)")
     s.add_argument("--allowed-host", action="append", default=[],
                    help="Host header accepted over HTTP (repeatable), e.g. the tunnel's public host")
     s.add_argument("--quiet", action="store_true", help="no per-call log on stderr")

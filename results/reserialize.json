@@ -1,0 +1,65 @@
+{
+  "serialiser": "json.dumps(payload, ensure_ascii=False)",
+  "cases": {
+    "C1": {
+      "phase_a": {
+        "raw": 817865,
+        "reserialized": 714797,
+        "saving": 0.12602079805346844
+      },
+      "replay": {
+        "raw": 114712,
+        "reserialized": 100932,
+        "saving": 0.12012692656391655
+      }
+    },
+    "C2": {
+      "phase_a": {
+        "raw": 527542,
+        "reserialized": 504282,
+        "saving": 0.044091276144837765
+      },
+      "replay": {
+        "raw": 50488,
+        "reserialized": 48118,
+        "saving": 0.04694184756773889
+      }
+    },
+    "C3": {
+      "phase_a": {
+        "raw": 2262885,
+        "reserialized": 2260071,
+        "saving": 0.0012435452972643368
+      },
+      "replay": {
+        "raw": 227433,
+        "reserialized": 227301,
+        "saving": 0.0005803907084723781
+      }
+    },
+    "C4": {
+      "phase_a": {
+        "raw": 154833,
+        "reserialized": 127925,
+        "saving": 0.1737872417378724
+      },
+      "replay": {
+        "raw": 16931,
+        "reserialized": 14054,
+        "saving": 0.1699249896639301
+      }
+    },
+    "C5": {
+      "phase_a": {
+        "raw": 599808,
+        "reserialized": 555104,
+        "saving": 0.07453051643192488
+      },
+      "replay": {
+        "raw": 74976,
+        "reserialized": 69388,
+        "saving": 0.07453051643192488
+      }
+    }
+  }
+}

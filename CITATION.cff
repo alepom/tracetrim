@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the paper (preferred citation)."
 title: "tracetrim: learn which fields of tool outputs an agent uses, and trim the rest"
 type: software
-version: "0.3.3"
+version: "0.3.4"
 license: MIT
 authors:
   - family-names: "Pomaro"

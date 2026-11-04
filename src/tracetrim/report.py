@@ -244,7 +244,9 @@ def _action(s: dict, d: dict) -> dict:
     if s["rule"] == "escapes":
         return {"kind": "auto", "type": "unescape"}
     if s["rule"] == "duplicates":
-        return {"kind": "auto", "type": "cache"}
+        # Manual: a repeated call is not always a wasted one (prices, statuses
+        # and logs change between calls), and only a person can tell.
+        return {"kind": "manual", "type": "cache"}
     if s["rule"] == "errors":
         return {"kind": "manual", "type": "fix_tool_description", "tool": tool,
                 "examples": t.get("error_examples", [])}
@@ -263,8 +265,8 @@ ACTION_TEXT = {
                "La configurazione generata attiva `expand` per questo tool, così un campo nascosto si può recuperare."),
     "unescape": ("The generated config re-serialises every JSON output as UTF-8.",
                  "La configurazione generata riserializza ogni output JSON in UTF-8."),
-    "cache": ("The generated config caches identical calls within a run.",
-              "La configurazione generata mette in cache le chiamate identiche all'interno di un run."),
+    "cache": ("If these results do not change within a run, cache them in the agent or the tool: tracetrim does not.",
+              "Se questi risultati non cambiano all'interno di un run, mettili in cache nell'agente o nel tool: tracetrim non lo fa."),
     "fix_tool_description": ("Rewrite the tool description with the constraint these errors reveal:",
                              "Riscrivi la descrizione del tool con il vincolo che questi errori rivelano:"),
     "review_fields": ("Review these fields and add the ones the task does not need to the projection's dropped list:",
@@ -290,7 +292,6 @@ def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
         # Lossless, so on by default even when the saving is below the
         # report's threshold.
         "unescape": True,
-        "cache_identical_calls": any(s["action"]["type"] == "cache" for s in sugg),
         # expand on for every trimmed tool (safeguard of 0.2): a wrong cut costs
         # one round trip instead of a wrong answer.
         "tools": {t: {"trim": "prudent", "expand": True} for t in sorted(trim)},

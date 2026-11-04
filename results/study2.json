@@ -102,7 +102,8 @@
             "notes_with_blog_link_pct": 40
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02": {
           "runs": [
@@ -204,7 +205,8 @@
           "outside_band": [
             "median_volume"
           ],
-          "holds": false
+          "holds": false,
+          "outside_band_posthoc": []
         },
         "v02-structural": {
           "runs": [
@@ -304,7 +306,8 @@
             "notes_with_blog_link_pct": 36
           },
           "outside_band": [],
-          "holds": false
+          "holds": false,
+          "outside_band_posthoc": []
         }
       },
       "band": {
@@ -437,7 +440,8 @@
             "gaps_with_evidence_pct": 100
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02": {
           "runs": [
@@ -543,7 +547,8 @@
             "gaps_with_evidence_pct": 100
           },
           "outside_band": [],
-          "holds": false
+          "holds": false,
+          "outside_band_posthoc": []
         },
         "v02-structural": {
           "runs": [
@@ -649,7 +654,8 @@
             "gaps_with_evidence_pct": 100
           },
           "outside_band": [],
-          "holds": false
+          "holds": false,
+          "outside_band_posthoc": []
         }
       },
       "band": {
@@ -780,7 +786,8 @@
             "open_questions": 6
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02": {
           "runs": [
@@ -880,7 +887,8 @@
             "open_questions": 6
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02-structural": {
           "runs": [
@@ -980,7 +988,8 @@
             "open_questions": 6
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         }
       },
       "band": {
@@ -1112,7 +1121,8 @@
             "evidence_per_ticket": 1.8
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02": {
           "runs": [
@@ -1216,10 +1226,11 @@
             "correct_diagnoses_strict": 4,
             "evidence_per_ticket": 1.8
           },
-          "outside_band": [
+          "outside_band": [],
+          "holds": true,
+          "outside_band_posthoc": [
             "correct_diagnoses_strict"
-          ],
-          "holds": false
+          ]
         },
         "v02-structural": {
           "runs": [
@@ -1330,10 +1341,12 @@
             "evidence_per_ticket": 1.8
           },
           "outside_band": [
-            "correct_diagnoses",
-            "correct_diagnoses_strict"
+            "correct_diagnoses"
           ],
-          "holds": false
+          "holds": false,
+          "outside_band_posthoc": [
+            "correct_diagnoses_strict"
+          ]
         }
       },
       "band": {
@@ -1465,7 +1478,8 @@
             "failed_runs_covered": 5
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02": {
           "runs": [
@@ -1570,7 +1584,8 @@
             "failed_runs_covered": 5
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         },
         "v02-structural": {
           "runs": [
@@ -1675,7 +1690,8 @@
             "failed_runs_covered": 5
           },
           "outside_band": [],
-          "holds": true
+          "holds": true,
+          "outside_band_posthoc": []
         }
       },
       "band": {

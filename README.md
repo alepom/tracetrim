@@ -10,10 +10,10 @@ where this works and where it fails. In short:
 
 | | |
 |---|---|
-| Tool-output tokens removed on unseen runs (4 of 5 agents) | 63–77% (0.1), 46–61% with the 0.2 safeguards |
-| Same conversations, same 4 agents: Headroom (structural compression) vs tracetrim | 17–33% vs 59–77% (0.1), 46–61% (0.2) |
-| Live runs with `expand`: billed input tokens | −56% and −32%, every quality gate passed |
-| Learning from tool calls only (what a gateway sees) | misses most of what agents use |
+| Tool-output tokens removed on unseen runs (4 of 5 agents, 0.1) | 63–77%, of which up to 17 points from re-serialising the JSON alone |
+| Same conversations, same 4 agents | tracetrim 59–77% (0.1), 46–61% (0.2); Headroom 17–33%; re-serialisation alone 0–17% |
+| Live runs with `expand`: billed input tokens | −56% and −32%; every run passed its gates as frozen |
+| Learning from tool calls only (what a gateway sees) | a used field missed in 60% of held-out calls, against 6% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
@@ -63,18 +63,20 @@ servers share one), plus `expand` and `tracetrim_done`. Then use the agent as us
   (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
   never uses, with suggestions;
 - **during the first runs** (5 by default, `--min-runs`) nothing is changed: the proxy only observes.
-  `tracetrim_done` is how it sees the answer — the study found that learning from tool calls alone
-  misses most of what agents use;
+  `tracetrim_done` is how it sees the answer — in the study, learning from tool calls alone missed a
+  used field in 60% of held-out calls, against 6% with the answer;
 - **after that**, it applies the report's automatic actions on its own: the prudent projection, with
   identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
   report as a manual action for you to review;
 - **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
   trimmed, and the report says so. Runs without `tracetrim_done` count for telemetry, not for learning.
+  One agent at a time: calls that arrive together from several agents end up in the same run.
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
-delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), tool
-outputs shrank by about half after learning, no field was asked back, and every answer stayed
-correct: a check, not a measurement — the measurements are in the paper.
+delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
+tool outputs of the two runs after learning went from 33,122 to 18,197 tokens (−45%), no field was
+asked back, and all five tickets were right in every run: a check, not a measurement
+(`results/checks/auto_check_mcp.json`) — the measurements are in the paper.
 
 ### Servers that need credentials
 
@@ -148,9 +150,10 @@ a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a desc
 schema, to adapt to your provider's tool format (`{"type": "function", ...}` for OpenAI, `name` /
 `description` / `input_schema` for Anthropic).
 
-Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: uncached
-input tokens about halved after learning, no field asked back, every answer correct (a check, not a
-measurement: `python -m experiments.auto_check --mode function`).
+Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
+tool outputs went from 33,862 to 19,261 tokens (−43%), the agent asked for a hidden field twice, and all
+five tickets were right in every run (a check, not a measurement:
+`results/checks/auto_check_function.json`, from `python -m experiments.auto_check --mode function`).
 
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
@@ -196,6 +199,9 @@ policy = Policy.load("report.config.json")
 tool_message = policy.apply(tool_name, raw_output)
 ```
 
+`Policy.apply` only trims: it adds no `[trimmed]` line and there is no `expand` behind it. For the way
+back, use `AutoTrim` (function calling, below) or the proxy.
+
 Or in front of any MCP server, with no code change — locally (Claude Desktop, Claude Code,
 Cursor):
 
@@ -232,7 +238,7 @@ tracetrim measure traces/*.jsonl --per-tool
 ```
 
 Leave-one-out: each run is trimmed with a projection learned from the others; you see the tokens
-removed and the *misses* (runs in which a field the agent used would have been removed).
+removed and the *misses* (held-out calls in which a field the agent used would have been removed).
 
 ## What it does not do
 
@@ -250,8 +256,11 @@ removed and the *misses* (runs in which a field the agent used would have been r
 generated from their public OpenAPI descriptions), the gates and thermometers, and every
 analysis. `protocol.md` is the frozen protocol with all deviations. Every number of the paper is
 generated by `python -m experiments.paper_numbers` from `results/`, and every chart by
-`python -m experiments.paper_figures` from `results/` and `traces/`. Changes by version are in
-[CHANGELOG.md](CHANGELOG.md).
+`python -m experiments.paper_figures` from `results/` and the traces. Run them from the repository root
+with `PYTHONPATH=src`. The traces are in the Zenodo dataset: unzip it at the root, and the scripts read
+`dataset/traces/` (C3, C4 and C5; C1 and C2 are released as derived records only, since the search
+data cannot be redistributed, so their analyses run where they were recorded and their results are in
+`results/`). Changes by version are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Citation
 

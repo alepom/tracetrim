@@ -51,7 +51,7 @@ def leaves(node, path=""):
         yield path, node
 
 
-def keys_of(value) -> list[tuple[str, ...]]:
+def keys_of(value, comma_grouping: bool = True) -> list[tuple[str, ...]]:
     """The n-grams under which a value can reappear, or none when it is too
     generic to attribute: `10`, `true`, `LOW` show up everywhere."""
     if isinstance(value, bool) or value is None:
@@ -59,7 +59,12 @@ def keys_of(value) -> list[tuple[str, ...]]:
     if isinstance(value, int):
         if abs(value) < 100:
             return []
-        return [(str(value),), (f"{value:,}".replace(",", "."),)]
+        keys = [(str(value),), (f"{value:,}".replace(",", "."),)]
+        # "1,600", as English writes it: since 0.3.4 (the studies matched only
+        # plain and dot-grouped numbers; their agents wrote no comma-grouped one).
+        if comma_grouping and abs(value) >= 1000:
+            keys.append((f"{value:,}",))
+        return keys
     if isinstance(value, float):
         s = repr(value)
         if len(s.replace(".", "").lstrip("-0")) < 3:
@@ -158,9 +163,11 @@ class CallUsage:
         return isinstance(self.payload, (dict, list))
 
 
-def analyse(trace: Trace, normalize: bool = True) -> list[CallUsage]:
+def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -> list[CallUsage]:
     """`normalize`: also look for transformed forms of each value (dates,
-    amounts in minor units, short ids from URLs). On by default since 0.2."""
+    amounts in minor units, short ids from URLs). On by default since 0.2.
+    `comma_grouping`: also match numbers written "1,600". On by default since
+    0.3.4; off to reproduce the studies."""
     texts = [e.text for e in trace.events]
 
     # First event where each n-gram is written. Two versions: a proxy in front
@@ -182,7 +189,7 @@ def analyse(trace: Trace, normalize: bool = True) -> list[CallUsage]:
             continue
         own = ngrams(words(texts[i]))
         for path, value in leaves(u.payload):
-            k = keys_of(value)
+            k = keys_of(value, comma_grouping)
             if k:
                 u.judgeable.add(path)
             if normalize:

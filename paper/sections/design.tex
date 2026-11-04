@@ -29,15 +29,18 @@ own domain; a gate in the tool wrapper rejects any other domain for page parsing
 learning source and transfer between C1 and C2 (on the tools they share). \emph{Phase B}: the third run of each
 case, chosen before looking at the data, is replayed up to the final answer, changing only the tool messages:
 raw, prudent, aggressive, and prudent plus structural compression; two runs per arm; projections learned from the
-other seven runs. Headroom (\texttt{headroom-ai} \HeadroomVersion) is applied to the same conversations as a token-only baseline, configured to compress everything with no protection of recent messages and a target ratio of 0.2: the setting most favourable to it, so that the comparison does not depend on a cautious default. \emph{Phase C}: live
+other seven runs. Headroom (\texttt{headroom-ai} \HeadroomVersion) is applied to the same conversations as a token-only baseline, configured to compress everything with no protection of recent messages and a target ratio of 0.2: the setting most favourable to it, so that the comparison does not depend on a cautious default. Each conversation was compressed once, so Headroom's per-tool learning had no history of these tools. \emph{Phase C}: live
 runs on C1 and C4 with the prudent projection and \texttt{expand}, against raw runs, three per arm.
 
 \paragraph{Study 2.} The Phase B conversations are replayed again with the safeguards on (arm \texttt{v02}, and
 \texttt{v02} plus structural compression) against the raw arm, five runs per arm.
 
 \paragraph{Measures.} \emph{Gates} are binary: the answer parses, has the required structure, and every fact it
-attributes to a tool (volumes, URLs, identifiers, run and issue numbers, quoted error lines) matches the raw tool
-outputs, whatever the agent was shown. \emph{Thermometers} are graded: editorial metrics for C1, coverage metrics
+attributes to a tool (volumes, URLs, identifiers, run and issue numbers, quoted error lines) matches the tool
+outputs stored in the trace. In Phases A and B and in Study 2 these are the raw outputs, whatever the agent was
+shown; in Phase C, where the live loop stores what the agent received, they are the projected outputs and what
+\texttt{expand} returned (Section~\ref{sec:phasec} reports what this left unchecked). \emph{Thermometers} are graded: editorial metrics for C1, coverage metrics
 for C2 and C3, and the number of correct diagnoses and links for C4 and C5, whose correct answers are known.
-Results are reported as medians with ranges; with two to five runs per arm no significance test is claimed. The
-pre-registered rule for quality (H2) holds an arm to the raw arm's range on every thermometer.
+Results are reported as medians with ranges; with two to five runs per arm no significance test is claimed. Under
+the pre-registered rule for quality (H2), an arm \emph{holds} when it passes every gate in at least as many runs as
+the raw arm and its median on every thermometer lies within the raw arm's range.

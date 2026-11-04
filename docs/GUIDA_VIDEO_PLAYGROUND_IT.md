@@ -125,7 +125,7 @@ Dopo la terza esecuzione il terminale dice `trimming 4 tools`. Esegui di nuovo (
 [tracetrim]   this run: 2 calls, 2,227 -> 1,074 (-52%), 0 expand · session: ...
 ```
 
-Da mostrare: la riga di chiusura dell'esecuzione (circa −50% sui risultati degli strumenti), i token di
+Da mostrare: la riga di chiusura dell'esecuzione (circa −45% sui risultati degli strumenti), i token di
 input nel Playground confrontati con la scena 1, e le risposte ai cinque ticket, che restano corrette
 (la tabella delle risposte giuste è in `demo_prompts_IT.md`).
 
@@ -147,7 +147,7 @@ risposte; il primo avvio è più lento.
 - I due server sono protetti dal token finché i tunnel sono aperti; Ctrl+C chiude tutto.
 - tracetrim filtra solo ciò che passa da lui: non tocca la ricerca web nativa del Playground.
 - In una prova con un agente vero (5 esecuzioni, 3 di osservazione) i risultati degli strumenti sono
-  scesi del 50% circa dopo l'apprendimento, nessuna richiesta di `expand`, 5 ticket su 5 corretti in
+  scesi del 45% circa dopo l'apprendimento (`results/checks/auto_check_mcp.json`), nessuna richiesta di `expand`, 5 ticket su 5 corretti in
   ogni esecuzione. Il modello del Playground può comportarsi diversamente: fai una prova prima di girare.
 - Se l'agente non chiama `tracetrim_done`, quell'esecuzione resta solo nella telemetria (si chiude
   dopo 5 minuti di pausa) e non conta per l'apprendimento.

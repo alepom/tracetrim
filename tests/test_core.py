@@ -98,3 +98,9 @@ def test_leave_one_out_counts_a_miss_when_the_held_out_trace_uses_a_new_field():
     assert rows[0].misses == 0           # a uses only what b also uses
     assert rows[1].misses == 1           # b uses location_code, never seen in a
     assert rows[1].aggressive < rows[1].raw
+
+
+def test_comma_grouped_numbers_match_unless_reproducing_the_studies():
+    from tracetrim.usage import keys_of
+    assert ("1,600",) in keys_of(1600) and ("1.600",) in keys_of(1600)
+    assert ("1,600",) not in keys_of(1600, comma_grouping=False)

@@ -9,7 +9,8 @@ with both safeguards (arm \texttt{v02}) and with the same projection followed by
 \centering\small
 \input{generated/table_study2.tex}
 \caption{Study 2: replay of the same runs as Phase B, \StudyTwoRunsPerArm{} runs per arm, safeguards S1 and S2 on.
-Columns as in Table~\ref{tab:phaseb}.}
+Columns and $^{\ast}$ as in Table~\ref{tab:phaseb}: in billing support the \texttt{v02} arm holds under the frozen
+test, not under the strict one.}
 \label{tab:study2}
 \end{table}
 
@@ -17,8 +18,9 @@ Columns as in Table~\ref{tab:phaseb}.}
 \centering
 \input{generated/fig_savings.tex}
 \caption{Tool-output tokens removed on the same conversations, per case: the learned projection without safeguards
-(0.1, Phase B), with them (0.2, Study 2), and Headroom \HeadroomVersion{} configured to compress everything. Token
-counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
+(0.1, Phase B), with them (0.2, Study 2), Headroom \HeadroomVersion{} configured to compress everything and run once
+per conversation, and re-serialisation alone (compact JSON, no field removed), the lossless part included in every
+other bar. Token counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
 \label{fig:savings}
 \end{figure}
 
@@ -27,16 +29,18 @@ diagnosed all five tickets correctly in \StudyTwoFrozenAllRightVtwo{} runs, the 
 0.1 projection had lost it. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
 (\StudyTwoVtwoGatesiii), so no identifier was invented; with 0.1 the prudent arm had passed in
 \PhaseBPrudentGatesiii{} runs. \emph{H7}: in CI triage every \texttt{v02} run found all four expected links,
-including the one lost in Phase B. \emph{H8}: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
+including the one lost in Phase B. \emph{H8} is a token count on fixed replays, so it is
+deterministic and equals the offline estimate given in the protocol: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
 \StudyTwoVtwoTokensiii, \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} of the tool-message tokens in the
 editorial plan, the literature scan, billing support and CI triage, against \StudyTwoHeadroomTokensi, \StudyTwoHeadroomTokensiii, \StudyTwoHeadroomTokensiv{} and
-\StudyTwoHeadroomTokensv{} for Headroom (Figure~\ref{fig:savings}). The safeguards cost part of the saving (compare
+\StudyTwoHeadroomTokensv{} for Headroom and \ReserialReplayi, \ReserialReplayiii, \ReserialReplayiv{} and
+\ReserialReplayv{} for re-serialisation alone (Figure~\ref{fig:savings}). The safeguards cost part of the saving (compare
 \PhaseBPrudentTokensiii{} with \StudyTwoVtwoTokensiii{} in the literature scan) and bought back the three lost
 pieces of information.
 
 \paragraph{A fourth mechanism, found after the fact.} Reading the billing-support answers, we found that the
-frozen test for one ticket was too lenient: it accepted the diagnosis when the word ``funds'' appeared anywhere in
-the ticket, so advice such as ``check that you have sufficient funds'' passed it even when the diagnosis did not
+frozen test for one ticket was too lenient: it accepted the diagnosis when ``fondi'' (funds) or ``insufficient''
+appeared anywhere in the ticket, so advice such as ``check that you have sufficient funds'' passed it even when the diagnosis did not
 give the reason for the declined payment. With a strict test on the diagnosis alone (added after the data were
 seen, and reported beside the frozen result rather than instead of it), the raw arm gave the reason in
 \StudyTwoStrictAllRightRaw{} runs and the \texttt{v02} arm in \StudyTwoStrictAllRightVtwo. The reason arrives as an

@@ -5,9 +5,8 @@ automatic actions: which tools get the projection, whether JSON is
 re-serialised without escapes. It is plain JSON on purpose: a person can
 read it, change it, and review it in a pull request like any other config.
 
-Stateful features (`expand`, the cache of identical calls) need to live
-where the calls happen, in a proxy or an SDK adapter: here they are only
-read and exposed.
+Stateful features (`expand`) need to live where the calls happen, in a
+proxy or an SDK adapter: here they are only read and exposed.
 """
 from __future__ import annotations
 
@@ -24,7 +23,6 @@ class Policy:
         self.projection = projection
         self.tools = config.get("tools", {})
         self.unescape = bool(config.get("unescape", True))
-        self.cache_identical_calls = bool(config.get("cache_identical_calls", False))
         # Optional, after the projection: "toon" (lossless re-encoding) or
         # "headroom" (experimental). The study found that a denser format can
         # change how the model reads a payload: validate before relying on it.
@@ -50,7 +48,7 @@ class Policy:
     def _project(self, tool: str, output: str) -> str:
         spec = self.tools.get(tool, {})
         if self.projection and spec.get("trim", "off") != "off":
-            return self.projection.apply(tool, output)
+            return self.projection.apply(tool, output, keep_empty=True)
         if self.unescape:
             payload = parse_output(output)
             if payload is not None:

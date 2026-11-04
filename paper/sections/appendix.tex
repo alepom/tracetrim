@@ -8,12 +8,14 @@ All are dated and explained in full in the repository's \texttt{protocol.md}; no
 \item A bug in the agent loop dropped the system prompt after the first turn; found in the pilot and fixed before
   Phase A. Pilot runs are excluded.
 \item Prompts were written during the pilot rather than at freezing, and fixed before Phase A.
-\item Tool-level caps made explicit: at most five results per literature search; a safety guard at 80 calls.
+\item Tool-level caps made explicit: at most five results per literature search (amendment A2; this deviation had
+  first set ten); a safety guard at 80 calls.
 \item The literature catalogue was used without an API key, within its free daily allowance.
 \item A verification pilot after the fix; one correction to the CI-triage gate (several job names per cause).
 \item Simulated tools fixed before Phase A, with the OpenAPI versions and the presence rule documented.
 \item Transport errors of the search-data server: retries reconnect; after three failures the agent receives an
-  error and the run continues, flagged. Two editorial-plan runs are flagged.
+  error and the run continues, flagged. Two editorial-plan runs of Phase A and two of Phase C (one per arm) are
+  flagged; the results without them are reported in Section~\ref{sec:study1}.
 \item The list of hidden fields shown with \texttt{expand} was grouped, largest groups first, before Phase C.
 \item Post hoc: the literature-scan gate now requires a declared identifier to exist (it had accepted a valid DOI
   next to an invented identifier).
@@ -22,4 +24,7 @@ All are dated and explained in full in the repository's \texttt{protocol.md}; no
 \item Post hoc: a strict test for one billing ticket, reported beside the frozen one.
 \item Traces of the search-data cases are released as derived per-call records instead of pseudonymised traces,
   which could not have preserved the analysis.
+\item Post hoc: the volumes of the Phase C editorial-plan answers, which the frozen gate could check only where the
+  agent had seen them, are re-checked against the raw outputs of the other runs of the same day
+  (Section~\ref{sec:phasec}).
 \end{enumerate}

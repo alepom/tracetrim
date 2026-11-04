@@ -17,8 +17,16 @@
   reasoning are invisible; this is the root of the failures reported, and safeguards can only cover the blind
   spots that are known.
 \item \textbf{Post hoc decisions.} Three measurement corrections were made after seeing data (deviations 8, 10 and
-  11); each is applied to every run, and the strict test of deviation 11 is reported beside the frozen one.
+  11); each is applied to every run, and the strict test of deviation 11 is reported beside the frozen one. The
+  re-check of the Phase C volumes (deviation 13) was also added afterwards.
+\item \textbf{Gates in the live loop.} In Phase C the gates could only check facts against what the agent was shown;
+  in the editorial plan this left part of the reported volumes to a post-hoc re-check (Section~\ref{sec:phasec}).
+\item \textbf{Lossless part of the savings.} Every saving reported includes re-serialisation (compact JSON without
+  escapes), which removes nothing; it is reported separately so that the projection is credited only with the rest.
+\item \textbf{Number formats.} Usage detection in the studies matched numbers written plainly or with dot thousands
+  separators; numbers written with comma separators would have gone unseen. In all Phase A runs the agents wrote
+  \CommaNumbersWritten{} such numbers, so no use was missed this way; the library matches them since version 0.3.4.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
-  on them, the released data are derived per-call records, enough to reproduce the usage analysis but not to replay
-  the conversations.
+  on them, the released data are derived per-call records: enough to recompute which fields each call used and the
+  misses, but neither the token savings, which need the payloads, nor a replay of the conversations.
 \end{itemize}

@@ -4,7 +4,8 @@
 \paragraph{What the agent uses can be learned, but only from complete traces.} Across five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
 of it on a new run. The learner must see the final answer: an MCP gateway placed between agent and tools can
-\emph{apply} a projection, but learning from what it sees alone misses most of what the agent uses. The practical
+\emph{apply} a projection, but learning from what it sees alone misses far more of what the agent uses
+(\MissesPooledShareCalls{} of held-out calls against \MissesPooledShareFull). The practical
 consequence is an architecture: learn offline from full traces, review, apply anywhere. Version 0.3 of the library
 adds a second route, not evaluated in the studies reported here: the proxy offers the agent one more tool, through
 which the agent hands over its final answer, so that the gateway sees complete traces and can learn and apply the
@@ -22,8 +23,8 @@ identifier it was asked to report, an agent invented plausible ones. Identifiers
 lose, so a projection should never remove them, whatever the usage says.
 
 \paragraph{The recovery path matters.} With \texttt{expand}, a wrong cut costs one round trip instead of a wrong
-answer: in the live runs the agents asked for hidden fields when they needed them, and the end-to-end cost still
-fell. This only works when the agent knows what is hidden, which is why the hidden fields are listed, grouped,
+answer: in the live runs the agents asked for hidden fields, and the end-to-end cost still fell. It is not a
+guarantee: in one billing-support run the agent did not ask for the period end and got a ticket wrong. This only works when the agent knows what is hidden, which is why the hidden fields are listed, grouped,
 after every trimmed output.
 
 \paragraph{How to use it.} These results suggest a workflow rather than an automatic switch: record a few runs of a
@@ -31,4 +32,5 @@ task with full outputs; generate the telemetry report, which is useful on its ow
 proposed configuration, a plain list of kept and dropped fields; apply it with identifier protection and
 \texttt{expand}; and keep recording, so that a field the agent starts needing shows up in the next report. The
 library implements each step, including an MCP proxy that applies a configuration in front of any server without
-changes to the agent.
+changes to the agent. Reported savings should also be read against re-serialisation alone, which removes up to
+\ReserialAiv{} of these outputs without removing anything.

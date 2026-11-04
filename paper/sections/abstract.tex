@@ -3,12 +3,16 @@ informs the agent's answer, yet it is paid for at every turn. We learn, from an 
 fields of each tool output it uses, and remove the rest. On five agents (three on real APIs, two on simulated
 servers following public OpenAPI descriptions), a projection learned from seven runs and applied to an unseen one
 removed \PhaseAPrudentSavingi{} to \PhaseAPrudentSavingv{} of tool-output tokens in four cases and
-\PhaseAPrudentSavingii{} in the fifth; in live runs with an \texttt{expand} tool for hidden fields, billed input
-tokens fell by \PhaseCChangeInputi{} and \PhaseCChangeInputiv{} with every quality gate passed. Learning only from
-tool calls, as a gateway would, missed most of the fields agents use. Replays with projected outputs, under a
+\PhaseAPrudentSavingii{} in the fifth (re-serialising the JSON alone, with no field removed, already removes up to
+\ReserialAiv); in live
+runs with an \texttt{expand} tool for hidden fields, billed input tokens fell by \PhaseCChangeInputi{} and
+\PhaseCChangeInputiv{}, and every run passed its gates as frozen. Learning only from tool calls, as a gateway would,
+missed a used field in \MissesPooledShareCalls{} of held-out calls, against \MissesPooledShareFull{} when learning
+from complete traces. Replays with projected outputs, under a
 protocol frozen in advance, located the failures precisely: values the agent transforms before writing them,
 fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second
 pre-registered study showed that two safeguards, keeping identifying fields and recognising transformed values,
-removed those losses while keeping savings of \StudyTwoVtwoTokensiii{} to \StudyTwoVtwoTokensv; a post-hoc check
+removed those losses while keeping savings of \StudyTwoVtwoTokensiii{} to \StudyTwoVtwoTokensv{} on four of the five
+agents; a post-hoc check
 found a fourth mechanism, translated values, not covered. We release the library, with a bilingual telemetry report
 and an MCP proxy that applies a reviewed projection in front of any server.

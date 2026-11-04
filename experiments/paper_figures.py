@@ -9,7 +9,8 @@ figure changes only when the data does. The schematic figures (architecture,
 usage detection) carry no numbers and live in paper/figures/.
 
   fig_savings.tex     tool-output tokens removed, same conversations: tracetrim
-                      0.1 (prudent), tracetrim 0.2 (safeguards), Headroom
+                      0.1 (prudent), tracetrim 0.2 (safeguards), Headroom, and
+                      re-serialisation alone (the lossless part of any saving)
   fig_tools.tex       where the tokens go, per tool, in the two released
                       simulated cases: kept vs removed on held-out runs (0.2)
   fig_live.tex        live runs: billed input tokens per run, raw vs tracetrim
@@ -29,7 +30,7 @@ GEN = ROOT / "paper" / "generated"
 # Case names without the table's dagger (the caption says which are simulated).
 CASE = {"C1": "Editorial plan", "C2": "Content gaps", "C3": "Literature scan", "C4": "Billing support",
         "C5": "CI triage"}
-COLORS = (r"\definecolor{ttblue}{HTML}{2A78D6}\definecolor{ttorange}{HTML}{EB6834}"
+COLORS = (r"\definecolor{ttgray}{HTML}{9A9893}\definecolor{ttblue}{HTML}{2A78D6}\definecolor{ttorange}{HTML}{EB6834}"
           r"\definecolor{ttaqua}{HTML}{1BAF7A}\definecolor{ttgrid}{HTML}{DDDCD8}\definecolor{ttmuted}{HTML}{52514E}")
 AXIS = ("axis x line*=bottom, axis y line*=left, axis line style={draw=ttmuted}, tick style={draw=none}, major grid style={draw=ttgrid}, "
         "tick label style={font=\\footnotesize}, label style={font=\\footnotesize}, "
@@ -41,7 +42,7 @@ def load(name):
 
 
 def savings():
-    b, s2 = load("phase_b.json"), load("study2.json")
+    b, s2, ser = load("phase_b.json"), load("study2.json"), load("reserialize.json")
     rows = []
     for c in ("C1", "C2", "C3", "C4", "C5"):          # y dir=reverse: C1 at the top
         raw = b["cases"][c]["arms"]["raw"]["tool_tokens"]
@@ -50,7 +51,9 @@ def savings():
         h = b["cases"][c]["headroom"]
         assert h["tool_tokens"] == raw, "Headroom must be measured on the same conversations"
         hr = 100 * (1 - h["headroom"] / raw)
-        rows.append((CASE[c], v01, v02, hr))
+        rs = 100 * ser["cases"][c]["replay"]["saving"]
+        assert ser["cases"][c]["replay"]["raw"] == raw, "re-serialisation must be measured on the same conversations"
+        rows.append((CASE[c], v01, v02, hr, rs))
     names = ",".join(f"{{{n}}}" for n, *_ in rows)
 
     def plot(i, color, label):
@@ -60,13 +63,14 @@ def savings():
                 f"nodes near coords style={{font=\\scriptsize, text=black, anchor=west}}] "
                 f"coordinates {{{coords}}};\n\\addlegendentry{{{label}}}\n")
 
-    return (COLORS + "\n\\begin{tikzpicture}\n\\begin{axis}[" + AXIS + ", width=0.92\\linewidth, height=9.6cm, "
+    return (COLORS + "\n\\begin{tikzpicture}\n\\begin{axis}[" + AXIS + ", width=0.92\\linewidth, height=11.4cm, "
             "xbar=1.5pt, xmin=0, xmax=100, area legend, xmajorgrids, xlabel={tool-output tokens removed (\\%)}, "
             f"symbolic y coords={{{names}}}, ytick=data, y dir=reverse, enlarge y limits=0.14, "
-            "legend style={at={(0.5,1.02)}, anchor=south, legend columns=3, /tikz/every even column/.append style={column sep=8pt}}, "
+            "legend style={at={(0.5,1.02)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=8pt}}, "
             "reverse legend]\n"
             # With y dir=reverse the last plot is drawn at the top of each group.
-            + plot(3, "ttorange", "Headroom (structural)")
+            + plot(4, "ttgray", "re-serialisation only (lossless)")
+            + plot(3, "ttorange", "Headroom")
             + plot(1, "ttaqua", "tracetrim 0.1 (prudent)")
             + plot(2, "ttblue", "tracetrim 0.2 (safeguards)")
             + "\\end{axis}\n\\end{tikzpicture}\n")
@@ -78,9 +82,10 @@ def tools():
     from tracetrim.usage import analyse
     panels = []
     for c in ("C4", "C5"):
-        paths = sorted((ROOT / "traces" / c).glob("A*.jsonl"))
+        from .run import TRACES
+        paths = sorted((TRACES / c).glob("A*.jsonl"))
         traces = [load_trace(p) for p in paths]
-        d = rp.compute([t.name for t in traces], [analyse(t) for t in traces], protect_ids=True)
+        d = rp.compute([t.name for t in traces], [analyse(t, comma_grouping=False) for t in traces], protect_ids=True)
         rows = [(name, t["loo_prudent"], t["loo_raw"] - t["loo_prudent"]) for name, t in d["tools"].items()
                 if t["loo_raw"]]
         rows.sort(key=lambda r: -(r[1] + r[2]))

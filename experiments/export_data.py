@@ -54,7 +54,7 @@ def main():
             if not p.stem.startswith("A"):
                 continue            # replays repeat the A3 calls: their records add nothing
             with (d / p.name).open("w", encoding="utf-8") as fh:
-                for i, u in enumerate(analyse(load(p), normalize=False)):
+                for i, u in enumerate(analyse(load(p), normalize=False, comma_grouping=False)):
                     fh.write(json.dumps({
                         "call": i + 1, "tool": u.tool, "structured": u.structured,
                         "raw_tokens": count(u.output),

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import html
 import json
 import logging
 import os
@@ -72,8 +73,11 @@ class FileStorage:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         os.chmod(self.path.parent, 0o700)
         tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(self.data, indent=2))
-        os.chmod(tmp, 0o600)
+        tmp.unlink(missing_ok=True)
+        # Created readable by the owner only, never even briefly by others.
+        fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as fh:
+            fh.write(json.dumps(self.data, indent=2))
         tmp.replace(self.path)
 
     async def get_tokens(self) -> OAuthToken | None:
@@ -148,7 +152,7 @@ class Login:
         ok = "code" in q
         body = ("<!doctype html><meta charset=utf-8><body style='font:16px system-ui;padding:24px'>"
                 + ("tracetrim: login complete, you can close this tab." if ok
-                   else f"tracetrim: login failed ({q.get('error', ['no code'])[0]}).") + "</body>")
+                   else f"tracetrim: login failed ({html.escape(q.get('error', ['no code'])[0])}).") + "</body>")
         writer.write(f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: "
                      f"{len(body.encode())}\r\nConnection: close\r\n\r\n{body}".encode())
         await writer.drain()

@@ -1,0 +1,73 @@
+{
+  "mode": "function",
+  "model": "gpt-5.6-terra",
+  "min_runs": 3,
+  "note": "an end-to-end check, not a measurement under a protocol",
+  "runs": [
+    {
+      "run": 1,
+      "input": 24543,
+      "uncached": 18247,
+      "output": 2062,
+      "calls": 10,
+      "done": true,
+      "right": 5,
+      "trimming_after": false,
+      "tool_tokens_raw": 16561,
+      "tool_tokens_sent": 16561,
+      "usd_estimate": 0.0625
+    },
+    {
+      "run": 2,
+      "input": 43660,
+      "uncached": 17962,
+      "output": 2124,
+      "calls": 11,
+      "done": true,
+      "right": 5,
+      "trimming_after": false,
+      "tool_tokens_raw": 16931,
+      "tool_tokens_sent": 16931,
+      "usd_estimate": 0.0666
+    },
+    {
+      "run": 3,
+      "input": 43744,
+      "uncached": 18056,
+      "output": 1997,
+      "calls": 11,
+      "done": true,
+      "right": 5,
+      "trimming_after": true,
+      "tool_tokens_raw": 16931,
+      "tool_tokens_sent": 16931,
+      "usd_estimate": 0.0652
+    },
+    {
+      "run": 4,
+      "input": 27858,
+      "uncached": 10642,
+      "output": 2280,
+      "calls": 12,
+      "done": true,
+      "right": 5,
+      "trimming_after": true,
+      "tool_tokens_raw": 16931,
+      "tool_tokens_sent": 9628,
+      "usd_estimate": 0.0521
+    },
+    {
+      "run": 5,
+      "input": 28067,
+      "uncached": 10845,
+      "output": 2424,
+      "calls": 12,
+      "done": true,
+      "right": 5,
+      "trimming_after": true,
+      "tool_tokens_raw": 16931,
+      "tool_tokens_sent": 9633,
+      "usd_estimate": 0.0542
+    }
+  ]
+}

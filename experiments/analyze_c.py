@@ -40,6 +40,9 @@ def main():
                 "expand_calls": [m.get("expand_calls") or 0 for m in metas],
                 "expanded_fields": [m.get("expanded_fields") or 0 for m in metas],
                 "flags": [m["flags"] for m in metas],
+                # Calls that failed even after reconnecting (deviation 6): the
+                # sensitivity analysis drops runs with any.
+                "tool_failures": [len(m.get("tool_failures") or []) for m in metas],
                 "gates_passed": sum(gate_pass(g) for g in gates), "gates": gates,
                 "thermometers": [quality(p) for p in paths],
             }
