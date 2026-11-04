@@ -16,11 +16,13 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
 from mcp import ClientSession
+from mcp.client.stdio import StdioServerParameters, stdio_client
 from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -39,7 +41,13 @@ CASE_TOOLS = {
            "dataforseo_labs_bulk_keyword_difficulty", "on_page_content_parsing"],
     "C2": ["serp_organic_live_advanced", "on_page_content_parsing"],
     "C3": ["openalex_search_works", "openalex_get_work"],
+    # Simulated servers (amendment 1): every tool they expose.
+    "C4": ["stripe_search_customers", "stripe_list_charges", "stripe_retrieve_charge", "stripe_list_refunds",
+           "stripe_list_invoices", "stripe_retrieve_invoice", "stripe_list_subscriptions"],
+    "C5": ["gh_list_workflow_runs", "gh_list_jobs_for_workflow_run", "gh_download_job_logs",
+           "gh_list_issues", "gh_get_issue", "gh_list_pull_requests"],
 }
+SIMULATED = {"C4": "experiments.simulated.server_c4", "C5": "experiments.simulated.server_c5"}
 
 
 def env(name: str) -> str | None:
@@ -75,16 +83,23 @@ def domain_gate(tool: str, args: dict) -> bool:
 class DataForSEO:
     """MCP client session, kept open for one run."""
 
-    def __init__(self, allowed: list[str]):
+    def __init__(self, allowed: list[str], module: str | None = None):
         self.allowed = allowed
+        self.module = module        # a simulated server, launched over stdio
         self.rejections = 0
 
-    async def __aenter__(self):
+    def _transport(self):
+        if self.module:
+            return stdio_client(StdioServerParameters(command=sys.executable, args=["-m", self.module],
+                                                      cwd=str(ROOT)))
         token = env("DFS_MCP_TOKEN")
         if not token:
             raise SystemExit("DFS_MCP_TOKEN missing in .env")
         http = create_mcp_http_client(headers={"X-MCP-Token": token})
-        self._cm = streamable_http_client(DFS_URL, http_client=http, max_sse_event_size=16 * 1024 * 1024)
+        return streamable_http_client(DFS_URL, http_client=http, max_sse_event_size=16 * 1024 * 1024)
+
+    async def __aenter__(self):
+        self._cm = self._transport()
         read, write = await self._cm.__aenter__()
         self._session_cm = ClientSession(read, write)
         self.session = await self._session_cm.__aenter__()
@@ -107,7 +122,7 @@ class DataForSEO:
         await self._cm.__aexit__(*exc)
 
     async def call(self, name: str, args: dict) -> str:
-        if not domain_gate(name, args):
+        if not self.module and not domain_gate(name, args):
             self.rejections += 1
             return BLOCKED
         r = await self.session.call_tool(name, args, read_timeout_seconds=240)
@@ -184,7 +199,9 @@ class OpenAlex:
 
 def toolset(case: str):
     names = CASE_TOOLS[case]
-    return OpenAlex(names) if case == "C3" else DataForSEO(names)
+    if case == "C3":
+        return OpenAlex(names)
+    return DataForSEO(names, SIMULATED.get(case))
 
 
 def to_args(raw: str) -> dict:

@@ -145,7 +145,7 @@ async def run(case: str, run_id: str, model: str) -> dict:
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("case", nargs="?", choices=["C1", "C2", "C3"])
+    p.add_argument("case", nargs="?", choices=["C1", "C2", "C3", "C4", "C5"])
     p.add_argument("run_id", nargs="?")
     p.add_argument("--model", default=PRICES["model"])
     p.add_argument("--spend", action="store_true")

@@ -186,3 +186,11 @@ All recorded on 2026-11-04, during the pilot, before any run of Phase A.
    it is flagged and excluded.
 3. **OpenAlex without an API key.** The keyless free allowance (0.10 USD/day, ~100 searches) is enough for C3; the
    tool stops before it runs out. If OpenAlex starts requiring a key, the author is asked before going on.
+4. **Verification pilot (2026-11-04), after the fix of deviation 0.** One more run of C1-C3 (`pilot2`) and the first
+   runs of C4 and C5 (`pilot`), all excluded from results. All five answers parse and have the required structure; facts
+   verified 100% in every case after one correction to the C5 gate (a cause may name several jobs, separated by `;`:
+   each name is now verified on its own). Measured cost per live run replaces the estimates in the budget script.
+5. **Simulated tools fixed before Phase A** (amendment 1, A1): Stripe and GitHub OpenAPI descriptions at the commits
+   listed in `experiments/simulated/SOURCES.md`, with the presence rule stated there (top-level fields as the APIs
+   return them; below the top level, required fields and the branch a `type` names). Prompts of C4 (Italian, as its
+   customers) and C5 (English) written during the pilot, fixed with this commit.

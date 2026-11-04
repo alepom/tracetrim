@@ -17,8 +17,13 @@ from .run import PRICES, TRACES, cost
 
 
 def pilot(case):
-    p = TRACES / case / "pilot.meta.json"
-    return json.loads(p.read_text()) if p.exists() else None
+    # pilot2 is the verification pilot after the system-prompt fix: its
+    # usage is the one the study will see.
+    for name in ("pilot2", "pilot"):
+        p = TRACES / case / f"{name}.meta.json"
+        if p.exists():
+            return json.loads(p.read_text())
+    return None
 
 
 def main():
@@ -39,6 +44,8 @@ def main():
         note[c] = "pilot" if pilot(c) else "assumed = C1 pilot"
         last = m["usage_per_turn"][-1]
         scale = o.c3_scale if c == "C3" else 1.0
+        # C3's pilot2 already ran at 5 results per page: no scaling.
+        scale = 1.0 if m["run"] == "pilot2" or c != "C3" else scale
         live[c] = m["cost_usd"] * scale
         replay[c] = cost({"input": last["input"] * scale, "cached": 0, "output": last["output"]})
 
