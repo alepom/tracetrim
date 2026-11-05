@@ -38,7 +38,7 @@ Fixes from three internal reviews and two external review rounds before publicat
   when nothing matches; analyses import without the agent SDKs (`experiments/paths.py`); `requirements-study.txt`.
 - Experiments: the gates did not parse projected outputs (they end with the `[trimmed]` line); the line
   is now cut and every Phase C run re-checked, with no gate result changed; a post-hoc re-check finds one
-  editorial-plan volume of 180 written without a source (deviation 13).
+  unsupported volume among 180 reported keyword–volume pairs (deviation 13).
 - Paper: real-API and simulated cases are reported separately in every range; the editorial-plan
   measure outside the band is reported without reading a direction into it;
   the lossless part of the savings (re-serialisation alone) is reported; H3 fails in one case;
