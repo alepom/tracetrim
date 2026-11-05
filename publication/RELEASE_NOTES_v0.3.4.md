@@ -23,7 +23,8 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
   JSON alone, which removes nothing, accounts for up to 13% (real) and 17% (simulated). On the same
   conversations, the same two real-API agents: 59–68% (0.1), 46–53% (0.2), 17–28% for Headroom (stateless,
   aggressive setting), 16–24% for a plain minifier that removes no field; simulated: 69–77%, 57–61%, 31–33%,
-  18–33%.
+  18–33%. Against JSON already minified, the 0.2 projection still removes 39% and 35% (real) and 36% and
+  53% (simulated); on the agent that cites most of what it receives, a minifier alone does better.
 - Learning from tool calls alone (what a gateway sees) missed a used field in 49% of held-out calls of
   the three agents on real APIs, against 4% when the learner also sees the final answer.
 - Where it fails: values the agent transforms, fields used only to reason, and — without an id

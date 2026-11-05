@@ -170,7 +170,7 @@ def main():
                 rows.append(f" & Headroom (tokens only) & {pct(h['headroom'] / h['tool_tokens'] - 1)} & -- & -- & -- \\\\")
             rows.append("\\addlinespace")
         (GEN / f"table_{name.removesuffix('.json')}.tex").write_text(
-            "\\begin{tabular}{llrrll}\n\\toprule\nCase & Arm & Tool tokens & Gates passed & H2 (implemented) & H2 (protocol list) \\\\\n\\midrule\n"
+            "\\begin{tabular}{llrrll}\n\\toprule\nCase & Arm & Tool tokens & Gates passed & H2 (implemented) & H2 (protocol, computable) \\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     s2 = load("study2.json")
@@ -178,6 +178,10 @@ def main():
         c1 = s2["cases"]["C1"]
         lo, hi = c1["band"]["median_volume"]
         m("StudyTwoRawBandVolumei", f"{lo:g}--{hi:g}")
+        if "mean_volume" in c1["band"]:
+            lo_m, hi_m = c1["band"]["mean_volume"]
+            m("StudyTwoRawBandMeanVolumei", f"{num(lo_m)}--{num(hi_m)}")
+            m("StudyTwoVtwoMeanVolumei", num(c1["arms"]["v02"]["medians"]["mean_volume"]))
         for arm, key in (("v02", "Vtwo"), ("v02-structural", "Vtwostructural")):
             m(f"StudyTwo{key}MedianVolumei", f"{c1['arms'][arm]['medians']['median_volume']:g}")
         m("StudyTwoVtwoHoldsi", "holds" if c1["arms"]["v02"]["holds"] else "does not hold")
@@ -280,11 +284,17 @@ def main():
             m(f"ReserialMinA{R}", apct(-sr["phase_a"]["minified_saving"]))
             m(f"ReserialMinReplay{R}", apct(-sr["replay"]["minified_saving"]))
             m(f"VtwoNet{R}", apct(v02 / sr["replay"]["reserialized"] - 1))
+            # Against JSON already minified (conservative: tracetrim's own output keeps the
+            # default separators). Negative only if the projection beats the minifier.
+            vs_min = v02 / sr["replay"]["minified"] - 1
+            m(f"VtwoVsMin{R}", apct(vs_min) if vs_min <= 0 else "--")
+            m(f"VtwoAboveMin{R}", "yes" if vs_min > 0 else "no")
             rows.append(f"{CASE_NAME[c]} & {pct(-sr['replay']['saving'])} & {pct(-sr['replay']['minified_saving'])} & "
                         f"{pct(b['cases'][c]['arms']['prudent']['tool_tokens'] / raw - 1)} & {pct(v02 / raw - 1)} & "
-                        f"{pct(v02 / sr['replay']['reserialized'] - 1)} & {pct(b['cases'][c]['headroom']['headroom'] / raw - 1)} \\\\")
+                        f"{pct(v02 / sr['replay']['reserialized'] - 1)} & {pct(v02 / sr['replay']['minified'] - 1)} & "
+                        f"{pct(b['cases'][c]['headroom']['headroom'] / raw - 1)} \\\\")
         (GEN / "table_savings_detail.tex").write_text(
-            "\\begin{tabular}{lrrrrrr}\n\\toprule\nCase & Re-serialised & Minified & 0.1 prudent & 0.2 & 0.2 vs re-serialised & Headroom \\\\\n"
+            "\\begin{tabular}{lrrrrrrr}\n\\toprule\nCase & Re-serialised & Minified & 0.1 prudent & 0.2 & 0.2 vs re-serialised & 0.2 vs minified & Headroom \\\\\n"
             "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     ga = load("gates_audit.json")

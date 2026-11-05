@@ -13,7 +13,7 @@ where this works and where it fails. In short:
 | Tool-output tokens removed on unseen runs (0.1) | real APIs: 63% and 70% (12% on the third agent); simulated: 69% and 77% |
 | …of which re-serialising the JSON alone, removing nothing | up to 13% (real APIs), up to 17% (simulated) |
 | Same conversations: tracetrim 0.1 / 0.2 / Headroom (stateless) / full minifier, no field removed | the same two real-API agents: 59–68% / 46–53% / 17–28% / 16–24%; simulated: 69–77% / 57–61% / 31–33% / 18–33% |
-| Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates, one volume of 180 written without a source |
+| Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates; a later re-check found one unsupported volume among 180 reported keyword–volume pairs |
 | Learning from tool calls only (what a gateway sees) | a used field missed in 49% of the held-out structured calls it trims (156/317, 3 agents on real APIs), against 4% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
@@ -74,7 +74,10 @@ servers share one), plus `expand` and `tracetrim_done`. Then use the agent as us
   report as a manual action for you to review;
 - **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
   trimmed, and the report says so. Runs without `tracetrim_done` count for telemetry, not for learning.
-  One agent at a time: calls that arrive together from several agents end up in the same run.
+  One agent at a time: calls that arrive together from several agents end up in the same run. Over MCP the
+  proxy cannot see the model's turns, so calls emitted together are compared by arrival order: a later call's
+  arguments can count as using an earlier sibling's output. In the study this changed no figure; where turns
+  matter, record them (`AutoTrim` takes `turn`, JSONL traces accept a `"turn"` field).
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
 delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the

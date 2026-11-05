@@ -9,8 +9,8 @@ figure changes only when the data does. The schematic figures (architecture,
 usage detection) carry no numbers and live in paper/figures/.
 
   fig_savings.tex     tool-output tokens removed, same conversations: tracetrim
-                      0.1 (prudent), tracetrim 0.2 (safeguards), Headroom, and
-                      re-serialisation alone (the lossless part of any saving)
+                      0.1 (prudent), tracetrim 0.2 (safeguards), Headroom, and a
+                      full minifier (the strongest change that removes no field)
   fig_tools.tex       where the tokens go, per tool, in the two released
                       simulated cases: kept vs removed on held-out runs (0.2)
   fig_live.tex        live runs: billed input tokens per run, raw vs tracetrim
@@ -51,7 +51,8 @@ def savings():
         h = b["cases"][c]["headroom"]
         assert h["tool_tokens"] == raw, "Headroom must be measured on the same conversations"
         hr = 100 * (1 - h["headroom"] / raw)
-        rs = 100 * ser["cases"][c]["replay"]["saving"]
+        # The baseline drawn is a full minifier: the strongest change that removes no field.
+        rs = 100 * ser["cases"][c]["replay"]["minified_saving"]
         assert ser["cases"][c]["replay"]["raw"] == raw, "re-serialisation must be measured on the same conversations"
         rows.append((CASE[c], v01, v02, hr, rs))
     names = ",".join(f"{{{n}}}" for n, *_ in rows)
@@ -69,7 +70,7 @@ def savings():
             "legend style={at={(0.5,1.02)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=8pt}}, "
             "reverse legend]\n"
             # With y dir=reverse the last plot is drawn at the top of each group.
-            + plot(4, "ttgray", "re-serialisation only (lossless)")
+            + plot(4, "ttgray", "full minifier (no field removed)")
             + plot(3, "ttorange", "Headroom")
             + plot(1, "ttaqua", "tracetrim 0.1 (prudent)")
             + plot(2, "ttblue", "tracetrim 0.2 (safeguards)")

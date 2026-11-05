@@ -34,7 +34,7 @@ All are dated and explained in full in the repository's \texttt{protocol.md}; no
   \TurnsFiguresUnchanged; the replay projections are identical.
 \item Post hoc, publication review: thermometers and audits. The thermometers were implemented after the protocol was
   frozen and before Phase A, and differ from its list (C1 lacked the mean volume; its ``topics covered'' relied on the
-  course's list of expected themes and cannot be computed here). H2 is also evaluated on the protocol's list
+  course's list of expected themes and cannot be computed here). H2 is also evaluated on the computable part of the protocol's list
   (Tables~\ref{tab:phaseb} and~\ref{tab:study2}), with the same outcome in every arm. The gates are narrower than the
   protocol's wording, and the billing thermometer is a keyword test: both are measured in
   Appendix~\ref{app:supplementary}.
@@ -56,14 +56,15 @@ the prudent, aggressive and structural arms of Phase B in \PhaseBOriginalGatesPr
 \begin{table}[h]
 \centering\small
 \input{generated/table_c4_audit.tex}
-\caption{Billing support: tickets passing the frozen keyword test and the stricter audit of the diagnosis against the
-scenario's facts, with negations rejected (\texttt{experiments/c4\_audit.py}, deviation 15).}
+\caption{Billing support: tickets passing the frozen keyword test and the stricter rules on the diagnosis alone
+(exact amounts, year and outcome of the scenario, negations rejected; \texttt{experiments/c4\_audit.py}, deviation
+15). Rules, not a reading: they show what the keyword test lets through, not that a diagnosis is right.}
 \label{tab:c4audit}
 \end{table}
 
 \begin{table}[h]
 \centering\small
-\input{generated/table_savings_detail.tex}
+\resizebox{\textwidth}{!}{\input{generated/table_savings_detail.tex}}
 \caption{Tool-output tokens on the replayed conversations, change against the raw outputs: re-serialised as tracetrim
 writes JSON (default separators), fully minified, the 0.1 prudent projection, the 0.2 projection, the 0.2 projection
 against the re-serialised outputs (what removing fields adds), and Headroom.}

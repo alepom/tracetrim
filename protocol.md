@@ -303,7 +303,7 @@ The spend cap of 40 USD and its stop rule are unchanged.
 15. **Thermometers, gates and the billing keyword test (2026-11-05, external review).** The thermometers were
     implemented after the freeze and before Phase A, and differ from the list in Measures: C1 lacked the mean volume
     (added now) and its "topics covered" relied on the course's list of expected themes, which does not exist for this
-    task; the C1 note-link metric comes from the pilot's script. H2 is also evaluated on the protocol's list, with the
+    task; the C1 note-link metric comes from the pilot's script. H2 is also evaluated on the computable part of the protocol's list, with the
     same outcome in every arm. The gates are narrower than the wording above (C2 checks URLs, not titles; C1 skips
     keywords without a volume; C3 checks titles through the identifier), and the C4 thermometer is a keyword test;
     `experiments/gates_audit.py` and `experiments/c4_audit.py` measure what this leaves out, reported beside the

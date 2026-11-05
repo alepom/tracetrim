@@ -75,7 +75,8 @@ mechanisms, each traced to a specific field.
 \resizebox{\textwidth}{!}{\input{generated/table_phase_b.tex}}
 \caption{Phase B: replay of one run per case, only tool messages changed, two runs per arm. \emph{Tool tokens}:
 raw size, then change per arm. \emph{Gates}: runs in which every gate passed. \emph{H2}: the relative rule (gates passed in at least as many runs as raw, every thermometer median within
-the raw range), on the thermometers as implemented and on the protocol's list (deviation 15); \emph{meets} says
+the raw range), on the thermometers as implemented and on the computable part of the protocol's list, without its ``topics covered''
+(deviation 15); \emph{meets} says
 nothing about absolute quality (content gaps: no raw run passes the gates). $^{\ast}$Also outside the band on the
 strict test added after the fact (deviation 11).}
 \label{tab:phaseb}
@@ -120,8 +121,8 @@ a value written without a source, which a gate of this design cannot catch (devi
 The agents did use \texttt{expand}: a median of \PhaseCPrudentExpandi{} call per run in the editorial plan and
 \PhaseCPrudentExpandiv{} in billing support, where the agent recovered the hidden period end in two of three runs.
 In the third it did not, and passed the keyword test on \PhaseCMinRightPrudentiv{} tickets of five, fewer than any
-raw run (at least \PhaseCMinRightRawiv); under the stricter audit of the diagnoses both arms confirm
-\AuditCFourCPrudent{} and \AuditCFourCRaw{} (Table~\ref{tab:c4audit}). Run-to-run variation in these tasks is large
+raw run (at least \PhaseCMinRightRawiv); under the stricter rules both arms pass \AuditCFourCPrudent{}
+and \AuditCFourCRaw{} (Table~\ref{tab:c4audit}). Run-to-run variation in these tasks is large
 compared with the effects measured.
 
 A limit of this phase: the live loop stored what the agent received, so for the prudent arm the raw outputs of the

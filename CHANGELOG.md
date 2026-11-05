@@ -6,7 +6,7 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## 0.3.4
 
-Fixes from three internal reviews and one external review before publication.
+Fixes from three internal reviews and two external review rounds before publication.
 
 - **Proxy security**: DNS-rebinding protection always on (local addresses on the proxy's port, plus
   `--allowed-host`), also for `/report`; tokens compared in constant time; `--token` can come from
@@ -25,6 +25,11 @@ Fixes from three internal reviews and one external review before publication.
   search-data cases from the released records.
 - OAuth token files are created readable by the owner only; `tracetrim learn --v01`; Python 3.10
   compatibility of `tracetrim login`; `AutoTrim.expand` tolerates malformed arguments.
+- External review, round 2: the billing audit requires exact amounts, year and outcome (same counts); the full
+  minifier is the baseline in Figure 5, with the 0.2 projection measured against minified JSON; H2 on the
+  computable part of the protocol's list; abstract and conclusion speak of visible reuse and repaired failures, as an
+  exploratory study; the proxy returns untouched results as sent (`_meta` included) and keeps `_meta` when it trims;
+  the proxy's blindness to turns is documented.
 - External review: usage compared by model turn when traces record it (`"turn"`, also in `AutoTrim.output`),
   with no effect on the study's figures (deviation 14); thermometers and gates measured against the protocol's
   wording, with a stricter audit of the billing diagnoses and of what the gates skip (deviation 15); a full-minifier

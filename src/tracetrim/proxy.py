@@ -389,7 +389,7 @@ def _server(o: Options):
                 if learner:
                     learner.call(params.name, args, note)
                 live.call(params.name, note, note)
-                return types.CallToolResult(content=content, isError=is_error, structuredContent=structured)
+                return r                     # exactly as the server sent it, metadata included
             raw = "".join(getattr(c, "text", "") or "" for c in content)
             if rec:
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
@@ -403,8 +403,8 @@ def _server(o: Options):
             live.call(params.name, raw, text)
             if text == raw:
                 # Nothing trimmed: the server's result goes back untouched,
-                # structured content included.
-                return types.CallToolResult(content=content, structuredContent=structured)
+                # structured content and metadata included.
+                return r
             if structured is not None and trimmer.policy is not None:
                 # The structured copy is trimmed like the text, or it would carry
                 # back everything the projection removed.
@@ -413,8 +413,9 @@ def _server(o: Options):
                     structured = json.loads(projected)
                 except ValueError:
                     structured = None
+            meta = getattr(r, "meta", None)
             return types.CallToolResult(content=[types.TextContent(type="text", text=text)],
-                                        structuredContent=structured)
+                                        structuredContent=structured, **({"_meta": meta} if meta else {}))
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
     return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool), learner

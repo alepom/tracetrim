@@ -1,6 +1,6 @@
 Agents built on large language models read tool outputs written for programs: most of what an API returns is never
-visibly reused in the agent's answer, yet it is paid for at every turn. We learn, from an agent's own execution traces, which
-fields of each tool output it uses, and remove the rest. On five agents (three on real APIs, two on simulated
+visibly reused in the agent's answer, yet it is paid for at every turn. In an exploratory study, we learn from an agent's
+own execution traces which fields of each tool output it visibly reuses, and remove the rest. On five agents (three on real APIs, two on simulated
 servers following public OpenAPI descriptions), a projection learned from seven runs and applied to an unseen one
 removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of tool-output tokens on two of the agents with real APIs
 and \PhaseAPrudentSavingii{} on the third, and \PhaseAPrudentSavingiv{} and \PhaseAPrudentSavingv{} on the simulated
@@ -15,8 +15,8 @@ complete traces. Replays with projected outputs, under a
 protocol frozen in advance, located the failures precisely: values the agent transforms before writing them,
 fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second
 pre-registered study, on the same conversations, showed that two safeguards, keeping identifying fields and recognising transformed values,
-removed those losses while keeping savings of \StudyTwoVtwoTokensi{} and \StudyTwoVtwoTokensiii{} on those two
-real-API agents and \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} on the simulated ones, with one secondary
-measure of the editorial plan outside the raw arm's range; a post-hoc check
+repaired those failures while keeping savings of \StudyTwoVtwoTokensi{} and \StudyTwoVtwoTokensiii{} on those two
+real-API agents and \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} on the simulated ones, with the search-volume measures of the editorial plan (median; median and mean on the protocol's computable
+list) outside the raw arm's range; a post-hoc check
 found a fourth mechanism, translated values, not covered. We release the library, with a bilingual telemetry report
 and an MCP proxy that applies a reviewed projection in front of any server.

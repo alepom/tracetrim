@@ -14,8 +14,10 @@ only the agent's diagnosis and asks for the facts of the scenario
   T4  the refund of 49,00 is still pending
   T5  the invoice of 38,00 = plan 29,00 + 9,00 of extra storage
 
-It is still a set of rules, not a reading: it is reported beside the frozen
-test, not instead of it.
+Amounts must be whole ("29,00 €", never 129 or 29,50), the date must carry
+its year, and a failed double charge or a completed refund is rejected. It is
+still a set of rules, not a reading: reported beside the frozen test, not
+instead of it, as stricter rules rather than confirmation.
 """
 import json
 import re
@@ -25,27 +27,43 @@ from tracetrim.traces import load
 from .checks import final_json
 from .paths import ROOT, TRACES
 
-NEG = re.compile(r"\b(non|nessun[oa]?|senza|not|no)\b[^.;]{0,25}$", re.I)
+NEG = re.compile(r"\b(non|nessun[oa]?|senza|not|no)\b[^.;]{0,40}$", re.I)
+
+
+def amount(n: int) -> str:
+    """An amount in euro, written whole: "29,00 €", "€29", "29 euro"; never 129 or 29,50."""
+    v = rf"{n}(?:[.,]00)?"
+    # After the amount: no further digit, nor a decimal part (",50"); punctuation is fine.
+    return rf"(?<![\d.,]){v}\s*(?:€|euro\b|eur\b)|(?:€|eur\b)\s*{v}(?!\d|[.,]\d)"
+
+
+# Every pattern must match (not negated); no FORBID pattern may match.
 RULES = {
-    "T1": [r"(due|2|two)\s+addebit|doppi[oa]\s+addebit|addebitat[oa]\s+due\s+volte|duplicat|double", r"29"],
-    "T2": [r"fondi\s+insufficienti|insufficient|disponibilit[aà]\s+(di\s+fondi\s+)?insufficiente|saldo\s+insufficiente"],
-    "T3": [r"20\s+novembre|2026-11-20|20/11"],
-    "T4": [r"49", r"elaborazion|pending|in\s+corso|in\s+attesa|non\s+ancora\s+(completat|accreditat)"],
-    "T5": [r"38", r"\b9([.,]00)?\b", r"storage|spazio|50\s*gb"],
+    "T1": [r"(due|2|two)\s+addebit|doppi[oa]\s+addebit|addebitat[oa]\s+due\s+volte|duplicat|double", amount(29)],
+    "T2": [r"fondi\s+insufficienti|insufficient\s+funds|disponibilit[aà]\s+(di\s+fondi\s+)?insufficiente|saldo\s+insufficiente"],
+    "T3": [r"20\s+novembre\s+2026|2026-11-20|20/11/2026"],
+    "T4": [amount(49), r"elaborazion|pending|in\s+corso|in\s+attesa|non\s+ancora\s+(completat|accreditat)"],
+    "T5": [amount(38), amount(9), r"storage|spazio|50\s*gb"],
+}
+FORBID = {
+    # The double charge is of two successful charges; the refund is still open.
+    "T1": [r"\b(fallit[io]|rifiutat[io]|non\s+(sono\s+)?andat[io]\s+a\s+buon\s+fine|failed|declined)\b"],
+    "T4": [r"\b(rimborso|refund)\b[^.;]{0,40}\b(completat[oa]|accreditat[oa]|annullat[oa]|fallit[oa]|canceled|failed)\b"],
 }
 
 
-def passes(text: str, patterns) -> bool:
+def passes(text: str, patterns, forbid=()) -> bool:
     for pat in patterns:
         m = re.search(pat, text, re.I)
         if not m or NEG.search(text[:m.start()]):
             return False
-    return True
+    return not any(re.search(f, text, re.I) for f in forbid)
 
 
 def audit(answer) -> dict:
     tickets = {str(t.get("id")): t for t in (answer or {}).get("ticket") or []}
-    return {k: bool(tickets.get(k)) and passes(str(tickets[k].get("diagnosi", "")), RULES[k]) for k in RULES}
+    return {k: bool(tickets.get(k)) and passes(str(tickets[k].get("diagnosi", "")), RULES[k], FORBID.get(k, ()))
+            for k in RULES}
 
 
 def main():

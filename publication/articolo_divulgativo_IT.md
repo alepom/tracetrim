@@ -54,7 +54,8 @@ nei casi reali (fino al 17% nei simulati). Sulle stesse conversazioni, nei due c
 source di compressione del contesto (usata senza storia, in una configurazione aggressiva), toglie il 17% e il 28%; il
 filtro imparato il 59% e il 68% (il 46% e il 53% con le protezioni della versione 0.2). Un semplice minificatore, che
 non toglie nessun campo, arriva già al 16% e al 24%: è il termine di paragone minimo per qualunque compressione. Il terzo caso reale è l'eccezione:
-l'agente usa quasi tutto quello che riceve, e il filtro toglie il 12%.
+l'agente usa quasi tutto quello che riceve, il filtro toglie il 12% e un semplice minificatore fa meglio. Negli
+altri casi, anche partendo da JSON già minificato, il filtro toglie ancora tra il 35% e il 39% nei casi reali.
 
 **Il filtro va imparato dalle tracce complete.** Se si osservano solo le chiamate ai tool, cioè quello che vedrebbe
 un proxy MCP messo tra agente e server, i campi persi esplodono: nel complesso il filtro toglie un campo usato nel

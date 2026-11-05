@@ -1,14 +1,20 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-Agents read far more than they use, and what they use can be learned from their own traces: on four of the five
-agents studied, a projection learned from other runs removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of
+Agents read far more than they visibly reuse, and what they reuse in writing can be learned from their own traces:
+on four of the five agents studied, a projection learned from other runs removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of
 the tool-output tokens of a new run on two agents with real APIs, and \PhaseAPrudentSavingiv{} and
 \PhaseAPrudentSavingv{} on two simulated ones (re-serialisation alone, which removes no field, accounting for up to
 \ReserialAi{} and \ReserialAiv{}). Where it failed, it failed for a reason: the agent had transformed a value, used a field only
 to reason, or, deprived of an identifier, invented one. Two safeguards, keeping identifying fields and recognising
-transformed values, removed the losses that motivated them while keeping a saving of \StudyTwoVtwoTokensi{} and
+transformed values, repaired the specific failures that motivated them, in the conversations where they were found,
+while keeping a saving of \StudyTwoVtwoTokensi{} and
 \StudyTwoVtwoTokensiii{} on those real-API agents and \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} on the
-simulated ones; a fourth mechanism, translation, remains open.
+simulated ones; measured against outputs already minified, it still removed \VtwoVsMini{} and \VtwoVsMiniii{} of the
+tokens on those real-API agents and \VtwoVsMiniv{} and \VtwoVsMinv{} on the simulated ones, while on the agent that
+cites most of what it receives a minifier alone did better; a fourth mechanism, translation, remains open. In short: a projection learned from
+textual reuse can shrink already minified outputs in several workloads; the quality of the answers depends on
+information that this reuse makes only partly observable, and the safeguards correct some of the documented failures.
+A study on new tasks, models and runs is needed to say how often quality is preserved.
 The method is therefore best used as it is implemented: as a proposal learned from complete traces, reviewed by a
 person, applied with identifiers protected and with a way back for the agent when a cut was wrong.

@@ -20,31 +20,38 @@ test, not under the strict one.}
 \input{generated/fig_savings.tex}
 \caption{Tool-output tokens removed on the same conversations, per case: the learned projection without safeguards
 (0.1, Phase B), with them (0.2, Study 2), Headroom \HeadroomVersion{} configured to compress everything and run once
-per conversation, and re-serialisation alone (compact JSON, no field removed), the lossless part included in the
-tracetrim bars. Token counts only: the effect on answers is in Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
+per conversation, and a full minifier, which removes no field (tracetrim's own output is compact JSON with default
+separators; Table~\ref{tab:savingsdetail} separates the two). Token counts only: the effect on answers is in
+Tables~\ref{tab:phaseb} and~\ref{tab:study2}.}
 \label{fig:savings}
 \end{figure}
 
 \paragraph{Pre-registered hypotheses.} All four held as frozen. \emph{H5}: in billing support the \texttt{v02} arm
 passed the frozen keyword test on all five tickets in \StudyTwoFrozenAllRightVtwo{} runs, the period end included,
-where the 0.1 projection had lost it. The keyword tests accept a negated or contradictory sentence; a stricter
-audit of every diagnosis against the scenario's facts, added afterwards (deviation 15, Table~\ref{tab:c4audit}),
-confirms \AuditCFourDVtwo{} \texttt{v02} diagnoses against \AuditCFourDRaw{} raw ones, every \texttt{v02} miss
-being the decline reason discussed below. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
+where the 0.1 projection had lost it. The keyword tests accept a negated or contradictory sentence. Stricter
+rules, added afterwards (deviation 15, Table~\ref{tab:c4audit}), read only the diagnosis and require the scenario's
+exact amounts, the year and the outcome, rejecting negations: \AuditCFourDVtwo{} \texttt{v02} diagnoses pass them
+against \AuditCFourDRaw{} raw ones, every \texttt{v02} failure being the decline reason discussed below. These are
+still rules, not a reading of the answers; the difference is not a statistical result (five tickets per run are not
+independent observations), but it shows that the hypotheses held as frozen do not by themselves mean that quality was
+preserved. \emph{H6}: in the literature scan every \texttt{v02} run passed the gates
 (\StudyTwoVtwoGatesiii), so no identifier was invented; with 0.1 the prudent arm had passed in
 \PhaseBPrudentGatesiii{} runs. \emph{H7}: in CI triage every \texttt{v02} run found all four expected links,
 including the one lost in Phase B. \emph{H8} is a token count on fixed replays, so it is
 deterministic and equals the offline estimate given in the protocol: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
 \StudyTwoVtwoTokensiii, \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} of the tool-message tokens in the
 editorial plan, the literature scan, billing support and CI triage, against \StudyTwoHeadroomTokensi, \StudyTwoHeadroomTokensiii, \StudyTwoHeadroomTokensiv{} and
-\StudyTwoHeadroomTokensv{} for Headroom and \ReserialReplayi, \ReserialReplayiii, \ReserialReplayiv{} and
-\ReserialReplayv{} for re-serialisation alone (Figure~\ref{fig:savings}). The safeguards cost part of the saving (compare
+\StudyTwoHeadroomTokensv{} for Headroom and \ReserialMinReplayi, \ReserialMinReplayiii, \ReserialMinReplayiv{} and
+\ReserialMinReplayv{} for a full minifier that removes no field (Figure~\ref{fig:savings}). Measured against JSON
+already minified, the \texttt{v02} projection still removes \VtwoVsMini, \VtwoVsMiniii, \VtwoVsMiniv{} and
+\VtwoVsMinv{} of the tokens in these four cases (Table~\ref{tab:savingsdetail}). The safeguards cost part of the saving (compare
 \PhaseBPrudentTokensiii{} with \StudyTwoVtwoTokensiii{} in the literature scan) and bought back the three lost
 pieces of information.
 
 \paragraph{Outside the hypotheses.} In the editorial plan the \texttt{v02} arm \StudyTwoVtwoHoldsi{} under the band rule
 (Table~\ref{tab:study2}): its gates passed in every run, but the median search volume of the keywords it chose was
-\StudyTwoVtwoMedianVolumei, outside the raw arm's range (\StudyTwoRawBandVolumei). We read no direction into it: the
+\StudyTwoVtwoMedianVolumei, outside the raw arm's range (\StudyTwoRawBandVolumei), and on the computable part of the
+protocol's list so was the mean (\StudyTwoVtwoMeanVolumei{} against \StudyTwoRawBandMeanVolumei). We read no direction into it: the
 same projection followed by structural compression stayed in range (\StudyTwoVtwostructuralMedianVolumei), and in
 Phase B the prudent arm was in range (\PhaseBPrudentMedianVolumei) while the aggressive and structural arms were not
 (\PhaseBAggressiveMedianVolumei{} and \PhaseBStructuralMedianVolumei). With five runs per arm, one median out of range is
@@ -76,4 +83,6 @@ any other change to what the agent reads.
 \paragraph{The content-gap case.} The content-gap analyst failed the gates in most runs of every arm, the raw one
 included (\StudyTwoRawGatesii): when the search API returns a redirect link instead of a result's URL, the agent
 reconstructs the URL from the breadcrumb, against the instructions. The safeguards neither caused nor fixed this,
-and the projection saves little on this task (\StudyTwoVtwoTokensii).
+and the projection saves little on this task (\StudyTwoVtwoTokensii): less than a full minifier
+(\ReserialMinReplayii), which keeps every field. Where an agent cites most of what it receives, minifying is the
+better choice.
