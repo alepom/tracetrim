@@ -79,3 +79,17 @@ def test_report_names_project_and_author_and_no_missing_identifier():
         if value is not None:
             assert value in a
     assert "None" not in a
+
+
+def test_with_one_run_the_headline_does_not_claim_held_out_savings():
+    import json as _json
+    from tracetrim import report as rp
+    from tracetrim.traces import Trace, Event
+    from tracetrim.usage import analyse
+    t = Trace("one", [Event("prompt", text="go"),
+                      Event("call", text="{}", tool="t", output=_json.dumps({"a": "x" * 20}, indent=2)),
+                      Event("message", text="done")])
+    d = rp.compute(["one"], [analyse(t)])
+    page = rp.render_html(d, rp.suggestions(d))
+    assert "at least two runs" in page and "on runs it never saw" not in page
+    assert "Only 1 trace:" in page

@@ -138,6 +138,7 @@ def compute(names, usages, unseen="keep", protect_ids=True) -> dict:
             "raw": total_raw, "unescaped": sum(t["unescaped"] for t in tools.values()),
             "loo_prudent": sum(r.prudent for r in rows), "loo_aggressive": sum(r.aggressive for r in rows),
             "loo_trimmed_calls": sum(r.trimmed_calls for r in rows), "loo_misses": sum(r.misses for r in rows),
+            "loo_misses_prudent": sum(r.misses_prudent for r in rows),
             "errors": sum(t["errors"] for t in tools.values()),
             "duplicates": sum(t["duplicates"] for t in tools.values()),
         },
@@ -177,14 +178,14 @@ def suggestions(d: dict) -> list[dict]:
 
     if T["traces"] < MIN_TRACES:
         add("few-traces", "warning", None,
-            f"Only {T['traces']} traces: learned projections are unstable. Collect at least {MIN_TRACES}-10 runs of the same task before applying one.",
-            f"Solo {T['traces']} tracce: le proiezioni apprese sono instabili. Raccogli almeno {MIN_TRACES}-10 esecuzioni dello stesso compito prima di applicarne una.")
+            f"Only {T['traces']} trace{'' if T['traces'] == 1 else 's'}: learned projections are unstable. Collect at least {MIN_TRACES}-10 runs of the same task before applying one.",
+            f"Solo {T['traces']} tracc{'ia' if T['traces'] == 1 else 'e'}: le proiezioni apprese sono instabili. Raccogli almeno {MIN_TRACES}-10 esecuzioni dello stesso compito prima di applicarne una.")
 
     esc = 1 - T["unescaped"] / total
     if esc >= ESCAPE_MIN_SAVING:
         add("escapes", "quick-win", None,
-            f"Tool outputs contain ASCII escapes (\\uXXXX). Re-serialising them as UTF-8 saves {_n(T['raw'] - T['unescaped'], 'en')} tokens ({_p(esc, 'en')}), with no loss of information.",
-            f"Gli output dei tool contengono escape ASCII (\\uXXXX). Riserializzarli in UTF-8 fa risparmiare {_n(T['raw'] - T['unescaped'], 'it')} token ({_p(esc, 'it')}), senza perdita di informazione.")
+            f"Tool outputs are indented or contain ASCII escapes (\\uXXXX). Writing them as compact UTF-8 JSON saves {_n(T['raw'] - T['unescaped'], 'en')} tokens ({_p(esc, 'en')}), with no loss of information.",
+            f"Gli output dei tool sono indentati o contengono escape ASCII (\\uXXXX). Riscriverli come JSON UTF-8 compatto fa risparmiare {_n(T['raw'] - T['unescaped'], 'it')} token ({_p(esc, 'it')}), senza perdita di informazione.")
 
     if T["duplicates"]:
         add("duplicates", "quick-win", None,
@@ -317,7 +318,14 @@ L = {
     "project": ("Project and author", "Progetto e autore"),
     "hero": ("of tool-output tokens removed by the prudent projection, on runs it never saw",
              "dei token restituiti dai tool tolti dalla proiezione prudente, su run mai visti"),
+    "misses_prudent": ("held-out misses, prudent projection (the one applied)",
+                       "mancati sui run esclusi, proiezione prudente (quella applicata)"),
     "hero_sub": ("aggressive projection", "proiezione aggressiva"),
+    # With one run there is nothing to hold out: the saving is re-serialisation only.
+    "hero_one": ("of tool-output tokens saved so far by writing compact JSON alone, no field removed: "
+                 "learning and testing a projection needs at least two runs",
+                 "dei token restituiti dai tool risparmiati finora solo riscrivendo il JSON compatto, senza togliere "
+                 "campi: per imparare e verificare una proiezione servono almeno due esecuzioni"),
     "where": ("Where the tokens go", "Dove vanno i token"),
     "where_sub": ("Tokens returned by each tool, and the part the prudent projection removes on held-out runs.",
                   "Token restituiti da ogni tool, e la parte che la proiezione prudente toglie sui run esclusi."),
@@ -466,8 +474,10 @@ def render_html(d: dict, sugg: list[dict]) -> str:
     tiles_html = "".join(
         f'<div class="tile"><div class="v">{_num(v)}</div><div class="k">{_t(k)}'
         f'{f" <b>{d_:+.0%}</b>" if d_ is not None else ""}</div></div>' for k, v, d_ in tiles)
-    tiles_html += (f'<div class="tile"><div class="v">{T["loo_misses"]}/{T["loo_trimmed_calls"]}</div>'
-                   f'<div class="k">{_t("misses")}</div></div>')
+    # The tile is about the projection the config applies (prudent); the
+    # aggressive one's misses are on the line under the headline.
+    tiles_html += (f'<div class="tile"><div class="v">{T.get("loo_misses_prudent", 0)}/{T["loo_trimmed_calls"]}</div>'
+                   f'<div class="k">{_t("misses_prudent")}</div></div>')
 
     saving = 1 - T["loo_prudent"] / (T["raw"] or 1)
     agg = 1 - T["loo_aggressive"] / (T["raw"] or 1)
@@ -480,8 +490,11 @@ def render_html(d: dict, sugg: list[dict]) -> str:
                if auto["switched_off"] else "")
         auto_html = (f'<div class="autobox"><b>{_t("auto_title")}</b> · {state}{off}'
                      f' · <span class="method">{html.escape(auto["updated"])}</span></div>')
-    hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero")}</div>'
-            f'<div class="hs">{_t("hero_sub")}: −{agg:.0%} · {_t("misses")}: {T["loo_misses"]}/{T["loo_trimmed_calls"]}</div></div>')
+    if T["traces"] < 2:
+        hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero_one")}</div></div>')
+    else:
+        hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero")}</div>'
+                f'<div class="hs">{_t("hero_sub")}: −{agg:.0%}, {_t("misses")}: {T["loo_misses"]}/{T["loo_trimmed_calls"]}</div></div>')
 
     def act(a):
         en, it = ACTION_TEXT[a["type"]]
@@ -602,8 +615,8 @@ main {{ overflow-wrap:break-word; }}
 pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px 12px; overflow-x:auto; }}
 </style></head>
 <body class="en"><main>
-<div class="bar"><button class="en" onclick="document.body.className='en'">EN</button>
-<button class="it" onclick="document.body.className='it'">IT</button></div>
+<div class="bar"><button class="en" onclick="setLang('en')">EN</button>
+<button class="it" onclick="setLang('it')">IT</button></div>
 <h1>{_t("title")}</h1><p class="sub">{_t("subtitle")}</p>
 <p class="byline">{html.escape(d["generator"]["name"])} {html.escape(d["generator"]["version"])} · {html.escape(d["generator"]["author"])}</p>
 {auto_html}{hero}<div class="tiles">{tiles_html}</div>
@@ -621,6 +634,18 @@ pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; 
 <p class="method">{html.escape(d["generated"])} · unseen={html.escape(d["unseen"])}</p>
 </main><div id="tip" hidden></div>
 <script>
+// The chosen language survives the live report's automatic refresh: kept in the
+// URL fragment (a refresh reloads the same URL) and, where allowed, in storage.
+function setLang(l) {{
+  document.body.className = l;
+  try {{ history.replaceState(null, '', '#' + l); }} catch (e) {{}}
+  try {{ localStorage.setItem('tracetrim-lang', l); }} catch (e) {{}}
+}}
+(function () {{
+  var l = (location.hash || '').slice(1);
+  if (l !== 'en' && l !== 'it') {{ try {{ l = localStorage.getItem('tracetrim-lang'); }} catch (e) {{ l = null; }} }}
+  if (l === 'en' || l === 'it') document.body.className = l;
+}})();
 (function () {{
   var tip = document.getElementById('tip');
   function show(el, x, y) {{

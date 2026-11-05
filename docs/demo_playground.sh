@@ -11,7 +11,7 @@
 #   docs/demo_playground.sh --headroom    # tracetrim also applies Headroom (experimental)
 #
 # Environment (optional, recommended): DEMO_TOKEN (same token for both servers),
-# NGROK_DOMAIN (static domain, used for the tracetrim URL so it never changes).
+# NGROK_DOMAIN (only on paid plans: a reserved domain; the free plan assigns a fixed one by itself).
 #
 # Everything stays up until Ctrl+C: the scenes are switched in the Playground,
 # not here. In this terminal, [billing] lines show each call reaching the
@@ -79,7 +79,12 @@ for _ in $(seq 30); do
   sleep 1
 done
 if [ -z "$URL" ]; then
-  echo "ngrok did not open the tunnel: see out/demo/ngrok.log"; exit 1
+  echo "ngrok did not open the tunnel:"
+  grep -o 'err="[^"]*' out/demo/ngrok.log | tail -1 | cut -c6- | head -c 300; echo
+  if [ -n "${NGROK_DOMAIN:-}" ]; then
+    echo "NGROK_DOMAIN is set to '$NGROK_DOMAIN': on the free plan leave it unset (unset NGROK_DOMAIN)."
+  fi
+  exit 1
 fi
 HOST=${URL#https://}
 
