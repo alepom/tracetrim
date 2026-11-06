@@ -1,5 +1,5 @@
-**Agents read more than they use.** tracetrim learns, from your agent's own runs, which fields of each
-tool output the agent actually uses, and trims the rest — with a telemetry report you can read and a
+**Agents read more than they visibly reuse.** tracetrim learns, from your agent's own runs, which fields of each
+tool output the agent reuses in what it writes, and trims the rest — with a telemetry report you can read and a
 way back (`expand`) for anything it removed.
 
 Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Software and data:
@@ -16,24 +16,22 @@ Paper: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934) · Sof
   `tracetrim login`.
 - **Hosted agents** (OpenAI Playground, Responses API): the proxy over HTTP with a bearer token.
 
-### What the study found
+### What the exploratory study found
 
 - On held-out runs, a learned projection removed 63% and 70% of tool-output tokens on two of the three
-  agents with real APIs (12% on the third) and 69% and 77% on the two simulated ones; re-serialising the
-  JSON alone, which removes nothing, accounts for up to 13% (real) and 17% (simulated). On the same
-  conversations, the same two real-API agents: 59–68% (0.1), 46–53% (0.2), 17–28% for Headroom (stateless,
-  aggressive setting), 16–24% for a plain minifier that removes no field; simulated: 69–77%, 57–61%, 31–33%,
-  18–33%. Against JSON already minified, the 0.2 projection still removes 39% and 35% (real) and 36% and
-  53% (simulated); on the agent that cites most of what it receives, a minifier alone does better.
-- Learning from tool calls alone (what a gateway sees) missed a used field in 49% of held-out calls of
-  the three agents on real APIs, against 4% when the learner also sees the final answer.
+  agents with real APIs (12% on the third) and 69% and 77% on the two simulated ones. Against JSON already
+  minified, the 0.2 projection still removes 39% and 35% (real) and 36% and 53% (simulated); on the agent
+  that cites most of what it receives, a minifier alone does better. On the same conversations, Headroom
+  (stateless, aggressive setting) removed 17–28% on those two real-API agents and 31–33% on the simulated ones.
+- Learning from tool calls alone (what a gateway sees) missed a used field in 49% of the held-out
+  structured calls it trims (156/317) on the three real-API agents, against 4% when the learner also sees
+  the final answer.
 - Where it fails: values the agent transforms, fields used only to reason, and — without an id
-  field — agents inventing ids. Identifiers are always kept since 0.2.
+  field — agents inventing ids. Identifiers are always kept since 0.2. The safeguards repaired the failures
+  found, on the same conversations; how often quality is preserved on new tasks and models is still open.
 
 The studies ran on 0.1 and 0.2; the automatic mode, the multi-server proxy, OAuth and function calling
 came after them and were checked end to end with a real agent, not evaluated under a protocol.
+0.3.4 includes the fixes of three internal reviews and three external review rounds.
 
-0.3.4 includes the fixes of three internal reviews and one external review (proxy security, correctness, and
-the paper): see the changelog.
-
-See [CHANGELOG.md](CHANGELOG.md) for the changes by version.
+Changes by version: [CHANGELOG.md](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md).

@@ -68,7 +68,7 @@ The author set the research question and the constraints of the study; an AI cod
 |---|---|
 | Files | `2_software_and_data/tracetrim_software.zip`, `2_software_and_data/tracetrim_dataset.zip`, `SHA256SUMS.txt` |
 | Resource type | Software |
-| Title | `tracetrim 0.3.4: learn which fields of tool outputs an agent uses, and trim the rest (code, protocols and data)` |
+| Title | `tracetrim 0.3.4: learn which fields of tool outputs an agent visibly reuses, and trim the rest (code, protocols and data)` |
 | Creators | come sopra |
 | License | MIT (codice); nel campo descrizione si indica CC BY 4.0 per dati e documentazione (vedi `LICENSES.md`) |
 | Version | `0.3.4` |

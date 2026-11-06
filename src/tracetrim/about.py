@@ -7,7 +7,7 @@ published, which happens together with the repository becoming public.
 """
 NAME = "tracetrim"
 VERSION = "0.3.4"
-DESCRIPTION = "Learn which fields of tool outputs an agent actually uses, from its traces, and trim the rest."
+DESCRIPTION = "Learn which fields of tool outputs an agent visibly reuses, from its traces, and trim the rest."
 
 AUTHOR = "Alessio Pomaro"
 AUTHOR_ROLE = "Independent Researcher"

@@ -1,4 +1,4 @@
-"""Learn which fields of tool outputs an agent actually uses, and trim the rest."""
+"""Learn which fields of tool outputs an agent visibly reuses, and trim the rest."""
 from .about import VERSION as __version__
 from .projection import Projection, learn, project
 from .traces import Event, Trace, load

@@ -1,7 +1,7 @@
 # tracetrim
 
-**Agents read more than they use.** tracetrim learns, from your agent's own traces, which
-fields of each tool output the agent actually uses, and helps you remove the rest — with a
+**Agents read more than they visibly reuse.** tracetrim learns, from your agent's own traces, which
+fields of each tool output the agent reuses in what it writes, and helps you remove the rest — with a
 telemetry report you can read, a configuration you can review, and an MCP proxy that applies it
 in front of any server without changing your agent.
 

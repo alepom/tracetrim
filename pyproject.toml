@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tracetrim"
 version = "0.3.4"
-description = "Learn which fields of tool outputs an agent actually uses, from its traces, and trim the rest."
+description = "Learn which fields of tool outputs an agent visibly reuses, from its traces, and trim the rest."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Alessio Pomaro" }]

@@ -12,7 +12,7 @@ Two sources, because what you can observe depends on where you sit:
   calls       later tool-call arguments only: what an MCP proxy can see
 
 On the traces this was developed on, `calls` sees about a fifth of the
-fields the agent actually uses. Learn offline from full traces; apply
+fields the agent visibly reuses. Learn offline from full traces; apply
 anywhere, an MCP proxy included.
 
 Fields never seen while learning pass through by default (`unseen="keep"`):
