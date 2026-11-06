@@ -21,4 +21,5 @@ dataset/
 publication/packages/
 .private/
 build/
+dist/
 *:Zone.Identifier

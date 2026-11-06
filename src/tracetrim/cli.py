@@ -1,4 +1,4 @@
-"""tracetrim — learn from agent traces which tool-output fields are used.
+"""tracetrim — learn from agent traces which tool-output fields are visibly reused.
 
   tracetrim learn   traces/*.jsonl -o projection.json [--mode prudent|aggressive] [--source full|calls]
   tracetrim apply   projection.json|report.config.json TOOL < output.json

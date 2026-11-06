@@ -1,12 +1,11 @@
 """Project and author data: one source for the report, the package and, later,
 CITATION.cff and the Zenodo records.
 
-Identifiers stay None until they are reserved, and None is never shown. The
-DOIs below are reserved on Zenodo and resolve once the records are
-published, which happens together with the repository becoming public.
+Identifiers stay None until they exist, and None is never shown. The DOIs
+below are published on Zenodo and resolve.
 """
 NAME = "tracetrim"
-VERSION = "0.3.4"
+VERSION = "0.3.5"
 DESCRIPTION = "Learn which fields of tool outputs an agent visibly reuses, from its traces, and trim the rest."
 
 AUTHOR = "Alessio Pomaro"

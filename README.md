@@ -25,11 +25,12 @@ anything that matters.
 ## Install
 
 ```bash
-pip install "tracetrim[measure,proxy] @ git+https://github.com/alepom/tracetrim"
-pip install "tracetrim[headroom] @ git+https://github.com/alepom/tracetrim"   # + Headroom backend (experimental, heavy)
+pip install "tracetrim[measure,proxy]"
+pip install "tracetrim[headroom]"   # + Headroom backend (experimental, heavy)
 ```
 
-Python 3.10+. From a clone: `pip install -e ".[measure,proxy,test]"`. Not on PyPI yet. To reproduce the
+Python 3.10+. From GitHub: `pip install "tracetrim[measure,proxy] @ git+https://github.com/alepom/tracetrim"`.
+From a clone: `pip install -e ".[measure,proxy,test]"`. To reproduce the
 study's numbers, figures and analyses: `pip install -e ".[measure,proxy,test]"` is enough (they need no agent SDK);
 to run new agent sessions, also `pip install -r requirements-study.txt` (the versions used, OpenAI SDK included).
 
@@ -281,7 +282,7 @@ with `PYTHONPATH=src`. The traces are in the Zenodo dataset: unzip it at the roo
 data cannot be redistributed, so their analyses run where they were recorded and their results are in
 `results/`; `python -m experiments.misses_from_derived` recomputes their misses from the records). The simulated
 servers download their pinned OpenAPI descriptions on first use. Changes by version are in
-[CHANGELOG.md](CHANGELOG.md).
+[CHANGELOG.md](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md).
 
 ## Citation
 

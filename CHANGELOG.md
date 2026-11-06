@@ -4,6 +4,16 @@ All versions were developed on 2026-11-04, together with the study described in 
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 0.3.5
+
+Published on PyPI. No change in behaviour from 0.3.4, the version archived on Zenodo.
+
+- Install with `pip install "tracetrim[measure,proxy]"`; installing from GitHub stays as an alternative.
+- Package metadata: keywords, classifiers, the software DOI and an SPDX license expression; the
+  README's links are absolute, so they work on the PyPI page.
+- Wording: descriptions, CLI help and the report's footer say "visibly reuses", as the paper does
+  (detected textual reuse, not use).
+
 ## 0.3.4
 
 Fixes from three internal reviews and two external review rounds before publication.
