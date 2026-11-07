@@ -5,6 +5,12 @@ fields of each tool output the agent reuses in what it writes, and helps you rem
 telemetry report you can read, a configuration you can review, and an MCP proxy that applies it
 in front of any server without changing your agent.
 
+**tracetrim in two minutes** (video, no sound):
+
+https://github.com/user-attachments/assets/66d7ac8b-1541-4ee3-89b4-4e6fbfe8d043
+
+
+
 It comes with a [study](https://doi.org/10.5281/zenodo.23953934), with protocols frozen before every run, of
 where this works and where it fails. In short:
 
