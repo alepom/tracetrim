@@ -45,10 +45,17 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
 - **Harness of the new measures**: `python -m experiments.run --v04 schedule | next | dry-run DIR`, with the
   stop rules of the protocol and a dry run that spends nothing. The runs are kept as a data set for later
   offline evaluations ([docs/traces-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/traces-v04.md)).
-- **First measure of the skill's strategy** (E1 of `protocol-v04.md`, `results/v04/e1.json`): on
-  `gpt-5.6-terra`, 50 runs, the strategy text did not reduce turns, tool calls or cost, and did not override the
-  parameter values the prompts prescribe. That model already issues calls together in about three turns out of
-  four; the effect on models that do not was not measured. The strategy stays off by default.
+- **First measures of the new functions** ([docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md)):
+  100 runs of `gpt-5.6-terra` under `protocol-v04.md`, frozen before the first paid run. Small experiments on
+  one model, reported with the hypotheses stated beforehand.
+  - *The skill's strategy* (E1, 50 runs): it did not reduce turns, tool calls or cost, and did not override the
+    parameter values the prompts prescribe. That model already issues calls together in about three turns out
+    of four; the effect on models that do not was not measured. The strategy stays off by default.
+  - *Adaptive learning* (E2, 50 runs): a field the agent recovers with `expand` and writes is kept from the
+    next run, in 16 cases of 16. Promotion and sampling made no measurable difference: the situations they are
+    for did not occur. Both stay off by default.
+  - *Trimming*, in the same runs: tool-output tokens down 44% and the cost of a run down 30% and 24% on the two
+    cases with trimmed arms, with the gates passed in 5 runs of 5.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists

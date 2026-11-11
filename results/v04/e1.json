@@ -3,27 +3,27 @@
   "tokens": "tiktoken o200k_base; billed tokens from the API usage",
   "dry_run": false,
   "dataforseo": {
-    "runs": 29,
-    "calls": 587,
+    "runs": 39,
+    "calls": 813,
     "calls_per_tool": {
-      "dataforseo_labs_bulk_keyword_difficulty": 19,
-      "dataforseo_labs_google_keyword_ideas": 19,
-      "dataforseo_labs_google_keyword_suggestions": 82,
-      "dataforseo_labs_google_ranked_keywords": 20,
-      "dataforseo_labs_google_related_keywords": 10,
-      "dataforseo_labs_google_relevant_pages": 19,
-      "dataforseo_labs_search_intent": 19,
-      "kw_data_google_ads_search_volume": 44,
-      "kw_data_google_trends_explore": 85,
+      "dataforseo_labs_bulk_keyword_difficulty": 29,
+      "dataforseo_labs_google_keyword_ideas": 29,
+      "dataforseo_labs_google_keyword_suggestions": 126,
+      "dataforseo_labs_google_ranked_keywords": 30,
+      "dataforseo_labs_google_related_keywords": 12,
+      "dataforseo_labs_google_relevant_pages": 29,
+      "dataforseo_labs_search_intent": 30,
+      "kw_data_google_ads_search_volume": 69,
+      "kw_data_google_trends_explore": 129,
       "on_page_content_parsing": 36,
-      "serp_organic_live_advanced": 193,
-      "serp_youtube_organic_live_advanced": 41
+      "serp_organic_live_advanced": 228,
+      "serp_youtube_organic_live_advanced": 66
     },
     "calls_per_api": {
-      "keywords_data": 129,
-      "labs": 188,
+      "keywords_data": 198,
+      "labs": 285,
       "onpage": 36,
-      "serp": 234
+      "serp": 294
     },
     "rates": {
       "keywords_data": {
@@ -47,7 +47,7 @@
         "usd_per_call": 0.00155
       }
     },
-    "usd_estimated": 7.8674
+    "usd_estimated": 11.7806
   },
   "e1": {
     "C1": {

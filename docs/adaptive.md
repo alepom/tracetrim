@@ -3,7 +3,10 @@
 How automatic mode corrects a projection while the agent works: evidence from `expand`, promotion of
 fields, sampling without filter. Unreleased: this page describes the branch
 `feat/adaptive-learning-mcp-skills`. Everything here was checked by tests and by an offline demo with a
-scripted agent; **none of it has been measured with a model yet**.
+scripted agent, and then measured on one model in a small experiment: [measures-v04.md](measures-v04.md).
+In short: fields the agent recovers and writes come back by themselves; promotion and sampling made no
+measurable difference there, and what they are for (a value used and never written, a field never asked
+for) did not occur. Both stay off by default.
 
 Promotion and sampling are off unless you turn them on. Evidence is always recorded.
 
@@ -165,6 +168,9 @@ Before the change the saving on this tool was 61%.
 
 - Evidence from `expand` exists only if the agent calls it. Sampling is the only route to a field the
   agent never asks for, and it costs tokens.
+- An agent has another way to a removed field: calling another tool that returns it and is not trimmed.
+  It was seen in the measures. It leaves no `expand` evidence, though ordinary learning still sees the
+  value written; on an API billed per call it has a price.
 - Reuse is detected textual reuse, with the blind spots of usage detection.
 - One run at a time per proxy or `AutoTrim`.
 - An `expand` on a result of an earlier run is recorded as requested and recovered; reuse is not
