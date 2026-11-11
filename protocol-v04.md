@@ -1,5 +1,7 @@
 # Protocol of the measures on the adaptive work (v0.4)
 
+Frozen on 2026-11-11 at commit `bfe25b3`, approved by the author (REVISIONE-01c).
+
 Status: **frozen on 2026-11-11**, approved by the author, before any paid run. The commit that froze it is
 recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
 at the bottom, dated, with the reason.
