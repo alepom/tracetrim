@@ -101,6 +101,7 @@ def test_the_token_counts_in_the_documentation_are_the_measured_ones():
     doc = (Path(__file__).resolve().parent.parent / "docs" / "skill.md").read_text()
     assert f"| {base} |" in doc and f"| +{full - base} ({full} in all) |" in doc
     assert f"({count(skill.skill_md())} and {count(skill.skill_md(strategy=True))})" in doc
+    assert f"points to the skill ({count(skill.pointer())} tokens)" in doc
 
 
 def test_the_tool_descriptions_are_enough_without_the_skill():

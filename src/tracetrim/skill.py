@@ -57,6 +57,13 @@ def frontmatter(strategy: bool = False, done: bool = True) -> dict:
     }
 
 
+def pointer(done: bool = True) -> str:
+    """One sentence for the server's MCP `instructions`: the only way a host
+    that does not load skills learns that the skill exists."""
+    tools = "`expand` and `tracetrim_done`" if done else "`expand`"
+    return f"How to use {tools} is explained in the resource {URI}: read it before you first use them."
+
+
 def _yaml(d: dict, indent: str = "") -> str:
     # Strings as JSON strings, which are valid YAML: no YAML library needed,
     # and the frontmatter served is exactly the one listed.

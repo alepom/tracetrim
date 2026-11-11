@@ -42,6 +42,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import skill
+from .about import VERSION
 from .contract import ToolCall, ToolResult
 from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
@@ -210,6 +211,13 @@ def publish_skill(server, *, strategy: bool, done: bool) -> dict:
     The SDK this was written against (mcp 2.3.0) has no Skills support yet:
     the two methods are registered as plain request handlers. The proxy's
     resources are this one file; upstream resources are not proxied.
+
+    Extensions are announced in `server/discover` (protocol 2026-07-28). Hosts
+    on the earlier protocol negotiate them in the `initialize` handshake
+    instead (MCP Inspector 2.13.0 does), in a `capabilities.extensions` field
+    that is outside the published schema of those versions: the SDK drops it
+    from the reply, so a middleware puts it back, and only for a client that
+    declared the extension itself, the one case in which the field is expected.
     """
     from mcp import types
     from mcp.shared.exceptions import MCPError
@@ -253,6 +261,16 @@ def publish_skill(server, *, strategy: bool, done: bool) -> dict:
     server.add_request_handler("skills/list", types.PaginatedRequestParams, skills_list)
     server.add_request_handler("skills/get", GetSkillParams, skills_get)
     server.extensions[skill.EXTENSION] = {}          # no optional feature: `directoryRead` stays off
+
+    async def announce_in_handshake(ctx, call_next):
+        result = await call_next(ctx)
+        if ctx.method == "initialize" and isinstance(result, dict):
+            asked = ((ctx.params or {}).get("capabilities") or {}).get("extensions") or {}
+            if skill.EXTENSION in asked and isinstance(result.get("capabilities"), dict):
+                result["capabilities"].setdefault("extensions", {})[skill.EXTENSION] = {}
+        return result
+
+    server.middleware.append(announce_in_handshake)
     return entry
 
 
@@ -412,9 +430,13 @@ def _server(o: Options):
                                         structuredContent=structured, **({"_meta": meta} if meta else {}))
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
-    server = Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool)
     # The skill explains expand and tracetrim_done: published whenever expand is offered.
-    if o.skill and offers_expand:
+    publish = o.skill and offers_expand
+    server = Server("tracetrim-proxy", version=VERSION, lifespan=upstream, on_list_tools=list_tools,
+                    on_call_tool=call_tool,
+                    # One sentence, for hosts that show a server's instructions and do not load skills.
+                    instructions=skill.pointer(done=learner is not None) if publish else None)
+    if publish:
         entry = publish_skill(server, strategy=o.skill_strategy, done=learner is not None)
         log(f"skill: {entry['uri']} · {entry['resources'][0]['digest'][:19]}… · strategy "
             f"{'on' if o.skill_strategy else 'off'}")

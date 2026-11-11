@@ -30,6 +30,8 @@ def rows() -> dict:
         "function_calling_base": count(skill.text(done=False)),
         "function_calling_base_strategy": count(skill.text(strategy=True, done=False)),
         "skills_list_entry_base": count(json.dumps(skill.entry())),
+        "server_instructions": count(skill.pointer()),
+        "server_instructions_fixed_config": count(skill.pointer(done=False)),
         "tool_definition_tracetrim_done": count(json.dumps(DONE)),
         "tool_definition_expand": count(json.dumps(EXPAND)),
     }

@@ -57,6 +57,8 @@ which state the contract in one sentence each, and the one line for the instruct
 | Request | Reply |
 | - | - |
 | `server/discover` | capabilities with `resources` and `extensions["io.modelcontextprotocol/skills"] = {}` (no `directoryRead`) |
+| `initialize` | the same capabilities; `extensions` only when the client declared the extension in its own capabilities |
+| either | `instructions`: one sentence that points to the skill (38 tokens), and `serverInfo.version` |
 | `skills/list` | one entry: `uri`, the whole `frontmatter`, and `resources` with `uri`, `digest` (`sha256:` of the bytes served) and `size` |
 | `skills/get` | the same entry, by URI |
 | `resources/read` | the `SKILL.md`, `text/markdown` |
@@ -71,9 +73,16 @@ digest then changes with it: a host that kept the old entry fails verification o
 refreshes it with `skills/get`, as the extension prescribes; a skill already in the model's context
 stays as it was loaded until the host reloads it. There is no change notification.
 
-**Protocol versions.** The extension is defined for protocol `2026-07-28` and later. With the earlier
-`initialize` handshake the MCP SDK does not advertise extensions: the `SKILL.md` is then an ordinary
-resource, and the tool descriptions carry the contract.
+**Protocol versions.** Extensions are part of the protocol from `2026-07-28`, where the server
+announces them in `server/discover`. On `2025-11-25` and earlier, hosts negotiate them in the
+`initialize` handshake, in a `capabilities.extensions` field that is outside the published schema of
+those versions (MCP Inspector does this). The proxy answers in kind, but only to a client that declared
+the extension: the others never see a field they did not ask for. The `mcp` 2.3.0 SDK drops the field
+from an `initialize` reply, so the proxy puts it back with a middleware.
+
+**Hosts that do not load skills.** They see the `SKILL.md` as an ordinary resource, and the server's
+`instructions` say in one sentence that it exists and what it is for. Whether a host shows a server's
+instructions to its model is up to the host; the tool descriptions carry the contract in any case.
 
 **SDK.** Written against `mcp` 2.3.0, which has no Skills support (it is merged upstream and not
 released): `skills/list` and `skills/get` are registered as plain request handlers.
@@ -86,8 +95,19 @@ released): `skills/list` and `skills/get` are registered as plain request handle
 | The client sees resources and has no way to load a skill | the `mcp` 2.3.0 Python client on protocol `2025-11-25` | the skill is listed as a resource; the run is closed and `expand` works from the tool descriptions alone |
 | The session ends without `tracetrim_done` | both | the run is kept for telemetry only, nothing is learned from it |
 
-These are tests of the server (`tests/test_proxy_skill.py`). **No agent host was tried**: whether a
-given host loads the skill on its own, and whether its model then follows it, is not shown here.
+| A host that negotiates extensions in `initialize` | the handshake of MCP Inspector CLI 2.13.0, replayed byte for byte in a test | the extension is announced, `skills/list` and `skills/get` answer |
+
+These are tests of the server (`tests/test_proxy_skill.py`). **Activation in a host was not tried**:
+no agent host was connected, so whether a given host loads the skill on its own, and whether its model
+then follows it, is not shown here.
+
+MCP Inspector CLI 2.13.0 was run once against an earlier state of this branch and reported
+`skills_unsupported`: the proxy did not announce the extension in `initialize`. That is fixed and
+covered by the test above; the run with Inspector itself has to be repeated:
+
+```bash
+npx -y @modelcontextprotocol/inspector --cli .venv/bin/python -m tracetrim.cli proxy --upstream-cmd ".venv/bin/python tests/fixtures/meta_server.py" --auto /tmp/tt-inspector --quiet --method skills/list --verify
+```
 
 ## Closing a run
 

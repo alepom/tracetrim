@@ -15,6 +15,7 @@ skill on its own is a property of that host, and is not tested here.
 import asyncio
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,7 @@ from mcp.shared.exceptions import MCPError
 from pydantic import TypeAdapter
 
 from tracetrim import skill
+from tracetrim.about import VERSION
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -156,6 +158,7 @@ def test_with_a_fixed_config_the_skill_leaves_tracetrim_done_out(tmp_path):
 def test_no_skill_is_published_when_switched_off_or_when_nothing_is_trimmed(tmp_path, flags):
     async def script(c, s):
         assert c.server_capabilities.resources is None and not c.server_capabilities.extensions
+        assert c.instructions is None
         with pytest.raises(MCPError) as e:
             await request(s, "skills/list")
         return e.value.error.code, [t.name for t in (await c.list_tools()).tools]
@@ -169,8 +172,11 @@ def test_no_skill_is_published_when_switched_off_or_when_nothing_is_trimmed(tmp_
 
 def test_a_client_without_skill_support_sees_a_resource_and_the_tools_are_enough(tmp_path):
     async def script(init, s):
-        # The earlier protocol has no extensions: the skill is not announced as one.
+        # This client did not declare the extension, so the handshake does not announce it;
+        # the server's instructions are then the only pointer to the skill.
         assert init.capabilities.resources is not None and not init.capabilities.extensions
+        assert init.instructions == skill.pointer() and skill.URI in init.instructions
+        assert init.server_info.version == VERSION
         [res] = (await s.list_resources()).resources
         tools = {t.name: t.description for t in (await s.list_tools()).tools}
         # The client never reads the skill: the descriptions alone carry the contract.
@@ -199,6 +205,52 @@ def test_reading_the_skill_as_a_plain_resource_is_not_part_of_a_run(tmp_path):
     assert handshake(auto(tmp_path), script) == skill.skill_md()
     run = [json.loads(line) for line in (tmp_path / "work" / "traces" / "run-0001.jsonl").open()]
     assert [(e["kind"], e.get("tool")) for e in run] == [("call", "volumes"), ("message", None)]
+
+
+def raw_handshake(flags, client_capabilities, then=()):
+    """Speak JSON-RPC over stdio without the SDK: exactly what a host sends."""
+    p = params(*flags)
+    proc = subprocess.Popen([p.command, *p.args], cwd=p.cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.DEVNULL, text=True)
+
+    def ask(message):
+        proc.stdin.write(json.dumps(message) + "\n")
+        proc.stdin.flush()
+        return json.loads(proc.stdout.readline()) if "id" in message else None
+
+    try:
+        init = ask({"method": "initialize", "jsonrpc": "2.0", "id": 0, "params": {
+            "protocolVersion": "2025-11-25", "capabilities": client_capabilities,
+            "clientInfo": {"name": "inspector-cli", "version": "2.13.0"}}})
+        ask({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        return init["result"], [ask({"jsonrpc": "2.0", "id": n, **m}) for n, m in enumerate(then, 1)]
+    finally:
+        proc.stdin.close()
+        proc.wait(timeout=30)
+
+
+def test_the_extension_is_announced_in_the_initialize_handshake_to_a_client_that_declares_it(tmp_path):
+    # The handshake MCP Inspector CLI 2.13.0 sends (recorded on 2026-11-11): protocol 2025-11-25,
+    # extensions negotiated in `initialize`. The proxy answered without `extensions`, and
+    # Inspector reported `skills_unsupported`.
+    declared = {"roots": {"listChanged": True},
+                "extensions": {"io.modelcontextprotocol/tasks": {}, "io.modelcontextprotocol/skills": {}}}
+    init, [listing, got] = raw_handshake(auto(tmp_path), declared, then=[
+        {"method": "skills/list", "params": {}}, {"method": "skills/get", "params": {"uri": skill.URI}}])
+    assert init["protocolVersion"] == "2025-11-25"
+    assert init["capabilities"]["extensions"] == {"io.modelcontextprotocol/skills": {}}      # ours, not `tasks`
+    assert "resources" in init["capabilities"] and "tools" in init["capabilities"]
+    assert init["serverInfo"] == {"name": "tracetrim-proxy", "version": VERSION} and VERSION
+    assert init["instructions"] == skill.pointer()
+    assert listing["result"]["skills"] == [skill.entry()] and got["result"]["skill"] == skill.entry()
+
+
+@pytest.mark.parametrize("flags, capabilities", [([], {"roots": {"listChanged": True}}),
+                                                 (["--no-skill"], {"extensions": {"io.modelcontextprotocol/skills": {}}})])
+def test_the_handshake_does_not_announce_it_unasked_or_switched_off(tmp_path, flags, capabilities):
+    init, _ = raw_handshake(auto(tmp_path, *flags), capabilities)
+    assert "extensions" not in init["capabilities"]
+    assert ("instructions" in init) is not flags and ("resources" in init["capabilities"]) is not flags
 
 
 # -- 3. the session ends without tracetrim_done ---------------------------------

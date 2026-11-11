@@ -27,7 +27,10 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   - `AutoTrim(structural=...)` re-encodes outputs from the first call, as the proxy always did. Until
     0.3.5 it waited for the first learned config.
   - In automatic mode, and with `--config`, the proxy now declares the `resources` capability (one
-    resource: the skill). `--no-skill` restores the previous capabilities.
+    resource: the skill), announces the Skills extension (in `server/discover`, and in `initialize` to
+    clients that declare it) and sets the server's `instructions` to one sentence that points to the
+    skill. `--no-skill` restores the previous capabilities and instructions.
+  - `serverInfo.version` is tracetrim's version; it was empty.
   - The description of `tracetrim_done`'s `answer` says "the answer only, not the conversation".
 - **Fixed:** `expand` requests made after the last closing were not saved when the proxy stopped; a
   trace written just before a crash could be overwritten by the next run.
