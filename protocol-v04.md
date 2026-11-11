@@ -298,3 +298,15 @@ The switch-off is meant for a tool that goes on asking for hidden fields, and he
 count of a tool now starts again when ordinary learning keeps a recovered field, as it already did after a
 promotion. Decided after the dry run and before every paid run, with no measured data seen. H5 is unchanged; the
 software measured is the one at this commit or later.
+
+**2 — 2026-11-11, before any paid run: extended recording (commit `4192433`).** Every run also records the
+schemas of the tools offered to the model, with a hash per tool, and how each call ended (answered, error marked
+by the tool, refused by the domain gate, no answer from the client). Decided before every paid run; no measure
+changes. The runs are kept as the starting data set for offline evaluations of later functions: where they are
+and what they hold is in `docs/traces-v04.md`.
+
+**3 — 2026-11-11, before any paid run: order of E2 and two more stops (same commit).** E2 runs the first sequence
+of every arm, run by run across the arms, then the second, instead of alternating the two sequences: if the
+budget stops the runs early, it takes about as many from each arm. Two stops are added to those of "Budget and
+stop rule": E2 starts only after the report on E1 has been reviewed, and at the 40 USD warning everything stops
+until the report on the spend has been reviewed. Runs, arms, measures and hypotheses are unchanged.
