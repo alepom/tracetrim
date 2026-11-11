@@ -4,6 +4,7 @@
   .venv/bin/python -m experiments.run C1 pilot
   .venv/bin/python -m experiments.run C2 A01
   .venv/bin/python -m experiments.run --spend          # ledger total, no run
+  .venv/bin/python -m experiments.run --v04 schedule   # the runs of protocol-v04.md (see experiments/v04.py)
 
 Writes:
   traces/<case>/<run>.jsonl       events in the tracetrim format
@@ -24,7 +25,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from openai import AsyncOpenAI
+try:
+    from openai import AsyncOpenAI
+except ImportError:              # a dry run of protocol-v04.md needs no model client
+    AsyncOpenAI = None
 
 from .tools import ROOT, to_args, toolset
 
@@ -166,6 +170,10 @@ async def _loop(case, run_id, model, arm, before, system, user, trace_path, meta
 
 
 def main():
+    if "--v04" in sys.argv[1:]:
+        # The runs of protocol-v04.md have their own arms, ledger and stop rules: experiments/v04.py.
+        from . import v04
+        return v04.main([a for a in sys.argv[1:] if a != "--v04"])
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("case", nargs="?", choices=["C1", "C2", "C3", "C4", "C5"])
     p.add_argument("run_id", nargs="?")
