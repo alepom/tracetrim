@@ -1,0 +1,30 @@
+{
+  "format": "tracetrim/projection@1",
+  "mode": "prudent",
+  "source": "full",
+  "unseen": "keep",
+  "tools": {
+    "list_invoices": [
+      "data[].account_id",
+      "data[].amount_due",
+      "data[].created",
+      "data[].hosted_invoice_url",
+      "data[].id",
+      "data[].status",
+      "has_more"
+    ]
+  },
+  "dropped": {
+    "list_invoices": [
+      "data[].footer",
+      "data[].remark_0",
+      "data[].remark_1",
+      "data[].remark_2",
+      "data[].remark_3",
+      "data[].remark_4",
+      "data[].remark_5",
+      "data[].remark_6",
+      "data[].remark_7"
+    ]
+  }
+}

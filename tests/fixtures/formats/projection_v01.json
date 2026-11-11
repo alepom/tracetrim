@@ -1,0 +1,11 @@
+{
+  "format": "tracetrim/projection@1",
+  "mode": "aggressive",
+  "source": "full",
+  "tools": {
+    "list_invoices": [
+      "data[].amount_due",
+      "data[].id"
+    ]
+  }
+}

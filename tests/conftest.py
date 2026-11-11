@@ -1,13 +1,16 @@
 """Shared fixtures. Some tests replay recorded runs of the simulated cases:
 those live in traces/ where they were recorded, and in dataset/traces/ once
-the Zenodo dataset is unzipped at the repository root. Without either, the
+the Zenodo dataset is unzipped at the repository root; $TRACETRIM_TRACES
+points to them when they are elsewhere (a git worktree). Without any, the
 tests that need them are skipped, not failed."""
+import os
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-TRACES = next((p for p in (ROOT / "traces", ROOT / "dataset" / "traces") if (p / "C4").exists()), None)
+_PLACES = [Path(p) for p in [os.environ.get("TRACETRIM_TRACES")] if p] + [ROOT / "traces", ROOT / "dataset" / "traces"]
+TRACES = next((p for p in _PLACES if (p / "C4").exists()), None)
 
 
 @pytest.fixture

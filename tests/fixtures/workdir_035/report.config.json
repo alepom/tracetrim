@@ -1,0 +1,19 @@
+{
+  "format": "tracetrim/config@1",
+  "generated": "2026-11-11T08:14:53+00:00",
+  "projection": "report.projection.json",
+  "unescape": true,
+  "tools": {
+    "list_invoices": {
+      "trim": "prudent",
+      "expand": true
+    }
+  },
+  "auto": {
+    "complete_runs": 3,
+    "min_runs": 3,
+    "applied": true,
+    "switched_off": [],
+    "updated": "2026-11-11T08:14:53+00:00"
+  }
+}

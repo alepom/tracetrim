@@ -1,0 +1,7 @@
+{
+  "runs": 7,
+  "complete_runs": 6,
+  "trimmed": {"list_invoices": 9},
+  "expanded": {"list_invoices": 2},
+  "off": ["search_customers"]
+}
