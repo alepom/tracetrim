@@ -94,6 +94,15 @@ def test_the_cli_prints_the_text_or_writes_a_skill_folder(tmp_path, capsys):
     assert written.read_text() == skill.skill_md(strategy=True)
 
 
+def test_the_token_counts_in_the_documentation_are_the_measured_ones():
+    tiktoken = pytest.importorskip("tiktoken")
+    count = lambda t: len(tiktoken.get_encoding("o200k_base").encode(t))   # noqa: E731
+    base, full = count(skill.text()), count(skill.text(strategy=True))
+    doc = (Path(__file__).resolve().parent.parent / "docs" / "skill.md").read_text()
+    assert f"| {base} |" in doc and f"| +{full - base} ({full} in all) |" in doc
+    assert f"({count(skill.skill_md())} and {count(skill.skill_md(strategy=True))})" in doc
+
+
 def test_the_tool_descriptions_are_enough_without_the_skill():
     from tracetrim.auto import DONE, DONE_REPLY
     from tracetrim.engine import EXPAND

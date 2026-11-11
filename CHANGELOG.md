@@ -4,6 +4,36 @@ All versions were developed on 2026-11-04, together with the study described in 
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## Unreleased
+
+Work on the branch `feat/adaptive-learning-mcp-skills`, after the studies of the paper: checked by
+tests, not evaluated under a protocol. Nothing here changes the numbers of the paper.
+
+- **The tracetrim skill** ([docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
+  The instructions for `tracetrim_done` and `expand` are one versioned text, on two levels: *base*,
+  always on, and *strategy* (how to organise tool calls), off unless asked for. The proxy publishes it
+  through the MCP Skills extension (`io.modelcontextprotocol/skills`): `skills/list`, `skills/get`, and
+  the `SKILL.md` as a resource, with digest and size. `--skill-strategy` adds the strategy, `--no-skill`
+  publishes nothing. For function calling, `AutoTrim(strategy=...)` and `AutoTrim.instructions`; for
+  hosts that do not load skills, `tracetrim skill` prints the text.
+- **One engine.** The MCP proxy and `AutoTrim` are now adapters over `tracetrim.engine`, which speaks a
+  small contract with no SDK behind it (`tracetrim.contract`: call, result, observation, evidence). The
+  contract keeps apart what tracetrim receives from a tool and what it shows the model.
+- **Closing a run is robust.** A repeated or retried `tracetrim_done` changes nothing and gets the same
+  reply; closings are serialised.
+- **Changed behaviour:**
+  - `tracetrim_done` without an answer is now refused, and the run stays open. Until 0.3.5 it closed
+    the run as one without answer.
+  - `AutoTrim(structural=...)` re-encodes outputs from the first call, as the proxy always did. Until
+    0.3.5 it waited for the first learned config.
+  - In automatic mode, and with `--config`, the proxy now declares the `resources` capability (one
+    resource: the skill). `--no-skill` restores the previous capabilities.
+  - The description of `tracetrim_done`'s `answer` says "the answer only, not the conversation".
+- **Fixed:** `expand` requests made after the last closing were not saved when the proxy stopped; a
+  trace written just before a crash could be overwritten by the next run.
+- Files written by earlier versions (work directories, configs, projections, traces, state) load as
+  before: `tests/test_regression_035.py`, written on the untouched 0.3.5 code.
+
 ## 0.3.5
 
 Published on PyPI. No change in behaviour from 0.3.4, the version archived on Zenodo.

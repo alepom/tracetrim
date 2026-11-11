@@ -27,7 +27,7 @@ dependencies = []
 [project.optional-dependencies]
 # Token counts are measured, never estimated: `measure` needs a real tokenizer.
 measure = ["tiktoken>=0.7"]
-test = ["pytest>=8", "tiktoken>=0.7"]
+test = ["pytest>=8", "tiktoken>=0.7", "pyyaml>=6"]
 proxy = ["mcp>=2.3"]
 # Experimental, heavy (torch): see tracetrim.structural.headroom.
 headroom = ["headroom-ai>=0.39"]

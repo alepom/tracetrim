@@ -68,7 +68,9 @@ call tracetrim_done once with the complete answer, before you show it; then show
 ```
 
 The agent sees the same tools with the same names (prefixed with the server name only if two
-servers share one), plus `expand` and `tracetrim_done`. Then use the agent as usual:
+servers share one), plus `expand` and `tracetrim_done`. The proxy also publishes these instructions
+as an Agent Skill over MCP (unreleased; see [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)):
+a host that loads MCP skills needs no added line, the others keep it. Then use the agent as usual:
 
 - **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
   (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
@@ -165,7 +167,9 @@ first runs, the trimmed one after. `tt.done` closes the run, updates the report
 was learned survives restarts. The rules are those of the proxy's automatic mode. Arguments can be
 a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a description and a JSON
 schema, to adapt to your provider's tool format (`{"type": "function", ...}` for OpenAI, `name` /
-`description` / `input_schema` for Anthropic).
+`description` / `input_schema` for Anthropic). `tt.instructions` is the text that explains `expand`
+to the model, for your system prompt; `AutoTrim(..., strategy=True)` adds optional notes on how to
+organise tool calls (off by default, not measured yet: [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
 
 Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
 tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a
