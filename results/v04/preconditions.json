@@ -97,12 +97,18 @@
             "items[].channel_name": {
               "removed_by_the_projection": true,
               "present_in_calls": 16,
-              "used_in_runs": 0
+              "with_a_value_in_calls": 16,
+              "used_in_runs": 0,
+              "distinct_values": 124,
+              "share_of_the_commonest_value": 0.0545
             },
             "items[].views_count": {
               "removed_by_the_projection": true,
               "present_in_calls": 16,
-              "used_in_runs": 0
+              "with_a_value_in_calls": 16,
+              "used_in_runs": 0,
+              "distinct_values": 238,
+              "share_of_the_commonest_value": 0.0199
             }
           }
         }
@@ -171,6 +177,50 @@
           "held_out_saving": 0.7189
         }
       },
+      "fields_needed_by_the_variant": {}
+    },
+    "C4v": {
+      "traces": 8,
+      "tool_output_tokens": 155127,
+      "held_out_saving": 0.5681,
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "tools": {
+        "stripe_list_invoices": {
+          "trimmed": true,
+          "calls": 16,
+          "share_of_tokens": 0.4828,
+          "held_out_saving": 0.5979
+        },
+        "stripe_list_charges": {
+          "trimmed": true,
+          "calls": 18,
+          "share_of_tokens": 0.2609,
+          "held_out_saving": 0.526
+        },
+        "stripe_search_customers": {
+          "trimmed": true,
+          "calls": 40,
+          "share_of_tokens": 0.1928,
+          "held_out_saving": 0.5431
+        },
+        "stripe_list_subscriptions": {
+          "trimmed": true,
+          "calls": 8,
+          "share_of_tokens": 0.0587,
+          "held_out_saving": 0.58
+        },
+        "stripe_list_refunds": {
+          "trimmed": false,
+          "calls": 2,
+          "share_of_tokens": 0.0048,
+          "held_out_saving": 0.7189
+        }
+      },
       "fields_needed_by_the_variant": {
         "stripe_list_invoices": {
           "calls": 16,
@@ -188,12 +238,18 @@
             "data[].hosted_invoice_url": {
               "removed_by_the_projection": true,
               "present_in_calls": 16,
-              "used_in_runs": 0
+              "with_a_value_in_calls": 16,
+              "used_in_runs": 0,
+              "distinct_values": 9,
+              "share_of_the_commonest_value": 0.1667
             },
             "data[].collection_method": {
               "removed_by_the_projection": true,
               "present_in_calls": 16,
-              "used_in_runs": 0
+              "with_a_value_in_calls": 16,
+              "used_in_runs": 0,
+              "distinct_values": 2,
+              "share_of_the_commonest_value": 0.5208
             }
           }
         }

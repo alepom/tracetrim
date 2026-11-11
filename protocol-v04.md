@@ -1,8 +1,8 @@
 # Protocol of the measures on the adaptive work (v0.4)
 
-Status: **draft of 2026-11-11, not frozen**. It is frozen when the author approves it: the approval, its date
-and the commit are recorded here, before the first paid run. Changes after freezing go in "Deviations" at
-the bottom, dated, with the reason.
+Status: **frozen on 2026-11-11**, approved by the author, before any paid run. The commit that froze it is
+recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
+at the bottom, dated, with the reason.
 
 This protocol is separate from `protocol.md`, which stays as it is with the results of the original study.
 The paper reports that study (tracetrim 0.1 and 0.2, November 2026). What follows measures functions written
@@ -43,19 +43,21 @@ eight Phase A traces of each case. On 2026-11-11:
 | C1 | 58% | keyword suggestions, ranked keywords, Trends explore, YouTube SERP (4 of 11) |
 | C2 | 9% | **none** (0 of 2) |
 | C4 | 57% | invoices, charges, customer search, subscriptions (4 of 5) |
+| C4 on E2's copy of its world (below) | 57% | the same four |
 
 The configuration is the one tracetrim builds by itself: a tool is trimmed when it carries at least 5% of the
 tool-output tokens and its held-out saving is at least 20%. In C2 the organic SERP saves 16% and the page parser
 nothing, so **no C2 tool is trimmed**. Two consequences, stated now:
 
-- in E1 the arms T and ST of C2 trim nothing: on C2 they measure only that tracetrim in the loop changes nothing;
+- in E1, C2 has only the arms R and S: arms that trim nothing would measure noise. C2 stays in E1 because it is
+  the second case on a real API on which the strategy can be measured;
 - C2 cannot be the real case of E2, where a removed field must exist. E2's real case is C1.
 
 ## E1 — the strategy of the skill
 
 ### Design
 
-Four arms, same prompt, tools and model:
+Four arms, same prompt, tools and model (C2: the first two only):
 
 | Arm | Strategy text | Trimming |
 |---|---|---|
@@ -75,8 +77,9 @@ Four arms, same prompt, tools and model:
   run, where there is something to organise; C4 is the simulated case with a live-loop baseline in the original
   study (Phase C) and five independent tickets, which invite calls issued together. Prompts are those of the
   original study, unchanged.
-- **Runs**: 5 per arm and case, 60 in all. Interleaved by case: R, S, T, ST, then again, so that a drift of the
-  service or of the search results hits all arms alike.
+- **Runs**: 5 per arm and case: 20 on C1, 10 on C2, 20 on C4, 50 in all. In rounds: one run of every arm of C1,
+  then of C2, then of C4, and again, so that a drift of the service or of the search results hits all arms alike.
+  E1's C4 runs use the simulated world of the original study, unchanged.
 
 ### Measures
 
@@ -111,8 +114,8 @@ beside success and coverage of the same runs.
   coverage median lies inside R's [min, max] or above it. The same for ST against T.
 - **H2 — fewer turns.** In C4, where the tickets are independent, the median number of turns of S is below R's
   minimum. For C1 and C2 no direction is predicted: their prompts already prescribe an order of work.
-- **H3 — trimming is neutral where it trims nothing.** In C2, T against R and ST against S: every measure of one
-  arm inside the other's [min, max].
+- **H3 — removed before freezing.** It concerned the trimmed arms of C2, which are not run (see Preconditions).
+  The numbers of the other hypotheses are kept.
 - **H4 — the strategy does not undo the saving.** In C1 and C4, the billed input tokens of ST have a median not
   above T's maximum.
 
@@ -121,7 +124,7 @@ difference inside the other arm's range is reported as not distinguishable from 
 
 ### What counts as success
 
-For the strategy to be recommended as a default it must pass H1 in all three cases. Fewer turns or tokens with H1
+For the strategy to be recommended as a default it must pass H1 in all three cases (in C2, S against R only). Fewer turns or tokens with H1
 failed is reported as a cost, not a gain. If H1 holds and nothing else moves, the result is "no measurable effect",
 and the strategy stays off by default.
 
@@ -131,13 +134,20 @@ and the strategy stays off by default.
 
 - **Starting point**: a work directory seeded with the eight Phase A traces of the case, so that automatic mode
   starts from the projection learned on them (`min_runs` 5). Each sequence gets its own copy.
+- **The simulated case runs on a copy of its world** (`experiments/simulated/v04`), derived from the original
+  world (same generator and seed) by a declared rule with its own seed. Two fields of every invoice change and
+  nothing else: `collection_method` alternates between its two values along each customer's invoices, and
+  `hosted_invoice_url` is always present. In the original world the invoices the tickets are about nearly all
+  have the same `collection_method`, which an agent could state without reading it, and many have no link. The
+  server of the original study is not touched. The seed traces are the Phase A traces read as recorded on the
+  copy (the same rule applied to the recorded invoice outputs).
 - **Variant of the task**: the case's user prompt plus one requirement that needs fields the projection removes.
   The prompts are in `experiments/prompts/` and fixed here.
 
   | Case | Requirement added | Fields needed | Removed now, and never used in Phase A |
   |---|---|---|---|
-  | C1 (real) | name the most relevant YouTube channel and the views of its video, for the topics analysed on YouTube (`c1v-user.md`) | `items[].channel_name`, `items[].views_count` of the YouTube SERP | yes, both; present in 16 of 16 calls, 2 calls per run |
-  | C4 (simulated) | for tickets about an invoice, give the link to the invoice page and say whether it is charged automatically or sent for payment (`c4v-user.md`) | `data[].hosted_invoice_url`, `data[].collection_method` of the invoice list | yes, both; present in 16 of 16 calls, 1 to 3 calls per run |
+  | C1 (real) | name the most relevant YouTube channel and the views of its video, for the topics analysed on YouTube (`c1v-user.md`) | `items[].channel_name`, `items[].views_count` of the YouTube SERP | yes, both; with a value in 16 of 16 calls, 2 calls per run |
+  | C4 (simulated, on the copy) | for tickets about an invoice, give the link to the invoice page and say whether it is charged automatically or sent for payment (`c4v-user.md`) | `data[].hosted_invoice_url`, `data[].collection_method` of the invoice list | yes, both; with a value in 16 of 16 calls, 1 to 3 calls per run; `collection_method` takes two values, the commoner in 52% of the invoices read |
 
   The values of three of these fields are expected to be written in the answer (a name, a number, a link). The
   fourth, `collection_method`, is expected to be used and reworded ("addebitata automaticamente"): the case in
@@ -156,8 +166,8 @@ and the strategy stays off by default.
   can be sampled from its second run on. With the default share a field would rarely come back within five runs.
   Seed: the sequence number.
 - **Sequences**: a sequence is 5 consecutive runs of the variant in one work directory; learning accumulates
-  along it. C4: 2 sequences per arm (40 runs). C1: 1 sequence per arm (20 runs), because of its cost.
-  Sequences of different arms are interleaved run by run.
+  along it. Two sequences per arm in each case: 40 runs on C1 and 40 on C4. One sequence would not tell an effect
+  from chance. Sequences of different arms are interleaved run by run.
 - The strategy level of the skill is off. The base level (`expand`) is in every arm.
 
 ### Measures
@@ -192,24 +202,25 @@ hypothesis is reported as **not testable in these runs**, with the counts, not a
 
 ### What counts as success
 
-E2 supports turning promotion on by default only if H6 holds in both C4 sequences and promotion never lowers the
+E2 supports turning promotion on by default only if H6 holds in both C4 sequences of each arm and promotion never lowers the
 share of runs that meet the requirement. It supports sampling only if H7 holds and the tokens sampling adds stay
 within the declared share. Any other outcome leaves both off by default.
 
 ## What cannot be concluded
 
 - **One model.** Whether other models call `expand`, follow the strategy or reword values in the same way is untested.
-- **Few runs.** Five runs per arm in E1; in E2 two sequences per arm on the simulated case and **one** on the real
-  case. No significance test; a single sequence is a single trajectory.
+- **Few runs.** Five runs per arm in E1; in E2 two sequences of five runs per arm. No significance test: two
+  sequences that agree are two trajectories, not a distribution.
 - **Keyword gates.** The gates of C4 and the "requirement met" tests check for identifiers, links and keywords:
   they accept a wrong sentence that contains the right words. The stricter C4 audit is reported beside them.
-- **Simulated case.** C4's payloads were generated from a public API description. Its content is not real, and
-  in the recorded traces `collection_method` takes one value in 46 of 48 invoices: a model could guess it.
+- **Simulated case.** C4's payloads were generated from a public API description: their shape is realistic, their
+  content is not. For E2 two fields were set by us so that the variant could be asked at all: what E2 shows on C4
+  is how tracetrim reacts, not how often a real API makes such a field necessary.
 - **The demo is not evidence.** `experiments/adaptive_demo.py` uses a scripted agent. It showed that the mechanism
   works; E2 is the first measure of what a model does with it.
 - **Reuse is detected textual reuse**, with the blind spots described in the paper.
 - **The proxy.** Only the function-calling adapter is exercised. Hosts that load the skill over MCP are not tested.
-- **C2 trims nothing**, so E1 says nothing about trimming on C2.
+- **C2 trims nothing**, so E1 says nothing about trimming on C2, and nothing about the strategy combined with it.
 - **Savings are those of the configuration as delivered.** Other thresholds would trim other tools.
 
 ## Budget and stop rule
@@ -221,22 +232,31 @@ turn; E2's variants are assumed to cost 1.25 times the original task, an assumpt
 
 | | Runs | USD |
 |---|---:|---:|
-| E1: 4 arms × 5 runs × C1, C2, C4 | 60 | 14.55 |
-| E2: C1, 4 arms × 1 sequence × 5 runs | 20 | 10.43 |
-| E2: C4, 4 arms × 2 sequences × 5 runs | 40 | 4.13 |
+| E1 on C1: 4 arms × 5 runs | 20 | 8.43 |
+| E1 on C2: 2 arms × 5 runs | 10 | 2.22 |
+| E1 on C4: 4 arms × 5 runs | 20 | 1.68 |
+| E2 on C1: 4 arms × 2 sequences × 5 runs | 40 | 20.85 |
+| E2 on C4: 4 arms × 2 sequences × 5 runs | 40 | 4.13 |
 | Tuning: prompts of the variants, dry runs of the harness (an allowance) | | 5.00 |
-| **Total** | **120** | **34.11** |
+| **Total** | **130** | **42.30** |
 
-If every run cost the maximum seen for its case: 39.27 USD. Measured cost per raw live run: C1 0.415 (maximum
-0.506), C2 0.219 (0.244), C4 0.082 (0.091).
+The estimate is above the warning and below the cap, and so stated: the author is warned at 40 USD and decides
+whether to go on. If every run cost the maximum seen for its case: 49.48 USD, half a dollar under the cap; in that
+case the last runs of E2 would not start. Measured cost per raw live run: C1 0.415 (maximum 0.506), C2 0.219
+(0.244), C4 0.082 (0.091).
 
 - **Cap 50 USD, warning at 40**, on a new ledger (`out/ledger.jsonl` of this checkout; the original study's is
   not touched). The running total is computed from `usage` after every run, aborted ones included; at the cap
   `experiments/run.py` refuses to start a run, as it did.
 - Prices: `experiments/prices.json`, verified on 2026-11-04.
-- **DataForSEO** is billed apart, on the provider's account. Expected calls: C1 920 (40 runs × 23; 1,040 at the
-  maximum seen per run), C2 330 (20 runs × 16.5; 400). The original study made 528 live calls on these two
-  cases. The calls of every run are counted and reported; the author checks the spend on the provider's panel.
+- **DataForSEO** is billed apart, on the provider's account, and its price per call is not known here. Expected
+  calls: C1 1,380 (60 runs × 23; 1,560 at the maximum seen per run), C2 165 (10 runs × 16.5; 200). The original
+  study made 528 live calls on these two cases. The calls of every run are counted, per tool.
+- **DataForSEO stop rule.** After the first 10 runs that call DataForSEO, every run that calls it stops. The calls
+  per tool and run are reported (`REPORT-01d-dfs.md`), the author reads the spend on the provider's panel, relates
+  it to the calls and decides whether to go on; the runs resume only when the author's decision is recorded
+  (`out/v04/dataforseo_checkpoint.json`, written by hand). The order of the runs makes those 10 cover both
+  cases: C1's four arms, C2's two, then C1's four again. Runs on the simulated case are not held back.
 
 ## Data rules
 
@@ -249,8 +269,9 @@ Those of `CLAUDE.md` and of `protocol.md`:
 
 ## Before the first paid run (no spend)
 
-1. `experiments/run.py`: arms R, S, T, ST and the E2 arms; the system prompt composed with the skill text; the cap
-   and warning of this protocol; new traces written under this checkout, never under the original study's.
+1. `experiments/run.py` (with `experiments/v04.py`): arms R, S, T, ST and the E2 arms; the system prompt composed
+   with the skill text; the cap, the warning and the DataForSEO stop rule of this protocol; new traces written
+   under this checkout, never under the original study's.
 2. `experiments/coverage.py`: the checks listed above. `experiments/analyze_v04.py`: the tables, from the meta
    files, with every number recomputable.
 3. A dry run of each arm with a stub in place of the model, to check traces, meta files, ledger and stop rule.

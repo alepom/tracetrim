@@ -7,8 +7,13 @@ Phase A traces would trim (the configuration the T arms and E2 start from),
 and, for the fields E2's task variants make necessary, that the projection
 removes them and in how many recorded calls they are present. Field paths and
 counts only: no value of any tool output is written.
+
+`C4v` is C4 on the copy of its simulated world that E2 uses
+(experiments/simulated/v04): the same recorded runs, with the invoice outputs
+as that world's server returns them.
 """
 import json
+from collections import Counter
 
 from tracetrim import analyse, load
 from tracetrim import report as rp
@@ -17,15 +22,27 @@ from tracetrim.usage import leaves
 from .paths import ROOT, STUDY_TRACES
 
 OUT = ROOT / "results" / "v04" / "preconditions.json"
-CASES = ("C1", "C2", "C4")
+CASES = ("C1", "C2", "C4", "C4v")
 # E2: the fields each variant of the task needs (experiments/prompts/c1v-user.md, c4v-user.md).
 NEEDED = {"C1": {"serp_youtube_organic_live_advanced": ["items[].channel_name", "items[].views_count"]},
-          "C4": {"stripe_list_invoices": ["data[].hosted_invoice_url", "data[].collection_method"]}}
+          "C4v": {"stripe_list_invoices": ["data[].hosted_invoice_url", "data[].collection_method"]}}
+
+
+def phase_a(name: str) -> list:
+    """The Phase A traces of a case; for `C4v`, read as recorded on E2's copy of the world."""
+    traces = [load(p) for p in sorted((STUDY_TRACES / name.removesuffix("v")).glob("A*.jsonl"))]
+    if name.endswith("v"):
+        from .simulated.v04 import rewrite
+        for t in traces:
+            for e in t.events:
+                if e.kind == "call" and e.output is not None:
+                    e.output = rewrite(e.tool, e.output)
+    return traces
 
 
 def case(name: str) -> dict:
-    paths = sorted((STUDY_TRACES / name).glob("A*.jsonl"))
-    usages = [analyse(load(p)) for p in paths]
+    paths = phase_a(name)
+    usages = [analyse(t) for t in paths]
     d = rp.compute([p.name for p in paths], usages)
     config, projection = rp.build_config(d, rp.suggestions(d), usages, "report.projection.json")
     total = d["totals"]["raw"]
@@ -40,7 +57,15 @@ def case(name: str) -> dict:
         needed[tool] = {"calls": len(calls), "calls_per_run": per_run, "fields": {
             f: {"removed_by_the_projection": f in dropped,
                 "present_in_calls": sum(any(p == f for p, _ in leaves(c.payload)) for c in calls),
-                "used_in_runs": sum(any(c.tool == tool and f in c.used for c in u) for u in usages)}
+                # With a value, not null: a field that is there and empty cannot be reported.
+                "with_a_value_in_calls": sum(any(p == f and v is not None for p, v in leaves(c.payload)) for c in calls),
+                "used_in_runs": sum(any(c.tool == tool and f in c.used for c in u) for u in usages),
+                # How many different values, and how the commonest weighs: a field with one
+                # value can be stated without being read. Counts only.
+                "distinct_values": len(Counter(json.dumps(v) for c in calls for p, v in leaves(c.payload) if p == f)),
+                "share_of_the_commonest_value": round(max(Counter(
+                    json.dumps(v) for c in calls for p, v in leaves(c.payload) if p == f).values()) / max(1, sum(
+                        1 for c in calls for p, _ in leaves(c.payload) if p == f)), 4)}
             for f in fields}}
     return {"traces": len(paths), "tool_output_tokens": total,
             "held_out_saving": round(1 - d["totals"]["loo_prudent"] / total, 4),
@@ -57,5 +82,7 @@ if __name__ == "__main__":
               f"{', '.join(r['tools_trimmed']) or 'no tool'}")
         for tool, n in r["fields_needed_by_the_variant"].items():
             for f, v in n["fields"].items():
-                print(f"   {tool} {f}: removed {v['removed_by_the_projection']}, in {v['present_in_calls']}/{n['calls']} "
-                      f"calls, used in {v['used_in_runs']} runs; calls per run {n['calls_per_run']}")
+                print(f"   {tool} {f}: removed {v['removed_by_the_projection']}, with a value in "
+                      f"{v['with_a_value_in_calls']}/{n['calls']} calls, used in {v['used_in_runs']} runs, "
+                      f"{v['distinct_values']} values (commonest {v['share_of_the_commonest_value']:.0%}); "
+                      f"calls per run {n['calls_per_run']}")

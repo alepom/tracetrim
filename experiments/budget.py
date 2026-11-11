@@ -23,15 +23,20 @@ from .paths import PRICES, STUDY_TRACES, TRACES, cost
 # here is changing the protocol.
 V04 = {
     "cap_usd": 50.0, "warn_usd": 40.0,
-    "e1": {"cases": ["C1", "C2", "C4"], "arms": ["R", "S", "T", "ST"], "runs_per_arm": 5},
+    # C2 has no trimmed arm: the configuration tracetrim builds on its traces trims no tool.
+    "e1": {"cases": ["C1", "C2", "C4"], "arms": {"C1": ["R", "S", "T", "ST"], "C2": ["R", "S"],
+                                                 "C4": ["R", "S", "T", "ST"]}, "runs_per_arm": 5},
     # E2's real case is C1, not C2: the configuration tracetrim builds on the C2 traces trims no tool.
     "e2": {"cases": ["C1", "C4"], "arms": ["base", "promotion", "sampling", "promotion+sampling"],
-           "sequences_per_arm": {"C1": 1, "C4": 2}, "runs_per_sequence": 5,
+           "sequences_per_arm": {"C1": 2, "C4": 2}, "runs_per_sequence": 5,
            # The variant asks for more than the original task: assumed cost of a run, relative to
            # the original task's. An assumption, not a measure: the first runs will correct it.
            "variant_factor": 1.25,
            "sample_rate": 0.25, "sample_max_share": 0.5},
     "tuning_usd": 5.0,           # prompts of the variants, dry runs of the harness: an allowance, not an estimate
+    # DataForSEO is billed apart and its price per call is not known here: after this many runs
+    # that call it, everything that calls it stops until the author has read the spend.
+    "dataforseo_checkpoint_runs": 10,
 }
 
 
@@ -64,7 +69,7 @@ def v04() -> dict:
              "ST": skill["function_calling_base_strategy"]}
     e1, e2 = [], []
     for c in V04["e1"]["cases"]:
-        for arm in V04["e1"]["arms"]:
+        for arm in V04["e1"]["arms"][c]:
             n = V04["e1"]["runs_per_arm"]
             extra = added[arm] * m[c]["turns"] * per_token
             e1.append({"case": c, "arm": arm, "runs": n, "usd": n * (m[c]["cost"] + extra),
