@@ -5,6 +5,7 @@ library and the results (the agent loop, run.py, needs openai; tools.py, mcp).
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -14,6 +15,9 @@ PROMPTS = ROOT / "experiments" / "prompts"
 TRACES = next((p for p in (ROOT / "traces", ROOT / "dataset" / "traces") if any(p.glob("C*/A*.jsonl"))),
               ROOT / "traces")
 LEDGER = ROOT / "out" / "ledger.jsonl"
+# The traces of the original study, READ ONLY, when they are not in this checkout
+# (a git worktree): $TRACETRIM_TRACES. New runs never write there: they write to TRACES.
+STUDY_TRACES = Path(os.environ["TRACETRIM_TRACES"]) if os.environ.get("TRACETRIM_TRACES") else TRACES
 PRICES = json.loads((ROOT / "experiments" / "prices.json").read_text())
 
 # Replay arms: Phase B (tracetrim 0.1) and Study 2 (safeguards S1 + S2).

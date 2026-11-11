@@ -39,6 +39,9 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   the size of a result (rows are never cut), and the number of distinct values of each argument.
 - **Persistence.** Files in the work directory are written aside and renamed; a lock protects the state
   shared by tool calls and the learning thread; a closing whose write fails can be tried again.
+- **Protocol of the new measures**: `protocol-v04.md` (a draft until the author approves it), apart from
+  `protocol.md`, which is unchanged. Its estimate comes from `python -m experiments.budget --v04`, its
+  preconditions from `python -m experiments.v04_preconditions`. No paid run has been made.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists

@@ -33,14 +33,16 @@ EXTENSION = "io.modelcontextprotocol/skills"
 _DIR = Path(__file__).parent / "skills" / NAME
 
 
-def _parts(strategy: bool, done: bool) -> list[str]:
-    return (["done"] if done else []) + ["expand"] + (["strategy"] if strategy else [])
+def _parts(strategy: bool, done: bool, expand: bool = True) -> list[str]:
+    return (["done"] if done else []) + (["expand"] if expand else []) + (["strategy"] if strategy else [])
 
 
-def text(strategy: bool = False, done: bool = True) -> str:
+def text(strategy: bool = False, done: bool = True, expand: bool = True) -> str:
     """The instructions, as Markdown. `done=False` leaves out `tracetrim_done`:
-    a function-calling loop passes the answer itself (`AutoTrim.done`)."""
-    return "\n".join((_DIR / f"{p}.md").read_text(encoding="utf-8") for p in _parts(strategy, done))
+    a function-calling loop passes the answer itself (`AutoTrim.done`).
+    `expand=False` leaves out `expand` too: with `strategy=True` that is the
+    strategy alone, for an agent whose tool results are not trimmed."""
+    return "\n".join((_DIR / f"{p}.md").read_text(encoding="utf-8") for p in _parts(strategy, done, expand))
 
 
 def frontmatter(strategy: bool = False, done: bool = True) -> dict:

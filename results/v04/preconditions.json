@@ -1,0 +1,203 @@
+{
+  "what": "preconditions of protocol-v04.md, from the Phase A traces of the original study",
+  "tokens": "tiktoken o200k_base",
+  "cases": {
+    "C1": {
+      "traces": 8,
+      "tool_output_tokens": 817865,
+      "held_out_saving": 0.5824,
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "tools": {
+        "serp_organic_live_advanced": {
+          "trimmed": false,
+          "calls": 26,
+          "share_of_tokens": 0.236,
+          "held_out_saving": 0.1845
+        },
+        "kw_data_google_trends_explore": {
+          "trimmed": true,
+          "calls": 33,
+          "share_of_tokens": 0.2097,
+          "held_out_saving": 0.9786
+        },
+        "serp_youtube_organic_live_advanced": {
+          "trimmed": true,
+          "calls": 16,
+          "share_of_tokens": 0.176,
+          "held_out_saving": 0.6189
+        },
+        "dataforseo_labs_google_keyword_suggestions": {
+          "trimmed": true,
+          "calls": 36,
+          "share_of_tokens": 0.1604,
+          "held_out_saving": 0.6178
+        },
+        "dataforseo_labs_google_ranked_keywords": {
+          "trimmed": true,
+          "calls": 8,
+          "share_of_tokens": 0.1113,
+          "held_out_saving": 0.6265
+        },
+        "dataforseo_labs_google_keyword_ideas": {
+          "trimmed": false,
+          "calls": 9,
+          "share_of_tokens": 0.0469,
+          "held_out_saving": 0.6225
+        },
+        "kw_data_google_ads_search_volume": {
+          "trimmed": false,
+          "calls": 17,
+          "share_of_tokens": 0.0344,
+          "held_out_saving": 0.3784
+        },
+        "dataforseo_labs_google_relevant_pages": {
+          "trimmed": false,
+          "calls": 8,
+          "share_of_tokens": 0.0106,
+          "held_out_saving": 0.356
+        },
+        "dataforseo_labs_search_intent": {
+          "trimmed": false,
+          "calls": 11,
+          "share_of_tokens": 0.0092,
+          "held_out_saving": 0.7884
+        },
+        "dataforseo_labs_bulk_keyword_difficulty": {
+          "trimmed": false,
+          "calls": 8,
+          "share_of_tokens": 0.0054,
+          "held_out_saving": 0.4896
+        },
+        "dataforseo_labs_google_related_keywords": {
+          "trimmed": false,
+          "calls": 1,
+          "share_of_tokens": 0.0001,
+          "held_out_saving": 0.1071
+        }
+      },
+      "fields_needed_by_the_variant": {
+        "serp_youtube_organic_live_advanced": {
+          "calls": 16,
+          "calls_per_run": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "fields": {
+            "items[].channel_name": {
+              "removed_by_the_projection": true,
+              "present_in_calls": 16,
+              "used_in_runs": 0
+            },
+            "items[].views_count": {
+              "removed_by_the_projection": true,
+              "present_in_calls": 16,
+              "used_in_runs": 0
+            }
+          }
+        }
+      }
+    },
+    "C2": {
+      "traces": 8,
+      "tool_output_tokens": 527542,
+      "held_out_saving": 0.0892,
+      "tools_trimmed": [],
+      "tools": {
+        "serp_organic_live_advanced": {
+          "trimmed": false,
+          "calls": 105,
+          "share_of_tokens": 0.552,
+          "held_out_saving": 0.1617
+        },
+        "on_page_content_parsing": {
+          "trimmed": false,
+          "calls": 31,
+          "share_of_tokens": 0.448,
+          "held_out_saving": 0.0
+        }
+      },
+      "fields_needed_by_the_variant": {}
+    },
+    "C4": {
+      "traces": 8,
+      "tool_output_tokens": 154833,
+      "held_out_saving": 0.5673,
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "tools": {
+        "stripe_list_invoices": {
+          "trimmed": true,
+          "calls": 16,
+          "share_of_tokens": 0.4818,
+          "held_out_saving": 0.5963
+        },
+        "stripe_list_charges": {
+          "trimmed": true,
+          "calls": 18,
+          "share_of_tokens": 0.2614,
+          "held_out_saving": 0.526
+        },
+        "stripe_search_customers": {
+          "trimmed": true,
+          "calls": 40,
+          "share_of_tokens": 0.1932,
+          "held_out_saving": 0.5431
+        },
+        "stripe_list_subscriptions": {
+          "trimmed": true,
+          "calls": 8,
+          "share_of_tokens": 0.0588,
+          "held_out_saving": 0.58
+        },
+        "stripe_list_refunds": {
+          "trimmed": false,
+          "calls": 2,
+          "share_of_tokens": 0.0048,
+          "held_out_saving": 0.7189
+        }
+      },
+      "fields_needed_by_the_variant": {
+        "stripe_list_invoices": {
+          "calls": 16,
+          "calls_per_run": [
+            2,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "fields": {
+            "data[].hosted_invoice_url": {
+              "removed_by_the_projection": true,
+              "present_in_calls": 16,
+              "used_in_runs": 0
+            },
+            "data[].collection_method": {
+              "removed_by_the_projection": true,
+              "present_in_calls": 16,
+              "used_in_runs": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

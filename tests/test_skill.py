@@ -83,6 +83,12 @@ def test_function_calling_gets_the_same_text_without_tracetrim_done(tmp_path):
     assert with_strategy == skill.text(strategy=True, done=False) and "Know when to stop" in with_strategy
 
 
+def test_the_strategy_can_be_had_alone_for_an_agent_whose_results_are_not_trimmed():
+    alone = skill.text(strategy=True, done=False, expand=False)
+    assert alone == (TEXTS / "strategy.md").read_text() and "expand" not in alone and "tracetrim" not in alone
+    assert skill.text(done=False, expand=False) == ""
+
+
 def test_the_cli_prints_the_text_or_writes_a_skill_folder(tmp_path, capsys):
     main(["skill"])
     assert capsys.readouterr().out == skill.text()
