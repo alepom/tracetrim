@@ -22,34 +22,25 @@ code changes. The proxy
 
 Learning needs the agent's final answer, which tool calls alone do not show:
 in automatic mode (tracetrim.auto) the agent passes it to `tracetrim_done`.
+
+This module is an adapter: it translates MCP requests into the contract of
+tracetrim.contract and leaves every decision to tracetrim.engine.
 """
 from __future__ import annotations
 
 import hmac
 import json
 import os
-import secrets
 import shlex
 import sys
 from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .projection import project
+from .contract import ToolCall, ToolResult
+from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
-from .usage import leaves, parse_output
 
-EXPAND = {
-    "name": "expand",
-    "description": ("Some tool results are trimmed to save context: the fields removed are listed in the line "
-                    "'[trimmed] call_id=... hidden: ...' after the result. Call expand with that call_id and "
-                    "the fields or groups you need, to get their values from the original result."),
-    "inputSchema": {"type": "object", "required": ["call_id", "fields"], "properties": {
-        "call_id": {"type": "string"},
-        "fields": {"type": "array", "items": {"type": "string"}}}},
-}
-MAX_GROUPS = 25
-MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MAX_SSE_EVENT = 16 * 1024 * 1024
 
 
@@ -84,7 +75,7 @@ class Live:
         r, s = self.count(raw), self.count(sent)
         self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
         self.run = [self.run[0] + 1, self.run[1] + r, self.run[2] + s, self.run[3]]
-        hidden = sent.rsplit("\n[trimmed] ", 1)[1].split("hidden: ", 1)[1] if "\n[trimmed] " in sent else ""
+        hidden = sent.rsplit(MARK, 1)[1].split("hidden: ", 1)[1] if MARK in sent else ""
         groups = len(hidden.split(", ")) if hidden else 0
         self._print(f"{tool:<34} {r:>8,} -> {s:>8,} {self.unit} ({self._pct(s, r)})"
                     + (f"  hidden: {groups} group{'s' if groups != 1 else ''}" if groups else ""))
@@ -107,66 +98,6 @@ class Live:
             c, r, s, e = self.run
             total = f"this run: {c} calls, {r:,} -> {s:,} ({self._pct(s, r)}), {e} expand · {total}"
         print(f"[tracetrim] {line}\n[tracetrim]   {total}", file=sys.stderr, flush=True)
-
-
-class Trimmer:
-    """The part of the proxy that does not depend on MCP: testable alone."""
-
-    def __init__(self, policy: Policy | None):
-        self.policy = policy
-        self.originals: dict[str, object] = {}
-        self.hidden: dict[str, set] = {}
-        self.tool_of: dict[str, str] = {}
-        self.n = 0
-
-    def output(self, tool: str, out: str) -> str:
-        if self.policy is None:
-            return out
-        trimmed = self.policy.apply(tool, out)
-        proj = self.policy.projection
-        payload = parse_output(out)
-        if proj is None or tool not in proj.keep or not isinstance(payload, (dict, list)):
-            return trimmed
-        drop = proj.seen.get(tool, set()) - proj.keep[tool]
-        hidden = sorted({p for p, _ in leaves(payload) if p in drop})
-        if not hidden or not self.policy.expand_enabled(tool) and not self.policy.config.get("expand_all"):
-            return trimmed
-        # Random ids: over HTTP several clients share one proxy, and a sequential
-        # id would let one of them expand another's results.
-        cid = "c" + secrets.token_hex(4)
-        while len(self.originals) >= MAX_ORIGINALS:
-            old = next(iter(self.originals))
-            self.originals.pop(old)
-            self.tool_of.pop(old, None)
-            self.hidden.pop(old, None)
-        self.originals[cid] = payload
-        self.tool_of[cid] = tool
-        self.hidden[cid] = set(hidden)
-        groups: dict[str, int] = {}
-        for h in hidden:
-            g = ".".join(h.split(".")[:2])
-            groups[g] = groups.get(g, 0) + 1
-        ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
-        items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
-        listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
-        return f"{trimmed}\n[trimmed] call_id={cid} hidden: {listed}"
-
-    def expand(self, call_id: str, wanted: list[str]) -> str:
-        payload = self.originals.get(call_id)
-        if payload is None:
-            return "Error: unknown call_id."
-        hidden = self.hidden.get(call_id, set())
-        if "*" in wanted:
-            fields = set(hidden)
-        else:
-            fields = {p for p, _ in leaves(payload)
-                      if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in wanted)}
-        if not fields:
-            groups = sorted({".".join(h.split(".")[:2]) for h in hidden})
-            return ("Error: no field matches " + ", ".join(wanted)[:200] + ". Hidden groups: "
-                    + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else "."))
-        got = project(payload, fields)
-        return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False)
 
 
 @dataclass
@@ -269,16 +200,13 @@ def _server(o: Options):
     from mcp import ClientSession, types
     from mcp.server.lowlevel import Server
 
-    from .auto import DONE, Learner
+    from .auto import DONE, DONE_REPLY, Learner
 
     learner = Learner(o.auto_dir, o.min_runs) if o.auto_dir else None
-    policy = Policy.load(o.config) if o.config else (learner.initial_policy() if learner else None)
-    if o.structural:
-        # Override from the command line: "toon" or "headroom" after the projection
-        # (or alone, when no config is given).
-        policy = policy or Policy({"format": "tracetrim/config@1", "tools": {}}, None)
-        policy.structural = o.structural
-    trimmer = Trimmer(policy)
+    # `--structural` overrides the config: "toon" or "headroom" after the
+    # projection (or alone, when there is no config yet).
+    engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural)
+    offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)
     live.per_run = bool(learner)
@@ -291,25 +219,25 @@ def _server(o: Options):
     if learner:
         st = learner.state
         log(f"auto mode: {learner.dir} · {st['complete_runs']} complete runs (learning from {o.min_runs})"
-            f" · config {'applied' if policy and policy.tools else 'not applied yet'}")
+            f" · config {'applied' if engine.trimming else 'not applied yet'}")
 
-    async def close_run(answer):
-        path = learner.done(answer)
-        if path is None:
-            return
-        run_total = live.new_run()
-        new = await asyncio.to_thread(learner.relearn)
-        st = learner.state
-        if new is not None:
-            if o.structural:
-                new.structural = o.structural
-            trimmer.policy = new
-        applied = trimmer.policy is not None and bool(trimmer.policy.tools)
-        log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
-        log(f"  {st['complete_runs']} complete runs · report updated · "
-            + (f"trimming {len(trimmer.policy.tools)} tools" if applied
-               else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
-            + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
+    closing = asyncio.Lock()
+
+    async def close_run(answer) -> bool:
+        """Close the run, if one is open. One closing at a time: a second
+        request waits, then finds nothing left to close."""
+        async with closing:
+            if engine.done(answer) is None:
+                return False
+            run_total = live.new_run()
+            await asyncio.to_thread(engine.relearn)
+            st = learner.state
+            log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
+            log(f"  {st['complete_runs']} complete runs · report updated · "
+                + (f"trimming {len(engine.policy.tools)} tools" if engine.trimming
+                   else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
+                + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
+            return True
 
     routes: dict[str, tuple[str, str]] = {}
 
@@ -339,7 +267,7 @@ def _server(o: Options):
         tools = [t.model_copy(update={"output_schema": None}) for t in up]
         # In automatic mode expand is listed from the start: clients may cache
         # the tool list, and trimming begins only after the first runs.
-        if trimmer.policy is not None or learner:
+        if offers_expand:
             tools.append(types.Tool(**EXPAND))
         if learner:
             tools.append(types.Tool(**DONE))
@@ -348,15 +276,22 @@ def _server(o: Options):
     async def call_tool(ctx, params):
         args = params.arguments or {}
         if learner and params.name == "tracetrim_done":
-            await close_run(str(args.get("answer", "")))
-            text = "Recorded."
+            answer = args.get("answer")
+            if not isinstance(answer, str):
+                answer = "" if answer is None else json.dumps(answer, ensure_ascii=False)
+            if not answer.strip():
+                # Not a closing: the run stays open for the call that carries the answer.
+                return types.CallToolResult(isError=True, content=[types.TextContent(
+                    type="text", text="Error: tracetrim_done needs your final answer in `answer`. Nothing was recorded.")])
+            if not await close_run(answer):
+                log("tracetrim_done with no tool call since the last closing (a repeat or a retry): nothing to record")
+            # The same reply whether the run was closed now or already: it asks for nothing more.
+            text = DONE_REPLY
         elif params.name == "expand":
             fields = [str(f) for f in args.get("fields") or []]
             cid = str(args.get("call_id", ""))
-            text = trimmer.expand(cid, fields)
+            text = engine.expand(cid, fields)
             live.expand(cid, fields, text)
-            if learner and cid in trimmer.tool_of:
-                learner.expanded(trimmer.tool_of[cid])
         else:
             if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
                 await close_run(None)
@@ -368,6 +303,7 @@ def _server(o: Options):
                 return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
                                             isError=True)
             server, name = routes[params.name]
+            call = ToolCall(params.name, args)
             r = await sessions[server].call_tool(name, args)
             content = list(r.content or [])
             # An error, or anything that is not plain text (images, resources),
@@ -386,8 +322,7 @@ def _server(o: Options):
                     rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": note},
                                          ensure_ascii=False) + "\n")
                     rec.flush()
-                if learner:
-                    learner.call(params.name, args, note)
+                engine.observe(call, ToolResult(note, verbatim=True))
                 live.call(params.name, note, note)
                 return r                     # exactly as the server sent it, metadata included
             raw = "".join(getattr(c, "text", "") or "" for c in content)
@@ -395,20 +330,16 @@ def _server(o: Options):
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
                                      ensure_ascii=False) + "\n")
                 rec.flush()
-            text = trimmer.output(params.name, raw)
-            if learner:
-                learner.call(params.name, args, raw)
-                if "\n[trimmed] " in text:
-                    learner.trimmed(params.name)
+            text = engine.observe(call, ToolResult(raw)).text
             live.call(params.name, raw, text)
             if text == raw:
                 # Nothing trimmed: the server's result goes back untouched,
                 # structured content and metadata included.
                 return r
-            if structured is not None and trimmer.policy is not None:
+            if structured is not None and engine.policy is not None:
                 # The structured copy is trimmed like the text, or it would carry
                 # back everything the projection removed.
-                projected = trimmer.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
+                projected = engine.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
                 try:
                     structured = json.loads(projected)
                 except ValueError:
