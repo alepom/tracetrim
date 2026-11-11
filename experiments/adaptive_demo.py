@@ -189,7 +189,7 @@ async def scenario(adapter: str, variant: str, arm: str, count) -> dict:
         "decisions": {"state": {k: state[k] for k in ("runs", "complete_runs", "trimmed", "expanded", "off",
                                                       "expand_runs", "sampling")},
                       "kept": projection["tools"], "dropped": projection["dropped"],
-                      "evidence": report["adaptive"]["evidence"],
+                      "evidence": report["adaptive"]["evidence"], "resumed": report["adaptive"]["resumed"],
                       "exposure": [[r["trimmed_line"], r["field_in_result"], r["expands"]] for r in runs]},
     }
 

@@ -309,10 +309,15 @@ class Learner:
             data = evidence.load(self.evidence_path)
             # The targeted correction comes first: fields are promoted before a
             # whole tool is judged, and a tool that just got one starts counting again.
-            new = evidence.decide(data, a, f"run-{self.state['runs']:04d}") if a.promote and ready else []
-            if new:
+            last = f"run-{self.state['runs']:04d}"
+            new = evidence.decide(data, a, last) if a.promote and ready else []
+            # A field that came back by itself (recovered with expand, written, and now kept by
+            # ordinary learning) corrects the cut as a promotion does: the requests that asked
+            # for it no longer count against the tool.
+            resumed = evidence.resume(data, projection.keep, last) if ready else []
+            if new or resumed:
                 evidence.save(self.evidence_path, data)
-                for tool in {p["tool"] for p in new}:
+                for tool in {p["tool"] for p in new + resumed}:
                     for counter in ("trimmed", "expanded", "expand_runs"):
                         self.state[counter].pop(tool, None)
             self._switch_off_overexpanded()
@@ -375,6 +380,8 @@ class Learner:
         return {
             "settings": asdict(self.adaptive),
             "promotions": promotions,
+            # Fields an expand gave back and ordinary learning then kept by itself.
+            "resumed": data["resumed"],
             "effect": effect,
             "evidence": {tool: {"origin": t.get("origin"), "broad_requests": len(t.get("broad_requests", [])),
                                 "fields": {path: {k: len(runs.get(k, [])) for k in KINDS}
@@ -397,7 +404,9 @@ class Learner:
 
     def _switch_off_overexpanded(self) -> None:
         """The last resort: a tool whose filtered results are expanded too often
-        is no longer filtered. With promotion on, the requests must also come
+        is no longer filtered. The counts start again whenever a cut of the
+        tool is corrected, by a promotion or by ordinary learning keeping a
+        recovered field: only requests the correction did not settle count. With promotion on, the requests must also come
         from as many runs as a promotion by request needs, so that the targeted
         correction gets its chance first."""
         runs_needed = self.adaptive.promote_requested_runs if self.adaptive.promote else 0

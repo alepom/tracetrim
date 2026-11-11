@@ -27,6 +27,10 @@ Promotion (opt-in): a field is added to what the projection keeps when
     `promote_reused_runs` runs (default 1: the model had it and wrote it), or
   - it was requested by name in at least `promote_requested_runs` runs
     (default 2: no visible reuse, so one run could be a whim).
+A field recovered with `expand` and then written needs no promotion: ordinary
+learning sees its value in the answer and keeps it. That is recorded too
+(`resume`), because it settles the requests that asked for it.
+
 A promoted field stays promoted: evidence only accumulates, so the projection
 cannot oscillate. The way back is explicit (`revert`): a reverted field is
 removed again and is not promoted a second time.
@@ -65,7 +69,7 @@ class Adaptive:
 
 
 def empty() -> dict:
-    return {"format": FORMAT, "tools": {}, "promotions": []}
+    return {"format": FORMAT, "tools": {}, "promotions": [], "resumed": []}
 
 
 def load(path: str | Path) -> dict:
@@ -75,6 +79,7 @@ def load(path: str | Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("format") != FORMAT:
         raise ValueError(f"{path.name}: not a tracetrim evidence file")
+    data.setdefault("resumed", [])          # files written before this key existed
     return data
 
 
@@ -175,6 +180,25 @@ def decide(data: dict, a: Adaptive, run: str) -> list[dict]:
                                 "at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
                     break
     data["promotions"] += new
+    return new
+
+
+def resume(data: dict, kept: dict[str, set[str]], run: str) -> list[dict]:
+    """Fields that an `expand` gave back and that ordinary learning now keeps
+    (their value was seen written): recorded once, appended to
+    `data["resumed"]` and returned. `kept`: what the learned projection keeps,
+    per trimmed tool, before promotions.
+
+    The cut those requests were about is corrected. They are stale evidence
+    against the tool: the caller starts its switch-off counters again, as it
+    does after a promotion. Without this a tool called twice a run was
+    switched off one run after its field had come back."""
+    known = {(r["tool"], r["field"]) for r in data["resumed"]}
+    new = [{"tool": tool, "field": path, "after": run, "recovered_in": list(runs[RECOVERED])}
+           for tool, t in sorted(data["tools"].items()) if tool in kept
+           for path, runs in sorted(t["fields"].items())
+           if runs.get(RECOVERED) and path in kept[tool] and (tool, path) not in known]
+    data["resumed"] += new
     return new
 
 

@@ -364,6 +364,8 @@ L = {
         "di conseguenza. Le evidenze contano le esecuzioni, non le richieste. Un campo visto intero e non visto "
         "riusato non è dimostrato inutile: nulla viene tolto per questo."),
     "promotions": ("Promoted fields", "Campi promossi"), "no_promotions": ("No field promoted.", "Nessun campo promosso."),
+    "resumed": ("Fields recovered with expand and then kept by ordinary learning (the tool's switch-off count restarted)",
+                "Campi recuperati con expand e poi tenuti dall'apprendimento ordinario (il conteggio di sospensione del tool è ripartito)"),
     "promote_off": ("promotion is off: evidence is recorded, nothing is promoted",
                     "la promozione è spenta: le evidenze sono registrate, nulla viene promosso"),
     "reason": ("reason", "motivo"), "runs": ("runs", "esecuzioni"), "state": ("state", "stato"),
@@ -539,6 +541,10 @@ def _adaptive_html(d: dict) -> str:
         if ev:
             out.append(f'<details><summary>{_t("evidence")} · {len(ev)}</summary>'
                        + _table([_t("tool"), _t("field")] + [_t("ev_" + k) for k in kinds], ev) + "</details>")
+        if a.get("resumed"):
+            out.append(f'<h3>{_t("resumed")}</h3>' + _table(
+                [_t("tool"), _t("field"), _t("runs")],
+                [[code(r["tool"]), code(r["field"]), html.escape(", ".join(r["recovered_in"]))] for r in a["resumed"]]))
         if a.get("conflicts"):
             out.append(f'<h3>{_t("conflicts")}</h3>' + _table(
                 [_t("tool"), _t("field")], [[code(c["tool"]), code(c["field"])] for c in a["conflicts"]]))

@@ -224,6 +224,51 @@ def test_without_promotion_the_whole_tool_is_switched_off_and_with_it_only_the_f
     assert state(tmp_path / "b")["trimmed"] == {TOOL: 3} and state(tmp_path / "b")["expanded"] == {}
 
 
+def twice(tt, k, fields=(), extra=""):
+    """A run in which the tool is called twice, as the agents of the study do."""
+    sent = [tt.output(TOOL, args(k), orders.output(**args(k))), tt.output(TOOL, args(k + 100), orders.output(**args(k + 100)))]
+    for s in sent:
+        missing = [f for f in fields if f.rsplit(".", 1)[-1] not in s.split(MARK)[0]]
+        if missing and MARK in s:
+            tt.expand({"call_id": s.rsplit("call_id=", 1)[1].split()[0], "fields": missing})
+    tt.done(answer(k, extra))
+    return sent
+
+
+def test_a_field_that_came_back_by_itself_does_not_get_the_tool_switched_off(tmp_path):
+    # Found in the dry run of protocol-v04.md, before any paid run: a tool called twice
+    # a run, its field asked back and written in run 1 and kept from run 2. After run 2:
+    # four filtered results, two expanded, and the tool was switched off for nothing.
+    tt = learned(tmp_path)
+    assert all(MARK in s for s in twice(tt, 4, [CARRIER], f" Carrier: {newest(4)['carrier']}."))
+    assert CARRIER in kept(tmp_path) and ev(tmp_path)["promotions"] == []           # ordinary learning, no promotion
+    assert ev(tmp_path)["resumed"] == [{"tool": TOOL, "field": CARRIER, "after": "run-0004",
+                                         "recovered_in": ["run-0004"]}]
+    assert state(tmp_path)["trimmed"] == {} and state(tmp_path)["expanded"] == {}   # the count started again
+    for k in (5, 6, 7):
+        sent = twice(tt, k, [CARRIER], f" Carrier: {newest(k)['carrier']}.")
+        assert all(MARK in s and "carrier" in s.split(MARK)[0] for s in sent)       # still trimmed, with the field
+    assert state(tmp_path)["off"] == [] and tt.trimming and state(tmp_path)["trimmed"] == {TOOL: 6}
+    report = json.loads((tmp_path / "report.json").read_text())["adaptive"]
+    assert [r["field"] for r in report["resumed"]] == [CARRIER]
+    assert "kept by ordinary learning" in (tmp_path / "report.html").read_text()
+
+
+def test_a_tool_that_goes_on_asking_for_other_fields_is_still_switched_off(tmp_path):
+    tt = learned(tmp_path)
+    twice(tt, 4, [CARRIER], f" Carrier: {newest(4)['carrier']}.")                   # settled: the count restarts
+    assert state(tmp_path)["off"] == []
+    for k in (5, 6):
+        twice(tt, k, [NOTE])                                                        # another field, never written
+    assert state(tmp_path)["off"] == [TOOL] and not tt.trimming
+    assert [r["field"] for r in ev(tmp_path)["resumed"]] == [CARRIER]               # recorded once
+
+
+def test_an_evidence_file_without_the_newer_key_loads(tmp_path):
+    (tmp_path / "evidence.json").write_text(json.dumps({"format": evidence.FORMAT, "tools": {}, "promotions": []}))
+    assert evidence.load(tmp_path / "evidence.json")["resumed"] == []
+
+
 def test_a_switched_off_tool_is_exposed_whole_and_counted_nowhere(tmp_path):
     tt = learned(tmp_path)
     for k in range(4, 9):
@@ -563,6 +608,8 @@ def test_the_proxy_and_autotrim_decide_the_same(variant, arm):
     # Same calls, same answers, same configuration: same exposure of every result, same
     # counters, same evidence, same projection.
     assert fc["decisions"] == mcp["decisions"]
+    # The field the agent wrote came back by itself in both, and restarted the tool's count in both.
+    assert bool(fc["decisions"]["resumed"]) is (variant == "visible")
     assert fc["promotions"] == mcp["promotions"] and fc["kept_again_from_shift_run"] == mcp["kept_again_from_shift_run"]
     # Only the proxy knows where a call really went.
     if origins[1]:

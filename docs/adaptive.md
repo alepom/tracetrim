@@ -69,6 +69,9 @@ to come back in a second, independent run. Promotion starts once trimming has st
   requests also came from as many runs as a promotion needs. Switching the whole tool off stays as the
   last resort: it still happens when requests remain frequent, for example an agent that always asks
   for everything.
+- **A field that came back by itself counts as a correction too.** When a recovered field is written and
+  ordinary learning keeps it, the tool's count starts again as after a promotion: the requests that asked
+  for it are settled. The report lists these fields.
 - **No oscillation.** Evidence only accumulates and nothing demotes a field on its own.
 - **The way back.** Every promotion is kept in `evidence.json` with its reason and the runs behind it.
 

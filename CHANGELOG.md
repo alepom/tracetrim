@@ -61,6 +61,12 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
     skill. `--no-skill` restores the previous capabilities and instructions.
   - `serverInfo.version` is tracetrim's version; it was empty.
   - The description of `tracetrim_done`'s `answer` says "the answer only, not the conversation".
+- **Fixed:** a tool could be switched off one run after its field had come back. When the agent asks a
+  field back with `expand` and writes its value, ordinary learning keeps the field from the next run; the
+  requests that asked for it still counted against the tool, and a tool called twice a run reached the
+  switch-off threshold with them. The count now starts again when a recovered field is kept, as it does
+  after a promotion; a tool that goes on asking for other fields is still switched off. Found in the dry
+  run of `protocol-v04.md`, before any paid run.
 - **Fixed:** `expand` requests made after the last closing were not saved when the proxy stopped; a
   trace written just before a crash could be overwritten by the next run.
 - Files written by earlier versions (work directories, configs, projections, traces, state) load as
