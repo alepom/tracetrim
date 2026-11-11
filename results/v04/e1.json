@@ -1,0 +1,6888 @@
+{
+  "protocol": "protocol-v04.md",
+  "tokens": "tiktoken o200k_base; billed tokens from the API usage",
+  "dry_run": false,
+  "dataforseo": {
+    "runs": 29,
+    "calls": 587,
+    "calls_per_tool": {
+      "dataforseo_labs_bulk_keyword_difficulty": 19,
+      "dataforseo_labs_google_keyword_ideas": 19,
+      "dataforseo_labs_google_keyword_suggestions": 82,
+      "dataforseo_labs_google_ranked_keywords": 20,
+      "dataforseo_labs_google_related_keywords": 10,
+      "dataforseo_labs_google_relevant_pages": 19,
+      "dataforseo_labs_search_intent": 19,
+      "kw_data_google_ads_search_volume": 44,
+      "kw_data_google_trends_explore": 85,
+      "on_page_content_parsing": 36,
+      "serp_organic_live_advanced": 193,
+      "serp_youtube_organic_live_advanced": 41
+    },
+    "calls_per_api": {
+      "keywords_data": 129,
+      "labs": 188,
+      "onpage": 36,
+      "serp": 234
+    },
+    "rates": {
+      "keywords_data": {
+        "usd": 1.612,
+        "calls": 46,
+        "usd_per_call": 0.03504
+      },
+      "labs": {
+        "usd": 0.948,
+        "calls": 71,
+        "usd_per_call": 0.01335
+      },
+      "serp": {
+        "usd": 0.237,
+        "calls": 71,
+        "usd_per_call": 0.00334
+      },
+      "onpage": {
+        "usd": 0.017,
+        "calls": 11,
+        "usd_per_call": 0.00155
+      }
+    },
+    "usd_estimated": 7.8674
+  },
+  "e1": {
+    "C1": {
+      "R": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 4,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": {
+          "median": 0.3755,
+          "min": 0.3337,
+          "max": 0.4239
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 9,
+          "min": 8,
+          "max": 10
+        },
+        "calls": {
+          "median": 22,
+          "min": 19,
+          "max": 24
+        },
+        "calls_per_turn_max": {
+          "median": 6,
+          "min": 5,
+          "max": 7
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 704930,
+          "min": 591738,
+          "max": 1058847
+        },
+        "billed_cached": {
+          "median": 571563,
+          "min": 489520,
+          "max": 909974
+        },
+        "billed_output": {
+          "median": 7634,
+          "min": 6878,
+          "max": 8191
+        },
+        "cost_usd": {
+          "median": 0.4735,
+          "min": 0.3939,
+          "max": 0.5703
+        },
+        "tokens_tool_definitions": {
+          "median": 7699,
+          "min": 7699,
+          "max": 7699
+        },
+        "tokens_instructions_added": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 124823,
+          "min": 88866,
+          "max": 146190
+        },
+        "tokens_outputs_sent": {
+          "median": 124823,
+          "min": 88866,
+          "max": 146190
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 4729,
+          "min": 4606,
+          "max": 5122
+        },
+        "dataforseo_calls": {
+          "median": 22,
+          "min": 19,
+          "max": 24
+        }
+      },
+      "S": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": {
+          "median": 0.3688,
+          "min": 0.2987,
+          "max": 0.4823
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 10,
+          "min": 6,
+          "max": 11
+        },
+        "calls": {
+          "median": 20,
+          "min": 18,
+          "max": 26
+        },
+        "calls_per_turn_max": {
+          "median": 5,
+          "min": 5,
+          "max": 7
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 763969,
+          "min": 492505,
+          "max": 1101384
+        },
+        "billed_cached": {
+          "median": 650075,
+          "min": 362299,
+          "max": 964797
+        },
+        "billed_output": {
+          "median": 7564,
+          "min": 6367,
+          "max": 9202
+        },
+        "cost_usd": {
+          "median": 0.4828,
+          "min": 0.4093,
+          "max": 0.5885
+        },
+        "tokens_tool_definitions": {
+          "median": 7699,
+          "min": 7699,
+          "max": 7699
+        },
+        "tokens_instructions_added": {
+          "median": 549,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 133399,
+          "min": 100208,
+          "max": 145333
+        },
+        "tokens_outputs_sent": {
+          "median": 133399,
+          "min": 100208,
+          "max": 145333
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 4765,
+          "min": 4042,
+          "max": 5479
+        },
+        "dataforseo_calls": {
+          "median": 20,
+          "min": 18,
+          "max": 26
+        }
+      },
+      "T": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": {
+          "median": 0.4389,
+          "min": 0.2637,
+          "max": 0.4689
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 9,
+          "min": 8,
+          "max": 11
+        },
+        "calls": {
+          "median": 24,
+          "min": 17,
+          "max": 26
+        },
+        "calls_per_turn_max": {
+          "median": 6,
+          "min": 5,
+          "max": 6
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 2,
+          "min": 1,
+          "max": 3
+        },
+        "billed_input": {
+          "median": 476266,
+          "min": 468129,
+          "max": 667742
+        },
+        "billed_cached": {
+          "median": 402077,
+          "min": 385325,
+          "max": 556523
+        },
+        "billed_output": {
+          "median": 8158,
+          "min": 7044,
+          "max": 8625
+        },
+        "cost_usd": {
+          "median": 0.3329,
+          "min": 0.3311,
+          "max": 0.4387
+        },
+        "tokens_tool_definitions": {
+          "median": 7828,
+          "min": 7828,
+          "max": 7828
+        },
+        "tokens_instructions_added": {
+          "median": 109,
+          "min": 109,
+          "max": 109
+        },
+        "tokens_outputs_original": {
+          "median": 126191,
+          "min": 121782,
+          "max": 152148
+        },
+        "tokens_outputs_sent": {
+          "median": 71264,
+          "min": 68625,
+          "max": 87444
+        },
+        "tokens_expand_replies": {
+          "median": 6227,
+          "min": 6,
+          "max": 13873
+        },
+        "tokens_final_answer": {
+          "median": 5208,
+          "min": 4599,
+          "max": 5624
+        },
+        "dataforseo_calls": {
+          "median": 24,
+          "min": 17,
+          "max": 26
+        }
+      },
+      "ST": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 4,
+        "did_not_do_the_task": 1,
+        "dataforseo_usd_estimated": {
+          "median": 0.3871,
+          "min": 0.3855,
+          "max": 0.4639
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 0.6667,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 9,
+          "min": 1,
+          "max": 12
+        },
+        "calls": {
+          "median": 23,
+          "min": 0,
+          "max": 27
+        },
+        "calls_per_turn_max": {
+          "median": 5,
+          "min": 0,
+          "max": 7
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 3
+        },
+        "billed_input": {
+          "median": 442252,
+          "min": 11267,
+          "max": 707649
+        },
+        "billed_cached": {
+          "median": 371295,
+          "min": 11264,
+          "max": 628467
+        },
+        "billed_output": {
+          "median": 7976,
+          "min": 189,
+          "max": 8413
+        },
+        "cost_usd": {
+          "median": 0.3064,
+          "min": 0.0045,
+          "max": 0.3934
+        },
+        "tokens_tool_definitions": {
+          "median": 7828,
+          "min": 7828,
+          "max": 7828
+        },
+        "tokens_instructions_added": {
+          "median": 658,
+          "min": 658,
+          "max": 658
+        },
+        "tokens_outputs_original": {
+          "median": 111706,
+          "min": 0,
+          "max": 143696
+        },
+        "tokens_outputs_sent": {
+          "median": 62663,
+          "min": 0,
+          "max": 79304
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 13228
+        },
+        "tokens_final_answer": {
+          "median": 4595,
+          "min": 68,
+          "max": 4669
+        },
+        "dataforseo_calls": {
+          "median": 23,
+          "min": 0,
+          "max": 27
+        }
+      }
+    },
+    "C2": {
+      "R": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 3,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": {
+          "median": 0.0501,
+          "min": 0.0378,
+          "max": 0.0578
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 0.8333,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 5,
+          "min": 3,
+          "max": 6
+        },
+        "calls": {
+          "median": 16,
+          "min": 14,
+          "max": 20
+        },
+        "calls_per_turn_max": {
+          "median": 9,
+          "min": 9,
+          "max": 12
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 1,
+          "min": 0,
+          "max": 4
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 236839,
+          "min": 145376,
+          "max": 383652
+        },
+        "billed_cached": {
+          "median": 154360,
+          "min": 67751,
+          "max": 281815
+        },
+        "billed_output": {
+          "median": 6601,
+          "min": 4303,
+          "max": 7207
+        },
+        "cost_usd": {
+          "median": 0.294,
+          "min": 0.2455,
+          "max": 0.3539
+        },
+        "tokens_tool_definitions": {
+          "median": 621,
+          "min": 621,
+          "max": 621
+        },
+        "tokens_instructions_added": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 100282,
+          "min": 76510,
+          "max": 106832
+        },
+        "tokens_outputs_sent": {
+          "median": 100282,
+          "min": 76510,
+          "max": 106832
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 5303,
+          "min": 2950,
+          "max": 5580
+        },
+        "dataforseo_calls": {
+          "median": 16,
+          "min": 14,
+          "max": 20
+        }
+      },
+      "S": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 4,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": {
+          "median": 0.0463,
+          "min": 0.0398,
+          "max": 0.0512
+        },
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 4,
+          "min": 3,
+          "max": 6
+        },
+        "calls": {
+          "median": 16,
+          "min": 13,
+          "max": 18
+        },
+        "calls_per_turn_max": {
+          "median": 9,
+          "min": 9,
+          "max": 9
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 2,
+          "min": 2,
+          "max": 4
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 191175,
+          "min": 127119,
+          "max": 367028
+        },
+        "billed_cached": {
+          "median": 115381,
+          "min": 53630,
+          "max": 267766
+        },
+        "billed_output": {
+          "median": 7114,
+          "min": 5918,
+          "max": 8374
+        },
+        "cost_usd": {
+          "median": 0.2735,
+          "min": 0.2287,
+          "max": 0.3389
+        },
+        "tokens_tool_definitions": {
+          "median": 621,
+          "min": 621,
+          "max": 621
+        },
+        "tokens_instructions_added": {
+          "median": 549,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 74815,
+          "min": 70782,
+          "max": 97961
+        },
+        "tokens_outputs_sent": {
+          "median": 74815,
+          "min": 70782,
+          "max": 97961
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 5478,
+          "min": 4229,
+          "max": 7208
+        },
+        "dataforseo_calls": {
+          "median": 16,
+          "min": 13,
+          "max": 18
+        }
+      }
+    },
+    "C4": {
+      "R": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 4,
+          "min": 3,
+          "max": 4
+        },
+        "calls": {
+          "median": 11,
+          "min": 11,
+          "max": 13
+        },
+        "calls_per_turn_max": {
+          "median": 6,
+          "min": 5,
+          "max": 7
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 43275,
+          "min": 28308,
+          "max": 61480
+        },
+        "billed_cached": {
+          "median": 23020,
+          "min": 4953,
+          "max": 32279
+        },
+        "billed_output": {
+          "median": 2833,
+          "min": 2590,
+          "max": 3016
+        },
+        "cost_usd": {
+          "median": 0.0801,
+          "min": 0.0722,
+          "max": 0.101
+        },
+        "tokens_tool_definitions": {
+          "median": 665,
+          "min": 665,
+          "max": 665
+        },
+        "tokens_instructions_added": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 20798,
+          "min": 16931,
+          "max": 26074
+        },
+        "tokens_outputs_sent": {
+          "median": 20798,
+          "min": 16931,
+          "max": 26074
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 1573,
+          "min": 1491,
+          "max": 1669
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "S": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 4,
+          "min": 3,
+          "max": 4
+        },
+        "calls": {
+          "median": 12,
+          "min": 10,
+          "max": 13
+        },
+        "calls_per_turn_max": {
+          "median": 6,
+          "min": 5,
+          "max": 7
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 45359,
+          "min": 27747,
+          "max": 56211
+        },
+        "billed_cached": {
+          "median": 27243,
+          "min": 8613,
+          "max": 32743
+        },
+        "billed_output": {
+          "median": 2969,
+          "min": 2496,
+          "max": 3229
+        },
+        "cost_usd": {
+          "median": 0.0791,
+          "min": 0.07,
+          "max": 0.0922
+        },
+        "tokens_tool_definitions": {
+          "median": 665,
+          "min": 665,
+          "max": 665
+        },
+        "tokens_instructions_added": {
+          "median": 549,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 18638,
+          "min": 16900,
+          "max": 22337
+        },
+        "tokens_outputs_sent": {
+          "median": 18638,
+          "min": 16900,
+          "max": 22337
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 1555,
+          "min": 1480,
+          "max": 1750
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "T": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 3,
+          "min": 3,
+          "max": 4
+        },
+        "calls": {
+          "median": 10,
+          "min": 10,
+          "max": 11
+        },
+        "calls_per_turn_max": {
+          "median": 5,
+          "min": 5,
+          "max": 6
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 17340,
+          "min": 17288,
+          "max": 30423
+        },
+        "billed_cached": {
+          "median": 6294,
+          "min": 5101,
+          "max": 18492
+        },
+        "billed_output": {
+          "median": 2969,
+          "min": 2790,
+          "max": 3054
+        },
+        "cost_usd": {
+          "median": 0.0605,
+          "min": 0.0567,
+          "max": 0.0633
+        },
+        "tokens_tool_definitions": {
+          "median": 794,
+          "min": 794,
+          "max": 794
+        },
+        "tokens_instructions_added": {
+          "median": 109,
+          "min": 109,
+          "max": 109
+        },
+        "tokens_outputs_original": {
+          "median": 18638,
+          "min": 18638,
+          "max": 19807
+        },
+        "tokens_outputs_sent": {
+          "median": 10527,
+          "min": 10516,
+          "max": 11268
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 1574,
+          "min": 1499,
+          "max": 1680
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "ST": {
+        "runs": 5,
+        "flagged": 0,
+        "gates_passed": 5,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 4,
+          "min": 3,
+          "max": 4
+        },
+        "calls": {
+          "median": 11,
+          "min": 10,
+          "max": 12
+        },
+        "calls_per_turn_max": {
+          "median": 5,
+          "min": 5,
+          "max": 6
+        },
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 33613,
+          "min": 18955,
+          "max": 35225
+        },
+        "billed_cached": {
+          "median": 20685,
+          "min": 7938,
+          "max": 22018
+        },
+        "billed_output": {
+          "median": 2848,
+          "min": 2464,
+          "max": 3103
+        },
+        "cost_usd": {
+          "median": 0.0643,
+          "min": 0.0532,
+          "max": 0.0672
+        },
+        "tokens_tool_definitions": {
+          "median": 794,
+          "min": 794,
+          "max": 794
+        },
+        "tokens_instructions_added": {
+          "median": 658,
+          "min": 658,
+          "max": 658
+        },
+        "tokens_outputs_original": {
+          "median": 20798,
+          "min": 18638,
+          "max": 21168
+        },
+        "tokens_outputs_sent": {
+          "median": 11806,
+          "min": 10517,
+          "max": 12119
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 1612,
+          "min": 1537,
+          "max": 1720
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  "e1_hypotheses": {
+    "H1": {
+      "per_comparison": {
+        "C1 S vs R": {
+          "gates": [
+            5,
+            4
+          ],
+          "coverage_median": 1.0,
+          "control_coverage_range": [
+            1.0,
+            1.0
+          ],
+          "holds": true
+        },
+        "C1 ST vs T": {
+          "gates": [
+            4,
+            5
+          ],
+          "coverage_median": 1.0,
+          "control_coverage_range": [
+            1.0,
+            1.0
+          ],
+          "holds": false
+        },
+        "C2 S vs R": {
+          "gates": [
+            4,
+            3
+          ],
+          "coverage_median": 1.0,
+          "control_coverage_range": [
+            0.8333,
+            1.0
+          ],
+          "holds": true
+        },
+        "C4 S vs R": {
+          "gates": [
+            5,
+            5
+          ],
+          "coverage_median": 1.0,
+          "control_coverage_range": [
+            1.0,
+            1.0
+          ],
+          "holds": true
+        },
+        "C4 ST vs T": {
+          "gates": [
+            5,
+            5
+          ],
+          "coverage_median": 1.0,
+          "control_coverage_range": [
+            1.0,
+            1.0
+          ],
+          "holds": true
+        }
+      },
+      "holds": false
+    },
+    "H2": {
+      "turns_median_S": 4,
+      "turns_min_R": 3,
+      "holds": false
+    },
+    "H4": {
+      "per_case": {
+        "C1": {
+          "billed_input_median_ST": 442252,
+          "billed_input_max_T": 667742,
+          "holds": true
+        },
+        "C4": {
+          "billed_input_median_ST": 33613,
+          "billed_input_max_T": 30423,
+          "holds": false
+        }
+      },
+      "holds": false
+    }
+  },
+  "per_run": [
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "R",
+      "run": "E1-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18840,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 24,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 1,
+      "billed": {
+        "input": 591738,
+        "cached": 489520,
+        "output": 7634
+      },
+      "cost_usd": 0.3939,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 88866,
+        "outputs_sent": {
+          "full": 88866
+        },
+        "expand_replies": 0,
+        "final_answer": 4729
+      },
+      "exposure": {
+        "full": 24
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 8,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 2.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 2,
+          "received": 4.5,
+          "reused": 0.5,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 8,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 7.0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 16.5,
+          "reused": 1.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4122
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "R",
+      "run": "E1-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18100,
+      "facts": [
+        54,
+        54
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 21,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 684096,
+        "cached": 556922,
+        "output": 6878
+      },
+      "cost_usd": 0.4483,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 124823,
+        "outputs_sent": {
+          "full": 124823
+        },
+        "expand_replies": 0,
+        "final_answer": 4606
+      },
+      "exposure": {
+        "full": 21
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 5.5,
+          "reused_from_top": 3
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 10.5,
+          "reused": 9.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3504
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "R",
+      "run": "E1-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 19639,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 704930,
+        "cached": 571563,
+        "output": 7702
+      },
+      "cost_usd": 0.4735,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 120281,
+        "outputs_sent": {
+          "full": 120281
+        },
+        "expand_replies": 0,
+        "final_answer": 4965
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 6.0,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 12,
+          "reused": 11,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 2.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3337
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "R",
+      "run": "E1-R-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 20022,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 24,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.5,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 898930,
+        "cached": 752992,
+        "output": 8191
+      },
+      "cost_usd": 0.5408,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 142967,
+        "outputs_sent": {
+          "full": 142967
+        },
+        "expand_replies": 0,
+        "final_answer": 5122
+      },
+      "exposure": {
+        "full": 24
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 43,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 9.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 43,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 12.0,
+          "reused": 9.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 18,
+          "reused": 1,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4239
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "R",
+      "run": "E1-R-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18559,
+      "facts": [
+        58,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 10,
+      "calls": 22,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 1058847,
+        "cached": 909974,
+        "output": 7548
+      },
+      "cost_usd": 0.5703,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 146190,
+        "outputs_sent": {
+          "full": 146190
+        },
+        "expand_replies": 0,
+        "final_answer": 4717
+      },
+      "exposure": {
+        "full": 22
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 12.5,
+          "reused": 10.5,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 20,
+          "reused": 0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3755
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "S",
+      "run": "E1-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18747,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 10,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 763969,
+        "cached": 650075,
+        "output": 7439
+      },
+      "cost_usd": 0.4471,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 100208,
+        "outputs_sent": {
+          "full": 100208
+        },
+        "expand_replies": 0,
+        "final_answer": 4765
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 9,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 1,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 5.5,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 9,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 2.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.312
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "S",
+      "run": "E1-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 21484,
+      "facts": [
+        72,
+        72
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 10,
+      "calls": 24,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 1052710,
+        "cached": 904069,
+        "output": 9202
+      },
+      "cost_usd": 0.5885,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 145333,
+        "outputs_sent": {
+          "full": 145333
+        },
+        "expand_replies": 0,
+        "final_answer": 5479
+      },
+      "exposure": {
+        "full": 24
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 6,
+          "received": 10.0,
+          "reused": 9.5,
+          "reused_from_top": 4
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.0,
+          "reused": 2.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4439
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "S",
+      "run": "E1-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 15766,
+      "facts": [
+        41,
+        41
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 18,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 492505,
+        "cached": 362299,
+        "output": 6367
+      },
+      "cost_usd": 0.4093,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 116735,
+        "outputs_sent": {
+          "full": 116735
+        },
+        "expand_replies": 0,
+        "final_answer": 4042
+      },
+      "exposure": {
+        "full": 18
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 3
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 11,
+          "reused_from_top": 1
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.0,
+          "reused": 2.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.2987
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "S",
+      "run": "E1-S-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 19345,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 20,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 732406,
+        "cached": 595974,
+        "output": 7564
+      },
+      "cost_usd": 0.4828,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 133889,
+        "outputs_sent": {
+          "full": 133889
+        },
+        "expand_replies": 0,
+        "final_answer": 4834
+      },
+      "exposure": {
+        "full": 20
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 23,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 23,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 7.5,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 10,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.0,
+          "reused": 4.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3688
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "S",
+      "run": "E1-S-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18024,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 11,
+      "calls": 26,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.0,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 1,
+      "billed": {
+        "input": 1101384,
+        "cached": 964797,
+        "output": 7611
+      },
+      "cost_usd": 0.5575,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 133399,
+        "outputs_sent": {
+          "full": 133399
+        },
+        "expand_replies": 0,
+        "final_answer": 4542
+      },
+      "exposure": {
+        "full": 26
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 4,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 17,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 6,
+          "received": 8.0,
+          "reused": 2.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 17,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 12.5,
+          "reused": 10.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 3.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4823
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "ST",
+      "run": "E1-ST-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18155,
+      "facts": [
+        56,
+        56
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 10,
+      "calls": 27,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 613550,
+        "cached": 519230,
+        "output": 8413
+      },
+      "cost_usd": 0.3934,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 658,
+        "outputs_original": 143696,
+        "outputs_sent": {
+          "filtered": 26872,
+          "full": 52432
+        },
+        "expand_replies": 6,
+        "final_answer": 4605
+      },
+      "exposure": {
+        "filtered": 16,
+        "full": 11
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3,
+        "dataforseo_labs_google_keyword_suggestions": 7,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 7,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 11.5,
+          "reused": 10.0,
+          "reused_from_top": 1
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 20,
+          "reused": 0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4639
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "ST",
+      "run": "E1-ST-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": true,
+      "answer_is_not_the_json_asked": true,
+      "messages": 1,
+      "final_answer_chars": 312,
+      "facts": [
+        0,
+        0
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": false,
+          "medium-term plan has 10 to 15 items": false,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 4,
+        "of": 6,
+        "share": 0.6667
+      },
+      "turns": 1,
+      "calls": 0,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 0,
+        "max": 0
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 11267,
+        "cached": 11264,
+        "output": 189
+      },
+      "cost_usd": 0.0045,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 658,
+        "outputs_original": 0,
+        "outputs_sent": {},
+        "expand_replies": 0,
+        "final_answer": 68
+      },
+      "exposure": {},
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {}
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "ST",
+      "run": "E1-ST-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18258,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 22,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 353249,
+        "cached": 289874,
+        "output": 7976
+      },
+      "cost_usd": 0.2804,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 658,
+        "outputs_original": 105945,
+        "outputs_sent": {
+          "filtered": 17933,
+          "full": 31313
+        },
+        "expand_replies": 0,
+        "final_answer": 4669
+      },
+      "exposure": {
+        "filtered": 12,
+        "full": 10
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 9.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 6.5,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 8.5,
+          "reused_from_top": 1
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 17.0,
+          "reused": 2.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3855
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "ST",
+      "run": "E1-ST-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18436,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 12,
+      "calls": 23,
+      "expand_calls": 3,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 707649,
+        "cached": 628467,
+        "output": 8293
+      },
+      "cost_usd": 0.3836,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 658,
+        "outputs_original": 111706,
+        "outputs_sent": {
+          "filtered": 16769,
+          "full": 45794,
+          "full_cheaper": 100
+        },
+        "expand_replies": 13228,
+        "final_answer": 4595
+      },
+      "exposure": {
+        "filtered": 9,
+        "full": 12,
+        "full_cheaper": 2
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 5,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 5,
+          "received": 10,
+          "reused": 2,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 2,
+          "received": 4.5,
+          "reused": 1.0,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 30,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "expand items[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 12,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.5,
+          "reused": 0.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3871
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "ST",
+      "run": "E1-ST-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 17898,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 23,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 442252,
+        "cached": 371295,
+        "output": 7523
+      },
+      "cost_usd": 0.3064,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 658,
+        "outputs_original": 121235,
+        "outputs_sent": {
+          "filtered": 15008,
+          "full": 53071,
+          "full_cheaper": 101
+        },
+        "expand_replies": 0,
+        "final_answer": 4542
+      },
+      "exposure": {
+        "filtered": 9,
+        "full": 12,
+        "full_cheaper": 2
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_related_keywords": 3,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 5.0,
+          "reused": 4.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 3,
+          "received": 8,
+          "reused": 4,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 7.5,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.5,
+          "reused": 1.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3871
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "T",
+      "run": "E1-T-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 21611,
+      "facts": [
+        71,
+        71
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 11,
+      "calls": 24,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 2.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 640648,
+        "cached": 556523,
+        "output": 8342
+      },
+      "cost_usd": 0.3797,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 109,
+        "outputs_original": 135799,
+        "outputs_sent": {
+          "filtered": 19255,
+          "full": 51125
+        },
+        "expand_replies": 6,
+        "final_answer": 5461
+      },
+      "exposure": {
+        "filtered": 14,
+        "full": 10
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 27,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 6,
+          "received": 10.0,
+          "reused": 6.0,
+          "reused_from_top": 4
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 27,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.5,
+          "reused": 0.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4439
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "T",
+      "run": "E1-T-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 20311,
+      "facts": [
+        72,
+        72
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 17,
+      "expand_calls": 3,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 468129,
+        "cached": 385325,
+        "output": 7368
+      },
+      "cost_usd": 0.3311,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 109,
+        "outputs_original": 121782,
+        "outputs_sent": {
+          "filtered": 16567,
+          "full": 57830
+        },
+        "expand_replies": 6227,
+        "final_answer": 5208
+      },
+      "exposure": {
+        "filtered": 9,
+        "full": 8
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 1,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "expand items[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 12,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.2637
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "T",
+      "run": "E1-T-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 18649,
+      "facts": [
+        60,
+        60
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 26,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 3.5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 667742,
+        "cached": 552616,
+        "output": 8158
+      },
+      "cost_usd": 0.4387,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 109,
+        "outputs_original": 152148,
+        "outputs_sent": {
+          "filtered": 23153,
+          "full": 64240,
+          "full_cheaper": 51
+        },
+        "expand_replies": 13387,
+        "final_answer": 4707
+      },
+      "exposure": {
+        "filtered": 13,
+        "full": 12,
+        "full_cheaper": 1
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 7,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_related_keywords": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 7,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 6
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 4,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "expand items[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 4,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 12.0,
+          "reused": 9.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 19.5,
+          "reused": 1.5,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4389
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "T",
+      "run": "E1-T-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 22149,
+      "facts": [
+        72,
+        72
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 9,
+      "calls": 25,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 476266,
+        "cached": 402077,
+        "output": 8625
+      },
+      "cost_usd": 0.3323,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 109,
+        "outputs_original": 126191,
+        "outputs_sent": {
+          "filtered": 14511,
+          "full_cheaper": 162,
+          "full": 56591
+        },
+        "expand_replies": 6,
+        "final_answer": 5624
+      },
+      "exposure": {
+        "filtered": 10,
+        "full_cheaper": 3,
+        "full": 12
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 7,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "kw_data_google_ads_search_volume": 2,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 2,
+          "received": 8.5,
+          "reused": 4.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 7.5,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 7,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 4,
+          "received": 11.0,
+          "reused": 9.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 1.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.4689
+    },
+    {
+      "experiment": "E1",
+      "case": "C1",
+      "arm": "T",
+      "run": "E1-T-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 17976,
+      "facts": [
+        57,
+        57
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 20,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 476183,
+        "cached": 391097,
+        "output": 7044
+      },
+      "cost_usd": 0.3329,
+      "tokens": {
+        "tool_definitions": 7828,
+        "instructions_added": 109,
+        "outputs_original": 121908,
+        "outputs_sent": {
+          "filtered": 19700,
+          "full": 48925
+        },
+        "expand_replies": 13873,
+        "final_answer": 4599
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 10
+      },
+      "dataforseo_calls": {
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "dataforseo_labs_search_intent": 1,
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_ranked_keywords": 2,
+        "dataforseo_labs_google_relevant_pages": 1
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "dataforseo_labs_google_keyword_suggestions",
+        "dataforseo_labs_google_ranked_keywords",
+        "kw_data_google_trends_explore",
+        "serp_youtube_organic_live_advanced"
+      ],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 2,
+          "received": 7.5,
+          "reused": 7.5,
+          "reused_from_top": 2
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 25,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "expand items[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 20.0,
+          "reused": 3.0,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.3471
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "R",
+      "run": "E1-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 12054,
+      "facts": [
+        18,
+        30
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 14,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 230879,
+        "cached": 121864,
+        "output": 4303
+      },
+      "cost_usd": 0.294,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 106832,
+        "outputs_sent": {
+          "full": 106832
+        },
+        "expand_replies": 0,
+        "final_answer": 2950
+      },
+      "exposure": {
+        "full": 14
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 9,
+        "on_page_content_parsing": 5
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 9,
+          "received": 11,
+          "reused": 4,
+          "reused_from_top": 0
+        }
+      },
+      "dataforseo_usd_estimated": 0.0378
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "R",
+      "run": "E1-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 14003,
+      "facts": [
+        24,
+        24
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 1,
+      "billed": {
+        "input": 236839,
+        "cached": 154360,
+        "output": 6601
+      },
+      "cost_usd": 0.275,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 81291,
+        "outputs_sent": {
+          "full": 81291
+        },
+        "expand_replies": 0,
+        "final_answer": 5502
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 12,
+        "on_page_content_parsing": 4
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 11,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 3
+        }
+      },
+      "dataforseo_usd_estimated": 0.0463
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "R",
+      "run": "E1-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 15495,
+      "facts": [
+        31,
+        32
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 1,
+      "billed": {
+        "input": 375734,
+        "cached": 268937,
+        "output": 7207
+      },
+      "cost_usd": 0.3539,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 104286,
+        "outputs_sent": {
+          "full": 104286
+        },
+        "expand_replies": 0,
+        "final_answer": 5580
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 15,
+        "on_page_content_parsing": 4
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 14,
+          "received": 10.0,
+          "reused": 10.0,
+          "reused_from_top": 6
+        }
+      },
+      "dataforseo_usd_estimated": 0.0563
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "R",
+      "run": "E1-R-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 14720,
+      "facts": [
+        30,
+        30
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 20,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 12
+      },
+      "repeated_calls": 0,
+      "error_calls": 4,
+      "billed": {
+        "input": 383652,
+        "cached": 281815,
+        "output": 7188
+      },
+      "cost_usd": 0.3463,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 100282,
+        "outputs_sent": {
+          "full": 100282
+        },
+        "expand_replies": 0,
+        "final_answer": 5303
+      },
+      "exposure": {
+        "full": 20
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 15,
+        "on_page_content_parsing": 5
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 12,
+          "received": 10.0,
+          "reused": 10.0,
+          "reused_from_top": 6
+        }
+      },
+      "dataforseo_usd_estimated": 0.0578
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "R",
+      "run": "E1-R-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 12946,
+      "facts": [
+        32,
+        32
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": false,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 5,
+        "of": 6,
+        "share": 0.8333
+      },
+      "turns": 3,
+      "calls": 15,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 7.5,
+        "max": 12
+      },
+      "repeated_calls": 0,
+      "error_calls": 1,
+      "billed": {
+        "input": 145376,
+        "cached": 67751,
+        "output": 6390
+      },
+      "cost_usd": 0.2455,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 76510,
+        "outputs_sent": {
+          "full": 76510
+        },
+        "expand_replies": 0,
+        "final_answer": 5097
+      },
+      "exposure": {
+        "full": 15
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 15
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 14,
+          "received": 10.0,
+          "reused": 9.5,
+          "reused_from_top": 6
+        }
+      },
+      "dataforseo_usd_estimated": 0.0501
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "S",
+      "run": "E1-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 12861,
+      "facts": [
+        27,
+        27
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 6.5,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 2,
+      "billed": {
+        "input": 127119,
+        "cached": 53630,
+        "output": 5918
+      },
+      "cost_usd": 0.2287,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 70782,
+        "outputs_sent": {
+          "full": 70782
+        },
+        "expand_replies": 0,
+        "final_answer": 4743
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 11,
+        "on_page_content_parsing": 2
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 9,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 4
+        }
+      },
+      "dataforseo_usd_estimated": 0.0398
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "S",
+      "run": "E1-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 17606,
+      "facts": [
+        31,
+        34
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 15,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 2,
+      "billed": {
+        "input": 165816,
+        "cached": 88095,
+        "output": 8374
+      },
+      "cost_usd": 0.2735,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 74815,
+        "outputs_sent": {
+          "full": 74815
+        },
+        "expand_replies": 0,
+        "final_answer": 7208
+      },
+      "exposure": {
+        "full": 15
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 12,
+        "on_page_content_parsing": 3
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 10,
+          "received": 10.0,
+          "reused": 10.0,
+          "reused_from_top": 4
+        }
+      },
+      "dataforseo_usd_estimated": 0.0447
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "S",
+      "run": "E1-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 14470,
+      "facts": [
+        26,
+        26
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 17,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 4,
+      "billed": {
+        "input": 191175,
+        "cached": 115381,
+        "output": 7114
+      },
+      "cost_usd": 0.26,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 74222,
+        "outputs_sent": {
+          "full": 74222
+        },
+        "expand_replies": 0,
+        "final_answer": 5478
+      },
+      "exposure": {
+        "full": 17
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 13,
+        "on_page_content_parsing": 4
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 11,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 4
+        }
+      },
+      "dataforseo_usd_estimated": 0.0496
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "S",
+      "run": "E1-S-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 12065,
+      "facts": [
+        22,
+        22
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 3,
+      "billed": {
+        "input": 242238,
+        "cached": 158325,
+        "output": 6408
+      },
+      "cost_usd": 0.2764,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 82399,
+        "outputs_sent": {
+          "full": 82399
+        },
+        "expand_replies": 0,
+        "final_answer": 4229
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 12,
+        "on_page_content_parsing": 4
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 10,
+          "received": 10.0,
+          "reused": 9.5,
+          "reused_from_top": 4
+        }
+      },
+      "dataforseo_usd_estimated": 0.0463
+    },
+    {
+      "experiment": "E1",
+      "case": "C2",
+      "arm": "S",
+      "run": "E1-S-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 16057,
+      "facts": [
+        31,
+        31
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 18,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 9
+      },
+      "repeated_calls": 0,
+      "error_calls": 2,
+      "billed": {
+        "input": 367028,
+        "cached": 267766,
+        "output": 7234
+      },
+      "cost_usd": 0.3389,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 97961,
+        "outputs_sent": {
+          "full": 97961
+        },
+        "expand_replies": 0,
+        "final_answer": 6072
+      },
+      "exposure": {
+        "full": 18
+      },
+      "dataforseo_calls": {
+        "serp_organic_live_advanced": 13,
+        "on_page_content_parsing": 5
+      },
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 12,
+          "received": 10.0,
+          "reused": 10.0,
+          "reused_from_top": 6
+        }
+      },
+      "dataforseo_usd_estimated": 0.0512
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "R",
+      "run": "E1-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5372,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 61480,
+        "cached": 32279,
+        "output": 3016
+      },
+      "cost_usd": 0.101,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 26074,
+        "outputs_sent": {
+          "full": 26074
+        },
+        "expand_replies": 0,
+        "final_answer": 1633
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 3,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 3
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "R",
+      "run": "E1-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5499,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 43275,
+        "cached": 23020,
+        "output": 2833
+      },
+      "cost_usd": 0.0791,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 16931,
+        "outputs_sent": {
+          "full": 16931
+        },
+        "expand_replies": 0,
+        "final_answer": 1669
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "R",
+      "run": "E1-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4925,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 47152,
+        "cached": 25130,
+        "output": 2590
+      },
+      "cost_usd": 0.0801,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 19008,
+        "outputs_sent": {
+          "full": 19008
+        },
+        "expand_replies": 0,
+        "final_answer": 1491
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "R",
+      "run": "E1-R-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5057,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 28308,
+        "cached": 9902,
+        "output": 2782
+      },
+      "cost_usd": 0.0722,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 20798,
+        "outputs_sent": {
+          "full": 20798
+        },
+        "expand_replies": 0,
+        "final_answer": 1552
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "R",
+      "run": "E1-R-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5239,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 28364,
+        "cached": 4953,
+        "output": 2859
+      },
+      "cost_usd": 0.0821,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 20798,
+        "outputs_sent": {
+          "full": 20798
+        },
+        "expand_replies": 0,
+        "final_answer": 1573
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "S",
+      "run": "E1-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5133,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 53946,
+        "cached": 29977,
+        "output": 2969
+      },
+      "cost_usd": 0.0896,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 21168,
+        "outputs_sent": {
+          "full": 21168
+        },
+        "expand_replies": 0,
+        "final_answer": 1555
+      },
+      "exposure": {
+        "full": 12
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "S",
+      "run": "E1-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4976,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 27747,
+        "cached": 8613,
+        "output": 2668
+      },
+      "cost_usd": 0.072,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "full": 18638
+        },
+        "expand_replies": 0,
+        "final_answer": 1517
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "S",
+      "run": "E1-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4815,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 27764,
+        "cached": 8614,
+        "output": 2496
+      },
+      "cost_usd": 0.07,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "full": 18638
+        },
+        "expand_replies": 0,
+        "final_answer": 1480
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "S",
+      "run": "E1-S-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5255,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 45359,
+        "cached": 27243,
+        "output": 3122
+      },
+      "cost_usd": 0.0791,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16900,
+        "outputs_sent": {
+          "full": 16900
+        },
+        "expand_replies": 0,
+        "final_answer": 1581
+      },
+      "exposure": {
+        "full": 12
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 2.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "S",
+      "run": "E1-S-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5886,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 7
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 56211,
+        "cached": 32743,
+        "output": 3229
+      },
+      "cost_usd": 0.0922,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 22337,
+        "outputs_sent": {
+          "full": 22337
+        },
+        "expand_replies": 0,
+        "final_answer": 1750
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "ST",
+      "run": "E1-ST-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5270,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 33875,
+        "cached": 20685,
+        "output": 3043
+      },
+      "cost_usd": 0.067,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 658,
+        "outputs_original": 21168,
+        "outputs_sent": {
+          "filtered": 11810,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1612
+      },
+      "exposure": {
+        "filtered": 11,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "ST",
+      "run": "E1-ST-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5141,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 32603,
+        "cached": 20700,
+        "output": 2848
+      },
+      "cost_usd": 0.0621,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 658,
+        "outputs_original": 19008,
+        "outputs_sent": {
+          "filtered": 10520,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1537
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "ST",
+      "run": "E1-ST-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5716,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 33613,
+        "cached": 20683,
+        "output": 3103
+      },
+      "cost_usd": 0.0672,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 658,
+        "outputs_original": 20798,
+        "outputs_sent": {
+          "filtered": 11806
+        },
+        "expand_replies": 0,
+        "final_answer": 1720
+      },
+      "exposure": {
+        "filtered": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "ST",
+      "run": "E1-ST-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5205,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 35225,
+        "cached": 22018,
+        "output": 2792
+      },
+      "cost_usd": 0.0643,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 658,
+        "outputs_original": 21168,
+        "outputs_sent": {
+          "filtered": 11807,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1612
+      },
+      "exposure": {
+        "filtered": 11,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "ST",
+      "run": "E1-ST-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5257,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 18955,
+        "cached": 7938,
+        "output": 2464
+      },
+      "cost_usd": 0.0532,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 658,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "filtered": 10517
+        },
+        "expand_replies": 0,
+        "final_answer": 1575
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": true,
+        "tokens": 658
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "T",
+      "run": "E1-T-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5526,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 17320,
+        "cached": 5101,
+        "output": 3054
+      },
+      "cost_usd": 0.0621,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "filtered": 10516
+        },
+        "expand_replies": 0,
+        "final_answer": 1680
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "T",
+      "run": "E1-T-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5305,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 17288,
+        "cached": 6290,
+        "output": 2790
+      },
+      "cost_usd": 0.0567,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "filtered": 10517
+        },
+        "expand_replies": 0,
+        "final_answer": 1585
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "T",
+      "run": "E1-T-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4972,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 17340,
+        "cached": 6297,
+        "output": 2922
+      },
+      "cost_usd": 0.0584,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18638,
+        "outputs_sent": {
+          "filtered": 10527
+        },
+        "expand_replies": 0,
+        "final_answer": 1499
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "T",
+      "run": "E1-T-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5008,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 30423,
+        "cached": 18492,
+        "output": 2980
+      },
+      "cost_usd": 0.0633,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19008,
+        "outputs_sent": {
+          "filtered": 10522,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1508
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E1",
+      "case": "C4",
+      "arm": "T",
+      "run": "E1-T-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5032,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "billed": {
+        "input": 18090,
+        "cached": 6294,
+        "output": 2969
+      },
+      "cost_usd": 0.0605,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19807,
+        "outputs_sent": {
+          "filtered": 11268
+        },
+        "expand_replies": 0,
+        "final_answer": 1574
+      },
+      "exposure": {
+        "filtered": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    }
+  ]
+}

@@ -31,6 +31,9 @@ calls and messages. Every `call` has:
 | `turn` | the model turn that emitted the call |
 | `outcome` | `ok`, `tool_error` (the server marked the result as an error), `gate_refused` (the study's domain gate), `client_error` (no answer after the retries), `expand_error` |
 
+A provider that reports an error as ordinary text, as DataForSEO does (`Error: API Error: ...`), is recorded as
+`ok`: the server did not mark the result as an error. Such calls are told by the text of `output`.
+
 `experiments.v04.calls(path)` reads a trace back as one record per call with all of these, `expand` included:
 a test checks that nothing is missing. An `expand` call names in its arguments the `call_id` printed in the
 `[trimmed]` line of the result it asks about.

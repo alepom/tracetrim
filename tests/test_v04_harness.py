@@ -452,6 +452,14 @@ def test_the_tables_are_computed_from_the_files_of_the_runs(dry):
     assert sequences[("C1", "promotion")]["expand_calls"] == [2, 0]
     page = tables(res)
     assert "DRY RUN" in page and "kept from run" in page
+    # The hypotheses are computed from the table, as the protocol states them.
+    h = res["e1_hypotheses"]
+    assert set(h["H1"]["per_comparison"]) == {"C1 S vs R", "C1 ST vs T", "C2 S vs R", "C4 S vs R", "C4 ST vs T"}
+    assert h["H1"]["holds"] is True and h["H2"]["holds"] is False        # the stub replays the same run in every arm
+    assert set(h["H4"]["per_case"]) == {"C1", "C4"}
+    assert all(r["no_tool_call"] is False and r["answer_is_not_the_json_asked"] is False
+               for r in res["per_run"] if r["experiment"] == "E1")
+    assert res["dataforseo"]["rates"] is None and res["dataforseo"]["calls_per_api"]["serp"] > 0
     # Counts, shares and field paths only: no value of a tool output.
     saved = json.dumps(res)
     for m in dry["metas"]:
