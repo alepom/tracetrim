@@ -85,6 +85,11 @@ def test_the_warning_and_the_cap_are_those_of_the_protocol(tmp_path):
     spend(where, 39.99)
     assert v04.may_start(where, run) is None
     spend(where, 40.0)
+    # At the warning everything stops for a report, until its review is recorded.
+    with pytest.raises(SystemExit, match="warning: 40.00 USD spent .warning at 40, cap 50.. Report the spend"):
+        v04.may_start(where, run)
+    where.warning_reviewed.parent.mkdir(parents=True)
+    where.warning_reviewed.write_text('{"reviewed": true}\n')
     assert v04.may_start(where, run) == "WARNING: 40.00 USD spent, warning at 40, cap 50"
     spend(where, 50.0)
     with pytest.raises(SystemExit, match="stop rule: 50.00 USD already spent, cap 50"):
@@ -279,11 +284,80 @@ def test_dataforseo_calls_are_counted_and_the_domain_gate_is_on(dry):
     assert by(dry, "E1", "C4", "R")["dataforseo_calls"] == {} and by(dry, "E1", "C4", "R")["domain_rejections"] == 0
 
 
-def test_the_dataforseo_stop_rule_fired_during_the_dry_run(dry):
+def test_the_stops_fired_during_the_dry_run(dry):
     stop = json.loads(dry["where"].checkpoint.read_text())
     assert stop["dry_run"] is True and stop["runs_that_called_dataforseo"] == 10
     order = [(m["case"], m["run"]) for m in dry["metas"]]
     assert order.index(tuple(stop["stopped_before"].split())) == 10 + sum(m["case"] == "C4" for m in dry["metas"])
+    # And E2 waited for the review of E1: it stopped before its first run.
+    assert json.loads(dry["where"].e1_reviewed.read_text())["stopped_before"] == "C4 E2-base-s1-r1"
+
+
+# -- what the traces keep for later, offline evaluations ------------------------------------------
+
+def test_every_call_of_a_run_can_be_read_back_whole_from_its_trace(dry):
+    for m in dry["metas"]:
+        path = dry["root"] / "traces" / m["case"] / f"{m['run']}.jsonl"
+        calls = v04.calls(path)
+        assert len(calls) == m["calls"] + m["expand_calls"]
+        for c in calls:
+            assert set(c) == {"tool", "arguments", "original", "sent", "exposure", "turn", "outcome"}
+            assert isinstance(c["arguments"], dict) and isinstance(c["original"], str) and isinstance(c["sent"], str)
+            assert c["exposure"] in ("full", "filtered", "sampled", "full_cheaper", "expand")
+            assert c["outcome"] in (v04.OK, v04.TOOL_ERROR, v04.GATE_REFUSED, v04.CLIENT_ERROR, v04.EXPAND_ERROR)
+            assert 0 <= c["turn"] < m["turns"]
+            # When nothing was removed the two sides hold the same data: at most re-serialised.
+            if c["exposure"] in ("full", "sampled", "full_cheaper") and c["sent"] != c["original"]:
+                assert json.loads(c["sent"]) == json.loads(c["original"])
+            if c["exposure"] == "filtered":
+                assert "[trimmed] call_id=" in c["sent"] and len(c["sent"]) < len(c["original"])
+        tools = [c for c in calls if c["tool"] != "expand"]
+        assert Counter(c["exposure"] for c in tools) == m["exposure"]
+        assert Counter(c["outcome"] for c in tools) == m["outcomes"]
+        # An expand can be tied to the result it asks about.
+        ids = {c["sent"].rsplit("call_id=", 1)[1].split()[0] for c in tools if c["exposure"] == "filtered"}
+        assert all(c["arguments"]["call_id"] in ids for c in calls if c["tool"] == "expand")
+
+
+def test_the_outcome_of_a_call_tells_a_refusal_of_the_gate_from_an_answer(dry):
+    m = by(dry, "E1", "C1", "T")
+    calls = v04.calls(dry["root"] / "traces" / "C1" / f"{m['run']}.jsonl")
+    assert m["outcomes"] == {"ok": m["calls"] - 1, "gate_refused": 1}
+    [refused] = [c for c in calls if c["outcome"] == v04.GATE_REFUSED]
+    assert refused["tool"] == "on_page_content_parsing" and refused["exposure"] == "full"
+    assert by(dry, "E1", "C4", "R")["outcomes"] == {"ok": 10}
+
+
+def test_an_error_the_tool_reports_is_told_from_an_answer():
+    from experiments.tools import CASE_TOOLS, DataForSEO
+
+    async def go():
+        async with DataForSEO(CASE_TOOLS["C4"], "experiments.simulated.server_c4") as t:
+            good = await t.call("stripe_search_customers", {"email": "nobody@example.com"})
+            ok = t.last_is_error
+            bad = await t.call("stripe_list_charges", {})                # a required argument is missing
+            return good, ok, bad, t.last_is_error
+
+    good, ok, bad, is_error = asyncio.run(go())
+    assert ok is False and json.loads(good)["data"] == [] and is_error is True and bad
+
+
+def test_the_schemas_of_the_tools_offered_are_kept_next_to_every_trace(dry):
+    seen = {}
+    for m in dry["metas"]:
+        records = json.loads((dry["root"] / "traces" / m["case"] / f"{m['run']}.tools.json").read_text())
+        assert {r["name"]: r["sha256"] for r in records} == m["tool_schemas"]
+        assert all(set(r) == {"name", "description", "parameters", "sha256"} and len(r["sha256"]) == 64 for r in records)
+        assert ("expand" in m["tool_schemas"]) is m["trimming"]            # `expand` is there when it was offered
+        seen[(m["case"], m["arm"], m["n"])] = m["tool_schemas"]
+    # The same tool has the same hash in every run that was offered it.
+    assert seen[("C4", "R", 1)] == {k: v for k, v in seen[("C4", "T", 1)].items() if k != "expand"}
+    assert seen[("C4", "T", 1)]["expand"] == seen[("C1", "ST", 1)]["expand"]
+    real = by(dry, "E1", "C4", "R")
+    described = json.loads((dry["root"] / "traces" / "C4" / f"{real['run']}.tools.json").read_text())
+    assert all(r["description"] and r["parameters"].get("properties") for r in described)   # the simulated server's own
+    # Nothing in them says where a server is.
+    assert "http" not in json.dumps([json.loads(p.read_text()) for p in (dry["root"] / "traces").glob("C[12]/*.tools.json")])
 
 
 @pytest.mark.parametrize("case", ["C1", "C4"])
@@ -304,9 +378,32 @@ def test_e2_sequences_learn_from_one_run_to_the_next(dry, case):
     assert (dry["where"].workdir(Run("E2", case, "promotion", 1, 1)) / "evidence.json").exists()
 
 
+def test_e2_does_not_start_until_the_report_on_e1_is_reviewed(tmp_path):
+    where, first = Where(tmp_path), next(r for r in v04.schedule() if r.experiment == "E2")
+    assert (first.case, first.arm, first.sequence, first.n) == ("C4", "base", 1, 1)
+    spend(where, 12.0)
+    with pytest.raises(SystemExit, match="E1 is over: report it"):
+        v04.may_start(where, first)
+    assert v04.may_start(where, Run("E1", "C4", "ST", 5)) is None       # E1 itself is not held
+    where.e1_reviewed.parent.mkdir(parents=True)
+    where.e1_reviewed.write_text('{"reviewed": true}\n')
+    assert v04.may_start(where, first) is None
+
+
+def test_e2_runs_the_first_sequence_of_every_arm_before_the_second():
+    for case in ("C4", "C1"):
+        runs = [r for r in v04.schedule() if r.experiment == "E2" and r.case == case]
+        assert [r.sequence for r in runs] == [1] * 20 + [2] * 20
+        # Run by run across the arms: a stop takes about as many runs from each.
+        assert [(r.n, r.arm) for r in runs[:8]] == [(n, a) for n in (1, 2) for a in v04.E2_ARMS]
+    assert [r.case for r in v04.schedule() if r.experiment == "E2"] == ["C4"] * 40 + ["C1"] * 40
+
+
 def test_a_run_that_crosses_the_cap_stops_and_is_flagged(dry, tmp_path):
     where = Where(tmp_path)
     spend(where, 49.99)
+    where.warning_reviewed.parent.mkdir(parents=True)
+    where.warning_reviewed.write_text('{"reviewed": true}\n')
     run = Run("E1", "C4", "R", 1)
     m = asyncio.run(v04.execute(run, where, client=v04.stub_for(run), model="stub", dry=True))
     # Stopped at the turn that crossed the cap, before the run was over.

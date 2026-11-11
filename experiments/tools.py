@@ -92,6 +92,7 @@ class DataForSEO:
         self.rejections = 0
         self.retries = 0
         self.tool_failures = []     # calls that failed even after reconnecting
+        self.last_is_error = False  # did the server mark the last result as an error (MCP `isError`)? Recorded only.
 
     def _transport(self):
         if self.module:
@@ -137,6 +138,7 @@ class DataForSEO:
         await self._close(*exc)
 
     async def call(self, name: str, args: dict) -> str:
+        self.last_is_error = False
         if not self.module and not domain_gate(name, args):
             self.rejections += 1
             return BLOCKED
@@ -157,6 +159,7 @@ class DataForSEO:
                 await asyncio.sleep(5 * (attempt + 1))
                 await self._close()
                 await self._connect()
+        self.last_is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
         parts = [getattr(c, "text", "") for c in (getattr(r, "content", None) or [])]
         return "".join(parts)
 

@@ -21,6 +21,10 @@ adapter. What is new here:
               A call event holds the tool's ORIGINAL output (`output`) and, when
               it differs, what the model received (`sent`), with how it was
               exposed: gates and usage read the original, costs the other.
+              It also says how the call ended (`outcome`), and next to every
+              trace are the schemas of the tools the model was offered
+              (`<run>.tools.json`). `calls()` reads a trace back: see
+              docs/traces-v04.md for what these runs are kept for.
 
 The dry run replays the calls of a recorded Phase A run through a stub that
 stands for the model. For the DataForSEO cases the stub also stands for the
@@ -30,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import sys
 import time
@@ -81,6 +86,14 @@ class Where:
     def checkpoint(self) -> Path:
         return self.root / "out" / "v04" / "dataforseo_checkpoint.json"
 
+    @property
+    def e1_reviewed(self) -> Path:          # written by hand when the report on E1 has been reviewed
+        return self.root / "out" / "v04" / "e1_reviewed.json"
+
+    @property
+    def warning_reviewed(self) -> Path:     # written by hand when the report at the warning has been reviewed
+        return self.root / "out" / "v04" / "warning_reviewed.json"
+
     def workdir(self, run: "Run") -> Path:
         return self.root / "out" / "v04" / "e2" / run.case / f"{run.arm}-s{run.sequence}"
 
@@ -109,14 +122,57 @@ def schedule() -> list[Run]:
     """Every run of the protocol, in the order it is made.
 
     E1 in rounds: one run of every arm of C1, then of C2, then of C4, and
-    again. E2 after it, the simulated case first: within a case, run by run,
-    the two sequences of every arm in turn, so that the arms advance together."""
+    again. E2 after it, the simulated case first: within a case, the first
+    sequence of every arm, run by run across the arms, then the second. The
+    arms advance together, so that if the budget stops the runs early it takes
+    about as many from each arm."""
     e1 = V04["e1"]
     runs = [Run("E1", c, arm, n) for n in range(1, e1["runs_per_arm"] + 1) for c in e1["cases"] for arm in e1["arms"][c]]
     for c in ("C4", "C1"):
-        runs += [Run("E2", c, arm, n, s) for n in range(1, E2["runs_per_sequence"] + 1)
-                 for s in range(1, E2["sequences_per_arm"][c] + 1) for arm in E2["arms"]]
+        runs += [Run("E2", c, arm, n, s) for s in range(1, E2["sequences_per_arm"][c] + 1)
+                 for n in range(1, E2["runs_per_sequence"] + 1) for arm in E2["arms"]]
     return runs
+
+
+# -- what a trace records about a call ---------------------------------------------
+
+# How a call ended. Told apart so that errors can be studied later without running anything again.
+OK = "ok"                          # the tool answered
+TOOL_ERROR = "tool_error"          # the tool answered and marked the result as an error (MCP `isError`)
+GATE_REFUSED = "gate_refused"      # the study's domain gate refused the call: it never left this machine
+CLIENT_ERROR = "client_error"      # no answer after the retries: the model was told the tool did not respond
+EXPAND_ERROR = "expand_error"      # `expand` could not give anything back (unknown call_id, no field matches)
+
+
+def schema_records(schemas: list[dict]) -> list[dict]:
+    """The tools as offered to the model: name, description, argument schema, and
+    a hash of the three, so that runs offered the same tool can be recognised."""
+    out = []
+    for s in schemas:
+        rec = {"name": s["name"], "description": s.get("description", ""), "parameters": s.get("parameters", {})}
+        rec["sha256"] = hashlib.sha256(json.dumps(rec, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        out.append(rec)
+    return out
+
+
+def calls(trace_path: str | Path) -> list[dict]:
+    """Every call of a v0.4 run, read back from its trace: what an offline
+    evaluation needs, with nothing to run again.
+
+    `{"tool", "arguments", "original", "sent", "exposure", "turn", "outcome"}`:
+    `original` is what the tool returned, `sent` what the model received (the
+    same text unless tracetrim rewrote it). For `expand`, `original` and `sent`
+    are its reply and `exposure` is "expand"."""
+    out = []
+    for line in Path(trace_path).read_text(encoding="utf-8").splitlines():
+        e = json.loads(line) if line.strip() else {}
+        if e.get("kind") != "call":
+            continue
+        out.append({"tool": e["tool"], "arguments": to_args(e["arguments"]) if isinstance(e["arguments"], str) else e["arguments"],
+                    "original": e["output"], "sent": e.get("sent", e["output"]),
+                    "exposure": e.get("exposure", "expand" if e["tool"] == "expand" else FULL),
+                    "turn": e["turn"], "outcome": e["outcome"]})
+    return out
 
 
 # -- stop rules ----------------------------------------------------------------
@@ -145,6 +201,15 @@ def may_start(where: Where, run: Run) -> str | None:
         raise SystemExit(f"DataForSEO stop rule: {dataforseo_runs(where)} runs have called DataForSEO (checkpoint at "
                          f"{limit}). Report the calls, let the author read the spend, and record the decision in "
                          f"{where.checkpoint} before going on.")
+    # Two more stops, decided with the author before the first paid run: E2 does not start
+    # until the report on E1 has been reviewed, and nothing starts past the warning until the
+    # report on the spend has been.
+    if run.experiment == "E2" and run.n == 1 and run.sequence == 1 and not where.e1_reviewed.exists() \
+            and not any(e.get("experiment") == "E2" for e in ledger(where)):
+        raise SystemExit(f"E1 is over: report it, and record its review in {where.e1_reviewed} before E2 starts.")
+    if total >= WARN and not where.warning_reviewed.exists():
+        raise SystemExit(f"warning: {total:.2f} USD spent (warning at {WARN:.0f}, cap {CAP:.0f}). Report the spend "
+                         f"and the runs left, and record the review in {where.warning_reviewed} before going on.")
     return f"WARNING: {total:.2f} USD spent, warning at {WARN:.0f}, cap {CAP:.0f}" if total >= WARN else None
 
 
@@ -342,6 +407,8 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
     tokens = {"tool_definitions": 0, "instructions_added": count(added), "outputs_original": 0,
               "outputs_sent": {}, "expand_replies": 0, "final_answer": 0}
     exposure: dict[str, int] = {}
+    outcomes: dict[str, int] = {}
+    schemas: list[dict] = []
     reached: dict[str, set] = {}          # needed field -> the ways it reached the model
     n_calls = n_expand = 0
     t0 = time.time()
@@ -350,6 +417,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
             counted = Counted(base)
             tools = Trimmed(counted, engine) if engine is not None else counted
             tokens["tool_definitions"] = count(json.dumps(tools.schemas, ensure_ascii=False))
+            schemas = schema_records(tools.schemas)
             kwargs = {"model": model, "instructions": system_full, "tools": tools.schemas,
                       "input": [{"role": "user", "content": user}]}
             while True:
@@ -370,17 +438,23 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                     tools.turn = len(turns)
                 for fc in pending:
                     args = to_args(fc.arguments)
+                    failed_before = len(getattr(base, "tool_failures", []))
                     sent = await tools.call(fc.name, args)
                     e = {"kind": "call", "tool": fc.name, "arguments": fc.arguments, "output": sent, "turn": len(turns)}
                     if fc.name == "expand":
                         n_expand += 1
                         tokens["expand_replies"] += count(sent)
                         how = "expand"
+                        e["outcome"] = EXPAND_ERROR if sent.startswith("Error") else OK
                     else:
                         n_calls += 1
                         obs = getattr(tools, "last", None)
                         how = obs.exposure if obs is not None else FULL
                         original = tools.original if engine is not None else sent
+                        e["outcome"] = (GATE_REFUSED if original == BLOCKED
+                                        else CLIENT_ERROR if len(getattr(base, "tool_failures", [])) > failed_before
+                                        else TOOL_ERROR if getattr(base, "last_is_error", False) else OK)
+                        outcomes[e["outcome"]] = outcomes.get(e["outcome"], 0) + 1
                         tokens["outputs_original"] += count(original)
                         tokens["outputs_sent"][how] = tokens["outputs_sent"].get(how, 0) + count(sent)
                         exposure[how] = exposure.get(how, 0) + 1
@@ -424,6 +498,9 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
     answer = messages[-1] if messages else ""
     tokens["final_answer"] = count(answer)
     trace_path.write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in events), encoding="utf-8")
+    # The tools as the model was offered them, `expand` included: recorded, never used by a measure.
+    out_dir.joinpath(f"{run.id}.tools.json").write_text(json.dumps(schemas, indent=2, ensure_ascii=False) + "\n",
+                                                        encoding="utf-8")
     adaptive_meta = None
     if tt is not None:
         # The run is closed in the sequence's work directory: this is where learning happens.
@@ -449,7 +526,8 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                   "tokens": count(added)},
         "trimming": engine is not None, "tools_trimmed": sorted(engine.policy.tools) if engine is not None else [],
         "turns": len(turns), "calls": n_calls, "expand_calls": n_expand, "usage": total, "usage_per_turn": turns,
-        "tokens": tokens, "exposure": exposure, "dataforseo_calls": dataforseo_calls,
+        "tokens": tokens, "exposure": exposure, "outcomes": outcomes, "dataforseo_calls": dataforseo_calls,
+        "tool_schemas": {s["name"]: s["sha256"] for s in schemas},
         "domain_rejections": rejections, "tool_failures": failures, "retries": retries,
         "flags": flags + (["tool_failure"] if failures else []),
         "adaptive": adaptive_meta, "cost_usd": round(cost(total), 4), "prices": "experiments/prices.json",
@@ -580,18 +658,21 @@ async def dry_run(directory: str | Path, e2_runs: int = 2) -> list[dict]:
         if not wanted:
             continue
         print(f"{run.case} {run.id} (dry run)", flush=True)
-        try:
-            metas.append(await execute(run, where, client=stub_for(run), model="stub", dry=True))
-        except SystemExit as stop:
-            if "DataForSEO stop rule" not in str(stop) or where.checkpoint.exists():
-                raise
-            # The stop rule fired, as it must. In a dry run the "decision" is recorded
-            # here, so that the remaining arms can be exercised too.
-            print(f"  stopped: {str(stop)[:76]}...", flush=True)
-            where.checkpoint.parent.mkdir(parents=True, exist_ok=True)
-            where.checkpoint.write_text(json.dumps({"dry_run": True, "stopped_before": f"{run.case} {run.id}",
-                                                    "runs_that_called_dataforseo": dataforseo_runs(where)}) + "\n")
-            metas.append(await execute(run, where, client=stub_for(run), model="stub", dry=True))
+        for _ in range(3):
+            try:
+                metas.append(await execute(run, where, client=stub_for(run), model="stub", dry=True))
+                break
+            except SystemExit as stop:
+                # A stop fired, as it must. In a dry run the "decision" is recorded here,
+                # so that the remaining arms can be exercised too.
+                gate = (where.checkpoint if "DataForSEO stop rule" in str(stop)
+                        else where.e1_reviewed if "E1 is over" in str(stop) else None)
+                if gate is None or gate.exists():
+                    raise
+                print(f"  stopped: {str(stop)[:76]}...", flush=True)
+                gate.parent.mkdir(parents=True, exist_ok=True)
+                gate.write_text(json.dumps({"dry_run": True, "stopped_before": f"{run.case} {run.id}",
+                                            "runs_that_called_dataforseo": dataforseo_runs(where)}) + "\n")
     return metas
 
 

@@ -42,6 +42,9 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
 - **Protocol of the new measures**: `protocol-v04.md`, frozen on 2026-11-11 before any paid run, apart from
   `protocol.md`, which is unchanged. Its estimate comes from `python -m experiments.budget --v04`, its
   preconditions from `python -m experiments.v04_preconditions`. No paid run has been made.
+- **Harness of the new measures**: `python -m experiments.run --v04 schedule | next | dry-run DIR`, with the
+  stop rules of the protocol and a dry run that spends nothing. The runs are kept as a data set for later
+  offline evaluations ([docs/traces-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/traces-v04.md)).
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists
