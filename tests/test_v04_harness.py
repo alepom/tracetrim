@@ -19,11 +19,13 @@ from experiments.budget import V04  # noqa: E402
 from experiments.v04 import Run, Where  # noqa: E402
 from tracetrim import skill  # noqa: E402
 
+NOWHERE = Where(Path("/nonexistent"))      # the design as frozen, with no decision recorded
+
 
 # -- the schedule ---------------------------------------------------------------
 
 def test_the_schedule_is_the_design_of_the_protocol():
-    runs = v04.schedule()
+    runs = v04.schedule(NOWHERE)
     # 110 as measured: E2 on C1 has one sequence per arm instead of the two of the frozen design (deviation 4).
     assert len(runs) == 110 and len({(r.case, r.id) for r in runs}) == 110
     assert len(v04.schedule(Where(Path("/nonexistent")))) == 110
@@ -40,7 +42,7 @@ def test_the_schedule_is_the_design_of_the_protocol():
 
 
 def test_the_first_ten_dataforseo_runs_cover_both_real_cases():
-    first = [r for r in v04.schedule() if r.dataforseo][:V04["dataforseo_checkpoint_runs"]]
+    first = [r for r in v04.schedule(NOWHERE) if r.dataforseo][:V04["dataforseo_checkpoint_runs"]]
     assert Counter(r.case for r in first) == {"C1": 8, "C2": 2}
     assert [(r.case, r.arm, r.n) for r in first] == (
         [("C1", a, 1) for a in ("R", "S", "T", "ST")] + [("C2", "R", 1), ("C2", "S", 1)]
@@ -383,7 +385,7 @@ def test_e2_sequences_learn_from_one_run_to_the_next(dry, case):
 
 
 def test_e2_does_not_start_until_the_report_on_e1_is_reviewed(tmp_path):
-    where, first = Where(tmp_path), next(r for r in v04.schedule() if r.experiment == "E2")
+    where, first = Where(tmp_path), next(r for r in v04.schedule(NOWHERE) if r.experiment == "E2")
     assert (first.case, first.arm, first.sequence, first.n) == ("C4", "base", 1, 1)
     spend(where, 12.0)
     with pytest.raises(SystemExit, match="E1 is over: report it"):
@@ -395,12 +397,12 @@ def test_e2_does_not_start_until_the_report_on_e1_is_reviewed(tmp_path):
 
 
 def test_e2_runs_the_first_sequence_of_every_arm_before_the_second():
-    runs = [r for r in v04.schedule() if r.experiment == "E2" and r.case == "C4"]
+    runs = [r for r in v04.schedule(NOWHERE) if r.experiment == "E2" and r.case == "C4"]
     assert [r.sequence for r in runs] == [1] * 20 + [2] * 20
     # Run by run across the arms: a stop takes about as many runs from each.
     assert [(r.n, r.arm) for r in runs[:8]] == [(n, a) for n in (1, 2) for a in v04.E2_ARMS]
     # The simulated case first, then the real one.
-    assert [r.case for r in v04.schedule() if r.experiment == "E2"] == ["C4"] * 40 + ["C1"] * 20
+    assert [r.case for r in v04.schedule(NOWHERE) if r.experiment == "E2"] == ["C4"] * 40 + ["C1"] * 20
 
 
 def test_e2_on_the_real_case_waits_for_its_own_decision_which_also_fixes_its_sequences(tmp_path):
@@ -418,6 +420,27 @@ def test_e2_on_the_real_case_waits_for_its_own_decision_which_also_fixes_its_seq
     assert v04.e2_sequences(where) == {"C1": 2, "C4": 2} and len(v04.schedule(where)) == 130
     where.e2_c1_approved.write_text('{"decided": "one sequence"}\n')
     assert len(v04.schedule(where)) == 110
+
+
+def test_the_decision_on_the_real_case_can_name_its_arms_and_the_others_are_refused(tmp_path):
+    where = Where(tmp_path)
+    spend(where, 15.0)
+    for gate in (where.e1_reviewed, where.checkpoint):
+        gate.parent.mkdir(parents=True, exist_ok=True)
+        gate.write_text('{"ok": true}\n')
+    where.e2_c1_approved.write_text('{"sequences": 1, "arms": ["base", "sampling"]}\n')
+    c1 = [r for r in v04.schedule(where) if r.experiment == "E2" and r.case == "C1"]
+    # Ten runs, the two arms in turn along the sequence.
+    assert [(r.arm, r.n) for r in c1] == [(a, n) for n in range(1, 6) for a in ("base", "sampling")]
+    assert len(v04.schedule(where)) == 100 and v04.e2_arms("C4", where) == list(v04.E2_ARMS)
+    assert v04.may_start(where, Run("E2", "C1", "sampling", 1, 1)) is None
+    for arm in ("promotion", "promotion+sampling"):
+        with pytest.raises(SystemExit, match="E2 on C1 is run with the arms .'base', 'sampling'. only"):
+            v04.may_start(where, Run("E2", "C1", arm, 1, 1))
+    assert v04.may_start(where, Run("E2", "C4", "promotion", 1, 1)) is None            # the simulated case keeps all four
+    where.e2_c1_approved.write_text('{"sequences": 1, "arms": ["base", "turbo"]}\n')
+    with pytest.raises(SystemExit, match="unknown arms"):
+        v04.schedule(where)
 
 
 def test_a_run_that_crosses_the_cap_stops_and_is_flagged(dry, tmp_path):

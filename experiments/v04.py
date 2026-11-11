@@ -133,6 +133,21 @@ def e2_sequences(where: "Where | None" = None) -> dict[str, int]:
     return n
 
 
+def e2_arms(case: str, where: "Where | None" = None) -> list[str]:
+    """The arms of E2 that are run on a case. All four, except on the real case, C1,
+    where the decision recorded after E2 on C4 can name fewer (`arms` in
+    e2_c1_approved.json: deviation 5)."""
+    where = where or HERE
+    if case == "C1" and where.e2_c1_approved.exists():
+        named = json.loads(where.e2_c1_approved.read_text()).get("arms")
+        if named:
+            unknown = [a for a in named if a not in E2_ARMS]
+            if unknown:
+                raise SystemExit(f"{where.e2_c1_approved}: unknown arms {unknown}")
+            return [a for a in E2["arms"] if a in named]
+    return list(E2["arms"])
+
+
 def schedule(where: "Where | None" = None) -> list[Run]:
     """Every run of the protocol, in the order it is made.
 
@@ -146,7 +161,7 @@ def schedule(where: "Where | None" = None) -> list[Run]:
     sequences = e2_sequences(where)
     for c in ("C4", "C1"):                  # the simulated case first: E2 on C1 is decided on its outcome
         runs += [Run("E2", c, arm, n, s) for s in range(1, sequences[c] + 1)
-                 for n in range(1, E2["runs_per_sequence"] + 1) for arm in E2["arms"]]
+                 for n in range(1, E2["runs_per_sequence"] + 1) for arm in e2_arms(c, where)]
     return runs
 
 
@@ -226,6 +241,9 @@ def may_start(where: Where, run: Run) -> str | None:
     if run.experiment == "E2" and run.case == "C1" and not where.e2_c1_approved.exists():
         raise SystemExit(f"E2 on C1 waits for the decision taken after E2 on C4: report E2 on C4, and have the "
                          f"decision recorded in {where.e2_c1_approved}.")
+    if run.experiment == "E2" and run.arm not in e2_arms(run.case, where):
+        raise SystemExit(f"E2 on {run.case} is run with the arms {e2_arms(run.case, where)} only: "
+                         f"{run.arm} is not among those decided in {where.e2_c1_approved}.")
     if total >= WARN and not where.warning_reviewed.exists():
         raise SystemExit(f"warning: {total:.2f} USD spent (warning at {WARN:.0f}, cap {CAP:.0f}). Report the spend "
                          f"and the runs left, and record the review in {where.warning_reviewed} before going on.")
