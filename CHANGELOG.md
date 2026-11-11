@@ -23,7 +23,27 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   reply; closings are serialised. The report counts the two cases in which the boundary of a run may be
   wrong: closings refused for lack of an answer, and runs closed by an answer and followed by calls
   within the idle pause.
+- **Adaptive learning** ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)),
+  in automatic mode, for the proxy and `AutoTrim` alike:
+  - *Evidence from `expand`*, always recorded: per field, the runs in which it was requested by name,
+    recovered, reused after recovery, seen in an unfiltered result, used there. A request for
+    everything is not a request for each field. `evidence.json`, `evidence/run-*.jsonl`.
+  - *Promotion* (`--promote`, `Adaptive(promote=True)`; off by default): a field with enough evidence is
+    kept from then on, before the whole tool is switched off. Reasons and runs are kept;
+    `tracetrim promotions WORKDIR [--revert | --restore]` is the way back.
+  - *Sampling without filter* (`--sample-rate`; off by default): now and then a result that would be
+    trimmed is passed whole. The tool runs once; the sequence depends on a seed; a cost limit ties the
+    tokens added to those removed.
+  - The report has a section on promotions, their effect on tokens, evidence and sampling.
+- **Measures that change nothing**, in every report: list elements reused, with the arguments that fix
+  the size of a result (rows are never cut), and the number of distinct values of each argument.
+- **Persistence.** Files in the work directory are written aside and renamed; a lock protects the state
+  shared by tool calls and the learning thread; a closing whose write fails can be tried again.
+- **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
+  - The switch-off of a tool counts filtered results that were expanded, each once and only when a
+    removed field came back. Until 0.3.5 it counted every `expand` request, repeats and failed ones
+    included.
   - `tracetrim_done` without an answer is now refused, and the run stays open. Until 0.3.5 it closed
     the run as one without answer.
   - `AutoTrim(structural=...)` re-encodes outputs from the first call, as the proxy always did. Until

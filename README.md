@@ -82,7 +82,10 @@ a host that loads MCP skills needs no added line, the others keep it. Then use t
   identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
   report as a manual action for you to review;
 - **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
-  trimmed, and the report says so. Runs without `tracetrim_done` count for telemetry, not for learning.
+  trimmed, and the report says so. Unreleased, and off unless asked for: `--promote` keeps a single
+  field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
+  result whole now and then to see whether the agent uses what is removed
+  ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). Runs without `tracetrim_done` count for telemetry, not for learning.
   One agent at a time: calls that arrive together from several agents end up in the same run. Over MCP the
   proxy cannot see the model's turns, so calls emitted together are compared by arrival order: a later call's
   arguments can count as using an earlier sibling's output. In the study this changed no figure; where turns

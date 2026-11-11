@@ -1,0 +1,4408 @@
+{
+  "what": "adaptive learning demo: scripted agent, simulated tool, no model (a check, not a measurement)",
+  "tokens": "tiktoken o200k_base",
+  "settings": {
+    "min_runs": 3,
+    "learn_runs": 5,
+    "shift_runs": 10,
+    "limit": 3,
+    "arms": {
+      "baseline": {},
+      "promotion": {
+        "promote": true
+      },
+      "sampling": {
+        "sample_rate": 0.34,
+        "sample_seed": 7
+      },
+      "promotion+sampling": {
+        "promote": true,
+        "sample_rate": 0.34,
+        "sample_seed": 7
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "adapter": "function",
+      "variant": "visible",
+      "arm": "baseline",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "visible",
+      "arm": "promotion",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "reused",
+          "runs": [
+            "run-0006"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "visible",
+      "arm": "sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "visible",
+      "arm": "promotion+sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "reused",
+          "runs": [
+            "run-0006"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "invisible",
+      "arm": "baseline",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": true,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 535
+      },
+      "saving_left": 0.1068,
+      "trimming_on_at_the_end": false,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 535,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "invisible",
+      "arm": "promotion",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": 3,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].refund_note",
+          "reason": "requested",
+          "runs": [
+            "run-0006",
+            "run-0007"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 275
+      },
+      "saving_left": 0.5409,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 274,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 275,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "invisible",
+      "arm": "sampling",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": true,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 2,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 535
+      },
+      "saving_left": 0.1068,
+      "trimming_on_at_the_end": false,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 535,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "invisible",
+      "arm": "promotion+sampling",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": 3,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].refund_note",
+          "reason": "requested",
+          "runs": [
+            "run-0006",
+            "run-0007"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 275
+      },
+      "saving_left": 0.5409,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 274,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 275,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "lazy",
+      "arm": "baseline",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 0,
+      "answers_without_the_field": 10,
+      "tool_switched_off": false,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 232
+      },
+      "saving_left": 0.6127,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "lazy",
+      "arm": "promotion",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 0,
+      "answers_without_the_field": 10,
+      "tool_switched_off": false,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 232
+      },
+      "saving_left": 0.6127,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "lazy",
+      "arm": "sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 10,
+      "expand_calls": 0,
+      "answers_without_the_field": 8,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "function",
+      "variant": "lazy",
+      "arm": "promotion+sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 10,
+      "expand_calls": 0,
+      "answers_without_the_field": 8,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "used_in_full",
+          "runs": [
+            "run-0014"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "visible",
+      "arm": "baseline",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "visible",
+      "arm": "promotion",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "reused",
+          "runs": [
+            "run-0006"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "visible",
+      "arm": "sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "visible",
+      "arm": "promotion+sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 2,
+      "expand_calls": 1,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "reused",
+          "runs": [
+            "run-0006"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 261,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 254,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 252,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "invisible",
+      "arm": "baseline",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": true,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 535
+      },
+      "saving_left": 0.1068,
+      "trimming_on_at_the_end": false,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 535,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "invisible",
+      "arm": "promotion",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": 3,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].refund_note",
+          "reason": "requested",
+          "runs": [
+            "run-0006",
+            "run-0007"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 275
+      },
+      "saving_left": 0.5409,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 274,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 275,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "invisible",
+      "arm": "sampling",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": true,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 2,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 535
+      },
+      "saving_left": 0.1068,
+      "trimming_on_at_the_end": false,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 533,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 536,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 535,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "invisible",
+      "arm": "promotion+sampling",
+      "field": "data[].refund_note",
+      "kept_again_from_shift_run": 3,
+      "expand_calls": 2,
+      "answers_without_the_field": 0,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].refund_note",
+          "reason": "requested",
+          "runs": [
+            "run-0006",
+            "run-0007"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 275
+      },
+      "saving_left": 0.5409,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 281,
+          "trimmed_line": true,
+          "expands": 1,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 274,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 272,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 276,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 275,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "lazy",
+      "arm": "baseline",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 0,
+      "answers_without_the_field": 10,
+      "tool_switched_off": false,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 232
+      },
+      "saving_left": 0.6127,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "lazy",
+      "arm": "promotion",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": null,
+      "expand_calls": 0,
+      "answers_without_the_field": 10,
+      "tool_switched_off": false,
+      "field_kept_by_projection": false,
+      "promotions": [],
+      "sampled_results": 0,
+      "first_sampled_shift_run": null,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 232
+      },
+      "saving_left": 0.6127,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "lazy",
+      "arm": "sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 10,
+      "expand_calls": 0,
+      "answers_without_the_field": 8,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    },
+    {
+      "adapter": "mcp",
+      "variant": "lazy",
+      "arm": "promotion+sampling",
+      "field": "data[].carrier",
+      "kept_again_from_shift_run": 10,
+      "expand_calls": 0,
+      "answers_without_the_field": 8,
+      "tool_switched_off": false,
+      "field_kept_by_projection": true,
+      "promotions": [
+        {
+          "field": "data[].carrier",
+          "reason": "used_in_full",
+          "runs": [
+            "run-0014"
+          ],
+          "status": "active"
+        }
+      ],
+      "sampled_results": 1,
+      "first_sampled_shift_run": 9,
+      "last_learn_run": {
+        "raw": 597,
+        "received": 232
+      },
+      "last_shift_run": {
+        "raw": 599,
+        "received": 253
+      },
+      "saving_left": 0.5776,
+      "trimming_on_at_the_end": true,
+      "runs": [
+        {
+          "run": 1,
+          "phase": "learn",
+          "raw": 600,
+          "received": 600,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 2,
+          "phase": "learn",
+          "raw": 602,
+          "received": 602,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 3,
+          "phase": "learn",
+          "raw": 601,
+          "received": 601,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 4,
+          "phase": "learn",
+          "raw": 599,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 5,
+          "phase": "learn",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": true
+        },
+        {
+          "run": 6,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 7,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 8,
+          "phase": "shift",
+          "raw": 600,
+          "received": 233,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 9,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 10,
+          "phase": "shift",
+          "raw": 597,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 11,
+          "phase": "shift",
+          "raw": 597,
+          "received": 231,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 12,
+          "phase": "shift",
+          "raw": 597,
+          "received": 230,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 13,
+          "phase": "shift",
+          "raw": 600,
+          "received": 232,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": false,
+          "field_in_answer": false
+        },
+        {
+          "run": 14,
+          "phase": "shift",
+          "raw": 595,
+          "received": 531,
+          "trimmed_line": false,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        },
+        {
+          "run": 15,
+          "phase": "shift",
+          "raw": 599,
+          "received": 253,
+          "trimmed_line": true,
+          "expands": 0,
+          "field_in_result": true,
+          "field_in_answer": true
+        }
+      ]
+    }
+  ],
+  "sampling_seeds": {
+    "variant": "lazy",
+    "adapter": "function",
+    "sample_rate": 0.34,
+    "sample_max_share": 0.2,
+    "seeds": 20,
+    "shift_runs": 10,
+    "kept_again_from_shift_run": [
+      5,
+      8,
+      9,
+      7,
+      5,
+      9,
+      7,
+      10,
+      8,
+      6,
+      5,
+      7,
+      5,
+      6,
+      6,
+      5,
+      5,
+      6,
+      5,
+      8
+    ],
+    "kept_within_the_shift_runs": 20,
+    "median_of_those": 6,
+    "earliest": 5
+  },
+  "overhead": [
+    {
+      "output": "small",
+      "orders": 1,
+      "raw": 214,
+      "reserialised_whole": 188,
+      "filtered_body": 64,
+      "trimmed_line": 58,
+      "filtered_sent": 122,
+      "saving": 0.4299,
+      "expand_one_field": 13,
+      "expand_everything": 128,
+      "sampled_instead_of_filtered": 66,
+      "promoted_field_carrier": 9
+    },
+    {
+      "output": "large",
+      "orders": 50,
+      "raw": 9614,
+      "reserialised_whole": 8657,
+      "filtered_body": 2737,
+      "trimmed_line": 58,
+      "filtered_sent": 2795,
+      "saving": 0.7093,
+      "expand_one_field": 428,
+      "expand_everything": 5924,
+      "sampled_instead_of_filtered": 5862,
+      "promoted_field_carrier": 424
+    }
+  ]
+}
