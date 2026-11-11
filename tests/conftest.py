@@ -10,7 +10,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 _PLACES = [Path(p) for p in [os.environ.get("TRACETRIM_TRACES")] if p] + [ROOT / "traces", ROOT / "dataset" / "traces"]
-TRACES = next((p for p in _PLACES if (p / "C4").exists()), None)
+# A place counts when it holds the recorded runs of the original study (Phase A): a
+# checkout's own traces/ can exist with only the runs of later measures in it.
+TRACES = next((p for p in _PLACES if (p / "C4" / "A1.jsonl").exists()), None)
 
 
 @pytest.fixture
