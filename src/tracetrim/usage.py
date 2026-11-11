@@ -163,12 +163,9 @@ class CallUsage:
         return isinstance(self.payload, (dict, list))
 
 
-def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -> list[CallUsage]:
-    """`normalize`: also look for transformed forms of each value (dates,
-    amounts in minor units, short ids from URLs). On by default since 0.2.
-    `comma_grouping`: also match numbers written "1,600". On by default since
-    0.3.4; off to reproduce the studies."""
-    texts = [e.text for e in trace.events]
+def first_written(trace: Trace):
+    """(pos, first, first_in_calls): when each event counts as written, and
+    when each n-gram is first written, anywhere and in tool calls only."""
     # When to compare: the event's position, or its model turn when the trace
     # records turns. With turns, text written in the same turn as a call (its
     # arguments, the other calls emitted with it) is not "after" its output:
@@ -185,6 +182,16 @@ def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -
                 first[g] = pos[i]
             if e.kind != "message" and (g not in first_in_calls or pos[i] < first_in_calls[g]):
                 first_in_calls[g] = pos[i]
+    return pos, first, first_in_calls
+
+
+def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -> list[CallUsage]:
+    """`normalize`: also look for transformed forms of each value (dates,
+    amounts in minor units, short ids from URLs). On by default since 0.2.
+    `comma_grouping`: also match numbers written "1,600". On by default since
+    0.3.4; off to reproduce the studies."""
+    texts = [e.text for e in trace.events]
+    pos, first, first_in_calls = first_written(trace)
 
     result = []
     for i, e in enumerate(trace.events):
