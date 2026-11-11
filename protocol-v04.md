@@ -320,3 +320,13 @@ that report is recorded; (c) E2 on C1 has **one sequence per arm** (20 runs) ins
 restores the second. With one sequence per arm, what E2 shows on the real case is a single trajectory per arm:
 the limit stated under "What cannot be concluded" for few runs applies in full. Arms, measures and hypotheses are
 unchanged. The estimate in "Budget and stop rule" is that of the frozen design and is left as it was.
+
+**5 — 2026-11-11, after E2 on C4 and before any run of E2 on C1: two arms on the real case (commit `2f1ab2a`).**
+E2 on C1 is run with the arms **base** and **sampling** only, one sequence of five runs each: 10 runs. Decided on
+what E2 on C4 showed and on the DataForSEO cost, before any run on C1. On C4 promotion made no difference when the
+model writes the values it recovers, and the fields the C1 variant needs (a channel name, a number of views) are
+values one writes: with promotion on, H6 would most likely stay not testable. Sampling is the one mechanism that
+brings a field to the model when the model does not ask for it, and on C1 no other tool returns those two fields
+(on C4 the model got them from a tool that is not trimmed): C1 is where H7 can be put to the test. The hypotheses
+are those written above. **On C1, H6 is not evaluated**: there is no arm with promotion. H5 on C1 is read on the
+two arms run.
