@@ -310,3 +310,13 @@ of every arm, run by run across the arms, then the second, instead of alternatin
 budget stops the runs early, it takes about as many from each arm. Two stops are added to those of "Budget and
 stop rule": E2 starts only after the report on E1 has been reviewed, and at the 40 USD warning everything stops
 until the report on the spend has been reviewed. Runs, arms, measures and hypotheses are unchanged.
+
+**4 — 2026-11-11, after E1 and before any run of E2: E2 on the real case (commit `1c61ba9`).** At the
+DataForSEO checkpoint the author read the spend on the provider's panel: 2.81 USD for the first 199 calls, about
+0.38 USD per run of C1. E2 on C1 with two sequences per arm would cost about 15 USD there, on top of the 7.9
+estimated for E1, against the 10 the author had in mind. Decided on the cost alone, with no result of E2 seen:
+(a) E2 on C4 runs first, and the runs stop for a report; (b) E2 on C1 starts only when the decision taken on
+that report is recorded; (c) E2 on C1 has **one sequence per arm** (20 runs) instead of two, unless that decision
+restores the second. With one sequence per arm, what E2 shows on the real case is a single trajectory per arm:
+the limit stated under "What cannot be concluded" for few runs applies in full. Arms, measures and hypotheses are
+unchanged. The estimate in "Budget and stop rule" is that of the frozen design and is left as it was.
