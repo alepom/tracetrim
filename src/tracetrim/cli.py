@@ -7,7 +7,8 @@
   tracetrim login   --servers mcp.json                 (once, for servers that use OAuth)
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
-  tracetrim skill   [--strategy] [--no-done] [--write DIR]   (how to use expand and tracetrim_done, as text)
+                    [--skill-strategy] [--no-skill]
+  tracetrim skill   [--strategy] [--no-done] [--write DIR]   (the instructions the proxy publishes as a skill)
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -144,6 +145,7 @@ def cmd_proxy(a):
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
                 quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
+                skill=not a.no_skill, skill_strategy=a.skill_strategy,
                 servers=load_servers(a.servers) if a.servers else {})
     if a.http:
         asyncio.run(serve_http(o, host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
@@ -269,6 +271,10 @@ def main(argv=None):
     s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto; at least 2)")
     s.add_argument("--structural", choices=["toon", "headroom"],
                    help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
+    s.add_argument("--skill-strategy", action="store_true",
+                   help="add to the published skill the optional notes on organising tool calls (off by default)")
+    s.add_argument("--no-skill", action="store_true",
+                   help="do not publish the tracetrim skill (MCP Skills): the tool descriptions remain")
     s.set_defaults(func=cmd_proxy)
 
     s = sub.add_parser("skill", help="print the tracetrim skill, for agents whose host does not load MCP skills")

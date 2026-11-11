@@ -23,6 +23,10 @@ code changes. The proxy
 Learning needs the agent's final answer, which tool calls alone do not show:
 in automatic mode (tracetrim.auto) the agent passes it to `tracetrim_done`.
 
+How to use `expand` and `tracetrim_done` is also published as an Agent Skill
+(MCP Skills extension, see `publish_skill`), for hosts that load skills; the
+tool descriptions stay enough for the others.
+
 This module is an adapter: it translates MCP requests into the contract of
 tracetrim.contract and leaves every decision to tracetrim.engine.
 """
@@ -37,11 +41,13 @@ from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import skill
 from .contract import ToolCall, ToolResult
 from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
 
 MAX_SSE_EVENT = 16 * 1024 * 1024
+SKILL_TTL_MS = 300_000       # how long a host may reuse the skill entry: it changes only when the proxy restarts
 
 
 class Live:
@@ -113,6 +119,8 @@ class Options:
     min_runs: int = 5
     idle_seconds: int = 300          # a run without tracetrim_done is closed after this pause
     servers: dict = field(default_factory=dict)   # name -> {command, args, env} | {url, headers}
+    skill: bool = True               # publish the tracetrim skill (MCP Skills), whenever expand is offered
+    skill_strategy: bool = False     # ... with the optional notes on organising tool calls
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -191,6 +199,61 @@ def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
                                  "rename one of the servers in mcp.json")
             routes[name] = (server, t)
     return routes
+
+
+def publish_skill(server, *, strategy: bool, done: bool) -> dict:
+    """Serve the tracetrim skill as the MCP Skills extension asks (SEP-2640,
+    `io.modelcontextprotocol/skills`): `skills/list` and `skills/get` return
+    the entry (frontmatter and file manifest with digests), and the SKILL.md
+    itself is a resource, read with `resources/read`. Returns the entry.
+
+    The SDK this was written against (mcp 2.3.0) has no Skills support yet:
+    the two methods are registered as plain request handlers. The proxy's
+    resources are this one file; upstream resources are not proxied.
+    """
+    from mcp import types
+    from mcp.shared.exceptions import MCPError
+
+    invalid = types.INVALID_PARAMS
+    entry = skill.entry(strategy=strategy, done=done)
+    content = skill.skill_md(strategy=strategy, done=done)
+    cache = {"ttlMs": SKILL_TTL_MS, "cacheScope": "public"}
+
+    class GetSkillParams(types.RequestParams):
+        uri: str
+
+    async def list_resources(ctx, params):
+        if params is not None and params.cursor:
+            raise MCPError(invalid, "Invalid cursor.")
+        fm = entry["frontmatter"]
+        return types.ListResourcesResult(
+            resources=[types.Resource(uri=skill.URI, name=fm["name"], description=fm["description"],
+                                      mime_type="text/markdown", size=entry["resources"][0]["size"])],
+            ttl_ms=SKILL_TTL_MS, cache_scope="public")
+
+    async def read_resource(ctx, params):
+        if params.uri != skill.URI:
+            raise MCPError(invalid, f"Unknown resource: {params.uri}")
+        return types.ReadResourceResult(
+            contents=[types.TextResourceContents(uri=skill.URI, mime_type="text/markdown", text=content)],
+            ttl_ms=SKILL_TTL_MS, cache_scope="public")
+
+    async def skills_list(ctx, params):
+        if params.cursor:
+            raise MCPError(invalid, "Invalid cursor.")
+        return {"resultType": "complete", "skills": [entry], **cache}
+
+    async def skills_get(ctx, params):
+        if params.uri != skill.URI:
+            raise MCPError(invalid, f"Unknown skill: {params.uri}")
+        return {"resultType": "complete", "skill": entry, **cache}
+
+    server.add_request_handler("resources/list", types.PaginatedRequestParams, list_resources)
+    server.add_request_handler("resources/read", types.ReadResourceRequestParams, read_resource)
+    server.add_request_handler("skills/list", types.PaginatedRequestParams, skills_list)
+    server.add_request_handler("skills/get", GetSkillParams, skills_get)
+    server.extensions[skill.EXTENSION] = {}          # no optional feature: `directoryRead` stays off
+    return entry
 
 
 def _server(o: Options):
@@ -349,7 +412,15 @@ def _server(o: Options):
                                         structuredContent=structured, **({"_meta": meta} if meta else {}))
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
-    return Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool), learner
+    server = Server("tracetrim-proxy", lifespan=upstream, on_list_tools=list_tools, on_call_tool=call_tool)
+    # The skill explains expand and tracetrim_done: published whenever expand is offered.
+    if o.skill and offers_expand:
+        entry = publish_skill(server, strategy=o.skill_strategy, done=learner is not None)
+        log(f"skill: {entry['uri']} · {entry['resources'][0]['digest'][:19]}… · strategy "
+            f"{'on' if o.skill_strategy else 'off'}")
+    elif o.skill_strategy:
+        log("skill not published: " + ("--no-skill" if not o.skill else "nothing is trimmed without --auto or --config"))
+    return server, learner
 
 
 async def serve(o: Options) -> None:
