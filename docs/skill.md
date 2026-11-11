@@ -11,12 +11,32 @@ Unreleased: this page describes the branch `feat/adaptive-learning-mcp-skills`.
 | **strategy** | only when asked for | how to organise tool calls: independent calls together, grouped inputs, error feedback, progressive search, when to stop | +549 (770 in all) |
 
 The strategy teaches a method and prescribes no parameter value: limits, thresholds, ranges and
-budgets stay with your prompts and with the tools' schemas. It is off by default because its effect
-has not been measured yet.
+budgets stay with your prompts and with the tools' schemas. It is off by default: see what was
+measured, below.
 
 The text lives in `src/tracetrim/skills/tracetrim/` (`done.md`, `expand.md`, `strategy.md`) and has
 its own version, `tracetrim.skill.VERSION`; a test fails when a text changes and the version does not.
 Token counts are those of the text alone; the published `SKILL.md` adds its frontmatter (312 and 884).
+
+## What was measured on the strategy
+
+Experiment E1 of `protocol-v04.md` (2026-11-11, `results/v04/e1.json`): 50 runs of `gpt-5.6-terra`, with and
+without the strategy text, with and without trimming, on three agents (editorial plan and content-gap briefing
+on a real search-data API, billing support on a simulated API), five runs per arm.
+
+- **On this model the strategy changed nothing that could be measured**: turns, tool calls, billed tokens and
+  cost stayed inside the ranges of the arms without it. The three hypotheses stated before the runs failed.
+- **This model already issues calls together.** Without the strategy, 77%, 68% and 77% of the turns that
+  made a call made more than one (median 2, 3 and 5 calls per turn in the three cases). There was little left
+  for the strategy to organise. **Its effect on a model that issues calls one at a time was not measured.**
+- **It did not override the prompts.** The values the prompts prescribe (`limit` 10, `depth` 10, at most five
+  keywords per call) were respected in all 50 runs, with and without the strategy.
+- **One run asked a question instead of working**: in the arm with strategy and trimming, the model
+  answered that the reference date was in the future and asked for another. One run in 25 with the strategy,
+  none in 25 without, and none in the 60 live runs of the original study: too few to blame the text, which
+  does say to ask for information "when it is indispensable".
+
+So the strategy stays off by default, and nothing here says it is useless on other models.
 
 ## Three ways to deliver it
 

@@ -91,6 +91,10 @@ class Where:
         return self.root / "out" / "v04" / "e1_reviewed.json"
 
     @property
+    def e2_c1_approved(self) -> Path:       # written by hand when E2 on the real case is decided, after E2 on C4
+        return self.root / "out" / "v04" / "e2_c1_approved.json"
+
+    @property
     def warning_reviewed(self) -> Path:     # written by hand when the report at the warning has been reviewed
         return self.root / "out" / "v04" / "warning_reviewed.json"
 
@@ -118,7 +122,18 @@ class Run:
         return self.case in DATAFORSEO
 
 
-def schedule() -> list[Run]:
+def e2_sequences(where: "Where | None" = None) -> dict[str, int]:
+    """Sequences per arm in E2. On the real case, C1, one instead of the two of the
+    frozen design (deviation 4: its DataForSEO cost), unless the decision recorded
+    after E2 on C4 says otherwise (`sequences` in e2_c1_approved.json)."""
+    n = dict(E2["sequences_per_arm"]) | {"C1": 1}
+    where = where or HERE
+    if where.e2_c1_approved.exists():
+        n["C1"] = int(json.loads(where.e2_c1_approved.read_text()).get("sequences", 1))
+    return n
+
+
+def schedule(where: "Where | None" = None) -> list[Run]:
     """Every run of the protocol, in the order it is made.
 
     E1 in rounds: one run of every arm of C1, then of C2, then of C4, and
@@ -128,8 +143,9 @@ def schedule() -> list[Run]:
     about as many from each arm."""
     e1 = V04["e1"]
     runs = [Run("E1", c, arm, n) for n in range(1, e1["runs_per_arm"] + 1) for c in e1["cases"] for arm in e1["arms"][c]]
-    for c in ("C4", "C1"):
-        runs += [Run("E2", c, arm, n, s) for s in range(1, E2["sequences_per_arm"][c] + 1)
+    sequences = e2_sequences(where)
+    for c in ("C4", "C1"):                  # the simulated case first: E2 on C1 is decided on its outcome
+        runs += [Run("E2", c, arm, n, s) for s in range(1, sequences[c] + 1)
                  for n in range(1, E2["runs_per_sequence"] + 1) for arm in E2["arms"]]
     return runs
 
@@ -207,6 +223,9 @@ def may_start(where: Where, run: Run) -> str | None:
     if run.experiment == "E2" and run.n == 1 and run.sequence == 1 and not where.e1_reviewed.exists() \
             and not any(e.get("experiment") == "E2" for e in ledger(where)):
         raise SystemExit(f"E1 is over: report it, and record its review in {where.e1_reviewed} before E2 starts.")
+    if run.experiment == "E2" and run.case == "C1" and not where.e2_c1_approved.exists():
+        raise SystemExit(f"E2 on C1 waits for the decision taken after E2 on C4: report E2 on C4, and have the "
+                         f"decision recorded in {where.e2_c1_approved}.")
     if total >= WARN and not where.warning_reviewed.exists():
         raise SystemExit(f"warning: {total:.2f} USD spent (warning at {WARN:.0f}, cap {CAP:.0f}). Report the spend "
                          f"and the runs left, and record the review in {where.warning_reviewed} before going on.")
@@ -653,7 +672,7 @@ async def dry_run(directory: str | Path, e2_runs: int = 2) -> list[dict]:
     if where.root.exists() and any(where.root.iterdir()):
         raise SystemExit(f"{where.root} is not empty: a dry run starts from an empty directory")
     metas = []
-    for run in schedule():
+    for run in schedule(where):
         wanted = run.n == 1 if run.experiment == "E1" else (run.sequence == 1 and run.n <= e2_runs)
         if not wanted:
             continue
@@ -666,7 +685,8 @@ async def dry_run(directory: str | Path, e2_runs: int = 2) -> list[dict]:
                 # A stop fired, as it must. In a dry run the "decision" is recorded here,
                 # so that the remaining arms can be exercised too.
                 gate = (where.checkpoint if "DataForSEO stop rule" in str(stop)
-                        else where.e1_reviewed if "E1 is over" in str(stop) else None)
+                        else where.e1_reviewed if "E1 is over" in str(stop)
+                        else where.e2_c1_approved if "E2 on C1 waits" in str(stop) else None)
                 if gate is None or gate.exists():
                     raise
                 print(f"  stopped: {str(stop)[:76]}...", flush=True)

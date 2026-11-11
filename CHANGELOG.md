@@ -45,6 +45,10 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
 - **Harness of the new measures**: `python -m experiments.run --v04 schedule | next | dry-run DIR`, with the
   stop rules of the protocol and a dry run that spends nothing. The runs are kept as a data set for later
   offline evaluations ([docs/traces-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/traces-v04.md)).
+- **First measure of the skill's strategy** (E1 of `protocol-v04.md`, `results/v04/e1.json`): on
+  `gpt-5.6-terra`, 50 runs, the strategy text did not reduce turns, tool calls or cost, and did not override the
+  parameter values the prompts prescribe. That model already issues calls together in about three turns out of
+  four; the effect on models that do not was not measured. The strategy stays off by default.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists

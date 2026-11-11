@@ -24,16 +24,19 @@ from tracetrim import skill  # noqa: E402
 
 def test_the_schedule_is_the_design_of_the_protocol():
     runs = v04.schedule()
-    assert len(runs) == 130 and len({(r.case, r.id) for r in runs}) == 130
+    # 110 as measured: E2 on C1 has one sequence per arm instead of the two of the frozen design (deviation 4).
+    assert len(runs) == 110 and len({(r.case, r.id) for r in runs}) == 110
+    assert len(v04.schedule(Where(Path("/nonexistent")))) == 110
     per = Counter((r.experiment, r.case, r.arm) for r in runs)
     assert {k: n for k, n in per.items() if k[0] == "E1"} == {
         ("E1", c, a): 5 for c, arms in V04["e1"]["arms"].items() for a in arms}
     assert set(V04["e1"]["arms"]["C2"]) == {"R", "S"}                   # nothing is trimmed on C2: no trimmed arm
-    assert {k: n for k, n in per.items() if k[0] == "E2"} == {("E2", c, a): 10 for c in ("C1", "C4") for a in v04.E2_ARMS}
+    assert {k: n for k, n in per.items() if k[0] == "E2"} == {("E2", c, a): (10 if c == "C4" else 5)
+                                                               for c in ("C1", "C4") for a in v04.E2_ARMS}
     # Along a sequence the runs come in order: learning accumulates.
     for key in {(r.case, r.arm, r.sequence) for r in runs if r.experiment == "E2"}:
         assert [r.n for r in runs if (r.case, r.arm, r.sequence) == key and r.experiment == "E2"] == [1, 2, 3, 4, 5]
-    assert [r.experiment for r in runs] == ["E1"] * 50 + ["E2"] * 80
+    assert [r.experiment for r in runs] == ["E1"] * 50 + ["E2"] * 60
 
 
 def test_the_first_ten_dataforseo_runs_cover_both_real_cases():
@@ -289,8 +292,9 @@ def test_the_stops_fired_during_the_dry_run(dry):
     assert stop["dry_run"] is True and stop["runs_that_called_dataforseo"] == 10
     order = [(m["case"], m["run"]) for m in dry["metas"]]
     assert order.index(tuple(stop["stopped_before"].split())) == 10 + sum(m["case"] == "C4" for m in dry["metas"])
-    # And E2 waited for the review of E1: it stopped before its first run.
+    # And E2 waited for the review of E1: it stopped before its first run; then again before the real case.
     assert json.loads(dry["where"].e1_reviewed.read_text())["stopped_before"] == "C4 E2-base-s1-r1"
+    assert json.loads(dry["where"].e2_c1_approved.read_text())["stopped_before"] == "C1 E2-base-s1-r1"
 
 
 # -- what the traces keep for later, offline evaluations ------------------------------------------
@@ -391,12 +395,29 @@ def test_e2_does_not_start_until_the_report_on_e1_is_reviewed(tmp_path):
 
 
 def test_e2_runs_the_first_sequence_of_every_arm_before_the_second():
-    for case in ("C4", "C1"):
-        runs = [r for r in v04.schedule() if r.experiment == "E2" and r.case == case]
-        assert [r.sequence for r in runs] == [1] * 20 + [2] * 20
-        # Run by run across the arms: a stop takes about as many runs from each.
-        assert [(r.n, r.arm) for r in runs[:8]] == [(n, a) for n in (1, 2) for a in v04.E2_ARMS]
-    assert [r.case for r in v04.schedule() if r.experiment == "E2"] == ["C4"] * 40 + ["C1"] * 40
+    runs = [r for r in v04.schedule() if r.experiment == "E2" and r.case == "C4"]
+    assert [r.sequence for r in runs] == [1] * 20 + [2] * 20
+    # Run by run across the arms: a stop takes about as many runs from each.
+    assert [(r.n, r.arm) for r in runs[:8]] == [(n, a) for n in (1, 2) for a in v04.E2_ARMS]
+    # The simulated case first, then the real one.
+    assert [r.case for r in v04.schedule() if r.experiment == "E2"] == ["C4"] * 40 + ["C1"] * 20
+
+
+def test_e2_on_the_real_case_waits_for_its_own_decision_which_also_fixes_its_sequences(tmp_path):
+    where = Where(tmp_path)
+    spend(where, 16.0)
+    where.e1_reviewed.parent.mkdir(parents=True)
+    where.e1_reviewed.write_text('{"reviewed": true}\n')
+    where.checkpoint.write_text('{"go_on": true}\n')
+    assert v04.may_start(where, Run("E2", "C4", "base", 1, 1)) is None           # the review of E1 opens C4 only
+    with pytest.raises(SystemExit, match="E2 on C1 waits for the decision taken after E2 on C4"):
+        v04.may_start(where, Run("E2", "C1", "base", 1, 1))
+    assert v04.e2_sequences(where) == {"C1": 1, "C4": 2}
+    where.e2_c1_approved.write_text('{"sequences": 2}\n')
+    assert v04.may_start(where, Run("E2", "C1", "base", 1, 1)) is None
+    assert v04.e2_sequences(where) == {"C1": 2, "C4": 2} and len(v04.schedule(where)) == 130
+    where.e2_c1_approved.write_text('{"decided": "one sequence"}\n')
+    assert len(v04.schedule(where)) == 110
 
 
 def test_a_run_that_crosses_the_cap_stops_and_is_flagged(dry, tmp_path):

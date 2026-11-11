@@ -86,6 +86,7 @@ def row(meta_path: Path) -> dict:
         "coverage": coverage(trace, case),
         "turns": m["turns"], "calls": m["calls"], "expand_calls": m["expand_calls"],
         "calls_per_turn": {"median": median(per_turn) if per_turn else 0, "max": max(per_turn, default=0)},
+        "calls_in_turns": per_turn,
         "repeated_calls": repeated, "error_calls": sum(c["output"].startswith("Error") for c in calls),
         "billed": m["usage"], "cost_usd": m["cost_usd"], "tokens": m["tokens"], "exposure": m["exposure"],
         "dataforseo_calls": m["dataforseo_calls"], "domain_rejections": m["domain_rejections"],
@@ -127,6 +128,12 @@ def e1(rows: list[dict]) -> dict:
                 "coverage": spread(r["coverage"]["share"] for r in rs),
                 "turns": spread(r["turns"] for r in rs), "calls": spread(r["calls"] for r in rs),
                 "calls_per_turn_max": spread(r["calls_per_turn"]["max"] for r in rs),
+                # Descriptive: how much the model already issues calls together. Over the turns of
+                # the arm's runs that made at least one tool call (`expand` included).
+                "turns_with_calls": sum(len(r["calls_in_turns"]) for r in rs),
+                "share_of_turns_with_several_calls": round(
+                    sum(n > 1 for r in rs for n in r["calls_in_turns"]) / max(1, sum(len(r["calls_in_turns"]) for r in rs)), 4),
+                "calls_per_turn_median": median([n for r in rs for n in r["calls_in_turns"]] or [0]),
                 "repeated_calls": spread(r["repeated_calls"] for r in rs),
                 "error_calls": spread(r["error_calls"] for r in rs),
                 "expand_calls": spread(r["expand_calls"] for r in rs),
@@ -246,6 +253,12 @@ def tables(res: dict) -> str:
         lines.append(f"H4 (the strategy does not undo the saving): {'holds' if h['H4']['holds'] else 'FAILS'} · "
                      + ", ".join(f"{c}: ST median {v['billed_input_median_ST']:,.0f} vs T maximum {v['billed_input_max_T']:,.0f}"
                                  for c, v in h["H4"]["per_case"].items()))
+    if res["e1"]:
+        lines.append("\ncalls issued together (turns with at least one call):  case arm  turns  share with several  median per turn")
+        for case, arms in res["e1"].items():
+            for arm, a in arms.items():
+                lines.append(f"     {case:<5}{arm:<4}{a['turns_with_calls']:>6}{a['share_of_turns_with_several_calls']:>12.0%}"
+                             f"{a['calls_per_turn_median']:>10g}")
     lines.append(f"\nE2   {'case':<5}{'arm':<20}{'seq':>4}  kept from run (per field) · expand per run · requirement met · "
                  f"saving per run · switched off")
     for s in res["e2"]:
