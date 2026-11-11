@@ -20,7 +20,9 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   small contract with no SDK behind it (`tracetrim.contract`: call, result, observation, evidence). The
   contract keeps apart what tracetrim receives from a tool and what it shows the model.
 - **Closing a run is robust.** A repeated or retried `tracetrim_done` changes nothing and gets the same
-  reply; closings are serialised.
+  reply; closings are serialised. The report counts the two cases in which the boundary of a run may be
+  wrong: closings refused for lack of an answer, and runs closed by an answer and followed by calls
+  within the idle pause.
 - **Changed behaviour:**
   - `tracetrim_done` without an answer is now refused, and the run stays open. Until 0.3.5 it closed
     the run as one without answer.

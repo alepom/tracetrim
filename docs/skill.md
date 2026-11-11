@@ -116,6 +116,13 @@ npx -y @modelcontextprotocol/inspector --cli .venv/bin/python -m tracetrim.cli p
 - Closing is idempotent: a repeated or retried `tracetrim_done` (or `AutoTrim.done`) with no tool
   call since the last closing changes nothing, and the reply is the same `Recorded.`.
 - `tracetrim_done` without an answer is refused, and the run stays open for the call that carries it.
+  If the agent does not try again, nothing closes the run until the idle pause (5 minutes without a
+  call) or the end of the session, and it is then kept without answer. **A task that starts before
+  that lands in the same run**: its calls follow the earlier ones, and its answer closes both. The
+  report counts the refused closings, so this can be seen.
+- An answer followed by more calls opens a second run. The proxy cannot tell an agent that closed too
+  early from the next task, so it does not merge them; the report counts the runs closed by an answer
+  and followed by calls within the idle pause.
 - A session that ends without `tracetrim_done` leaves a run without answer: telemetry, not learning.
 - One run at a time per proxy or `AutoTrim`: calls that arrive between two closings belong to the
   same run, whoever sent them. Give each agent its own instance and work directory.

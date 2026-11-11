@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -56,7 +57,11 @@ EXPAND_MAX_RATE = 0.5
 
 
 class Learner:
-    def __init__(self, workdir: str | Path, min_runs: int = 5):
+    def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None):
+        """`idle_seconds`: the pause after which the integration closes a run
+        by itself (the proxy does; a function-calling loop closes its own
+        runs, and passes None). Only used to count runs that an answer closed
+        and that were followed by more calls within that pause."""
         self.dir = Path(workdir)
         (self.dir / "traces").mkdir(parents=True, exist_ok=True)
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
@@ -65,13 +70,24 @@ class Learner:
         self.min_runs = max(2, min_runs)
         self.state_path = self.dir / "state.json"
         self.state = {"runs": 0, "complete_runs": 0, "trimmed": {}, "expanded": {}, "off": [],
-                      "config_from_runs": 0}
+                      "config_from_runs": 0,
+                      # Where the boundary of a run may be wrong (see `refused` and `call`).
+                      "refused_closings": 0, "answered_runs_followed_by_calls": 0}
         if self.state_path.exists():
             self.state.update(json.loads(self.state_path.read_text()))
         self.events: list[dict] = []
+        self.idle_seconds = idle_seconds
+        self._answered_at: float | None = None       # when an answer last closed a run
 
     # -- observation ------------------------------------------------------
     def call(self, tool: str, arguments: dict, output: str, turn: int | None = None) -> None:
+        if not self.events and self._answered_at is not None:
+            # The first call after an answer. Within the idle pause it may be
+            # the same task going on (the agent closed too early) or the next
+            # one: the two cannot be told apart, so they are counted, not merged.
+            if self.idle_seconds is not None and time.time() - self._answered_at <= self.idle_seconds:
+                self.state["answered_runs_followed_by_calls"] += 1
+            self._answered_at = None
         e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
         if turn is not None:
             e["turn"] = turn             # calls of one turn do not use each other's outputs
@@ -87,6 +103,14 @@ class Learner:
         """A sign that the model needed something the projection removed."""
         if e.kind == RECOVERED:
             self.expanded(e.tool)
+
+    def refused(self) -> None:
+        """A closing that carried no answer and was refused: the run stays
+        open. If the agent does not try again, only the idle pause or the end
+        of the session closes it, and a task that starts before then lands in
+        the same run."""
+        self.state["refused_closings"] += 1
+        self._save()
 
     def _next_run(self) -> int:
         # Also from the files: if the process died after writing a trace and
@@ -116,6 +140,7 @@ class Learner:
         self.events = []
         if complete:
             self.state["complete_runs"] += 1
+            self._answered_at = time.time()
         self._save()
         return path
 
@@ -157,6 +182,8 @@ class Learner:
             config["tools"] = {}            # telemetry only until enough complete runs
         config["auto"] = {"complete_runs": len(complete), "min_runs": self.min_runs,
                           "applied": ready, "switched_off": self.state["off"],
+                          "refused_closings": self.state["refused_closings"],
+                          "answered_runs_followed_by_calls": self.state["answered_runs_followed_by_calls"],
                           "updated": datetime.now(timezone.utc).isoformat(timespec="seconds")}
 
         projection.save(self.dir / "report.projection.json")

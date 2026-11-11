@@ -282,6 +282,48 @@ def test_a_closing_without_an_answer_is_refused_and_the_run_stays_open(tmp_path)
     assert not good.is_error and good.content[0].text == "Recorded."
     # One complete run, with the call made before the refused closings.
     assert traces(tmp_path) == ["run-0001.jsonl"] and state(tmp_path)["complete_runs"] == 1
+    # The report counts them, so the phenomenon can be seen.
+    report = json.loads((tmp_path / "work" / "report.json").read_text())
+    assert state(tmp_path)["refused_closings"] == 3 and report["auto"]["refused_closings"] == 3
+    assert "closings refused for lack of an answer" in (tmp_path / "work" / "report.html").read_text()
+
+
+def test_after_a_refused_closing_the_next_task_lands_in_the_same_run(tmp_path):
+    # The agent does not try again. Nothing closes the run until the idle pause
+    # or the end of the session: here the next task starts first, and the two
+    # are recorded as ONE run, closed by the second task's answer.
+    async def script(init, s):
+        await s.call_tool("volumes", {"task": "first"})
+        refused = await s.call_tool("tracetrim_done", {"answer": ""})
+        await s.call_tool("volumes", {"task": "second"})
+        await s.call_tool("tracetrim_done", {"answer": ANSWER})
+        return refused
+
+    assert handshake(auto(tmp_path), script).is_error
+    assert traces(tmp_path) == ["run-0001.jsonl"]
+    run = [json.loads(line) for line in (tmp_path / "work" / "traces" / "run-0001.jsonl").open()]
+    assert [e.get("arguments") for e in run] == [{"task": "first"}, {"task": "second"}, None]
+    assert state(tmp_path) | {"runs": 1, "complete_runs": 1, "refused_closings": 1} == state(tmp_path)
+
+
+def test_an_answer_followed_by_more_calls_makes_two_runs_and_is_counted(tmp_path):
+    # tracetrim_done too early, or simply the next task: the proxy cannot tell,
+    # so it does not merge the runs and the report counts the case.
+    async def script(init, s):
+        await s.call_tool("volumes", {})
+        await s.call_tool("tracetrim_done", {"answer": ANSWER})
+        await s.call_tool("tracetrim_done", {"answer": ANSWER})         # a repeat: not counted
+        await s.call_tool("volumes", {})
+        await s.call_tool("volumes", {})                                # same run: counted once
+        await s.call_tool("tracetrim_done", {"answer": ANSWER})
+
+    handshake(auto(tmp_path), script)
+    assert traces(tmp_path) == ["run-0001.jsonl", "run-0002.jsonl"]
+    report = json.loads((tmp_path / "work" / "report.json").read_text())
+    assert state(tmp_path)["answered_runs_followed_by_calls"] == 1
+    assert report["auto"]["answered_runs_followed_by_calls"] == 1 and report["auto"]["refused_closings"] == 0
+    page = (tmp_path / "work" / "report.html").read_text()
+    assert "followed by calls within the idle pause" in page and "closings refused" not in page
 
 
 def test_duplicate_and_concurrent_closings_record_one_run(tmp_path):

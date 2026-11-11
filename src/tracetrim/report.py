@@ -315,6 +315,12 @@ L = {
                      "il filtro è attivo, con le azioni automatiche qui sotto"),
     "auto_learning": ("learning: complete runs", "in apprendimento: esecuzioni complete"),
     "auto_off": ("switched off after too many expand requests", "spenti dopo troppe richieste di expand"),
+    "auto_refused": ("closings refused for lack of an answer (the run stayed open)",
+                     "chiusure rifiutate perché senza risposta (l'esecuzione è rimasta aperta)"),
+    "auto_followed": ("runs closed by an answer and followed by calls within the idle pause (closed too early, "
+                      "or the next task: not merged)",
+                      "esecuzioni chiuse con risposta e seguite da chiamate entro la pausa di inattività (chiuse "
+                      "troppo presto, o compito successivo: non fuse)"),
     "project": ("Project and author", "Progetto e autore"),
     "hero": ("of tool-output tokens removed by the prudent projection, on runs it never saw",
              "dei token restituiti dai tool tolti dalla proiezione prudente, su run mai visti"),
@@ -488,6 +494,10 @@ def render_html(d: dict, sugg: list[dict]) -> str:
                  else f'{_t("auto_learning")} {auto["complete_runs"]}/{auto["min_runs"]}')
         off = (f' · {_t("auto_off")}: ' + ", ".join(f"<code>{html.escape(x)}</code>" for x in auto["switched_off"])
                if auto["switched_off"] else "")
+        # Shown only when it happened: where the boundary of a run may be wrong.
+        off += "".join(f' · {_t(key)}: <b>{auto[field]}</b>'
+                       for key, field in (("auto_refused", "refused_closings"),
+                                          ("auto_followed", "answered_runs_followed_by_calls")) if auto.get(field))
         auto_html = (f'<div class="autobox"><b>{_t("auto_title")}</b> · {state}{off}'
                      f' · <span class="method">{html.escape(auto["updated"])}</span></div>')
     if T["traces"] < 2:

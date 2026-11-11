@@ -283,7 +283,7 @@ def _server(o: Options):
 
     from .auto import DONE, DONE_REPLY, Learner
 
-    learner = Learner(o.auto_dir, o.min_runs) if o.auto_dir else None
+    learner = Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds) if o.auto_dir else None
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural)
@@ -362,6 +362,7 @@ def _server(o: Options):
                 answer = "" if answer is None else json.dumps(answer, ensure_ascii=False)
             if not answer.strip():
                 # Not a closing: the run stays open for the call that carries the answer.
+                engine.refuse()
                 return types.CallToolResult(isError=True, content=[types.TextContent(
                     type="text", text="Error: tracetrim_done needs your final answer in `answer`. Nothing was recorded.")])
             if not await close_run(answer):

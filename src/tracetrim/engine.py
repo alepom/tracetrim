@@ -163,6 +163,11 @@ class Engine:
         """
         return self.learner.done(answer) if self.learner is not None else None
 
+    def refuse(self) -> None:
+        """Count a closing the adapter refused because it carried no answer."""
+        if self.learner is not None:
+            self.learner.refused()
+
     def relearn(self) -> bool:
         """Regenerate the report from the runs on disk; reload the policy when
         one applies. True when a policy was (re)loaded. Slow: an async adapter

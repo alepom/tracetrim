@@ -101,6 +101,25 @@ def test_a_trace_left_by_an_interrupted_closing_is_not_overwritten(tmp_path):
     assert again.close(billing.answer(1)).name == "run-0003.jsonl" and orphan.exists()
 
 
+def test_calls_after_an_answer_are_counted_only_within_the_idle_pause(tmp_path, monkeypatch):
+    import tracetrim.auto as auto
+    now = [1000.0]
+    monkeypatch.setattr(auto.time, "time", lambda: now[0])
+    engine = Engine(Learner(tmp_path, min_runs=2, idle_seconds=300))
+    for pause in (10, 301, 300):
+        engine.observe(call(0), ToolResult(billing.output(0)))
+        engine.close(billing.answer(0))
+        now[0] += pause
+    engine.observe(call(0), ToolResult(billing.output(0)))
+    assert engine.learner.state["answered_runs_followed_by_calls"] == 2      # after 10 s and 300 s, not 301
+    # A function-calling loop closes its own runs: nothing to count.
+    tt = AutoTrim(tmp_path / "fc", min_runs=2)
+    for _ in range(3):
+        tt.output(billing.TOOL, billing.arguments(0), billing.output(0))
+        tt.done(billing.answer(0))
+    assert tt.learner.state["answered_runs_followed_by_calls"] == 0
+
+
 def test_a_fixed_policy_needs_no_learner(tmp_path):
     learned(tmp_path)
     from tracetrim.runtime import Policy
