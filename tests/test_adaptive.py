@@ -224,6 +224,20 @@ def test_without_promotion_the_whole_tool_is_switched_off_and_with_it_only_the_f
     assert state(tmp_path / "b")["trimmed"] == {TOOL: 3} and state(tmp_path / "b")["expanded"] == {}
 
 
+def test_a_switched_off_tool_is_exposed_whole_and_counted_nowhere(tmp_path):
+    tt = learned(tmp_path)
+    for k in range(4, 9):
+        run(tt, k, [NOTE])
+    assert state(tmp_path)["off"] == [TOOL]
+    before = state(tmp_path)
+    tt = AutoTrim(tmp_path, min_runs=3, adaptive=Adaptive(sample_rate=1.0, sample_max_share=10))
+    obs = tt.engine.observe(ToolCall(TOOL, args(9)), ToolResult(orders.output(**args(9))))
+    assert (obs.exposure, obs.call_id, obs.hidden) == ("full", None, ()) and json.loads(obs.text) == orders.list_orders(**args(9))
+    tt.done(answer(9))
+    after = state(tmp_path)
+    assert all(after[k] == before[k] for k in ("trimmed", "expanded", "sampling", "full_cheaper"))
+
+
 def test_a_request_that_gives_back_nothing_removed_does_not_count_against_the_tool(tmp_path):
     tt = learned(tmp_path)
     for k in range(4, 9):

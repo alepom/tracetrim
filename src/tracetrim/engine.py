@@ -64,6 +64,11 @@ class Trimmer:
         payload = parse_output(out)
         if proj is None or tool not in proj.keep or not isinstance(payload, (dict, list)):
             return Observation(trimmed)
+        if self.policy.tools.get(tool, {}).get("trim", "off") == "off":
+            # The projection knows the tool but the config does not trim it (switched
+            # off after too many expand requests): nothing is removed, so the result
+            # is neither filtered, nor a candidate for sampling, nor "cheaper whole".
+            return Observation(trimmed)
         drop = proj.seen.get(tool, set()) - proj.keep[tool]
         hidden = sorted({p for p, _ in leaves(payload) if p in drop})
         if not hidden:
