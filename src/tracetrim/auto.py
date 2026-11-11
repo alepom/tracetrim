@@ -194,6 +194,7 @@ class AutoTrim:
 
         tt = AutoTrim("tracetrim-data/", min_runs=5)
         tools = my_tools + [tt.expand_tool]        # adapt the schema to your provider
+        system_prompt += tt.instructions           # how to use expand (and, with strategy=True, tools in general)
         ...
         # in the loop, for every tool call the model makes:
         if name == "expand":
@@ -207,10 +208,15 @@ class AutoTrim:
     The same rules as the proxy's automatic mode (the same engine,
     tracetrim.engine), without `tracetrim_done`: the code that runs the loop
     already has the final answer.
+
+    `strategy=True` adds to `instructions` the optional notes on how to
+    organise tool calls (see tracetrim.skill). Off by default.
     """
 
-    def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None):
+    def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
+                 strategy: bool = False):
         self.engine = Engine(Learner(workdir, min_runs), structural=structural)
+        self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
                             "parameters": EXPAND["inputSchema"]}
 
@@ -233,6 +239,13 @@ class AutoTrim:
     @property
     def report(self) -> Path:
         return self.learner.dir / "report.html"
+
+    @property
+    def instructions(self) -> str:
+        """Text for the system prompt: the tracetrim skill without the part on
+        `tracetrim_done`, which a function-calling loop does not need."""
+        from .skill import text
+        return text(strategy=self.strategy, done=False)
 
     def output(self, tool: str, arguments: dict | str | None, raw: str, turn: int | None = None) -> str:
         """Record the call; return what the model should receive. `turn`: the

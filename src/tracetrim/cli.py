@@ -7,6 +7,7 @@
   tracetrim login   --servers mcp.json                 (once, for servers that use OAuth)
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
+  tracetrim skill   [--strategy] [--no-done] [--write DIR]   (how to use expand and tracetrim_done, as text)
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -150,6 +151,21 @@ def cmd_proxy(a):
         asyncio.run(serve(o))
 
 
+def cmd_skill(a):
+    """The skill as text: for the system prompt of an agent whose host does not
+    load MCP skills, or (--write) as a SKILL.md folder for hosts that read
+    skills from disk."""
+    from . import skill
+    kw = {"strategy": a.strategy, "done": not a.no_done}
+    if a.write:
+        path = Path(a.write) / skill.NAME / "SKILL.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(skill.skill_md(**kw), encoding="utf-8")
+        print(path)
+    else:
+        sys.stdout.write(skill.text(**kw))
+
+
 def _upstreams(a) -> dict:
     from .proxy import Options, load_servers
     if bool(a.servers) == bool(a.upstream_url):
@@ -254,6 +270,13 @@ def main(argv=None):
     s.add_argument("--structural", choices=["toon", "headroom"],
                    help="re-encode outputs after the projection (headroom: experimental, needs tracetrim[headroom])")
     s.set_defaults(func=cmd_proxy)
+
+    s = sub.add_parser("skill", help="print the tracetrim skill, for agents whose host does not load MCP skills")
+    s.add_argument("--strategy", action="store_true", help="include the notes on organising tool calls")
+    s.add_argument("--no-done", action="store_true",
+                   help="leave out tracetrim_done (function calling: the loop passes the answer itself)")
+    s.add_argument("--write", metavar="DIR", help="write DIR/tracetrim/SKILL.md instead of printing the text")
+    s.set_defaults(func=cmd_skill)
 
     for cmd, func, text in (("login", cmd_login, "log in to the OAuth servers (browser), once"),
                             ("logout", cmd_logout, "forget the OAuth tokens")):

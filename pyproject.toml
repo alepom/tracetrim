@@ -45,5 +45,8 @@ tracetrim = "tracetrim.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+tracetrim = ["skills/*/*.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

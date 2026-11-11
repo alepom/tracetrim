@@ -129,7 +129,7 @@ def test_structural_applies_from_the_first_call_in_both_adapters(tmp_path):
 
 
 def test_the_core_imports_no_sdk():
-    code = ("import sys, tracetrim, tracetrim.contract, tracetrim.engine, tracetrim.auto, "
+    code = ("import sys, tracetrim, tracetrim.contract, tracetrim.engine, tracetrim.auto, tracetrim.skill, "
             "tracetrim.proxy; bad = [m for m in ('mcp', 'mcp_types', 'openai', 'anthropic', 'pydantic', 'httpx') "
             "if m in sys.modules]; print(bad); sys.exit(bool(bad))")
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
