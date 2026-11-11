@@ -287,4 +287,14 @@ and with a second AI session reviewing each step.
 
 ## Deviations
 
-None yet.
+Dated, with the reason. The numbering continues across the experiments.
+
+**1 — 2026-11-11, before any paid run: a correction to the software under test (commit `39ecfdd`).**
+The dry run of the harness (a stub in place of the model, no spend) showed that in the arms without promotion a
+tool was switched off at the end of the second run of a sequence although its fields had already come back: the
+agent had asked them back with `expand` and written them in the first run, ordinary learning kept them from the
+second, and the requests of the first run still counted against the tool (four filtered results, two expanded).
+The switch-off is meant for a tool that goes on asking for hidden fields, and here the requests were settled. The
+count of a tool now starts again when ordinary learning keeps a recovered field, as it already did after a
+promotion. Decided after the dry run and before every paid run, with no measured data seen. H5 is unchanged; the
+software measured is the one at this commit or later.
