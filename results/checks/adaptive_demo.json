@@ -1118,7 +1118,7 @@
       "tool_switched_off": true,
       "field_kept_by_projection": false,
       "promotions": [],
-      "sampled_results": 2,
+      "sampled_results": 0,
       "first_sampled_shift_run": null,
       "last_learn_run": {
         "raw": 597,
@@ -3277,7 +3277,7 @@
       "tool_switched_off": true,
       "field_kept_by_projection": false,
       "promotions": [],
-      "sampled_results": 2,
+      "sampled_results": 0,
       "first_sampled_shift_run": null,
       "last_learn_run": {
         "raw": 597,

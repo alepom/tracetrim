@@ -97,13 +97,15 @@ released): `skills/list` and `skills/get` are registered as plain request handle
 
 | A host that negotiates extensions in `initialize` | the handshake of MCP Inspector CLI 2.13.0, replayed byte for byte in a test | the extension is announced, `skills/list` and `skills/get` answer |
 
-These are tests of the server (`tests/test_proxy_skill.py`). **Activation in a host was not tried**:
-no agent host was connected, so whether a given host loads the skill on its own, and whether its model
-then follows it, is not shown here.
+These are tests of the server (`tests/test_proxy_skill.py`). **Activation in an agent host was not
+tried**: no agent host was connected, so whether a given host loads the skill on its own, and whether
+its model then follows it, is not shown here. Inspector verifies that the skill is served correctly; it
+is not an agent and does not act on it.
 
-MCP Inspector CLI 2.13.0 was run once against an earlier state of this branch and reported
-`skills_unsupported`: the proxy did not announce the extension in `initialize`. That is fixed and
-covered by the test above; the run with Inspector itself has to be repeated:
+**Verified as conformant by MCP Inspector CLI 2.13.0** (2026-11-11): outcome `verified`, the
+`SKILL.md` matching the manifest in digest and size (1303 bytes), no conformance or frontmatter
+violation. A first run, against an earlier state of this branch, had reported `skills_unsupported`
+because the proxy did not announce the extension in `initialize`. The command:
 
 ```bash
 npx -y @modelcontextprotocol/inspector --cli .venv/bin/python -m tracetrim.cli proxy --upstream-cmd ".venv/bin/python tests/fixtures/meta_server.py" --auto /tmp/tt-inspector --quiet --method skills/list --verify

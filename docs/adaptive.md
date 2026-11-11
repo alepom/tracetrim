@@ -80,7 +80,8 @@ to come back in a second, independent run. Promotion starts once trimming has st
   ```
 
   A reverted field is removed again and is not promoted a second time. A running proxy picks the change
-  up at its next closing.
+  up at its next closing. The operator's choice prevails: if ordinary learning would keep a reverted
+  field (its value was seen written), the field stays removed and the report lists it as to review.
 
 ## Sampling without filter (`--sample-rate`)
 
@@ -100,6 +101,20 @@ normally removed and tracetrim can see it. The tool runs once: only what is pass
   field. A promotion whose field no longer exists has nothing to apply to and stays on record.
 - Sampled results are counted apart: they are not among the filtered results the switch-off counts,
   and the savings the report estimates are computed on the original outputs, sampled or not.
+
+## The simple way for small outputs (always on)
+
+The line that lists what was removed has a fixed cost, some tens of tokens. On a small or already
+compact result it can cost more than the cut saves. So, for every result: when the filtered text, line
+included, counts **at least as many tokens** as the whole result re-serialised, the whole result is
+passed, without the line. Fewer tokens, and nothing removed.
+
+- Counted with tiktoken `o200k_base`; without tiktoken the comparison is on characters, and the report
+  names the unit.
+- For learning this is an unfiltered exposure that is **not random**. It has its own kind
+  (`full_cheaper`), is counted apart from filtered and from sampled results, and uses none of the
+  sampling quota. The report counts, per tool, the results passed this way.
+- It applies wherever a projection is applied: automatic mode, `--config`, `AutoTrim`.
 
 ## Measures that change nothing
 

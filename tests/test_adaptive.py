@@ -393,6 +393,75 @@ def test_new_fields_still_pass_and_a_changed_schema_does_not_break_promotions(tm
     assert NOTE in kept(tmp_path)                                      # the promotion stays, with nothing to apply to
 
 
+# -- the simple way for small outputs ------------------------------------------------------
+
+def status_runs(session_factory, work, n=6, **adaptive):
+    """The same small-result workflow through an adapter: what the model received, and the state."""
+    async def go():
+        async with session_factory(work, Adaptive(**adaptive)) as s:
+            sent = []
+            for k in range(1, n + 1):
+                raw, got = await s.call({"order": f"ord_{k:04d}"}, tool="order_status")
+                sent.append(got)
+                o = json.loads(raw)
+                await s.done(f"Order {o['id']} is {o['status']}.")
+            return sent
+    return asyncio.run(go()), state(work)
+
+
+def test_a_small_result_that_filtering_would_not_shorten_is_passed_whole(tmp_path):
+    sent, st = status_runs(demo.FunctionCalling, tmp_path, sample_rate=1.0, sample_max_share=10)
+    projection = json.loads((tmp_path / "report.projection.json").read_text())
+    assert projection["dropped"]["order_status"] == ["lane"]           # learned: `lane` is removed ...
+    for k, text in enumerate(sent[3:], 4):                             # ... yet every result goes on whole
+        assert MARK not in text and json.loads(text) == orders.order_status(f"ord_{k:04d}")
+        assert text == json.dumps(orders.order_status(f"ord_{k:04d}"))                 # re-serialised, no line
+    # Counted as its own kind: not filtered, not sampled, and no sampling quota used.
+    assert st["full_cheaper"] == {"order_status": 3} and st["trimmed"] == {} and st["sampling"] == {}
+    notes = [json.loads(line) for p in sorted((tmp_path / "evidence").glob("*.jsonl")) for line in p.open()]
+    assert [(n["exposure"], n["call_id"], n["hidden"]) for n in notes] == [("full_cheaper", None, ["lane"])] * 3
+    assert evidence.load(tmp_path / "evidence.json")["tools"] == {}                    # no evidence drawn from it
+    report = json.loads((tmp_path / "report.json").read_text())["adaptive"]
+    assert report["full_cheaper"] == {"order_status": 3} and report["sampling_unit"] == "tokens"
+    page = (tmp_path / "report.html").read_text()
+    assert "filtering would not have been shorter" in page and "run-time comparisons are in" in page
+
+
+def test_a_large_result_is_filtered_as_before_and_the_two_are_counted_apart(tmp_path):
+    tt = learned(tmp_path)
+    assert MARK in run(tt, 4) and state(tmp_path)["full_cheaper"] == {} and state(tmp_path)["trimmed"] == {TOOL: 1}
+
+
+def test_the_simple_way_is_the_same_through_the_proxy_and_autotrim(tmp_path):
+    fc, fc_state = status_runs(demo.FunctionCalling, tmp_path / "fc")
+    mcp, mcp_state = status_runs(demo.Mcp, tmp_path / "mcp")
+    assert fc == mcp and all(MARK not in t for t in fc)
+    for key in ("runs", "complete_runs", "trimmed", "expanded", "sampling", "full_cheaper", "off"):
+        assert fc_state[key] == mcp_state[key]
+    assert fc_state["full_cheaper"] == {"order_status": 3}
+
+
+def test_without_a_tokenizer_the_comparison_is_on_characters_and_says_so(tmp_path, monkeypatch):
+    import tracetrim.measure as measure
+    monkeypatch.setattr(measure, "counter", lambda: ((lambda s: len(s or "")), "characters"))
+    tt = learned(tmp_path)
+    assert tt.trimmer.count("abcd") == 4 and tt.trimmer.unit == "characters"
+    assert MARK in run(tt, 4)                                          # the decision is still taken
+    assert json.loads((tmp_path / "report.json").read_text())["adaptive"]["sampling_unit"] == "characters"
+
+
+def test_a_reverted_field_that_learning_would_keep_stays_removed_and_is_reported(tmp_path, capsys):
+    tt = learned(tmp_path, promote=True)
+    run(tt, 4, [CARRIER], f" Carrier: {newest(4)['carrier']}.")        # written: ordinary learning keeps it too
+    assert CARRIER in kept(tmp_path)
+    main(["promotions", str(tmp_path), "--revert", TOOL, CARRIER])
+    capsys.readouterr()
+    assert CARRIER in dropped(tmp_path)                                # the operator's choice stands
+    report = json.loads((tmp_path / "report.json").read_text())["adaptive"]
+    assert report["conflicts"] == [{"tool": TOOL, "field": CARRIER}]
+    assert "To review: reverted fields that ordinary learning would keep" in (tmp_path / "report.html").read_text()
+
+
 # -- persistence -----------------------------------------------------------------------
 
 def test_an_interrupted_write_leaves_the_previous_file_and_the_run_open(tmp_path, monkeypatch):

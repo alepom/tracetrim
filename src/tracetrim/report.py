@@ -383,6 +383,11 @@ L = {
     "filtered": ("filtered", "filtrati"), "expanded": ("of which expanded", "di cui espansi"),
     "broad": ("runs asking for everything", "esecuzioni con richiesta di tutto"),
     "sampled": ("sampled (passed whole)", "campionati (passati interi)"),
+    "cheaper": ("passed whole: filtering would not have been shorter",
+                "passati interi: il filtro non li avrebbe accorciati"),
+    "conflicts": ("To review: reverted fields that ordinary learning would keep (they stay removed)",
+                  "Da rivedere: campi annullati che l'apprendimento ordinario terrebbe (restano tolti)"),
+    "compared_in": ("run-time comparisons are in", "i confronti a runtime sono in"),
     "eligible": ("would be filtered", "da filtrare"),
     "removed_u": ("removed by filtering", "tolto dal filtro"), "added_u": ("added by sampling", "aggiunto dal campionamento"),
     "lists": ("List elements reused (a measure: rows are never cut)",
@@ -534,7 +539,10 @@ def _adaptive_html(d: dict) -> str:
         if ev:
             out.append(f'<details><summary>{_t("evidence")} · {len(ev)}</summary>'
                        + _table([_t("tool"), _t("field")] + [_t("ev_" + k) for k in kinds], ev) + "</details>")
-        tools = sorted(set(a["expand"]) | set(a["sampling"]))
+        if a.get("conflicts"):
+            out.append(f'<h3>{_t("conflicts")}</h3>' + _table(
+                [_t("tool"), _t("field")], [[code(c["tool"]), code(c["field"])] for c in a["conflicts"]]))
+        tools = sorted(set(a["expand"]) | set(a["sampling"]) | set(a.get("full_cheaper", {})))
         if tools:
             unit = a["sampling_unit"]
             rows = []
@@ -542,10 +550,12 @@ def _adaptive_html(d: dict) -> str:
                 e, s = a["expand"].get(t, {}), a["sampling"].get(t, {})
                 rows.append([code(t), str(e.get("filtered", 0)), str(e.get("expanded", 0)),
                              str(a["evidence"].get(t, {}).get("broad_requests", 0)), str(s.get("eligible", "—")),
-                             str(s.get("sampled", "—")), _num(s["removed"]) if s else "—", _num(s["added"]) if s else "—"])
+                             str(s.get("sampled", "—")), _num(s["removed"]) if s else "—", _num(s["added"]) if s else "—",
+                             str(a.get("full_cheaper", {}).get(t, 0))])
             out.append(f'<h3>{_t("exposure")}</h3>' + _table(
                 [_t("tool"), _t("filtered"), _t("expanded"), _t("broad"), _t("eligible"), _t("sampled"),
-                 f'{_t("removed_u")} ({unit})', f'{_t("added_u")} ({unit})'], rows))
+                 f'{_t("removed_u")} ({unit})', f'{_t("added_u")} ({unit})', _t("cheaper")], rows)
+                + f'<p class="method">{_t("compared_in")} {unit}</p>')
     lists = [(t, v) for t, v in (d.get("lists") or {}).items() if v["lists"]]
     if lists:
         rows = [[code(t), code(path),

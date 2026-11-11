@@ -41,6 +41,10 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   shared by tool calls and the learning thread; a closing whose write fails can be tried again.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
+  - *The simple way for small outputs*, always on: when a filtered result, with the line that lists
+    what was removed, would count at least as many tokens as the whole result re-serialised, the whole
+    result is passed without the line. Small or compact results that 0.3.5 trimmed and annotated now
+    arrive whole. Counted in the report as its own kind, apart from filtered and sampled results.
   - The switch-off of a tool counts filtered results that were expanded, each once and only when a
     removed field came back. Until 0.3.5 it counted every `expand` request, repeats and failed ones
     included.

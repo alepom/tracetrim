@@ -49,3 +49,18 @@ def list_orders(customer: str, limit: int = 3) -> dict:
 
 def output(customer: str, limit: int = 3) -> str:
     return json.dumps(list_orders(customer, limit), indent=2)
+
+
+LANES = ("priority handling lane", "standard handling lane", "overnight handling lane")
+
+
+def order_status(order: str) -> dict:
+    """A small result: three short fields, one of which (`lane`) an agent rarely reports."""
+    return {"id": order, "status": STATUSES[_n(order + "s", len(STATUSES))], "lane": LANES[_n(order + "l", len(LANES))]}
+
+
+def status_output(order: str) -> str:
+    return json.dumps(order_status(order), indent=2)
+
+
+OUTPUTS = {"list_orders": output, "order_status": status_output}

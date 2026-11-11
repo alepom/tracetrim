@@ -48,7 +48,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import evidence, store
-from .contract import FULL, KINDS, Observation, ToolCall, ToolResult
+from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine
 from .evidence import Adaptive
 from .runtime import Policy
@@ -95,7 +95,9 @@ class Learner:
                       # Since 0.4 work: `trimmed` and `expanded` count filtered results and those
                       # among them that were expanded (each once), since the tool's last promotion;
                       # `expand_runs`, the runs those requests came from; `sampling`, per tool.
-                      "expand_runs": {}, "sampling": {}}
+                      "expand_runs": {}, "sampling": {},
+                      # Results passed whole because the filtered one would not have been shorter.
+                      "full_cheaper": {}}
         if self.state_path.exists():
             try:
                 self.state.update(json.loads(self.state_path.read_text()))
@@ -118,12 +120,8 @@ class Learner:
         """Tokens (o200k_base) when tiktoken is installed, characters otherwise:
         only ever compared with counts in the same unit."""
         if self._count is None:
-            try:
-                import tiktoken
-                enc = tiktoken.get_encoding("o200k_base")
-                self._count = lambda t: len(enc.encode(t or ""))
-            except ImportError:
-                self._count = lambda t: len(t or "")
+            from .measure import counter
+            self._count, self.unit = counter()
         return self._count(text)
 
     # -- observation ------------------------------------------------------
@@ -177,6 +175,8 @@ class Learner:
                 self._origins[call.tool] = {"server": call.server, "tool": call.upstream_tool}
             if obs.exposure == FULL:
                 return
+            if obs.exposure == FULL_CHEAPER:
+                self.state["full_cheaper"][call.tool] = self.state["full_cheaper"].get(call.tool, 0) + 1
             if obs.call_id:
                 self.trimmed(call.tool)
                 self._index_of[obs.call_id] = index
@@ -318,18 +318,23 @@ class Learner:
             self._switch_off_overexpanded()
             off = list(self.state["off"])
             counters = {k: json.loads(json.dumps(self.state[k]))
-                        for k in ("trimmed", "expanded", "expand_runs", "sampling")}
+                        for k in ("trimmed", "expanded", "expand_runs", "sampling", "full_cheaper")}
             closings = (self.state["refused_closings"], self.state["answered_runs_followed_by_calls"])
 
         # Promotions and reverts change what the learned projection keeps.
         active, reverted = evidence.promoted(data), evidence.promoted(data, "reverted")
         before = Projection(projection.mode, projection.source, {t: set(k) for t, k in projection.keep.items()},
                             projection.seen, projection.unseen)
+        # A reverted field that ordinary learning would keep (its value was seen
+        # written): the operator's choice stands, and the report says so.
+        conflicts = [{"tool": t, "field": f} for t in sorted(projection.keep)
+                     for f in sorted(reverted.get(t, set()) & projection.keep[t])]
         for tool in projection.keep:
             changed = active.get(tool, set()) | reverted.get(tool, set())
             projection.keep[tool] = (projection.keep[tool] | active.get(tool, set())) - reverted.get(tool, set())
             projection.seen[tool] = projection.seen.get(tool, set()) | changed
         d["adaptive"] = self._adaptive_report(d, data, before, projection, usages, counters, measure.tokenizer())
+        d["adaptive"]["conflicts"] = conflicts
 
         for tool in off:
             config["tools"].pop(tool, None)
@@ -380,15 +385,15 @@ class Learner:
                               "runs_with_expand": len(counters["expand_runs"].get(tool, []))}
                        for tool, n in sorted(counters["trimmed"].items())},
             "sampling": counters["sampling"],
-            "sampling_unit": "tokens" if self._unit_is_tokens() else "characters",
+            # Results passed whole because filtering them would not have saved anything.
+            "full_cheaper": counters["full_cheaper"],
+            # The unit of the run-time comparisons (sampling cost, the simple way for small outputs).
+            "sampling_unit": self._unit(),
         }
 
-    def _unit_is_tokens(self) -> bool:
-        try:
-            import tiktoken  # noqa: F401
-            return True
-        except ImportError:
-            return False
+    def _unit(self) -> str:
+        self.count("")
+        return self.unit
 
     def _switch_off_overexpanded(self) -> None:
         """The last resort: a tool whose filtered results are expanded too often

@@ -5,11 +5,19 @@ from tracetrim import analyse, learn
 from tracetrim.proxy import Trimmer
 from tracetrim.runtime import Policy
 
-from test_core import VOLUMES, trace
+from test_core import VOLUMES as SMALL
+from test_core import trace
+
+# Enough to remove that trimming pays for the line that says what was removed:
+# on the four-field items of test_core the whole result is the shorter one,
+# and since the simple way for small outputs it is what goes on.
+VOLUMES = dict(SMALL, items=[dict(i, remark="checked against the monthly export of the keyword planner",
+                                  source="imported from the advertising account of the agency")
+                             for i in SMALL["items"]])
 
 
 def policy(expand=True):
-    p = learn([analyse(trace("t", "spa weekend 1600"))], "prudent")
+    p = learn([analyse(trace("t", "spa weekend 1600", VOLUMES))], "prudent")
     config = {"format": "tracetrim/config@1", "unescape": True,
               "tools": {"search_volume": {"trim": "prudent", "expand": expand}}}
     return Policy(config, p)
@@ -56,6 +64,21 @@ def test_upstream_tools_named_like_ours_are_prefixed():
     routes = route_names({"a": ["expand", "search"], "b": ["tracetrim_done"]})
     assert routes == {"a__expand": ("a", "expand"), "search": ("a", "search"),
                       "b__tracetrim_done": ("b", "tracetrim_done")}
+
+
+def test_a_result_that_trimming_would_not_shorten_goes_on_whole():
+    from tracetrim.contract import FILTERED, FULL_CHEAPER
+    t = Trimmer(policy())
+    small = t.observe("search_volume", json.dumps(SMALL, indent=2))
+    # Two short fields to remove, a line of some twenty tokens to say so: not worth it.
+    assert small.exposure == FULL_CHEAPER and small.call_id is None and "[trimmed]" not in small.text
+    assert json.loads(small.text) == SMALL and small.text == json.dumps(SMALL)        # whole, re-serialised
+    assert small.hidden == ("items[].location_code",) and not t.originals             # nothing kept for expand
+    large = t.observe("search_volume", json.dumps(VOLUMES))
+    assert large.exposure == FILTERED and large.call_id and t.count(large.text) < t.count(json.dumps(VOLUMES))
+    # Without the line there is no fixed cost: the same small result is trimmed.
+    bare = Trimmer(policy(expand=False)).observe("search_volume", json.dumps(SMALL))
+    assert bare.exposure == FILTERED and "location_code" not in bare.text
 
 
 def test_empty_lists_survive_at_run_time():

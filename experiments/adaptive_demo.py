@@ -66,9 +66,9 @@ class FunctionCalling:
     async def __aexit__(self, *exc):
         self.tt.learner.flush()
 
-    async def call(self, arguments):
-        raw = orders.output(**arguments)
-        return raw, self.tt.output(TOOL, arguments, raw)
+    async def call(self, arguments, tool=TOOL):
+        raw = orders.OUTPUTS[tool](**arguments)
+        return raw, self.tt.output(tool, arguments, raw)
 
     async def expand(self, call_id, fields):
         return self.tt.expand({"call_id": call_id, "fields": fields})
@@ -106,9 +106,9 @@ class Mcp:
     async def __aexit__(self, *exc):
         await self.stack.aclose()
 
-    async def call(self, arguments):
-        sent = (await self.session.call_tool(TOOL, arguments)).content[0].text
-        return orders.output(**arguments), sent
+    async def call(self, arguments, tool=TOOL):
+        sent = (await self.session.call_tool(tool, arguments)).content[0].text
+        return orders.OUTPUTS[tool](**arguments), sent
 
     async def expand(self, call_id, fields):
         return (await self.session.call_tool("expand", {"call_id": call_id, "fields": fields})).content[0].text

@@ -32,6 +32,18 @@ def tokenizer():
     return lambda s: len(enc.encode(s or ""))
 
 
+def counter():
+    """(count, unit) for decisions taken at run time: tokens (o200k_base) when
+    tiktoken is installed, characters otherwise. Only ever used to compare
+    two texts counted the same way; a report that shows such counts names the unit."""
+    try:
+        import tiktoken
+    except ImportError:
+        return (lambda s: len(s or "")), "characters"
+    enc = tiktoken.get_encoding("o200k_base")
+    return (lambda s: len(enc.encode(s or ""))), "tokens"
+
+
 @dataclass
 class Row:
     name: str

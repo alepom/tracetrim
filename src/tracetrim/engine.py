@@ -16,7 +16,7 @@ import json
 import secrets
 from pathlib import Path
 
-from .contract import FILTERED, SAMPLED, Observation, ToolCall, ToolResult
+from .contract import FILTERED, FULL_CHEAPER, SAMPLED, Observation, ToolCall, ToolResult
 from .evidence import is_broad
 from .projection import project
 from .runtime import Policy
@@ -44,6 +44,14 @@ class Trimmer:
         self.originals: dict[str, object] = {}
         self.hidden: dict[str, set] = {}
         self.tool_of: dict[str, str] = {}
+        self._count = None
+
+    def count(self, text: str) -> int:
+        """Tokens (o200k_base), or characters when tiktoken is not installed."""
+        if self._count is None:
+            from .measure import counter
+            self._count, self.unit = counter()
+        return self._count(text)
 
     def output(self, tool: str, out: str) -> str:
         return self.observe(tool, out).text
@@ -60,7 +68,24 @@ class Trimmer:
         hidden = sorted({p for p, _ in leaves(payload) if p in drop})
         if not hidden:
             return Observation(trimmed)
-        if not self.policy.expand_enabled(tool) and not self.policy.config.get("expand_all"):
+        annotate = self.policy.expand_enabled(tool) or self.policy.config.get("expand_all")
+        groups: dict[str, int] = {}
+        for h in hidden:
+            g = ".".join(h.split(".")[:2])
+            groups[g] = groups.get(g, 0) + 1
+        ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
+        items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
+        listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
+        # The simple way for small outputs: the line that says what was removed
+        # has a fixed cost, and on a small or already compact result it can cost
+        # more than the cut saves. Then the whole result goes on, without the line:
+        # fewer tokens and nothing lost. (Counted with a fixed id in place of the
+        # random one, so that the same result is treated the same everywhere.)
+        whole = self.policy.apply(tool, out, project=False)
+        candidate = f"{trimmed}{MARK}call_id=c00000000 hidden: {listed}" if annotate else trimmed
+        if self.count(candidate) >= self.count(whole):
+            return Observation(whole, FULL_CHEAPER, hidden=tuple(hidden))
+        if not annotate:
             return Observation(trimmed, FILTERED, hidden=tuple(hidden))
         # Random ids: over HTTP several clients share one proxy, and a sequential
         # id would let one of them expand another's results.
@@ -73,13 +98,6 @@ class Trimmer:
         self.originals[cid] = payload
         self.tool_of[cid] = tool
         self.hidden[cid] = set(hidden)
-        groups: dict[str, int] = {}
-        for h in hidden:
-            g = ".".join(h.split(".")[:2])
-            groups[g] = groups.get(g, 0) + 1
-        ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
-        items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
-        listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
         return Observation(f"{trimmed}{MARK}call_id={cid} hidden: {listed}", FILTERED, cid, tuple(hidden))
 
     def expand(self, call_id: str, wanted: list[str]) -> str:

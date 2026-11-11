@@ -17,5 +17,11 @@ def list_orders(customer: str, limit: int = 3) -> str:
     return orders.output(customer, limit)
 
 
+@app.tool()
+def order_status(order: str) -> str:
+    """The status of one order, by id."""
+    return orders.status_output(order)
+
+
 if __name__ == "__main__":
     app.run()

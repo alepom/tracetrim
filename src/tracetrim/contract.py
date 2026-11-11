@@ -19,6 +19,10 @@ from dataclasses import dataclass
 FULL = "full"            # nothing removed (it may have been re-serialised, which loses nothing)
 FILTERED = "filtered"    # fields removed by the projection
 SAMPLED = "sampled"      # the projection would have removed fields; this once, on purpose, it did not
+# The filtered result, with the line that lists what was removed, would have
+# been no shorter than the whole one: the whole one is passed. Not random, and
+# not a cut: counted apart from both FILTERED and SAMPLED.
+FULL_CHEAPER = "full_cheaper"
 
 # Kinds of evidence about a field the projection removes. They are kept apart:
 # each says something different, and none is proof that a field is needed.
@@ -52,10 +56,10 @@ class ToolResult:
 @dataclass(frozen=True)
 class Observation:
     text: str                          # what the model receives
-    exposure: str = FULL               # FULL, FILTERED or SAMPLED
+    exposure: str = FULL               # FULL, FILTERED, SAMPLED or FULL_CHEAPER
     call_id: str | None = None         # the handle `expand` takes, when it can give something back
     # The paths the projection removes from this result: actually removed when
-    # FILTERED, let through this once when SAMPLED.
+    # FILTERED, let through when SAMPLED or FULL_CHEAPER.
     hidden: tuple[str, ...] = ()
 
 
