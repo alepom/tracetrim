@@ -8,6 +8,8 @@
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
                     [--skill-strategy] [--no-skill]
+                    [--promote [--promote-runs 2]] [--sample-rate 0.1 [--sample-max-share 0.2] [--sample-seed 0]]
+  tracetrim promotions WORKDIR [--revert [TOOL [FIELD]] | --restore TOOL FIELD]
   tracetrim skill   [--strategy] [--no-done] [--write DIR]   (the instructions the proxy publishes as a skill)
 
 `measure` always starts by showing what it read: a parser that fails
@@ -126,6 +128,9 @@ def cmd_report(a):
     projection.save(proj_path)
     cfg_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     d["suggestions"], d["config"], d["config_file"] = sugg, config, cfg_path.name
+    from . import arguments, lists
+    d["lists"] = lists.summarise([lists.element_usage(t, normalize=not a.v01, comma_grouping=not a.v01) for t in traces])
+    d["arguments"] = arguments.cardinality(traces)
     out.write_text(rp.render_html(d, sugg), encoding="utf-8")
     out.with_suffix(".json").write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     auto = sum(s["action"]["kind"] == "auto" for s in sugg)
@@ -142,15 +147,48 @@ def cmd_proxy(a):
         raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
     if a.auto and a.config:
         raise SystemExit("--auto manages its own config: do not pass --config")
+    if (a.promote or a.sample_rate) and not a.auto:
+        raise SystemExit("--promote and --sample-rate work in automatic mode: add --auto WORKDIR")
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
                 quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
                 skill=not a.no_skill, skill_strategy=a.skill_strategy,
+                promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
+                sample_max_share=a.sample_max_share, sample_seed=a.sample_seed,
                 servers=load_servers(a.servers) if a.servers else {})
     if a.http:
         asyncio.run(serve_http(o, host=a.host, port=a.http, token=a.token, allowed_hosts=a.allowed_host))
     else:
         asyncio.run(serve(o))
+
+
+def cmd_promotions(a):
+    """List the fields promoted on evidence in a work directory, or take some back."""
+    from . import evidence
+    from .auto import Learner
+    work = Path(a.workdir)
+    path = work / "evidence.json"
+    data = evidence.load(path)
+    changed = []
+    if a.revert is not None:
+        if len(a.revert) > 2:
+            raise SystemExit("--revert takes nothing (all), a TOOL, or a TOOL and a FIELD")
+        changed = evidence.revert(data, *a.revert)
+    elif a.restore:
+        changed = evidence.restore(data, *a.restore)
+    if changed:
+        evidence.save(path, data)
+        # Rewrite config and report now; a running proxy picks the change up at its next closing.
+        config = json.loads((work / "report.config.json").read_text()) if (work / "report.config.json").exists() else {}
+        Learner(work, config.get("auto", {}).get("min_runs", 5)).relearn()
+    for p in data["promotions"]:
+        mark = " <- changed" if p in changed else ""
+        print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"
+              f"{'' if len(p['runs']) == 1 else 's'}: {', '.join(p['runs'])}){mark}")
+    if not data["promotions"]:
+        print("no promotions")
+    elif (a.revert is not None or a.restore) and not changed:
+        print("nothing changed: no promotion matches")
 
 
 def cmd_skill(a):
@@ -275,7 +313,26 @@ def main(argv=None):
                    help="add to the published skill the optional notes on organising tool calls (off by default)")
     s.add_argument("--no-skill", action="store_true",
                    help="do not publish the tracetrim skill (MCP Skills): the tool descriptions remain")
+    s.add_argument("--promote", action="store_true",
+                   help="--auto: keep from then on a field the agent asked back with expand often enough "
+                        "(off by default)")
+    s.add_argument("--promote-runs", type=int, default=2, metavar="N",
+                   help="runs in which a field must be asked for by name before it is promoted (default 2); "
+                        "a field reused after recovery is promoted after one")
+    s.add_argument("--sample-rate", type=float, default=0.0, metavar="F",
+                   help="--auto: share of the results that would be trimmed, passed whole instead, to see whether "
+                        "the agent uses what is removed (off by default)")
+    s.add_argument("--sample-max-share", type=float, default=0.2, metavar="F",
+                   help="cost limit of sampling: tokens it may add, as a share of the tokens trimming removed (default 0.2)")
+    s.add_argument("--sample-seed", type=int, default=0, help="seed of the sampling sequence")
     s.set_defaults(func=cmd_proxy)
+
+    s = sub.add_parser("promotions", help="list the fields promoted on evidence (--auto), or take them back")
+    s.add_argument("workdir")
+    s.add_argument("--revert", nargs="*", metavar="TOOL_OR_FIELD",
+                   help="take promotions back: all of them, a TOOL's, or TOOL FIELD; the field is trimmed again")
+    s.add_argument("--restore", nargs=2, metavar=("TOOL", "FIELD"), help="make a reverted promotion active again")
+    s.set_defaults(func=cmd_promotions)
 
     s = sub.add_parser("skill", help="print the tracetrim skill, for agents whose host does not load MCP skills")
     s.add_argument("--strategy", action="store_true", help="include the notes on organising tool calls")

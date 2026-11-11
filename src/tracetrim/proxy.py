@@ -120,6 +120,12 @@ class Options:
     min_runs: int = 5
     idle_seconds: int = 300          # a run without tracetrim_done is closed after this pause
     servers: dict = field(default_factory=dict)   # name -> {command, args, env} | {url, headers}
+    # Adaptive learning, with --auto; all off by default (see tracetrim.evidence.Adaptive).
+    promote: bool = False
+    promote_runs: int = 2
+    sample_rate: float = 0.0
+    sample_max_share: float = 0.2
+    sample_seed: int = 0
     skill: bool = True               # publish the tracetrim skill (MCP Skills), whenever expand is offered
     skill_strategy: bool = False     # ... with the optional notes on organising tool calls
 
@@ -282,8 +288,12 @@ def _server(o: Options):
     from mcp.server.lowlevel import Server
 
     from .auto import DONE, DONE_REPLY, Learner
+    from .evidence import Adaptive
 
-    learner = Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds) if o.auto_dir else None
+    adaptive = Adaptive(promote=o.promote, promote_requested_runs=o.promote_runs, sample_rate=o.sample_rate,
+                        sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
+    learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive)
+               if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural)
@@ -385,7 +395,7 @@ def _server(o: Options):
                 return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
                                             isError=True)
             server, name = routes[params.name]
-            call = ToolCall(params.name, args)
+            call = ToolCall(params.name, args, server=server, upstream_tool=name)
             r = await sessions[server].call_tool(name, args)
             content = list(r.content or [])
             # An error, or anything that is not plain text (images, resources),

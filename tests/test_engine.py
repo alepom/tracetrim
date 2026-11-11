@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from tracetrim.auto import AutoTrim, Learner
-from tracetrim.contract import FILTERED, FULL, RECOVERED, Evidence, ToolCall, ToolResult
+from tracetrim.contract import FILTERED, FULL, RECOVERED, Evidence, ToolCall, ToolResult  # noqa: F401
 from tracetrim.engine import Engine
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -54,13 +54,15 @@ def test_a_verbatim_result_is_recorded_and_never_rewritten(tmp_path):
 
 def test_expand_is_evidence_about_the_tool_of_that_result(tmp_path):
     engine = learned(tmp_path)
-    seen = []
-    engine.learner.evidence = seen.append
     obs = engine.observe(call(3), ToolResult(billing.output(3)))
     back = engine.expand(obs.call_id, ["data[].footer"])
     assert json.loads(back) == {"data": [{"footer": "Thank you for your business with us"}]}
-    assert seen == [Evidence(RECOVERED, billing.TOOL, obs.call_id, ("data[].footer",))]
-    assert engine.expand("c0000", ["*"]) == "Error: unknown call_id." and len(seen) == 1
+    assert engine.expand("c0000", ["*"]) == "Error: unknown call_id."
+    [note] = [n for n in engine.learner.notes if n["kind"] == "expand"]
+    assert (note["tool"], note["call_id"], note["recovered"]) == (billing.TOOL, obs.call_id, ["data[].footer"])
+    from tracetrim.evidence import derive
+    found, broad = derive(engine.learner.events, engine.learner.notes, None)
+    assert Evidence(RECOVERED, billing.TOOL, obs.call_id, ("data[].footer",)) in found and not broad
 
 
 def test_closing_twice_or_with_nothing_pending_changes_nothing(tmp_path):

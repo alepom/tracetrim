@@ -18,9 +18,16 @@ from dataclasses import dataclass
 # How a result reached the model.
 FULL = "full"            # nothing removed (it may have been re-serialised, which loses nothing)
 FILTERED = "filtered"    # fields removed by the projection
+SAMPLED = "sampled"      # the projection would have removed fields; this once, on purpose, it did not
 
-# Kinds of evidence.
-RECOVERED = "recovered"  # fields the model got back with `expand`
+# Kinds of evidence about a field the projection removes. They are kept apart:
+# each says something different, and none is proof that a field is needed.
+REQUESTED = "requested"        # the model asked for it by name (or for its group) with `expand`
+RECOVERED = "recovered"        # an `expand` gave it back, however it was asked for ("*" included)
+REUSED = "reused"              # after getting it back, the model wrote its value
+SEEN_FULL = "seen_full"        # it reached the model in a sampled, unfiltered result
+USED_IN_FULL = "used_in_full"  # ... and the model then wrote its value
+KINDS = (REQUESTED, RECOVERED, REUSED, SEEN_FULL, USED_IN_FULL)
 
 
 @dataclass(frozen=True)
@@ -28,6 +35,10 @@ class ToolCall:
     tool: str                  # the tool as tracetrim names it in traces, config and report
     arguments: dict
     turn: int | None = None    # the model turn that emitted the call, when the integration knows it
+    # Where the call really went, when the integration knows: an MCP proxy in
+    # front of several servers does, a function-calling loop leaves both empty.
+    server: str | None = None
+    upstream_tool: str | None = None
 
 
 @dataclass(frozen=True)
@@ -41,14 +52,16 @@ class ToolResult:
 @dataclass(frozen=True)
 class Observation:
     text: str                          # what the model receives
-    exposure: str = FULL               # FULL or FILTERED
+    exposure: str = FULL               # FULL, FILTERED or SAMPLED
     call_id: str | None = None         # the handle `expand` takes, when it can give something back
-    hidden: tuple[str, ...] = ()       # the paths removed from this result
+    # The paths the projection removes from this result: actually removed when
+    # FILTERED, let through this once when SAMPLED.
+    hidden: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
 class Evidence:
-    kind: str                  # RECOVERED
+    kind: str                  # one of KINDS
     tool: str                  # the tool whose result it is about
-    call_id: str               # the observation it refers to
+    call_id: str | None        # the observation it refers to (a sampled result has no handle)
     paths: tuple[str, ...]     # the fields concerned

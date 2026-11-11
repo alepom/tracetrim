@@ -354,6 +354,46 @@ L = {
     "status": ("decision", "decisione"), "missed": ("missed", "mancato"),
     "used_s": ("kept: used", "tenuto: usato"), "key_s": ("kept: record key", "tenuto: chiave del record"),
     "unjudged_s": ("kept: not judgeable", "tenuto: non giudicabile"), "dropped_s": ("dropped", "tagliato"),
+    "promoted_s": ("kept: promoted on evidence", "tenuto: promosso per evidenza"),
+    "adaptive": ("Adaptive learning", "Apprendimento adattivo"),
+    "adaptive_sub": (
+        "What the agent asked back with expand, what it used when a result was passed whole, and the fields kept "
+        "because of it. Evidence counts runs, not requests. A field seen whole and not seen reused is not proven "
+        "useless: nothing is removed on that ground.",
+        "Cosa l'agente ha richiesto con expand, cosa ha usato quando un risultato è passato intero, e i campi tenuti "
+        "di conseguenza. Le evidenze contano le esecuzioni, non le richieste. Un campo visto intero e non visto "
+        "riusato non è dimostrato inutile: nulla viene tolto per questo."),
+    "promotions": ("Promoted fields", "Campi promossi"), "no_promotions": ("No field promoted.", "Nessun campo promosso."),
+    "promote_off": ("promotion is off: evidence is recorded, nothing is promoted",
+                    "la promozione è spenta: le evidenze sono registrate, nulla viene promosso"),
+    "reason": ("reason", "motivo"), "runs": ("runs", "esecuzioni"), "state": ("state", "stato"),
+    "reason_requested": ("requested by name", "richiesto per nome"),
+    "reason_reused": ("reused after recovery", "riusato dopo il recupero"),
+    "reason_used_in_full": ("used in an unfiltered result", "usato in un risultato non filtrato"),
+    "status_active": ("active", "attiva"), "status_reverted": ("reverted", "annullata"),
+    "effect": ("Effect of promotions on tokens (recorded calls of the tool)",
+               "Effetto delle promozioni sui token (chiamate registrate del tool)"),
+    "without_p": ("without promotions", "senza promozioni"), "with_p": ("with promotions", "con promozioni"),
+    "evidence": ("Evidence per field (runs)", "Evidenze per campo (esecuzioni)"),
+    "ev_requested": ("requested", "richiesto"), "ev_recovered": ("recovered", "recuperato"),
+    "ev_reused": ("reused after recovery", "riusato dopo il recupero"),
+    "ev_seen_full": ("seen unfiltered", "visto non filtrato"),
+    "ev_used_in_full": ("used when unfiltered", "usato quando non filtrato"),
+    "exposure": ("Filtered and sampled results", "Risultati filtrati e campionati"),
+    "filtered": ("filtered", "filtrati"), "expanded": ("of which expanded", "di cui espansi"),
+    "broad": ("runs asking for everything", "esecuzioni con richiesta di tutto"),
+    "sampled": ("sampled (passed whole)", "campionati (passati interi)"),
+    "eligible": ("would be filtered", "da filtrare"),
+    "removed_u": ("removed by filtering", "tolto dal filtro"), "added_u": ("added by sampling", "aggiunto dal campionamento"),
+    "lists": ("List elements reused (a measure: rows are never cut)",
+              "Elementi di lista riusati (una misura: le righe non vengono mai tagliate)"),
+    "list": ("list", "lista"), "size_args": ("size asked (argument: median, max)", "dimensione richiesta (argomento: mediana, massimo)"),
+    "received": ("received (median, max)", "ricevuti (mediana, massimo)"),
+    "reused_n": ("reused (median, max)", "riusati (mediana, massimo)"),
+    "from_top": ("calls where the reused ones are the first", "chiamate in cui i riusati sono i primi"),
+    "deepest": ("deepest reused (median, max)", "riusato più in basso (mediana, massimo)"),
+    "arguments": ("Arguments: distinct values observed", "Argomenti: valori distinti osservati"),
+    "argument": ("argument", "argomento"), "distinct": ("distinct values", "valori distinti"),
     "method": ("How to read this report", "Come leggere questo report"),
     "method_text": (
         "Savings and misses are measured leave-one-out: each run is trimmed with a projection learned from the other runs. "
@@ -440,7 +480,7 @@ def _chart_tools(d) -> str:
             f'<div class="chart" role="img" aria-label="Tokens per tool, kept and removed">{"".join(out)}</div>')
 
 
-FIELD_KINDS = ("used", "key", "unjudged", "dropped")
+FIELD_KINDS = ("used", "key", "unjudged", "promoted", "dropped")
 
 
 def _fields_bar(t) -> str:
@@ -452,6 +492,76 @@ def _fields_bar(t) -> str:
                               f"{_n(tok[k], 'it')} token ({tok[k] / total:.0%})",
                               L[k + "_s"][0], L[k + "_s"][1])) for k in FIELD_KINDS]
     return f'<div class="thin">{_segments(parts)}</div>'
+
+
+def _table(head: list[str], rows: list[list[str]]) -> str:
+    return ('<div class="scroll"><table><thead><tr>' + "".join(f"<th>{h}</th>" for h in head) + "</tr></thead><tbody>"
+            + "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows) + "</tbody></table></div>")
+
+
+def _pair(m: dict) -> str:
+    return "—" if m["median"] is None else f'{m["median"]:g}, {m["max"]:g}'
+
+
+def _adaptive_html(d: dict) -> str:
+    """Evidence, promotions, sampling, list elements and arguments: present
+    only in reports written by automatic mode (and, for the last two, by any report)."""
+    code = lambda x: f"<code>{html.escape(str(x))}</code>"   # noqa: E731
+    out = []
+    a = d.get("adaptive")
+    if a:
+        out.append(f'<h2>{_t("adaptive")}</h2><p class="method">{_t("adaptive_sub")}</p>')
+        if not a["settings"]["promote"]:
+            out.append(f'<p class="method">{_t("promote_off")}</p>')
+        if a["promotions"]:
+            out.append(f'<h3>{_t("promotions")}</h3>' + _table(
+                [_t("tool"), _t("field"), _t("reason"), _t("runs"), _t("tokens"), _t("state")],
+                [[code(p["tool"]), code(p["field"]), f'{_t("reason_" + p["reason"])} (≥ {p["threshold"]})',
+                  html.escape(", ".join(p["runs"])), _num(p["field_tokens"]) if p["field_tokens"] is not None else "—",
+                  _t("status_" + p["status"])] for p in a["promotions"]]))
+        elif a["settings"]["promote"]:
+            out.append(f'<p class="method">{_t("no_promotions")}</p>')
+        if a["effect"]:
+            out.append(f'<h3>{_t("effect")}</h3>' + _table(
+                [_t("tool"), _t("calls"), _t("raw"), _t("without_p"), _t("with_p")],
+                [[code(t), str(e["calls"]), _num(e["raw"]),
+                  f'{_num(e["without_promotions"])} ({e["without_promotions"] / (e["raw"] or 1) - 1:+.0%})',
+                  f'{_num(e["with_promotions"])} ({e["with_promotions"] / (e["raw"] or 1) - 1:+.0%})']
+                 for t, e in a["effect"].items()]))
+        kinds = ("requested", "recovered", "reused", "seen_full", "used_in_full")
+        ev = [[code(t), code(f)] + [str(n[k]) for k in kinds]
+              for t, e in a["evidence"].items() for f, n in e["fields"].items()]
+        if ev:
+            out.append(f'<details><summary>{_t("evidence")} · {len(ev)}</summary>'
+                       + _table([_t("tool"), _t("field")] + [_t("ev_" + k) for k in kinds], ev) + "</details>")
+        tools = sorted(set(a["expand"]) | set(a["sampling"]))
+        if tools:
+            unit = a["sampling_unit"]
+            rows = []
+            for t in tools:
+                e, s = a["expand"].get(t, {}), a["sampling"].get(t, {})
+                rows.append([code(t), str(e.get("filtered", 0)), str(e.get("expanded", 0)),
+                             str(a["evidence"].get(t, {}).get("broad_requests", 0)), str(s.get("eligible", "—")),
+                             str(s.get("sampled", "—")), _num(s["removed"]) if s else "—", _num(s["added"]) if s else "—"])
+            out.append(f'<h3>{_t("exposure")}</h3>' + _table(
+                [_t("tool"), _t("filtered"), _t("expanded"), _t("broad"), _t("eligible"), _t("sampled"),
+                 f'{_t("removed_u")} ({unit})', f'{_t("added_u")} ({unit})'], rows))
+    lists = [(t, v) for t, v in (d.get("lists") or {}).items() if v["lists"]]
+    if lists:
+        rows = [[code(t), code(path),
+                 "; ".join(f'{html.escape(n)}: {s["median"]:g}, {s["max"]:g}' for n, s in v["size_arguments"].items()) or "—",
+                 str(m["calls"]), _pair(m["received"]), _pair(m["reused"]),
+                 f'{m["calls_reused_from_top"]}/{m["calls_with_reuse"]}', _pair(m["deepest_reused"])]
+                for t, v in lists for path, m in v["lists"].items()]
+        out.append(f'<h2>{_t("lists")}</h2>' + _table(
+            [_t("tool"), _t("list"), _t("size_args"), _t("calls"), _t("received"), _t("reused_n"), _t("from_top"),
+             _t("deepest")], rows))
+    args = [[code(t), code(p), str(m["calls"]), str(m["distinct"])]
+            for t, v in (d.get("arguments") or {}).items() for p, m in v["arguments"].items()]
+    if args:
+        out.append(f'<details><summary>{_t("arguments")} · {len(args)}</summary>'
+                   + _table([_t("tool"), _t("argument"), _t("calls"), _t("distinct")], args) + "</details>")
+    return "".join(out)
 
 
 def _about_html(g: dict) -> str:
@@ -609,6 +719,7 @@ code {{ font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }}
 .fill.kept, .fill.used, .sw.kept, .sw.used {{ background:var(--d-used); }}
 .fill.key, .sw.key {{ background:var(--d-key); }} .fill.unjudged, .sw.unjudged {{ background:var(--d-unjudged); }}
 .fill.removed, .fill.dropped, .sw.removed, .sw.dropped {{ background:var(--d-removed); }}
+.fill.promoted, .sw.promoted {{ background:var(--rev); }} tr.promoted td:nth-child(5) {{ color:var(--rev); }}
 .hit:hover .fill, .hit:focus-visible .fill {{ filter:brightness(1.12); box-shadow:0 0 0 2px var(--card), 0 0 0 3px var(--mut); }}
 td.fb {{ text-align:left; }}
 li.s code, .act code, .method code {{ overflow-wrap:anywhere; }}
@@ -639,6 +750,7 @@ pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; 
 <th>{_t("prudent")}</th><th>{_t("aggressive")}</th><th>{_t("misses")}</th><th>{_t("errors")}</th><th>{_t("prose")}</th></tr></thead>
 <tbody>{"".join(rows)}</tbody></table></div>
 <h2>{_t("fields")}</h2>{"".join(details)}
+{_adaptive_html(d)}
 <h2>{_t("method")}</h2><p class="method">{_t("method_text")}</p>
 <h2>{_t("project")}</h2>{_about_html(d["generator"])}
 <p class="method">{html.escape(d["generated"])} · unseen={html.escape(d["unseen"])}</p>

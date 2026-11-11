@@ -42,12 +42,15 @@ class Policy:
     def expand_enabled(self, tool: str) -> bool:
         return bool(self.tools.get(tool, {}).get("expand"))
 
-    def apply(self, tool: str, output: str) -> str:
-        return self._structural(tool, self._project(tool, output))
+    def apply(self, tool: str, output: str, project: bool = True) -> str:
+        """`project=False`: everything but the projection (re-serialisation,
+        structural encoding): the whole output, as it is shown when a call is
+        sampled without filter."""
+        return self._structural(tool, self._project(tool, output, project))
 
-    def _project(self, tool: str, output: str) -> str:
+    def _project(self, tool: str, output: str, project: bool = True) -> str:
         spec = self.tools.get(tool, {})
-        if self.projection and spec.get("trim", "off") != "off":
+        if project and self.projection and spec.get("trim", "off") != "off":
             return self.projection.apply(tool, output, keep_empty=True)
         if self.unescape:
             payload = parse_output(output)

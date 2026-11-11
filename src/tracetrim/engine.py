@@ -16,7 +16,8 @@ import json
 import secrets
 from pathlib import Path
 
-from .contract import FILTERED, FULL, RECOVERED, Evidence, Observation, ToolCall, ToolResult
+from .contract import FILTERED, SAMPLED, Observation, ToolCall, ToolResult
+from .evidence import is_broad
 from .projection import project
 from .runtime import Policy
 from .usage import leaves, parse_output
@@ -84,6 +85,10 @@ class Trimmer:
     def expand(self, call_id: str, wanted: list[str]) -> str:
         return self.recover(call_id, wanted)[0]
 
+    def forget(self, call_id: str) -> None:
+        for kept in (self.originals, self.tool_of, self.hidden):
+            kept.pop(call_id, None)
+
     def recover(self, call_id: str, wanted: list[str]) -> tuple[str, tuple[str, ...]]:
         """The reply to an `expand` request, and the paths it gave back."""
         payload = self.originals.get(call_id)
@@ -116,6 +121,7 @@ class Engine:
         if policy is None and structural:
             policy = Policy({"format": "tracetrim/config@1", "tools": {}}, None)
         self.trimmer = Trimmer(self._with_structural(policy))
+        self._expanded: set[str] = set()         # results already expanded once: a second request is a repeat
 
     def _with_structural(self, policy: Policy | None) -> Policy | None:
         if policy is not None and self.structural:
@@ -132,22 +138,49 @@ class Engine:
 
     # -- one call ----------------------------------------------------------
     def observe(self, call: ToolCall, result: ToolResult) -> Observation:
-        """Record what the tool sent; return what the model should receive."""
-        if self.learner is not None:
-            self.learner.call(call.tool, call.arguments, result.output, call.turn)
+        """Record what the tool sent; return what the model should receive.
+        The tool has already run, once: only what is passed on can differ."""
+        if self.learner is None:
+            return Observation(result.output) if result.verbatim else self.trimmer.observe(call.tool, result.output)
+        index = self.learner.call(call.tool, call.arguments, result.output, call.turn)
         if result.verbatim:
             return Observation(result.output)
         obs = self.trimmer.observe(call.tool, result.output)
-        if obs.call_id and self.learner is not None:
-            self.learner.trimmed(call.tool)
+        if obs.exposure == FILTERED and self.learner.adaptive.sample_rate > 0:
+            # Sampling: now and then a result that would be filtered goes on
+            # whole, so that the model can use what is normally removed.
+            whole = self.policy.apply(call.tool, result.output, project=False)
+            # Counted with a fixed id in place of the random one, whose tokens vary:
+            # the same call must weigh the same in every process.
+            filtered = obs.text.replace(obs.call_id, "c00000000") if obs.call_id else obs.text
+            if self.learner.sample(call.tool, self.learner.count(whole) - self.learner.count(filtered)):
+                if obs.call_id:
+                    self.trimmer.forget(obs.call_id)
+                obs = Observation(whole, SAMPLED, None, obs.hidden)
+        self.learner.observed(index, call, obs)
         return obs
 
     def expand(self, call_id: str, fields: list[str]) -> str:
         """Answer an `expand` request from the stored original: the tool is not called again."""
         tool = self.trimmer.tool_of.get(call_id)
-        text, paths = self.trimmer.recover(call_id, fields)
+        text, returned = self.trimmer.recover(call_id, fields)
         if tool is not None and self.learner is not None:
-            self.learner.evidence(Evidence(RECOVERED, tool, call_id, paths))
+            hidden = self.trimmer.hidden.get(call_id, set())
+            named = [w for w in fields if not is_broad(w, hidden)]
+            recovered = sorted(set(returned) & hidden)
+            self.learner.expand(
+                call_id, tool, requested=list(fields), returned=list(returned), recovered=recovered,
+                # Asked for by name or by group; what came back only with "everything" is not.
+                targeted=[p for p in recovered
+                          if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in named)],
+                broad=len(named) < len(fields),
+                # A result counts as expanded once, and only when something the
+                # projection had removed came back: a request that matches
+                # nothing, or only fields that were there, corrects no cut.
+                first=bool(recovered) and call_id not in self._expanded)
+            if recovered:
+                self._expanded.add(call_id)
+                self._expanded &= self.trimmer.originals.keys()
         return text
 
     # -- one run -----------------------------------------------------------

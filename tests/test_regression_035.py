@@ -164,8 +164,9 @@ def test_expand_returns_hidden_fields_from_the_original_without_a_new_call(tmp_p
     assert set(everything["data"][0]) == {"footer", *billing.REMARKS}
     assert tt.expand({"call_id": "c0000", "fields": ["*"]}) == "Error: unknown call_id."
     assert tt.expand("not json").startswith("Error")
-    # Two requests on one trimmed output: both counted (0.3.5 does not deduplicate).
-    assert tt.learner.state["expanded"] == {billing.TOOL: 2} and tt.learner.state["trimmed"] == {billing.TOOL: 1}
+    # Two requests on one trimmed output count once. (0.3.5 counted both: changed on purpose,
+    # so that the switch-off of a tool counts results expanded, not requests.)
+    assert tt.learner.state["expanded"] == {billing.TOOL: 1} and tt.learner.state["trimmed"] == {billing.TOOL: 1}
     # expand is not a tool call of the run: the trace holds the original call only.
     assert [e["tool"] for e in tt.learner.events] == [billing.TOOL]
 
