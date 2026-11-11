@@ -481,6 +481,11 @@ def test_the_tables_are_computed_from_the_files_of_the_runs(dry):
     assert all(r["no_tool_call"] is False and r["answer_is_not_the_json_asked"] is False
                for r in res["per_run"] if r["experiment"] == "E1")
     assert res["dataforseo"]["rates"] is None and res["dataforseo"]["calls_per_api"]["serp"] > 0
+    # E2: the stub writes every value it gets back, so every recovery is a written one and is kept afterwards.
+    h2 = res["e2_hypotheses"]
+    assert h2["H5"]["holds"] is True and h2["H5"]["recoveries_written"] == 16          # 8 sequences x 2 fields
+    assert h2["H6"]["testable"] is False and h2["H6"]["holds"] is None                 # nothing was reworded
+    assert h2["H7"]["testable"] is False                                               # the stub always expands
     # Counts, shares and field paths only: no value of a tool output.
     saved = json.dumps(res)
     for m in dry["metas"]:

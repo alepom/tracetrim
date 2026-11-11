@@ -1219,6 +1219,19 @@
       ],
       "repeated_calls": 0,
       "error_calls": 1,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 591738,
         "cached": 489520,
@@ -1378,6 +1391,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 684096,
         "cached": 556922,
@@ -1530,6 +1555,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 704930,
         "cached": 571563,
@@ -1683,6 +1720,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3
+      },
       "billed": {
         "input": 898930,
         "cached": 752992,
@@ -1837,6 +1886,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3
+      },
       "billed": {
         "input": 1058847,
         "cached": 909974,
@@ -1991,6 +2052,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 763969,
         "cached": 650075,
@@ -2145,6 +2218,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 1052710,
         "cached": 904069,
@@ -2295,6 +2380,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 492505,
         "cached": 362299,
@@ -2447,6 +2544,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 732406,
         "cached": 595974,
@@ -2602,6 +2711,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 1,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 4,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 1101384,
         "cached": 964797,
@@ -2756,6 +2877,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 7,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 3
+      },
       "billed": {
         "input": 613550,
         "cached": 519230,
@@ -2907,6 +3040,7 @@
       "calls_in_turns": [],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {},
       "billed": {
         "input": 11267,
         "cached": 11264,
@@ -2988,6 +3122,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 353249,
         "cached": 289874,
@@ -3151,6 +3297,19 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 5,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 707649,
         "cached": 628467,
@@ -3326,6 +3485,19 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_related_keywords": 3,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 442252,
         "cached": 371295,
@@ -3497,6 +3669,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 6,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 5,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 640648,
         "cached": 556523,
@@ -3656,6 +3840,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 1,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 468129,
         "cached": 385325,
@@ -3822,6 +4018,19 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 7,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_related_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 4,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 667742,
         "cached": 552616,
@@ -3997,6 +4206,19 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_related_keywords": 2,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 2,
+        "kw_data_google_trends_explore": 7,
+        "serp_organic_live_advanced": 4,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 476266,
         "cached": 402077,
@@ -4165,6 +4387,18 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 3,
+        "dataforseo_labs_google_ranked_keywords": 2,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 2
+      },
       "billed": {
         "input": 476183,
         "cached": 391097,
@@ -4326,6 +4560,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 5,
+        "serp_organic_live_advanced": 9
+      },
       "billed": {
         "input": 230879,
         "cached": 121864,
@@ -4413,6 +4651,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 1,
+      "calls_per_tool": {
+        "on_page_content_parsing": 4,
+        "serp_organic_live_advanced": 12
+      },
       "billed": {
         "input": 236839,
         "cached": 154360,
@@ -4501,6 +4743,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 1,
+      "calls_per_tool": {
+        "on_page_content_parsing": 4,
+        "serp_organic_live_advanced": 15
+      },
       "billed": {
         "input": 375734,
         "cached": 268937,
@@ -4589,6 +4835,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 4,
+      "calls_per_tool": {
+        "on_page_content_parsing": 5,
+        "serp_organic_live_advanced": 15
+      },
       "billed": {
         "input": 383652,
         "cached": 281815,
@@ -4674,6 +4924,9 @@
       ],
       "repeated_calls": 0,
       "error_calls": 1,
+      "calls_per_tool": {
+        "serp_organic_live_advanced": 15
+      },
       "billed": {
         "input": 145376,
         "cached": 67751,
@@ -4758,6 +5011,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 2,
+      "calls_per_tool": {
+        "on_page_content_parsing": 2,
+        "serp_organic_live_advanced": 11
+      },
       "billed": {
         "input": 127119,
         "cached": 53630,
@@ -4844,6 +5101,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 2,
+      "calls_per_tool": {
+        "on_page_content_parsing": 3,
+        "serp_organic_live_advanced": 12
+      },
       "billed": {
         "input": 165816,
         "cached": 88095,
@@ -4930,6 +5191,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 4,
+      "calls_per_tool": {
+        "on_page_content_parsing": 4,
+        "serp_organic_live_advanced": 13
+      },
       "billed": {
         "input": 191175,
         "cached": 115381,
@@ -5017,6 +5282,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 3,
+      "calls_per_tool": {
+        "on_page_content_parsing": 4,
+        "serp_organic_live_advanced": 12
+      },
       "billed": {
         "input": 242238,
         "cached": 158325,
@@ -5105,6 +5374,10 @@
       ],
       "repeated_calls": 0,
       "error_calls": 2,
+      "calls_per_tool": {
+        "on_page_content_parsing": 5,
+        "serp_organic_live_advanced": 13
+      },
       "billed": {
         "input": 367028,
         "cached": 267766,
@@ -5191,6 +5464,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 3,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 61480,
         "cached": 32279,
@@ -5297,6 +5577,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 43275,
         "cached": 23020,
@@ -5403,6 +5690,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 47152,
         "cached": 25130,
@@ -5508,6 +5802,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 28308,
         "cached": 9902,
@@ -5607,6 +5907,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 28364,
         "cached": 4953,
@@ -5707,6 +6013,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 53946,
         "cached": 29977,
@@ -5812,6 +6125,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 27747,
         "cached": 8613,
@@ -5911,6 +6230,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 27764,
         "cached": 8614,
@@ -6011,6 +6336,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 45359,
         "cached": 27243,
@@ -6117,6 +6449,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 56211,
         "cached": 32743,
@@ -6223,6 +6562,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 33875,
         "cached": 20685,
@@ -6336,6 +6682,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 32603,
         "cached": 20700,
@@ -6449,6 +6802,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 33613,
         "cached": 20683,
@@ -6554,6 +6913,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 35225,
         "cached": 22018,
@@ -6666,6 +7032,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 18955,
         "cached": 7938,
@@ -6770,6 +7142,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 17320,
         "cached": 5101,
@@ -6874,6 +7252,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 17288,
         "cached": 6290,
@@ -6978,6 +7362,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 17340,
         "cached": 6297,
@@ -7083,6 +7473,13 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 30423,
         "cached": 18492,
@@ -7195,6 +7592,12 @@
       ],
       "repeated_calls": 0,
       "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
       "billed": {
         "input": 18090,
         "cached": 6294,

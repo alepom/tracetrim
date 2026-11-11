@@ -1,0 +1,8043 @@
+{
+  "protocol": "protocol-v04.md",
+  "tokens": "tiktoken o200k_base; billed tokens from the API usage",
+  "dry_run": false,
+  "dataforseo": {
+    "runs": 29,
+    "calls": 587,
+    "calls_per_tool": {
+      "dataforseo_labs_bulk_keyword_difficulty": 19,
+      "dataforseo_labs_google_keyword_ideas": 19,
+      "dataforseo_labs_google_keyword_suggestions": 82,
+      "dataforseo_labs_google_ranked_keywords": 20,
+      "dataforseo_labs_google_related_keywords": 10,
+      "dataforseo_labs_google_relevant_pages": 19,
+      "dataforseo_labs_search_intent": 19,
+      "kw_data_google_ads_search_volume": 44,
+      "kw_data_google_trends_explore": 85,
+      "on_page_content_parsing": 36,
+      "serp_organic_live_advanced": 193,
+      "serp_youtube_organic_live_advanced": 41
+    },
+    "calls_per_api": {
+      "keywords_data": 129,
+      "labs": 188,
+      "onpage": 36,
+      "serp": 234
+    },
+    "rates": {
+      "keywords_data": {
+        "usd": 1.612,
+        "calls": 46,
+        "usd_per_call": 0.03504
+      },
+      "labs": {
+        "usd": 0.948,
+        "calls": 71,
+        "usd_per_call": 0.01335
+      },
+      "serp": {
+        "usd": 0.237,
+        "calls": 71,
+        "usd_per_call": 0.00334
+      },
+      "onpage": {
+        "usd": 0.017,
+        "calls": 11,
+        "usd_per_call": 0.00155
+      }
+    },
+    "usd_estimated": 7.8674
+  },
+  "e2": [
+    {
+      "case": "C4",
+      "arm": "base",
+      "sequence": 1,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [],
+      "switched_off": [],
+      "saving_per_run": [
+        0.4139,
+        0.4186,
+        0.4186,
+        0.4188,
+        0.4176
+      ],
+      "exposure": [
+        {
+          "filtered": 10
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 11,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3359,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "base",
+      "sequence": 2,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [],
+      "switched_off": [],
+      "saving_per_run": [
+        0.3942,
+        0.4184,
+        0.4237,
+        0.4237,
+        0.4196
+      ],
+      "exposure": [
+        {
+          "filtered": 10,
+          "full": 3
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10
+        },
+        {
+          "filtered": 10
+        },
+        {
+          "filtered": 11
+        }
+      ],
+      "cost_usd": 0.3187,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "promotion",
+      "sequence": 1,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 3
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].hosted_invoice_url",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        },
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].collection_method",
+          "reason": "reused",
+          "runs": [
+            "run-0010"
+          ],
+          "status": "active"
+        }
+      ],
+      "switched_off": [],
+      "saving_per_run": [
+        0.4089,
+        0.413,
+        0.4186,
+        0.417,
+        0.4186
+      ],
+      "exposure": [
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 11,
+          "full": 1
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3177,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "promotion",
+      "sequence": 2,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].collection_method",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        },
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].hosted_invoice_url",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        }
+      ],
+      "switched_off": [],
+      "saving_per_run": [
+        0.4221,
+        0.4186,
+        0.4187,
+        0.4182,
+        0.4179
+      ],
+      "exposure": [
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        },
+        {
+          "filtered": 12
+        },
+        {
+          "filtered": 10,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3278,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "sequence": 1,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ]
+        ]
+      },
+      "expand_calls": [
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].collection_method",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        },
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].hosted_invoice_url",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        }
+      ],
+      "switched_off": [],
+      "saving_per_run": [
+        0.3993,
+        0.3162,
+        0.4168,
+        0.3649,
+        0.3165
+      ],
+      "exposure": [
+        {
+          "filtered": 9,
+          "sampled": 1,
+          "full": 1
+        },
+        {
+          "filtered": 7,
+          "sampled": 3
+        },
+        {
+          "filtered": 10,
+          "sampled": 1
+        },
+        {
+          "filtered": 6,
+          "sampled": 4
+        },
+        {
+          "filtered": 7,
+          "sampled": 3
+        }
+      ],
+      "cost_usd": 0.3187,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "sequence": 2,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 3
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "expand"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].hosted_invoice_url",
+          "reason": "reused",
+          "runs": [
+            "run-0009"
+          ],
+          "status": "active"
+        },
+        {
+          "tool": "stripe_list_invoices",
+          "field": "data[].collection_method",
+          "reason": "reused",
+          "runs": [
+            "run-0010"
+          ],
+          "status": "active"
+        }
+      ],
+      "switched_off": [],
+      "saving_per_run": [
+        0.4151,
+        0.4252,
+        0.3143,
+        0.324,
+        0.3528
+      ],
+      "exposure": [
+        {
+          "filtered": 10,
+          "sampled": 1,
+          "full": 1
+        },
+        {
+          "filtered": 10
+        },
+        {
+          "filtered": 6,
+          "sampled": 4
+        },
+        {
+          "sampled": 3,
+          "filtered": 8
+        },
+        {
+          "sampled": 3,
+          "filtered": 8,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3329,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "sampling",
+      "sequence": 1,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [],
+          [
+            "filtered"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [],
+          [
+            "filtered"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [],
+      "switched_off": [],
+      "saving_per_run": [
+        0.386,
+        0.3737,
+        0.3476,
+        0.3677,
+        0.3457
+      ],
+      "exposure": [
+        {
+          "filtered": 9,
+          "sampled": 1,
+          "full": 2
+        },
+        {
+          "filtered": 8,
+          "sampled": 2
+        },
+        {
+          "filtered": 8,
+          "sampled": 2
+        },
+        {
+          "filtered": 6,
+          "sampled": 4
+        },
+        {
+          "filtered": 7,
+          "sampled": 3,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3174,
+      "dataforseo_calls": 0
+    },
+    {
+      "case": "C4",
+      "arm": "sampling",
+      "sequence": 2,
+      "runs": 5,
+      "kept_from_run": {
+        "data[].hosted_invoice_url": 2,
+        "data[].collection_method": 2
+      },
+      "reached": {
+        "data[].hosted_invoice_url": [
+          [
+            "expand"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "sampled"
+          ],
+          [
+            "filtered"
+          ]
+        ],
+        "data[].collection_method": [
+          [
+            "expand"
+          ],
+          [
+            "filtered",
+            "sampled"
+          ],
+          [
+            "filtered"
+          ],
+          [
+            "sampled"
+          ],
+          [
+            "filtered"
+          ]
+        ]
+      },
+      "expand_calls": [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "requirement_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "gates_passed": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "promotions": [],
+      "switched_off": [],
+      "saving_per_run": [
+        0.4214,
+        0.3731,
+        0.3567,
+        0.2772,
+        0.349
+      ],
+      "exposure": [
+        {
+          "filtered": 9,
+          "sampled": 1
+        },
+        {
+          "filtered": 11,
+          "sampled": 1,
+          "full": 1
+        },
+        {
+          "filtered": 7,
+          "sampled": 3,
+          "full": 1
+        },
+        {
+          "sampled": 3,
+          "filtered": 7,
+          "full": 1
+        },
+        {
+          "sampled": 3,
+          "filtered": 7,
+          "full": 1
+        }
+      ],
+      "cost_usd": 0.3468,
+      "dataforseo_calls": 0
+    }
+  ],
+  "e2_hypotheses": {
+    "H5": {
+      "recoveries_written": 12,
+      "kept_in_every_later_run": 12,
+      "holds": true,
+      "cases": [
+        {
+          "case": "C4",
+          "arm": "base",
+          "sequence": 1,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "base",
+          "sequence": 1,
+          "field": "data[].collection_method",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion",
+          "sequence": 1,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion",
+          "sequence": 1,
+          "field": "data[].collection_method",
+          "written_in_run": 2,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion",
+          "sequence": 2,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion",
+          "sequence": 2,
+          "field": "data[].collection_method",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion+sampling",
+          "sequence": 1,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion+sampling",
+          "sequence": 1,
+          "field": "data[].collection_method",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion+sampling",
+          "sequence": 2,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "promotion+sampling",
+          "sequence": 2,
+          "field": "data[].collection_method",
+          "written_in_run": 2,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "sampling",
+          "sequence": 2,
+          "field": "data[].hosted_invoice_url",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        },
+        {
+          "case": "C4",
+          "arm": "sampling",
+          "sequence": 2,
+          "field": "data[].collection_method",
+          "written_in_run": 1,
+          "kept_in_every_later_run": true,
+          "expanded_again": false
+        }
+      ]
+    },
+    "H6": {
+      "sequences_where_the_field_was_reworded": {
+        "promotion_on": 2,
+        "promotion_off": 0
+      },
+      "holds": null,
+      "testable": false,
+      "sequences": [
+        {
+          "arm": "base",
+          "sequence": 1,
+          "promotion": false,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.4176
+        },
+        {
+          "arm": "base",
+          "sequence": 2,
+          "promotion": false,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.4196
+        },
+        {
+          "arm": "promotion",
+          "sequence": 1,
+          "promotion": true,
+          "reworded_in_runs": [
+            1
+          ],
+          "kept_from_run": 3,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.4186
+        },
+        {
+          "arm": "promotion",
+          "sequence": 2,
+          "promotion": true,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.4179
+        },
+        {
+          "arm": "promotion+sampling",
+          "sequence": 1,
+          "promotion": true,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.3165
+        },
+        {
+          "arm": "promotion+sampling",
+          "sequence": 2,
+          "promotion": true,
+          "reworded_in_runs": [
+            1
+          ],
+          "kept_from_run": 3,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.3528
+        },
+        {
+          "arm": "sampling",
+          "sequence": 1,
+          "promotion": false,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.3457
+        },
+        {
+          "arm": "sampling",
+          "sequence": 2,
+          "promotion": false,
+          "reworded_in_runs": [],
+          "kept_from_run": 2,
+          "tool_switched_off": false,
+          "expand_in_every_run": false,
+          "saving_last_run": 0.349
+        }
+      ]
+    },
+    "H7": {
+      "runs_without_expand_while_a_field_was_removed": {
+        "sampling_arms": 1,
+        "other_arms": 1
+      },
+      "requirement_met": {
+        "sampling_arms": 1.0,
+        "other_arms": 1.0
+      },
+      "testable": true,
+      "holds": false,
+      "runs": [
+        {
+          "arm": "base",
+          "sequence": 2,
+          "n": 1,
+          "met": true,
+          "calls_per_tool": {
+            "stripe_list_charges": 2,
+            "stripe_list_invoices": 2,
+            "stripe_list_refunds": 1,
+            "stripe_list_subscriptions": 1,
+            "stripe_retrieve_invoice": 2,
+            "stripe_search_customers": 5
+          },
+          "exposure": {
+            "filtered": 10,
+            "full": 3
+          }
+        },
+        {
+          "arm": "sampling",
+          "sequence": 1,
+          "n": 1,
+          "met": true,
+          "calls_per_tool": {
+            "stripe_list_charges": 3,
+            "stripe_list_invoices": 1,
+            "stripe_list_refunds": 1,
+            "stripe_list_subscriptions": 1,
+            "stripe_retrieve_invoice": 1,
+            "stripe_search_customers": 5
+          },
+          "exposure": {
+            "filtered": 9,
+            "sampled": 1,
+            "full": 2
+          }
+        }
+      ]
+    }
+  },
+  "per_run": [
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s1-r1",
+      "sequence": 1,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5804,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 10,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 28459,
+        "cached": 16580,
+        "output": 3275
+      },
+      "cost_usd": 0.0664,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16565,
+        "outputs_sent": {
+          "filtered": 9623
+        },
+        "expand_replies": 86,
+        "final_answer": 1705
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 0
+        },
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4139
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s1-r2",
+      "sequence": 1,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5608,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31441,
+        "cached": 18998,
+        "output": 3226
+      },
+      "cost_usd": 0.0674,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10765,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1672
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4186
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s1-r3",
+      "sequence": 1,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5466,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31419,
+        "cached": 18963,
+        "output": 3212
+      },
+      "cost_usd": 0.0672,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10765,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1612
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4186
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s1-r4",
+      "sequence": 1,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4965,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31441,
+        "cached": 19006,
+        "output": 3005
+      },
+      "cost_usd": 0.0647,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10761,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1466
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4188
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s1-r5",
+      "sequence": 1,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5583,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 33874,
+        "cached": 20261,
+        "output": 3246
+      },
+      "cost_usd": 0.0702,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 21207,
+        "outputs_sent": {
+          "filtered": 12043,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1663
+      },
+      "exposure": {
+        "filtered": 11,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4176
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s2-r1",
+      "sequence": 2,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5380,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        3
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_retrieve_invoice": 2,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 33472,
+        "cached": 18678,
+        "output": 3416
+      },
+      "cost_usd": 0.0743,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 22268,
+        "outputs_sent": {
+          "filtered": 10519,
+          "full": 2970
+        },
+        "expand_replies": 0,
+        "final_answer": 1603
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 3
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_retrieve_invoice account_tax_ids[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice custom_fields[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice default_tax_rates[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice discounts[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice lines.data[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 1.5,
+          "reused_from_top": 2
+        },
+        "stripe_retrieve_invoice payments.data[]": {
+          "calls": 2,
+          "received": 0.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice threshold_reason.item_reasons[]": {
+          "calls": 2,
+          "received": 0.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_discount_amounts[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_pretax_credit_amounts[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_taxes[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [],
+          "data[].collection_method": []
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3942
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s2-r2",
+      "sequence": 2,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5443,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31300,
+        "cached": 18991,
+        "output": 3074
+      },
+      "cost_usd": 0.0653,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10768,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1624
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4184
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s2-r3",
+      "sequence": 2,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5386,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17756,
+        "cached": 6449,
+        "output": 3054
+      },
+      "cost_usd": 0.0606,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 10763
+        },
+        "expand_replies": 0,
+        "final_answer": 1610
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4237
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s2-r4",
+      "sequence": 2,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5108,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17706,
+        "cached": 6450,
+        "output": 2759
+      },
+      "cost_usd": 0.0569,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 10763
+        },
+        "expand_replies": 0,
+        "final_answer": 1521
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4237
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "base",
+      "run": "E2-base-s2-r5",
+      "sequence": 2,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5411,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 18605,
+        "cached": 6451,
+        "output": 2998
+      },
+      "cost_usd": 0.0616,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19846,
+        "outputs_sent": {
+          "filtered": 11518
+        },
+        "expand_replies": 0,
+        "final_answer": 1601
+      },
+      "exposure": {
+        "filtered": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4196
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s1-r1",
+      "sequence": 1,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5220,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 11,
+      "expand_calls": 4,
+      "calls_per_turn": {
+        "median": 4.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        3,
+        2
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 45359,
+        "cached": 32613,
+        "output": 3140
+      },
+      "cost_usd": 0.0697,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10042,
+          "sampled": 584,
+          "full": 309
+        },
+        "expand_replies": 507,
+        "final_answer": 1537
+      },
+      "exposure": {
+        "filtered": 9,
+        "sampled": 1,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3993
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s1-r2",
+      "sequence": 1,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5610,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19872,
+        "cached": 6555,
+        "output": 3156
+      },
+      "cost_usd": 0.0658,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 6629,
+          "sampled": 6142
+        },
+        "expand_replies": 0,
+        "final_answer": 1703
+      },
+      "exposure": {
+        "filtered": 7,
+        "sampled": 3
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3162
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s1-r3",
+      "sequence": 1,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5245,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19302,
+        "cached": 6555,
+        "output": 2895
+      },
+      "cost_usd": 0.0615,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 20837,
+        "outputs_sent": {
+          "filtered": 11621,
+          "sampled": 532
+        },
+        "expand_replies": 0,
+        "final_answer": 1574
+      },
+      "exposure": {
+        "filtered": 10,
+        "sampled": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4168
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s1-r4",
+      "sequence": 1,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5084,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19074,
+        "cached": 6640,
+        "output": 3170
+      },
+      "cost_usd": 0.0642,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 7628,
+          "sampled": 4233
+        },
+        "expand_replies": 0,
+        "final_answer": 1550
+      },
+      "exposure": {
+        "filtered": 6,
+        "sampled": 4
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3649
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s1-r5",
+      "sequence": 1,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5240,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19844,
+        "cached": 6550,
+        "output": 2463
+      },
+      "cost_usd": 0.0575,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 6667,
+          "sampled": 6098
+        },
+        "expand_replies": 0,
+        "final_answer": 1545
+      },
+      "exposure": {
+        "filtered": 7,
+        "sampled": 3
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3165
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s2-r1",
+      "sequence": 2,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5483,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6,
+        3
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 33944,
+        "cached": 20289,
+        "output": 3085
+      },
+      "cost_usd": 0.0684,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 21207,
+        "outputs_sent": {
+          "filtered": 11381,
+          "sampled": 532,
+          "full": 309
+        },
+        "expand_replies": 183,
+        "final_answer": 1652
+      },
+      "exposure": {
+        "filtered": 10,
+        "sampled": 1,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": false
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 0,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4151
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s2-r2",
+      "sequence": 2,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 4947,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 10,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        2
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 30472,
+        "cached": 18813,
+        "output": 2672
+      },
+      "cost_usd": 0.0591,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 10673
+        },
+        "expand_replies": 62,
+        "final_answer": 1498
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4252
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s2-r3",
+      "sequence": 2,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5234,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19851,
+        "cached": 6548,
+        "output": 2945
+      },
+      "cost_usd": 0.0633,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 6081,
+          "sampled": 6725
+        },
+        "expand_replies": 0,
+        "final_answer": 1541
+      },
+      "exposure": {
+        "filtered": 6,
+        "sampled": 4
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3143
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s2-r4",
+      "sequence": 2,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5373,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 21254,
+        "cached": 6585,
+        "output": 3042
+      },
+      "cost_usd": 0.0672,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 20837,
+        "outputs_sent": {
+          "sampled": 6271,
+          "filtered": 7815
+        },
+        "expand_replies": 0,
+        "final_answer": 1599
+      },
+      "exposure": {
+        "sampled": 3,
+        "filtered": 8
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.324
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion+sampling",
+      "run": "E2-promotion+sampling-s2-r5",
+      "sequence": 2,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5556,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 37003,
+        "cached": 21794,
+        "output": 3347
+      },
+      "cost_usd": 0.0749,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 21207,
+        "outputs_sent": {
+          "sampled": 4592,
+          "filtered": 8824,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1669
+      },
+      "exposure": {
+        "sampled": 3,
+        "filtered": 8,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.3528
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s1-r1",
+      "sequence": 1,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5222,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        2
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 28981,
+        "cached": 17804,
+        "output": 2981
+      },
+      "cost_usd": 0.0617,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16935,
+        "outputs_sent": {
+          "filtered": 9616,
+          "full": 309
+        },
+        "expand_replies": 86,
+        "final_answer": 1561
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": false
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 0,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4089
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s1-r2",
+      "sequence": 1,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5269,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 10,
+      "expand_calls": 1,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 28746,
+        "cached": 17878,
+        "output": 3025
+      },
+      "cost_usd": 0.0616,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16565,
+        "outputs_sent": {
+          "filtered": 9692
+        },
+        "expand_replies": 32,
+        "final_answer": 1548
+      },
+      "exposure": {
+        "filtered": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 0
+        },
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.413
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s1-r3",
+      "sequence": 1,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5115,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31211,
+        "cached": 18935,
+        "output": 3015
+      },
+      "cost_usd": 0.0645,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10765,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1538
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4186
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s1-r4",
+      "sequence": 1,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5312,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 33802,
+        "cached": 20290,
+        "output": 2919
+      },
+      "cost_usd": 0.0661,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 21207,
+        "outputs_sent": {
+          "filtered": 12055,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1590
+      },
+      "exposure": {
+        "filtered": 11,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.417
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s1-r5",
+      "sequence": 1,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5154,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31187,
+        "cached": 18935,
+        "output": 2956
+      },
+      "cost_usd": 0.0638,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10765,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1561
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 2,
+              "recovered": 2,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0010"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4186
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s2-r1",
+      "sequence": 2,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5510,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        3
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31022,
+        "cached": 18721,
+        "output": 3306
+      },
+      "cost_usd": 0.068,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10516,
+          "full": 309
+        },
+        "expand_replies": 183,
+        "final_answer": 1657
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4221
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s2-r2",
+      "sequence": 2,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5342,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 30967,
+        "cached": 18931,
+        "output": 2871
+      },
+      "cost_usd": 0.0623,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10764,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1593
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4186
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s2-r3",
+      "sequence": 2,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5255,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31186,
+        "cached": 18940,
+        "output": 3026
+      },
+      "cost_usd": 0.0646,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10763,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1585
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4187
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s2-r4",
+      "sequence": 2,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5822,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 6.0,
+        "max": 7
+      },
+      "calls_in_turns": [
+        5,
+        7
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19861,
+        "cached": 6445,
+        "output": 3244
+      },
+      "cost_usd": 0.067,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 22006,
+        "outputs_sent": {
+          "filtered": 12803
+        },
+        "expand_replies": 0,
+        "final_answer": 1748
+      },
+      "exposure": {
+        "filtered": 12
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4182
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "promotion",
+      "run": "E2-promotion-s2-r5",
+      "sequence": 2,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5147,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 31260,
+        "cached": 18956,
+        "output": 3121
+      },
+      "cost_usd": 0.0659,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 10779,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1533
+      },
+      "exposure": {
+        "filtered": 10,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].collection_method",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          },
+          {
+            "tool": "stripe_list_invoices",
+            "field": "data[].hosted_invoice_url",
+            "reason": "reused",
+            "runs": [
+              "run-0009"
+            ],
+            "status": "active"
+          }
+        ],
+        "switched_off": [],
+        "saving": 0.4179
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s1-r1",
+      "sequence": 1,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5189,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        2
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_retrieve_invoice": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 30882,
+        "cached": 18079,
+        "output": 3298
+      },
+      "cost_usd": 0.0688,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18629,
+        "outputs_sent": {
+          "filtered": 9151,
+          "sampled": 584,
+          "full": 1704
+        },
+        "expand_replies": 0,
+        "final_answer": 1574
+      },
+      "exposure": {
+        "filtered": 9,
+        "sampled": 1,
+        "full": 2
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_retrieve_invoice account_tax_ids[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice default_tax_rates[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice discounts[]": {
+          "calls": 1,
+          "received": 2,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice lines.data[]": {
+          "calls": 1,
+          "received": 2,
+          "reused": 2,
+          "reused_from_top": 1
+        },
+        "stripe_retrieve_invoice payments.data[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice threshold_reason.item_reasons[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_discount_amounts[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_pretax_credit_amounts[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_retrieve_invoice total_taxes[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [],
+          "data[].collection_method": []
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.386
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s1-r2",
+      "sequence": 1,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5959,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17458,
+        "cached": 6555,
+        "output": 3317
+      },
+      "cost_usd": 0.0629,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16565,
+        "outputs_sent": {
+          "filtered": 8039,
+          "sampled": 2336
+        },
+        "expand_replies": 0,
+        "final_answer": 1778
+      },
+      "exposure": {
+        "filtered": 8,
+        "sampled": 2
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3737
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s1-r3",
+      "sequence": 1,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5318,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19234,
+        "cached": 6546,
+        "output": 2481
+      },
+      "cost_usd": 0.0565,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 8143,
+          "sampled": 4042
+        },
+        "expand_replies": 0,
+        "final_answer": 1589
+      },
+      "exposure": {
+        "filtered": 8,
+        "sampled": 2
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3476
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s1-r4",
+      "sequence": 1,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5245,
+      "facts": [
+        12,
+        12
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 18962,
+        "cached": 6644,
+        "output": 2845
+      },
+      "cost_usd": 0.0601,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 7873,
+          "sampled": 3937
+        },
+        "expand_replies": 0,
+        "final_answer": 1574
+      },
+      "exposure": {
+        "filtered": 6,
+        "sampled": 4
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3677
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s1-r5",
+      "sequence": 1,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5441,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 34264,
+        "cached": 20483,
+        "output": 3124
+      },
+      "cost_usd": 0.0691,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "filtered": 7806,
+          "sampled": 4348,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1609
+      },
+      "exposure": {
+        "filtered": 7,
+        "sampled": 3,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": null,
+            "data[].collection_method": null
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3457
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s2-r1",
+      "sequence": 2,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5332,
+      "facts": [
+        13,
+        13
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 10,
+      "expand_calls": 2,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        2
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 30883,
+        "cached": 18895,
+        "output": 3064
+      },
+      "cost_usd": 0.0645,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 18677,
+        "outputs_sent": {
+          "filtered": 10091,
+          "sampled": 532
+        },
+        "expand_replies": 183,
+        "final_answer": 1612
+      },
+      "exposure": {
+        "filtered": 9,
+        "sampled": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "expand data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "expand"
+          ],
+          "data[].collection_method": [
+            "expand"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": false,
+          "data[].collection_method": false
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.4214
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s2-r2",
+      "sequence": 2,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5763,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 7
+      },
+      "calls_in_turns": [
+        5,
+        7,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 3,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 42207,
+        "cached": 24415,
+        "output": 3399
+      },
+      "cost_usd": 0.0813,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 26130,
+        "outputs_sent": {
+          "filtered": 11968,
+          "sampled": 4104,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1733
+      },
+      "exposure": {
+        "filtered": 11,
+        "sampled": 1,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 3,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 3
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered",
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "filtered",
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3731
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s2-r3",
+      "sequence": 2,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5374,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 30600,
+        "cached": 18869,
+        "output": 2821
+      },
+      "cost_usd": 0.0611,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16935,
+        "outputs_sent": {
+          "filtered": 7371,
+          "sampled": 3215,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1632
+      },
+      "exposure": {
+        "filtered": 7,
+        "sampled": 3,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.3567
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s2-r4",
+      "sequence": 2,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5596,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 34192,
+        "cached": 20273,
+        "output": 3579
+      },
+      "cost_usd": 0.0748,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 16935,
+        "outputs_sent": {
+          "sampled": 6640,
+          "filtered": 5292,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1682
+      },
+      "exposure": {
+        "sampled": 3,
+        "filtered": 7,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 1,
+          "items_met": 1
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "sampled"
+          ],
+          "data[].collection_method": [
+            "sampled"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.2772
+      }
+    },
+    {
+      "experiment": "E2",
+      "case": "C4",
+      "arm": "sampling",
+      "run": "E2-sampling-s2-r5",
+      "sequence": 2,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 5246,
+      "facts": [
+        14,
+        14
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 2,
+        "stripe_list_invoices": 2,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 33835,
+        "cached": 20387,
+        "output": 2847
+      },
+      "cost_usd": 0.0651,
+      "tokens": {
+        "tool_definitions": 794,
+        "instructions_added": 109,
+        "outputs_original": 19047,
+        "outputs_sent": {
+          "sampled": 4521,
+          "filtered": 7569,
+          "full": 309
+        },
+        "expand_replies": 0,
+        "final_answer": 1577
+      },
+      "exposure": {
+        "sampled": 3,
+        "filtered": 7,
+        "full": 1
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": true,
+        "tokens": 109
+      },
+      "tools_trimmed": [
+        "stripe_list_charges",
+        "stripe_list_invoices",
+        "stripe_list_subscriptions",
+        "stripe_search_customers"
+      ],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 2,
+          "received": 4.0,
+          "reused": 4.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      },
+      "e2": {
+        "requirement": {
+          "met": true,
+          "items": 2,
+          "items_met": 2
+        },
+        "reached": {
+          "data[].hosted_invoice_url": [
+            "filtered"
+          ],
+          "data[].collection_method": [
+            "filtered"
+          ]
+        },
+        "kept_before": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "kept_after": {
+          "data[].hosted_invoice_url": true,
+          "data[].collection_method": true
+        },
+        "evidence": {
+          "stripe_list_invoices": {
+            "data[].hosted_invoice_url": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            },
+            "data[].collection_method": {
+              "requested": 1,
+              "recovered": 1,
+              "reused": 1,
+              "seen_full": 0,
+              "used_in_full": 0
+            }
+          }
+        },
+        "promotions": [],
+        "switched_off": [],
+        "saving": 0.349
+      }
+    }
+  ]
+}

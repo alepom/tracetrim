@@ -88,6 +88,7 @@ def row(meta_path: Path) -> dict:
         "calls_per_turn": {"median": median(per_turn) if per_turn else 0, "max": max(per_turn, default=0)},
         "calls_in_turns": per_turn,
         "repeated_calls": repeated, "error_calls": sum(c["output"].startswith("Error") for c in calls),
+        "calls_per_tool": dict(sorted(Counter(c["tool"] for c in calls).items())),
         "billed": m["usage"], "cost_usd": m["cost_usd"], "tokens": m["tokens"], "exposure": m["exposure"],
         "dataforseo_calls": m["dataforseo_calls"], "domain_rejections": m["domain_rejections"],
         "skill": m["skill"], "tools_trimmed": m["tools_trimmed"],
@@ -205,6 +206,75 @@ def e2(rows: list[dict]) -> list[dict]:
     return out
 
 
+REWORDED = "data[].collection_method"        # the field E2's variant of C4 expects to be used and reworded
+
+
+def _reused(r: dict, field: str) -> int:
+    """Runs of the sequence so far in which the field was written after an expand gave it back."""
+    for fields in r["e2"]["evidence"].values():
+        if fields.get(field):
+            return fields[field]["reused"]
+    return 0
+
+
+def hypotheses_e2(rows: list[dict]) -> dict:
+    """H5, H6 and H7 of the protocol on the runs of E2, with the counts each rests on.
+    H6 and H7 depend on what the model does: where the premise did not occur they are
+    reported as not testable, as the protocol says."""
+    seqs = {}
+    for r in rows:
+        seqs.setdefault((r["case"], r["arm"], r["sequence"]), []).append(r)
+    h5, h6_premise, h6 = [], [], []
+    for (case, arm, seq), rs in sorted(seqs.items()):
+        rs.sort(key=lambda r: r["n"])
+        for f in [f for fs in NEEDS[case].values() for f in fs]:
+            before = 0
+            for i, r in enumerate(rs):
+                now = _reused(r, f)
+                expanded = "expand" in r["e2"]["reached"][f]
+                if expanded and now > before:           # recovered and written in this run
+                    later = rs[i + 1:]
+                    h5.append({"case": case, "arm": arm, "sequence": seq, "field": f, "written_in_run": r["n"],
+                               "kept_in_every_later_run": all(x["e2"]["kept_before"][f] for x in later),
+                               "expanded_again": any("expand" in x["e2"]["reached"][f] for x in later)})
+                elif expanded and f == REWORDED:        # recovered, and its value not seen written: the premise of H6
+                    h6_premise.append({"case": case, "arm": arm, "sequence": seq, "run": r["n"]})
+                before = now
+        if case == "C4":
+            f = REWORDED
+            kept = next((r["n"] for i, r in enumerate(rs) if all(x["e2"]["kept_before"][f] for x in rs[i:])), None)
+            h6.append({"arm": arm, "sequence": seq, "promotion": "promotion" in arm,
+                       "reworded_in_runs": [p["run"] for p in h6_premise if (p["arm"], p["sequence"], p["case"]) == (arm, seq, case)],
+                       "kept_from_run": kept, "tool_switched_off": bool(rs[-1]["e2"]["switched_off"]),
+                       "expand_in_every_run": all("expand" in r["e2"]["reached"][f] for r in rs),
+                       "saving_last_run": rs[-1]["e2"]["saving"]})
+    # H6 can be tested only where the field stayed reworded, with promotion off and with promotion on.
+    off = [s for s in h6 if not s["promotion"] and s["reworded_in_runs"]]
+    on = [s for s in h6 if s["promotion"] and s["reworded_in_runs"]]
+    if off and on:
+        h6_holds = (all(s["kept_from_run"] is not None and s["kept_from_run"] <= 3 and not s["tool_switched_off"] for s in on)
+                    and all(s["kept_from_run"] is None and (s["tool_switched_off"] or s["expand_in_every_run"]) for s in off))
+    else:
+        h6_holds = None
+    # H7: the runs that started without a needed field in the filtered results and made no expand.
+    quiet = [r for r in rows if not all(r["e2"]["kept_before"].values()) and r["expand_calls"] == 0]
+    group = lambda sampling: [r for r in quiet if ("sampling" in r["arm"]) is sampling]       # noqa: E731
+    share = lambda rs: round(sum(r["e2"]["requirement"]["met"] for r in rs) / len(rs), 4) if rs else None    # noqa: E731
+    with_s, without = group(True), group(False)
+    return {
+        "H5": {"recoveries_written": len(h5), "kept_in_every_later_run": sum(x["kept_in_every_later_run"] for x in h5),
+               "holds": all(x["kept_in_every_later_run"] for x in h5) if h5 else None, "cases": h5},
+        "H6": {"sequences_where_the_field_was_reworded": {"promotion_on": len(on), "promotion_off": len(off)},
+               "holds": h6_holds, "testable": h6_holds is not None, "sequences": h6},
+        "H7": {"runs_without_expand_while_a_field_was_removed": {"sampling_arms": len(with_s), "other_arms": len(without)},
+               "requirement_met": {"sampling_arms": share(with_s), "other_arms": share(without)},
+               "testable": bool(with_s and without),
+               "holds": (share(with_s) > share(without)) if with_s and without else None,
+               "runs": [{"arm": r["arm"], "sequence": r["sequence"], "n": r["n"], "met": r["e2"]["requirement"]["met"],
+                         "calls_per_tool": r["calls_per_tool"], "exposure": r["exposure"]} for r in quiet]},
+    }
+
+
 def analyse(where: Where) -> dict:
     rows = [row(p) for p in sorted(where.traces.glob("*/E[12]-*.meta.json"))]
     rates = dataforseo_rates(where)
@@ -226,6 +296,7 @@ def analyse(where: Where) -> dict:
                            "usd_estimated": round(sum(r.get("dataforseo_usd_estimated", 0) for r in rows), 4) if rates else None},
             "e1": table, "e1_hypotheses": hypotheses_e1(table),
             "e2": e2([r for r in rows if r["experiment"] == "E2"]),
+            "e2_hypotheses": hypotheses_e2([r for r in rows if r["experiment"] == "E2"]),
             "per_run": rows}
 
 
@@ -266,6 +337,15 @@ def tables(res: dict) -> str:
         lines.append(f"     {s['case']:<5}{s['arm']:<20}{s['sequence']:>4}  {kept} · {s['expand_calls']} · "
                      f"{['yes' if m else 'no' for m in s['requirement_met']]} · "
                      f"{[f'{v:.0%}' if v is not None else '—' for v in s['saving_per_run']]} · {s['switched_off'] or 'no'}")
+    h = res["e2_hypotheses"]
+    if res["e2"]:
+        say = lambda v: "not testable in these runs" if v is None else "holds" if v else "FAILS"     # noqa: E731
+        lines.append(f"\nH5 (written fields come back by themselves): {say(h['H5']['holds'])} · "
+                     f"{h['H5']['kept_in_every_later_run']} of {h['H5']['recoveries_written']} recoveries written were kept in every later run")
+        lines.append(f"H6 (a reworded field needs promotion): {say(h['H6']['holds'])} · sequences where the field was "
+                     f"recovered and not written: {h['H6']['sequences_where_the_field_was_reworded']}")
+        lines.append(f"H7 (sampling reaches what is not asked for): {say(h['H7']['holds'])} · runs with a field removed and no "
+                     f"expand: {h['H7']['runs_without_expand_while_a_field_was_removed']}, requirement met {h['H7']['requirement_met']}")
     return "\n".join(lines)
 
 
@@ -284,7 +364,7 @@ if __name__ == "__main__":
         head["dataforseo"] = res["dataforseo"]
         out[0].write_text(json.dumps(head | {"e1": res["e1"], "e1_hypotheses": res["e1_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E1"]},
                                      indent=2, ensure_ascii=False) + "\n")
-        out[1].write_text(json.dumps(head | {"e2": res["e2"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E2"]},
+        out[1].write_text(json.dumps(head | {"e2": res["e2"], "e2_hypotheses": res["e2_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E2"]},
                                      indent=2, ensure_ascii=False) + "\n")
     print(tables(res))
     print("\n" + ", ".join(str(p) for p in out))
