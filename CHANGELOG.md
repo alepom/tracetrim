@@ -4,6 +4,34 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## Unreleased
+
+Clearer reports and diagnostics. **Nothing changes in what the model receives**: the same calls give the
+same text and the same traces as 0.4.0, which a test checks with the new counts on and off.
+
+- **Where the saving comes from.** Every call is counted three times with the same tokenizer
+  (`o200k_base`): the output as the tool sent it, the same output as tracetrim writes it with nothing
+  removed, and what the model receives, the `[trimmed]` line included. The saving is the sum of two
+  parts, exactly: *re-serialisation* (compact JSON, nothing removed) and *fields* (what the projection
+  removes on top). The proxy's log says both for the run and for the session, as in
+  `(-39%: -27% format, -12% fields)`; the report has a section per run and per tool, `report.json` a new
+  key `savings`, and the work directory a new file `savings.json`. While learning, the saving from
+  fields is zero and the one from re-serialisation is not, and it shows. What `expand` gives back stays
+  apart. `Observation.sizes` carries the three counts; `--no-breakdown`, `AutoTrim(breakdown=False)` and
+  `Engine(breakdown=False)` turn the count off. `python -m experiments.breakdown_replay TRACES` plays
+  recorded runs again and prints the split per run.
+- **Runs followed by calls after an answer.** The report now explains its count: it adds up two cases
+  tracetrim cannot tell apart, an agent that closed too early and the next task starting within the idle
+  pause, whose length it states. On a host where the user opens the next conversation right away it grows
+  at every run, and by itself is not a sign of a problem. The counting and the key
+  `answered_runs_followed_by_calls` are unchanged; `auto` has a new key `idle_seconds`.
+- **Diagnostics of the client: `--log-client FILE`** (off by default). One JSON line per request of the
+  client: time, an anonymous id of the session (a salted hash), the method; for `initialize` what the
+  client declares (`clientInfo`, `protocolVersion`, `capabilities` with its extensions), for a resource or
+  a skill its uri, for a tool call the name of the tool. Never arguments, results, headers or tokens. It
+  tells whether a host asked for the tracetrim skill
+  ([docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)). Over stdio and HTTP.
+
 ## 0.4.0
 
 Developed from 2026-11-11 to 2026-11-12, after the studies of the paper: checked by tests and by the

@@ -188,7 +188,8 @@ an estimate of the calls that could have been made in an earlier turn.
 | `state.json` | counters: runs, filtered and expanded results, sampling, closings |
 | `evidence.json` | evidence per tool and field (run names), promotions with their reasons |
 | `evidence/run-0007.jsonl` | the notes of one run: exposures and `expand` requests |
-| `report.json`, `report.html` | section `adaptive`: promotions, their effect on tokens, evidence, sampling; `turns`: calls per turn |
+| `savings.json` | per run and tool: tokens the tools sent, the same outputs re-written whole, tokens the model received; replies of `expand` apart (since 0.4.1) |
+| `report.json`, `report.html` | section `savings`: where the saving of each run comes from, re-serialisation and fields; section `adaptive`: promotions, their effect on tokens, evidence, sampling; `turns`: calls per turn |
 
 Every file is written aside and renamed: a process killed while writing leaves the previous content.
 One lock protects what tool calls and the learning thread share. Work directories of 0.3.5 load as they are.

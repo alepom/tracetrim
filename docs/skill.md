@@ -157,6 +157,24 @@ because the proxy did not announce the extension in `initialize`. The command:
 npx -y @modelcontextprotocol/inspector --cli .venv/bin/python -m tracetrim.cli proxy --upstream-cmd ".venv/bin/python tests/fixtures/meta_server.py" --auto /tmp/tt-inspector --quiet --method skills/list --verify
 ```
 
+## Does a host load the skill?
+
+The traces cannot say: they hold tool calls, and a host that reads the skill makes none. Start the
+proxy with `--log-client FILE` (off by default) and look at the file after a session: one JSON line
+per request of the client, with the time, an anonymous id of the session and the method.
+
+- `initialize` (or `server/discover`) shows who connected and what it declared. A host that supports
+  skills has `io.modelcontextprotocol/skills` under `capabilities.extensions`.
+- A host that loads the skill then sends `skills/list` or `skills/get`, and `resources/read` with
+  `"uri": "skill://tracetrim/SKILL.md"`. A session with `tools/list` and `tools/call` only did not
+  read it: the tool descriptions are all its model saw.
+- Reading is not following: the line says the host fetched the text, not that it gave it to the model.
+
+The file never holds arguments, results, headers or tokens: a tool call leaves the name of the tool
+and nothing else (`tracetrim.clientlog` has the list of what is written, per method). Over HTTP,
+sessions are told apart by the id; on the protocol without sessions (2026-07-28) each request is its
+own connection and gets its own id.
+
 ## Closing a run
 
 - `tracetrim_done` takes the final answer and nothing else. The proxy already has the calls and their
@@ -170,7 +188,9 @@ npx -y @modelcontextprotocol/inspector --cli .venv/bin/python -m tracetrim.cli p
   report counts the refused closings, so this can be seen.
 - An answer followed by more calls opens a second run. The proxy cannot tell an agent that closed too
   early from the next task, so it does not merge them; the report counts the runs closed by an answer
-  and followed by calls within the idle pause.
+  and followed by calls within the idle pause. The count adds up the two cases: on a host where the
+  user opens the next conversation right away it grows at every run, and by itself it is not a sign
+  of a problem.
 - A session that ends without `tracetrim_done` leaves a run without answer: telemetry, not learning.
 - One run at a time per proxy or `AutoTrim`: calls that arrive between two closings belong to the
   same run, whoever sent them. Give each agent its own instance and work directory.

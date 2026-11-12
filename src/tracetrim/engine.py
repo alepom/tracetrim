@@ -15,9 +15,10 @@ from __future__ import annotations
 import json
 import re
 import secrets
+from dataclasses import replace
 from pathlib import Path
 
-from .contract import FILTERED, FULL_CHEAPER, SAMPLED, Observation, ToolCall, ToolResult
+from .contract import FILTERED, FULL, FULL_CHEAPER, SAMPLED, Observation, Sizes, ToolCall, ToolResult
 from .evidence import is_broad
 from .projection import dumps
 from .runtime import Policy
@@ -108,6 +109,9 @@ class Trimmer:
         # call_id must not name valid ones, or a client could expand another's
         # results. With one agent (stdio, function calling) naming them helps.
         self.shared = False
+        # (tool, output, tokens of the output written whole) of the last result that
+        # was compared with its whole form: the engine's breakdown reuses the count.
+        self.last_whole: tuple[str, str, int] | None = None
 
     def count(self, text: str) -> int:
         """Tokens (o200k_base), or characters when tiktoken is not installed."""
@@ -156,7 +160,9 @@ class Trimmer:
         # random one, so that the same result is treated the same everywhere.)
         whole = self.policy.apply(tool, out, project=False)
         candidate = f"{trimmed}{MARK}call_id=c00000000 hidden: {listed}" if annotate else trimmed
-        if self.count(candidate) >= self.count(whole):
+        whole_size = self.count(whole)
+        self.last_whole = (tool, out, whole_size)
+        if self.count(candidate) >= whole_size:
             return Observation(whole, FULL_CHEAPER, hidden=tuple(hidden))
         if not annotate:
             return Observation(trimmed, FILTERED, hidden=tuple(hidden))
@@ -228,12 +234,16 @@ class Engine:
     default) turns it on in automatic mode, from the first call, and otherwise
     leaves it to the config. `shared`:
     several clients reach this engine (the HTTP proxy), so an error never names
-    the call_ids of results it holds."""
+    the call_ids of results it holds. `breakdown`: count every call three times
+    (`contract.Sizes`), to tell what re-serialising saves from what removing
+    fields saves; a measure, which changes neither the traces nor what the model
+    receives."""
 
     def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
-                 shared: bool = False, compact: bool | None = None):
+                 shared: bool = False, compact: bool | None = None, breakdown: bool = True):
         self.learner = learner
         self.structural = structural
+        self.breakdown = breakdown
         # Lossless, so in automatic mode it does not wait for anything to be learned.
         self.compact = (True if learner is not None else None) if compact is None else compact
         if policy is None and learner is not None:
@@ -265,6 +275,39 @@ class Engine:
     def observe(self, call: ToolCall, result: ToolResult) -> Observation:
         """Record what the tool sent; return what the model should receive.
         The tool has already run, once: only what is passed on can differ."""
+        self.trimmer.last_whole = None
+        obs = self._observe(call, result)
+        if not self.breakdown:
+            return obs
+        sizes = self.sizes(call.tool, result, obs)
+        if self.learner is not None:
+            self.learner.measured(call.tool, sizes)
+        return replace(obs, sizes=sizes)
+
+    def sizes(self, tool: str, result: ToolResult, obs: Observation) -> Sizes:
+        """The three counts of a call. The text is tokenised as few times as it
+        takes: a count the trimmer already made is reused, and two texts that
+        are the same are counted once."""
+        count, raw, policy = self.trimmer.count, result.output, self.policy
+        r = count(raw)
+        if result.verbatim or policy is None or obs.text == raw:
+            return Sizes(r, r, r)                # passed on as received
+        known = self.trimmer.last_whole
+        w = known[2] if known is not None and known[0] == tool and known[1] is raw else None
+        if obs.exposure in (FULL_CHEAPER, SAMPLED):
+            # Passed whole on purpose: the text is the whole output, re-written.
+            s = count(obs.text) if w is None else w
+            return Sizes(r, s, s)
+        s = count(obs.text)
+        if obs.exposure == FULL and (policy.projection is None
+                                     or policy.tools.get(tool, {}).get("trim", "off") == "off"):
+            return Sizes(r, s, s)                # a tool that is not trimmed: only re-written
+        if w is None:
+            whole = policy.apply(tool, raw, project=False)
+            w = s if whole == obs.text else count(whole)
+        return Sizes(r, w, s)
+
+    def _observe(self, call: ToolCall, result: ToolResult) -> Observation:
         if self.learner is None:
             return Observation(result.output) if result.verbatim else self.trimmer.observe(call.tool, result.output)
         index = self.learner.call(call.tool, call.arguments, result.output, call.turn)
@@ -307,6 +350,10 @@ class Engine:
             if recovered:
                 self._expanded.add(call_id)
                 self._expanded &= self.trimmer.originals.keys()
+        if self.breakdown and self.learner is not None:
+            # Apart from the three counts of a call: what `expand` gives back is added
+            # to what the model reads, and is never part of a result's saving.
+            self.learner.expand_measured(self.trimmer.count(text))
         return text
 
     # -- one run -----------------------------------------------------------

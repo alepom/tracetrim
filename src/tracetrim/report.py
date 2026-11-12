@@ -146,6 +146,41 @@ def compute(names, usages, unseen="keep", protect_ids=True) -> dict:
     }
 
 
+def savings(data: dict) -> dict:
+    """The run-time counts of automatic mode (`savings.json`: per run and tool, the
+    tokens the tools sent, the same outputs re-written whole, what the model received)
+    as the report shows them: per run, per tool and in total, with the saving split in
+    two. `reserialisation` + `fields` = `raw` - `sent`, in every row."""
+    def row(raw, whole, sent, **more):
+        return {**more, "raw": raw, "whole": whole, "sent": sent,
+                "reserialisation": raw - whole, "fields": whole - sent}
+
+    def add(into, t):
+        for k in ("calls", "raw", "whole", "sent"):
+            into[k] = into.get(k, 0) + t[k]
+
+    runs, tools, total, expand = [], {}, {}, {"calls": 0, "tokens": 0}
+    for run, entry in sorted(data["runs"].items()):
+        one = {"calls": 0, "raw": 0, "whole": 0, "sent": 0}
+        for tool, t in entry["tools"].items():
+            add(one, t)
+            add(tools.setdefault(tool, {}), t)
+            add(total, t)
+        e = entry.get("expand", {})
+        expand["calls"] += e.get("calls", 0)
+        expand["tokens"] += e.get("tokens", 0)
+        runs.append(row(one["raw"], one["whole"], one["sent"], run=run, calls=one["calls"],
+                        expand_calls=e.get("calls", 0), expand_tokens=e.get("tokens", 0)))
+    return {
+        "unit": data.get("unit", "tokens"),
+        "runs": runs,
+        "tools": {tool: row(t["raw"], t["whole"], t["sent"], calls=t["calls"])
+                  for tool, t in sorted(tools.items(), key=lambda x: -x[1]["raw"])},
+        "total": row(total.get("raw", 0), total.get("whole", 0), total.get("sent", 0), calls=total.get("calls", 0),
+                     expand_calls=expand["calls"], expand_tokens=expand["tokens"]),
+    }
+
+
 def _n(x, lang):
     s = f"{int(round(x)):,}"
     return s.replace(",", ".") if lang == "it" else s
@@ -332,10 +367,29 @@ L = {
     "auto_off": ("switched off after too many expand requests", "spenti dopo troppe richieste di expand"),
     "auto_refused": ("closings refused for lack of an answer (the run stayed open)",
                      "chiusure rifiutate perché senza risposta (l'esecuzione è rimasta aperta)"),
-    "auto_followed": ("runs closed by an answer and followed by calls within the idle pause (closed too early, "
-                      "or the next task: not merged)",
-                      "esecuzioni chiuse con risposta e seguite da chiamate entro la pausa di inattività (chiuse "
-                      "troppo presto, o compito successivo: non fuse)"),
+    "auto_followed": ("runs closed by an answer and followed by calls within the idle pause (see the note below)",
+                      "esecuzioni chiuse con risposta e seguite da chiamate entro la pausa di inattività (vedi la "
+                      "nota qui sotto)"),
+    "savings": ("Where the saving comes from", "Da dove viene il risparmio"),
+    "savings_sub": (
+        "Counted at run time, call by call: what the tools sent against what the model received. "
+        "Re-serialisation is what writing the same data as compact JSON saves, with nothing removed. "
+        "Fields is what the projection removes on top of that, net of the line that lists what was removed. "
+        "The two add up to the total. While learning, no field is removed: only re-serialisation saves. "
+        "What expand gave back is counted apart, and is not subtracted from the saving.",
+        "Contato a runtime, chiamata per chiamata: ciò che hanno inviato i tool rispetto a ciò che ha ricevuto il "
+        "modello. La riserializzazione è ciò che si risparmia riscrivendo gli stessi dati come JSON compatto, senza "
+        "togliere nulla. I campi sono ciò che la proiezione toglie in più, al netto della riga che elenca i campi "
+        "tolti. Le due voci sommate danno il totale. Durante l'apprendimento nessun campo viene tolto: risparmia "
+        "solo la riserializzazione. Ciò che ha restituito expand è contato a parte, e non è sottratto dal risparmio."),
+    "sent_by_tools": ("sent by the tools", "inviati dai tool"),
+    "received_by_model": ("received by the model", "ricevuti dal modello"),
+    "saving_total": ("total", "totale"),
+    "saving_reserialisation": ("re-serialisation", "riserializzazione"),
+    "saving_fields": ("fields", "campi"),
+    "expand_back": ("given back by expand (calls, size)", "restituiti da expand (chiamate, dimensione)"),
+    "all_runs": ("all runs", "tutte le esecuzioni"),
+    "savings_per_tool": ("Per tool, all runs", "Per tool, tutte le esecuzioni"),
     "project": ("Project and author", "Progetto e autore"),
     "hero": ("of tool-output tokens removed by the prudent projection, on runs it never saw",
              "dei token restituiti dai tool tolti dalla proiezione prudente, su run mai visti"),
@@ -534,6 +588,54 @@ def _pair(m: dict) -> str:
     return "—" if m["median"] is None else f'{m["median"]:g}, {m["max"]:g}'
 
 
+def _savings_html(d: dict) -> str:
+    """Where the saving comes from: present in reports written by automatic mode since 0.4.1."""
+    s = d.get("savings")
+    if not s or not s["runs"]:
+        return ""
+
+    def cells(r):
+        raw = r["raw"] or 1
+        share = lambda x: "—" if not r["raw"] else f"{-x / raw:+.0%}"        # noqa: E731
+        return [_num(r["raw"]), _num(r["sent"]), f'<b>{share(r["raw"] - r["sent"])}</b>',
+                f'{share(r["reserialisation"])} ({_num(r["reserialisation"])})',
+                f'{share(r["fields"])} ({_num(r["fields"])})']
+
+    def expand(r):
+        return f'{r["expand_calls"]}, {_num(r["expand_tokens"])}' if r["expand_calls"] else "—"
+
+    head = [_t("calls"), f'{_t("sent_by_tools")} ({html.escape(s["unit"])})', _t("received_by_model"),
+            _t("saving_total"), _t("saving_reserialisation"), _t("saving_fields")]
+    runs = [[f'<code>{html.escape(r["run"])}</code>', str(r["calls"])] + cells(r) + [expand(r)] for r in s["runs"]]
+    runs.append([f'<b>{_t("all_runs")}</b>', str(s["total"]["calls"])] + cells(s["total"]) + [expand(s["total"])])
+    tools = [[f"<code>{html.escape(t)}</code>", str(r["calls"])] + cells(r) for t, r in s["tools"].items()]
+    return (f'<h2>{_t("savings")}</h2><p class="method">{_t("savings_sub")}</p>'
+            + _table([_t("run")] + head + [_t("expand_back")], runs)
+            + f'<details><summary>{_t("savings_per_tool")} · {len(tools)}</summary>'
+            + _table([_t("tool")] + head, tools) + "</details>")
+
+
+def _followed_note(auto: dict) -> str:
+    """What the count of runs followed by calls does and does not say."""
+    n = auto.get("answered_runs_followed_by_calls")
+    if not n:
+        return ""
+    pause = auto.get("idle_seconds")
+    en_pause = f" ({pause:g} seconds)" if pause else ""
+    it_pause = f" ({pause:g} secondi)" if pause else ""
+    en = (f"Runs closed by an answer and followed by calls: {n}. This count adds up two cases that tracetrim cannot "
+          f"tell apart: the agent closed the run too early and went on with the same task, or the next task began "
+          f"within the idle pause{en_pause}. On a host where the user opens the next conversation right away, it "
+          f"grows at every run: by itself it is not a sign that something is wrong. In both cases the runs are "
+          f"kept apart, never merged.")
+    it = (f"Esecuzioni chiuse con risposta e seguite da chiamate: {n}. Il contatore somma due casi che tracetrim non "
+          f"sa distinguere: l'agente ha chiuso l'esecuzione troppo presto e ha proseguito lo stesso compito, oppure "
+          f"il compito successivo è iniziato entro la pausa di inattività{it_pause}. Con un host in cui l'utente "
+          f"apre subito la conversazione successiva, cresce a ogni esecuzione: da solo non indica un problema. "
+          f"In entrambi i casi le esecuzioni restano separate, mai fuse.")
+    return f'<p class="method"><span lang="en">{html.escape(en)}</span><span lang="it">{html.escape(it)}</span></p>'
+
+
 def _adaptive_html(d: dict) -> str:
     """Evidence, promotions, sampling, list elements and arguments: present
     only in reports written by automatic mode (and, for the last two, by any report)."""
@@ -658,7 +760,8 @@ def render_html(d: dict, sugg: list[dict]) -> str:
                        for key, field in (("auto_refused", "refused_closings"),
                                           ("auto_followed", "answered_runs_followed_by_calls")) if auto.get(field))
         auto_html = (f'<div class="autobox"><b>{_t("auto_title")}</b> · {state}{off}'
-                     f' · <span class="method">{html.escape(auto["updated"])}</span></div>')
+                     f' · <span class="method">{html.escape(auto["updated"])}</span></div>'
+                     + _followed_note(auto))
     if T["traces"] < 2:
         hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero_one")}</div></div>')
     else:
@@ -791,6 +894,7 @@ pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; 
 <p class="byline">{html.escape(d["generator"]["name"])} {html.escape(d["generator"]["version"])} · {html.escape(d["generator"]["author"])}</p>
 {auto_html}{hero}<div class="tiles">{tiles_html}</div>
 {_chart_tools(d)}
+{_savings_html(d)}
 <h2>{_t("suggestions")}</h2><ul class="sugg">{sugg_html}</ul>
 <h2>{_t("actions")}</h2>{cfg_html}
 <h2>{_t("per_tool")}</h2>

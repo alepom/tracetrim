@@ -125,6 +125,9 @@ Dopo la terza esecuzione il terminale dice `trimming 4 tools`. Esegui di nuovo (
 [tracetrim]   this run: 2 calls, 2,227 -> 1,074 (-52%), 0 expand · session: ...
 ```
 
+Dalla 0.4.1 la parentesi dice anche da dove viene il risparmio, per esempio
+`(-39%: -27% format, -12% fields)`: `format` è il JSON riscritto compatto, `fields` i campi tolti.
+
 Da mostrare: la riga di chiusura dell'esecuzione (circa −44% sui risultati degli strumenti), i token di
 input nel Playground confrontati con la scena 1, e le risposte ai cinque ticket, che restano corrette
 (la tabella delle risposte giuste è in `demo_prompts_IT.md`).

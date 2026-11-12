@@ -73,14 +73,24 @@ class Live:
         # the current run is shown too, and reset when the run closes.
         self.per_run = False
         self.run = [0, 0, 0, 0]          # calls, raw, sent, expands
+        # The outputs re-written with nothing removed, when the engine counts them
+        # (contract.Sizes): they split a saving into "format" and "fields". None
+        # from the first call that comes without the count.
+        self.whole: int | None = 0
+        self.run_whole: int | None = 0
 
     def new_run(self) -> str:
         c, r, s, e = self.run
-        self.run = [0, 0, 0, 0]
-        return f"{c} calls, {r:,} -> {s:,} {self.unit} ({self._pct(s, r)}), {e} expand"
+        w, self.run, self.run_whole = self.run_whole, [0, 0, 0, 0], 0
+        return f"{c} calls, {r:,} -> {s:,} {self.unit} ({self._pct(s, r, w)}), {e} expand"
 
-    def call(self, tool: str, raw: str, sent: str) -> None:
-        r, s = self.count(raw), self.count(sent)
+    def call(self, tool: str, raw: str, sent: str, sizes=None) -> None:
+        if sizes is not None:
+            r, w, s = sizes.raw, sizes.whole, sizes.sent     # already counted by the engine, the same way
+        else:
+            r, w, s = self.count(raw), None, self.count(sent)
+        self.whole = None if w is None or self.whole is None else self.whole + w
+        self.run_whole = None if w is None or self.run_whole is None else self.run_whole + w
         self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
         self.run = [self.run[0] + 1, self.run[1] + r, self.run[2] + s, self.run[3]]
         hidden = sent.rsplit(MARK, 1)[1].split("hidden: ", 1)[1] if MARK in sent else ""
@@ -94,17 +104,26 @@ class Live:
         self._print(f"{'expand ' + call_id:<34} the agent asked for {', '.join(fields)[:60]}"
                     f" ({self.count(got):,} {self.unit})")
 
-    def _pct(self, s, r):
-        return f"{(s / r - 1) * 100:+.0f}%" if r else "  —"
+    def _pct(self, s, r, w=None):
+        """The change from `r` to `s`; with `w`, also its two parts, both as shares
+        of `r`: re-writing the output (format) and removing fields."""
+        if not r:
+            return "  —"
+        def pct(x):
+            return "0%" if x == 0 else f"{x / r * 100:+.0f}%"
+        if w is None or s == r:
+            return f"{(s / r - 1) * 100:+.0f}%"
+        return f"{pct(s - r)}: {pct(w - r)} format, {pct(s - w)} fields"
 
     def _print(self, line: str) -> None:
         if self.quiet:
             return
         import sys
-        total = f"session: {self.calls} calls, {self.raw:,} -> {self.sent:,} ({self._pct(self.sent, self.raw)}), {self.expands} expand"
+        total = (f"session: {self.calls} calls, {self.raw:,} -> {self.sent:,} "
+                 f"({self._pct(self.sent, self.raw, self.whole)}), {self.expands} expand")
         if self.per_run:
             c, r, s, e = self.run
-            total = f"this run: {c} calls, {r:,} -> {s:,} ({self._pct(s, r)}), {e} expand · {total}"
+            total = f"this run: {c} calls, {r:,} -> {s:,} ({self._pct(s, r, self.run_whole)}), {e} expand · {total}"
         print(f"[tracetrim] {line}\n[tracetrim]   {total}", file=sys.stderr, flush=True)
 
 
@@ -132,6 +151,8 @@ class Options:
     skill: bool = True               # publish the tracetrim skill (MCP Skills), whenever expand is offered
     skill_strategy: bool = False     # ... with the optional notes on organising tool calls
     compact: bool | None = None      # compact JSON; None: from the first call with --auto, else as the config says
+    breakdown: bool = True           # count what re-serialising saves apart from what removing fields saves
+    log_client: str | None = None    # a file for one line per client request (tracetrim.clientlog); off by default
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -302,7 +323,7 @@ def _server(o: Options):
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
-                    compact=o.compact)
+                    compact=o.compact, breakdown=o.breakdown)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)
@@ -420,8 +441,8 @@ def _server(o: Options):
                     rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": note},
                                          ensure_ascii=False) + "\n")
                     rec.flush()
-                engine.observe(call, ToolResult(note, verbatim=True))
-                live.call(params.name, note, note)
+                seen = engine.observe(call, ToolResult(note, verbatim=True))
+                live.call(params.name, note, note, seen.sizes)
                 return r                     # exactly as the server sent it, metadata included
             raw = "".join(getattr(c, "text", "") or "" for c in content)
             if rec:
@@ -430,7 +451,7 @@ def _server(o: Options):
                 rec.flush()
             obs = engine.observe(call, ToolResult(raw))
             text = obs.text
-            live.call(params.name, raw, text)
+            live.call(params.name, raw, text, obs.sizes)
             if text == raw:
                 # Nothing trimmed: the server's result goes back untouched,
                 # structured content and metadata included.
@@ -455,6 +476,22 @@ def _server(o: Options):
                     on_call_tool=call_tool,
                     # One sentence, for hosts that show a server's instructions and do not load skills.
                     instructions=skill.pointer(done=learner is not None) if publish else None)
+    if o.log_client:
+        from .clientlog import ClientLog
+        client_log = ClientLog(o.log_client)
+
+        async def log_request(ctx, call_next):
+            # Requests only (a notification has no id), written before they are served:
+            # a method the proxy does not know is a line too. Diagnostics never fail a request.
+            if ctx.request_id is not None:
+                try:
+                    client_log.record(getattr(ctx.session, "_connection", None), ctx.method, ctx.params)
+                except Exception as e:  # noqa: BLE001
+                    log(f"--log-client: line not written ({type(e).__name__})")
+            return await call_next(ctx)
+
+        server.middleware.append(log_request)
+        log(f"client requests logged to {o.log_client} (methods, declared capabilities, names: no arguments or results)")
     if publish:
         entry = publish_skill(server, strategy=o.skill_strategy, done=learner is not None)
         log(f"skill: {entry['uri']} · {entry['resources'][0]['digest'][:19]}… · strategy "

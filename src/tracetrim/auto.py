@@ -32,6 +32,7 @@ Everything lives in the work directory, so learning survives restarts:
   workdir/state.json              runs, expand counts, tools switched off
   workdir/evidence.json           evidence per field, promotions and their reasons
   workdir/evidence/run-0001.jsonl how results were exposed and what expand was asked, per run
+  workdir/savings.json            per run and tool: tokens sent by the tools, re-written whole, received
 
 Every file is replaced whole (written aside, then renamed): a process killed
 while writing leaves the previous content, never half of a file.
@@ -134,6 +135,10 @@ class Learner:
         self.idle_seconds = idle_seconds
         self._answered_at: float | None = None       # when an answer last closed a run
         self._count = None
+        # The open run, counted (contract.Sizes): tool -> [calls, raw, whole, sent]; expand: [calls, tokens].
+        self.savings_path = self.dir / "savings.json"
+        self._sizes: dict[str, list[int]] = {}
+        self._expand_sizes = [0, 0]
 
     def count(self, text: str) -> int:
         """Tokens (o200k_base) when tiktoken is installed, characters otherwise:
@@ -159,6 +164,40 @@ class Learner:
                 e["turn"] = turn             # calls of one turn do not use each other's outputs
             self.events.append(e)
             return len(self.events) - 1
+
+    def measured(self, tool: str, sizes) -> None:
+        """The three counts of a call of the open run (contract.Sizes)."""
+        with self.lock:
+            t = self._sizes.setdefault(tool, [0, 0, 0, 0])
+            for i, v in enumerate((1, sizes.raw, sizes.whole, sizes.sent)):
+                t[i] += v
+
+    def expand_measured(self, size: int) -> None:
+        """What a reply of `expand` weighs: kept apart from the results' counts."""
+        with self.lock:
+            self._expand_sizes[0] += 1
+            self._expand_sizes[1] += size
+
+    def _save_sizes(self, run: str) -> None:
+        """Add the counts of the open run to savings.json, under `run`, and start again.
+        Replies of `expand` that arrive after a closing are about the run just closed."""
+        if not self._sizes and not self._expand_sizes[0]:
+            return
+        data = {"format": "tracetrim/savings@1", "unit": self._unit(), "runs": {}}
+        if self.savings_path.exists():
+            try:
+                data.update(json.loads(self.savings_path.read_text(encoding="utf-8")))
+            except json.JSONDecodeError:
+                pass                             # a measure: start again rather than stop a closing
+        entry = data["runs"].setdefault(run, {"tools": {}, "expand": {"calls": 0, "tokens": 0}})
+        for tool, (n, raw, whole, sent) in sorted(self._sizes.items()):
+            t = entry["tools"].setdefault(tool, {"calls": 0, "raw": 0, "whole": 0, "sent": 0})
+            for k, v in (("calls", n), ("raw", raw), ("whole", whole), ("sent", sent)):
+                t[k] += v
+        entry["expand"]["calls"] += self._expand_sizes[0]
+        entry["expand"]["tokens"] += self._expand_sizes[1]
+        store.write_json(self.savings_path, data)
+        self._sizes, self._expand_sizes = {}, [0, 0]
 
     def trimmed(self, tool: str) -> None:
         with self.lock:
@@ -261,6 +300,7 @@ class Learner:
             self.events, self.notes, self._index_of = [], [], {}
             self.state["runs"] = number
             self._absorb(run, events, notes, answer if complete else None)
+            self._save_sizes(run)
             if complete:
                 self.state["complete_runs"] += 1
                 self._answered_at = time.time()
@@ -302,6 +342,7 @@ class Learner:
             if self.notes:
                 notes, self.notes = [dict(n, index=None) for n in self.notes], []
                 self._absorb(f"run-{self.state['runs']:04d}", [], notes, None)
+            self._save_sizes(f"run-{self.state['runs']:04d}")
             self._save()
         return None
 
@@ -331,6 +372,11 @@ class Learner:
         ready = len(complete) >= self.min_runs
 
         with self.lock:
+            if self.savings_path.exists():
+                try:
+                    d["savings"] = rp.savings(json.loads(self.savings_path.read_text(encoding="utf-8")))
+                except (json.JSONDecodeError, KeyError, TypeError):
+                    pass                         # unreadable: the report goes without the section
             a = self.adaptive
             data = evidence.load(self.evidence_path)
             # The targeted correction comes first: fields are promoted before a
@@ -378,6 +424,8 @@ class Learner:
         config["auto"] = {"complete_runs": len(complete), "min_runs": self.min_runs,
                           "applied": ready, "switched_off": off,
                           "refused_closings": closings[0], "answered_runs_followed_by_calls": closings[1],
+                          # The pause that counter is about (None: the integration closes its own runs).
+                          "idle_seconds": self.idle_seconds,
                           "promoted": {t: sorted(f) for t, f in sorted(active.items())},
                           "updated": datetime.now(timezone.utc).isoformat(timespec="seconds")}
 
@@ -486,12 +534,17 @@ class AutoTrim:
     `adaptive=Adaptive(promote=True, sample_rate=0.1)` turns on the promotion
     of fields on evidence and the sampling of unfiltered results
     (tracetrim.evidence). Both off by default.
+
+    `breakdown=False` stops counting, call by call, what re-serialising saves
+    and what removing fields saves (the report's section on where the saving
+    comes from). The count changes nothing the model receives.
     """
 
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
-                 strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True):
+                 strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
+                 breakdown: bool = True):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive), structural=structural,
-                             compact=compact)
+                             compact=compact, breakdown=breakdown)
         self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
                             "parameters": EXPAND["inputSchema"]}

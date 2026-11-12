@@ -54,6 +54,25 @@ class ToolResult:
 
 
 @dataclass(frozen=True)
+class Sizes:
+    """One call, counted three times with the same counter (tokens, o200k_base;
+    characters without a tokenizer). The saving `raw - sent` is the sum of two
+    parts, exactly: what re-writing the output saves with nothing removed, and
+    what removing fields saves on top of it."""
+    raw: int                   # the output as the tool sent it
+    whole: int                 # the same output as tracetrim writes it with nothing removed
+    sent: int                  # what the model receives, the `[trimmed]` line included
+
+    @property
+    def reserialisation(self) -> int:
+        return self.raw - self.whole
+
+    @property
+    def fields(self) -> int:
+        return self.whole - self.sent
+
+
+@dataclass(frozen=True)
 class Observation:
     text: str                          # what the model receives
     exposure: str = FULL               # FULL, FILTERED, SAMPLED or FULL_CHEAPER
@@ -61,6 +80,9 @@ class Observation:
     # The paths the projection removes from this result: actually removed when
     # FILTERED, let through when SAMPLED or FULL_CHEAPER.
     hidden: tuple[str, ...] = ()
+    # The three counts of this call, when the engine measures them (since 0.4.1).
+    # A measure only: it never changes `text`.
+    sizes: Sizes | None = None
 
 
 @dataclass(frozen=True)

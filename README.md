@@ -284,7 +284,9 @@ input schemas as its own (plus `expand`); each call is forwarded unchanged, and 
 rewritten on its way back. One proxy can stand in front of several servers (`--servers`).
 
 While it runs, the proxy prints one line per call on stderr — tokens from the tool, tokens to the
-agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). In
+agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). Each total
+says where its saving comes from, as in `(-39%: -27% format, -12% fields)`: writing the same data as
+compact JSON, and removing fields. In
 automatic mode JSON outputs are written compactly (no indentation, no spaces after `,` and `:`) from
 the first call, before anything is learned: nothing is removed, and on indented outputs it is often a
 large part of the saving (`--no-compact` to keep the spaces). Add
