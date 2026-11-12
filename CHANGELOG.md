@@ -4,6 +4,35 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## Unreleased
+
+Easier to put tracetrim in front of the servers you already use. **Nothing changes in what the model
+receives**: the engine, the proxy, learning and the skill are untouched.
+
+- **`tracetrim init`.** Reads the MCP configuration of a host (`--host claude-desktop`, `claude-code`,
+  `cursor`, `vscode`, or any file with `--file`) and puts tracetrim in front of its servers. Without
+  `--write` it is a dry run: it shows which servers go behind tracetrim, which stay in the host and why,
+  the host's new entry and the servers file. With `--write` it makes a backup next to the host's file,
+  moves the servers to `WORKDIR/servers.json` (mode `0600`) and leaves one `tracetrim` entry in their
+  place, with the absolute path of the executable. `tracetrim init --undo BACKUP` restores the file byte
+  for byte, and refuses when it changed since. Running `init` again wraps nothing twice and duplicates
+  no server. `--http PORT` prints the steps for a host that reaches tracetrim over HTTP, without
+  rewriting it.
+- **Keys are never shown.** No value of the host's file is printed, in a dry run or in an error: not of
+  `env` or `headers`, not an argument, not the path or the query of a URL.
+- **References stay references.** `${VAR}` and `${VAR:-default}` (Claude Code) and `${env:NAME}` (Cursor,
+  VS Code) are still resolved by the host, which passes them to tracetrim; `servers.json` uses
+  `${NAME}`. A server tracetrim cannot start exactly as the host did (a field it does not read, SSE,
+  `${input:…}`, `${workspaceFolder}`, …) stays in the host, untouched.
+- **One work directory per project**: `~/.tracetrim/HOST` for the user's file,
+  `~/.tracetrim/HOST/FOLDER-HASH` for a project's. `init` refuses to write `servers.json` inside a git
+  repository that does not ignore it (`--force` to do it anyway). Claude Code's `~/.claude.json` is never
+  opened: for the user scope `init` prints the `claude mcp` commands.
+- **[docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md)**: the format of each
+  host with its source, and a table of what was verified host by host (connection, tools,
+  `tracetrim_done`, the skill, `expand`), with how to verify a host yourself using `--log-client`. The
+  README's short way starts from `tracetrim init`.
+
 ## 0.4.1
 
 Clearer reports and diagnostics. **Nothing changes in what the model receives**: the same calls give the
