@@ -133,7 +133,8 @@ thinking tokens.
 | **Total** | **42** | **6.58** | **17.81** |
 
 **The upper figure is above the cap.** It assumes that every call takes a turn of its own and that nothing is
-cached; if it came true the last runs, on C1, would not start. The cost of a run is known after the pilot, and
+cached; if it came true the last runs would not start. In the order of the rounds those are runs of C4 and C5,
+the cases with the most runs: every case would still have both arms. The cost of a run is known after the pilot, and
 is reported before the measured runs go on.
 
 - Prices: `experiments/prices-e3.json`, read on 2026-11-11 from Google Cloud's Agent Platform (Vertex AI) pricing
