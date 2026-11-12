@@ -46,12 +46,21 @@ _HOME_VARS = ("HOME", "USERPROFILE", "APPDATA", "XDG_CONFIG_HOME")
 
 
 def _real_places():
-    """The files `tracetrim init` could reach under the real home. Only their
-    presence, size and time are looked at, never their content."""
-    from tracetrim.init import HOSTS
-    places = [h.user_path() for h in HOSTS.values() if h.user]
-    places += [REAL_HOME / ".claude.json", REAL_HOME / ".tracetrim"]
-    return {str(p): ((s := p.stat()).st_size, s.st_mtime_ns) if p.exists() else None for p in places}
+    """What `tracetrim init --write` would leave under the real home: a backup next
+    to a host's file, and a servers file in ~/.tracetrim. Names and times only, never
+    content. (Not the hosts' files themselves: a running host rewrites them on
+    its own, ~/.claude.json above all, and the check would fail for no reason.)"""
+    from tracetrim.init import BACKUP_MARK, HOSTS
+    found = set()
+    for h in HOSTS.values():
+        if h.user:
+            f = h.user_path()
+            found |= {str(b) for b in f.parent.glob(f.name + BACKUP_MARK + "*")} if f.parent.is_dir() else set()
+    # servers.json files and their times: a proxy already running from ~/.tracetrim
+    # writes traces and reports there, never its servers file.
+    work = REAL_HOME / ".tracetrim"
+    found |= {f"{q}@{q.stat().st_mtime_ns}" for q in work.rglob("servers.json")} if work.is_dir() else set()
+    return found
 
 
 @pytest.fixture(scope="session", autouse=True)

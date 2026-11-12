@@ -134,7 +134,7 @@ In a host such as Claude Code or Cursor, where a person talks to the agent:
 
 | Host | Connects over | Tools pass | Calls `tracetrim_done` | Loads the skill | `expand` works | Verified: when and how |
 |---|---|---|---|---|---|---|
-| OpenAI Playground | HTTP | yes | yes: 7 runs of 7, at least 2 of them without the line in the prompt | **no**: the client declares only the extension `io.modelcontextprotocol/ui` and asks neither `skills/list` nor `resources/read` | yes | skill: 12 November 2026, one run with `--log-client` (0.4.1); the rest: the author's runs in the Playground with 0.4 |
+| OpenAI Playground | HTTP | yes | yes: 7 runs of 7, at least 2 of them without the line in the prompt | **no**: the client declares only the extension `io.modelcontextprotocol/ui` and asks neither `skills/list` nor `resources/read` | yes | skill: 12 November 2026, one run with `--log-client` (0.4.1); the rest: 12 November 2026, six runs on DataForSEO's server with the 0.4 branch and one with 0.4.1 |
 | Responses API | not verified | not verified | not verified | not verified | not verified | — |
 | Claude Desktop | not verified | not verified | not verified | not verified | not verified | — |
 | Claude Code | not verified | not verified | not verified | not verified | not verified | — |
