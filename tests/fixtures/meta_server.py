@@ -2,6 +2,7 @@
 to check that the proxy passes them through (tests/test_proxy_passthrough.py)."""
 import asyncio
 import json
+import os
 
 from mcp import types
 from mcp.server.lowlevel import Server
@@ -16,7 +17,10 @@ async def list_tools(ctx, params):
 
 
 async def call_tool(ctx, params):
-    return types.CallToolResult(content=[types.TextContent(type="text", text=json.dumps(PAYLOAD))],
+    # META_INDENT: send the text indented, as many servers do, so that the proxy re-serialises
+    # it even when it passes the result whole (tests/test_proxy_passthrough.py).
+    indent = int(os.environ["META_INDENT"]) if os.environ.get("META_INDENT") else None
+    return types.CallToolResult(content=[types.TextContent(type="text", text=json.dumps(PAYLOAD, indent=indent))],
                                 structuredContent=PAYLOAD, _meta={"trace_id": "abc-123"})
 
 

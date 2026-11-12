@@ -49,7 +49,7 @@ from pathlib import Path
 
 from . import evidence, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
-from .engine import EXPAND, Engine
+from .engine import EXPAND, Engine, requested_fields
 from .evidence import Adaptive
 from .runtime import Policy
 
@@ -97,6 +97,10 @@ class Learner:
         # hold out, and nothing would ever be trimmed.
         self.min_runs = max(2, min_runs)
         self.adaptive = adaptive or Adaptive()
+        # The report counts tokens: without a tokenizer automatic mode would stop at its first
+        # relearning, in the middle of the agent's work. Say so now, at start-up.
+        from . import measure
+        measure.tokenizer()
         self.state_path = self.dir / "state.json"
         self.evidence_path = self.dir / "evidence.json"
         self.state = {"runs": 0, "complete_runs": 0, "trimmed": {}, "expanded": {}, "off": [],
@@ -122,6 +126,10 @@ class Learner:
         self.events: list[dict] = []
         self.notes: list[dict] = []                  # how results were exposed, and expand requests: evidence to be
         self._index_of: dict[str, int] = {}          # call_id -> position of its call in the open run
+        # The filtered results counted in `trimmed` since the tool's counters last started again:
+        # only an expansion of one of them counts against the tool (an older result can still be
+        # expanded, but its filtering was wiped with the counters).
+        self._counted: dict[str, set[str]] = {}
         self._origins: dict[str, dict] = {}          # tool -> {"server", "tool"}, when the integration knows
         self.idle_seconds = idle_seconds
         self._answered_at: float | None = None       # when an answer last closed a run
@@ -190,6 +198,7 @@ class Learner:
                 self.state["full_cheaper"][call.tool] = self.state["full_cheaper"].get(call.tool, 0) + 1
             if obs.call_id:
                 self.trimmed(call.tool)
+                self._counted.setdefault(call.tool, set()).add(obs.call_id)
                 self._index_of[obs.call_id] = index
             self.notes.append({"kind": "observation", "index": index, "tool": call.tool, "exposure": obs.exposure,
                                "call_id": obs.call_id, "hidden": list(obs.hidden)})
@@ -202,13 +211,15 @@ class Learner:
         asked for by name or group; `broad`: the request asked for everything;
         `first`: the first request on this result that gave back a removed field."""
         with self.lock:
-            if first:
-                # One per result, however many times it is asked: what the
-                # switch-off of a whole tool counts.
+            # Against the tool: once per result, however many times it is asked, only when a
+            # removed field came back, and only for results counted since its counters started again.
+            counts = first and call_id in self._counted.get(tool, set())
+            if counts:
                 self.expanded(tool)
             self.notes.append({"kind": "expand", "index": self._index_of.get(call_id), "after": len(self.events),
                                "tool": tool, "call_id": call_id, "requested": requested, "returned": returned,
-                               "recovered": recovered, "targeted": targeted, "broad": broad, "repeat": bool(recovered) and not first})
+                               "recovered": recovered, "targeted": targeted, "broad": broad,
+                               "repeat": bool(recovered) and not first, "counts": counts})
 
     def refused(self) -> None:
         """A closing that carried no answer and was refused: the run stays
@@ -266,7 +277,10 @@ class Learner:
         evidence.merge(data, run, found, broad, self._origins)
         evidence.save(self.evidence_path, data)
         for n in notes:
-            if n["kind"] == "expand":
+            # A run counts for the switch-off only if an expand in it really gave a removed field
+            # back (not a failed request, not a repeat) on a result that counts against the tool.
+            # Notes written before this rule (no "counts" key) count as they did.
+            if n["kind"] == "expand" and n.get("counts", bool(n.get("recovered")) and not n.get("repeat")):
                 runs = self.state["expand_runs"].setdefault(n["tool"], [])
                 if run not in runs:
                     runs.append(run)
@@ -326,12 +340,16 @@ class Learner:
             # A field that came back by itself (recovered with expand, written, and now kept by
             # ordinary learning) corrects the cut as a promotion does: the requests that asked
             # for it no longer count against the tool.
-            resumed = evidence.resume(data, projection.keep, last) if ready else []
+            # A field the operator reverted stays removed: its requests are not settled.
+            reverted_now = evidence.promoted(data, "reverted")
+            kept = {t: k - reverted_now.get(t, set()) for t, k in projection.keep.items()}
+            resumed = evidence.resume(data, kept, last) if ready else []
             if new or resumed:
                 evidence.save(self.evidence_path, data)
                 for tool in {p["tool"] for p in new + resumed}:
                     for counter in ("trimmed", "expanded", "expand_runs"):
                         self.state[counter].pop(tool, None)
+                    self._counted.pop(tool, None)
             self._switch_off_overexpanded()
             off = list(self.state["off"])
             counters = {k: json.loads(json.dumps(self.state[k]))
@@ -489,6 +507,13 @@ class AutoTrim:
     def structural(self) -> str | None:
         return self.engine.structural
 
+    @structural.setter
+    def structural(self, value: str | None) -> None:
+        # Settable, as it was up to 0.3.5: it applies from the policy in use on.
+        self.engine.structural = value
+        if self.engine.policy is not None:
+            self.engine.policy.structural = value
+
     @property
     def trimming(self) -> bool:
         return self.engine.trimming
@@ -523,7 +548,7 @@ class AutoTrim:
             except json.JSONDecodeError:
                 return "Error: expand needs JSON arguments with call_id and fields."
         arguments = arguments if isinstance(arguments, dict) else {}
-        return self.engine.expand(str(arguments.get("call_id", "")), [str(f) for f in arguments.get("fields") or []])
+        return self.engine.expand(str(arguments.get("call_id", "")), requested_fields(arguments.get("fields")))
 
     def done(self, answer: str | None) -> None:
         """Close the run with the final answer: report updated, policy reloaded

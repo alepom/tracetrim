@@ -652,3 +652,115 @@ def test_the_proxy_and_autotrim_decide_the_same(variant, arm):
     # Only the proxy knows where a call really went.
     if origins[1]:
         assert origins[0] == {TOOL: None} and origins[1] == {TOOL: {"server": "upstream", "tool": TOOL}}
+
+
+# --- Review of 2026-11-12: defects found by running code, each pinned here. ---
+
+def cid_of(sent):
+    return sent.rsplit("call_id=", 1)[1].split()[0]
+
+
+def test_a_request_that_gives_nothing_back_does_not_count_a_run_against_the_tool(tmp_path):
+    tt = learned(tmp_path)                              # the default: expansions from two distinct runs
+    four_calls(tt, 4, expand=3)
+    assert state(tmp_path)["expand_runs"] == {TOOL: ["run-0004"]}
+    sent = tt.output(TOOL, args(5), orders.output(**args(5)))
+    assert tt.expand({"call_id": cid_of(sent), "fields": ["no_such_field"]}).startswith("Error: no field matches")
+    tt.done(answer(5))
+    assert state(tmp_path)["expand_runs"] == {TOOL: ["run-0004"]} and state(tmp_path)["off"] == [] and tt.trimming
+
+
+def test_after_the_counters_start_again_an_older_result_does_not_count_against_the_tool(tmp_path):
+    tt = learned(tmp_path)
+    call = lambda k: tt.output(TOOL, args(k), orders.output(**args(k)))     # noqa: E731
+    a, b = call(4), call(104)
+    tt.expand({"call_id": cid_of(a), "fields": [CARRIER]})
+    tt.done(answer(4, f" Carrier: {newest(4)['carrier']}."))                   # written: kept, counters start again
+    assert state(tmp_path)["trimmed"] == {} and state(tmp_path)["expanded"] == {}
+    tt.expand({"call_id": cid_of(b), "fields": [NOTE]})                       # b was filtered before the restart
+    call(5), call(205)
+    tt.done(answer(5))
+    s = state(tmp_path)
+    assert s["trimmed"] == {TOOL: 2} and s["expanded"] == {} and s["expand_runs"] == {}
+
+
+def test_a_reverted_field_is_not_taken_as_settled_by_ordinary_learning(tmp_path):
+    import contextlib
+    import io
+    tt = learned(tmp_path, promote=True)
+    for k in (4, 5):
+        run(tt, k, [NOTE])                                                    # asked in two runs: promoted
+    with contextlib.redirect_stdout(io.StringIO()):
+        main(["promotions", str(tmp_path), "--revert", TOOL, NOTE])
+    tt = AutoTrim(tmp_path, min_runs=3, adaptive=Adaptive(promote=True))
+    tt.output(TOOL, args(6), orders.output(**args(6)))
+    sent = tt.output(TOOL, args(106), orders.output(**args(106)))
+    tt.expand({"call_id": cid_of(sent), "fields": [NOTE]})
+    tt.done(answer(6, f" Note: {newest(106)['refund_note']}."))
+    assert NOTE in dropped(tmp_path) and ev(tmp_path)["resumed"] == []
+    assert state(tmp_path)["expanded"] == {TOOL: 1}                           # the request still counts
+
+
+def test_structural_can_still_be_set_on_autotrim(tmp_path):
+    tt = AutoTrim(tmp_path, min_runs=3)
+    tt.structural = "toon"
+    assert tt.structural == "toon" and tt.engine.structural == "toon"
+
+
+def test_one_field_name_sent_as_a_string_is_one_name(tmp_path):
+    from tracetrim.engine import requested_fields
+    assert requested_fields("data[].note") == ["data[].note"] and requested_fields(["a", 2]) == ["a", "2"]
+    assert requested_fields(None) == [] and requested_fields("") == [] and requested_fields({"x": 1}) == []
+    tt = learned(tmp_path)
+    sent = tt.output(TOOL, args(4), orders.output(**args(4)))
+    assert NOTE.split(".")[1] in tt.expand({"call_id": cid_of(sent), "fields": NOTE})
+
+
+def test_automatic_mode_says_at_start_up_that_it_needs_a_tokenizer(tmp_path, monkeypatch):
+    from tracetrim import measure
+
+    def missing():
+        raise SystemExit("measuring needs a real tokenizer: pip install 'tracetrim[measure]'")
+    monkeypatch.setattr(measure, "tokenizer", missing)
+    with pytest.raises(SystemExit, match="tracetrim\\[measure\\]"):
+        AutoTrim(tmp_path, min_runs=3)
+
+
+@pytest.mark.parametrize("argv, message", [
+    (["--config", "c.json", "--promote-runs", "3"], "adaptive learning works in automatic mode only"),
+    (["--config", "c.json", "--sample-seed", "7"], "adaptive learning works in automatic mode only"),
+    (["--auto", "w", "--promote-runs", "3"], "add --promote"),
+    (["--auto", "w", "--sample-max-share", "0.9"], "add --sample-rate"),
+    (["--auto", "w", "--sample-rate", "2"], "tracetrim proxy: sample_rate is between 0 and 1"),
+])
+def test_the_proxy_refuses_adaptive_options_it_would_ignore_or_could_not_use(argv, message):
+    with pytest.raises(SystemExit, match=message):
+        main(["proxy", "--upstream-cmd", "python -m nothing", *argv])
+
+
+def test_the_promotions_command_relearns_with_the_settings_of_the_work_directory(tmp_path, monkeypatch):
+    import contextlib
+    import io
+
+    from tracetrim import auto
+    tt = learned(tmp_path, promote=True, switch_off_runs=5)
+    for k in (4, 5):
+        run(tt, k, [NOTE])                                                    # promoted
+    used = []
+    real = auto.Learner
+
+    def spy(*a, **kw):
+        used.append(kw.get("adaptive"))
+        return real(*a, **kw)
+    monkeypatch.setattr(auto, "Learner", spy)
+    with contextlib.redirect_stdout(io.StringIO()):
+        main(["promotions", str(tmp_path), "--revert", TOOL, NOTE])
+    assert used and used[0].switch_off_runs == 5 and used[0].promote
+
+
+def test_a_tool_that_returns_nothing_does_not_stop_the_report(tmp_path):
+    tt = AutoTrim(tmp_path, min_runs=2)
+    for _ in range(3):
+        tt.output("t", {}, "")
+        tt.done("an answer")
+    assert (tmp_path / "report.html").exists()

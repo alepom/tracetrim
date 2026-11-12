@@ -90,7 +90,8 @@ class Projection:
             return json.dumps(payload, ensure_ascii=False)
         drop = (self.seen.get(tool, set()) - self.keep[tool]) if self.unseen == "keep" else None
         p = project(payload, self.keep[tool], drop=drop, keep_empty=keep_empty)
-        return json.dumps({} if p is _EMPTY else p, ensure_ascii=False)
+        # Everything removed: an empty container of the same kind (a list stays a list).
+        return json.dumps(([] if isinstance(payload, list) else {}) if p is _EMPTY else p, ensure_ascii=False)
 
 
 def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_empty: bool = False):

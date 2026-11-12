@@ -154,8 +154,23 @@ def cmd_proxy(a):
         raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
     if a.auto and a.config:
         raise SystemExit("--auto manages its own config: do not pass --config")
-    if (a.promote or a.sample_rate or a.switch_off_runs != SWITCH_OFF_RUNS) and not a.auto:
-        raise SystemExit("--promote, --sample-rate and --switch-off-runs work in automatic mode: add --auto WORKDIR")
+    defaults = Adaptive()
+    adaptive = {"--promote": a.promote, "--promote-runs": a.promote_runs != defaults.promote_requested_runs,
+                "--sample-rate": bool(a.sample_rate), "--sample-max-share": a.sample_max_share != defaults.sample_max_share,
+                "--sample-seed": a.sample_seed != defaults.sample_seed,
+                "--switch-off-runs": a.switch_off_runs != defaults.switch_off_runs}
+    given = [name for name, on in adaptive.items() if on]
+    if given and not a.auto:
+        raise SystemExit(f"{', '.join(given)}: adaptive learning works in automatic mode only; add --auto WORKDIR")
+    if adaptive["--promote-runs"] and not a.promote:
+        raise SystemExit("--promote-runs sets the threshold of --promote: add --promote")
+    if (adaptive["--sample-max-share"] or adaptive["--sample-seed"]) and not a.sample_rate:
+        raise SystemExit("--sample-max-share and --sample-seed set up sampling: add --sample-rate")
+    try:
+        Adaptive(promote=a.promote, promote_requested_runs=a.promote_runs, sample_rate=a.sample_rate,
+                 sample_max_share=a.sample_max_share, sample_seed=a.sample_seed, switch_off_runs=a.switch_off_runs)
+    except ValueError as e:
+        raise SystemExit(f"tracetrim proxy: {e}") from None
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
                 quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
@@ -187,8 +202,16 @@ def cmd_promotions(a):
     if changed:
         evidence.save(path, data)
         # Rewrite config and report now; a running proxy picks the change up at its next closing.
+        # With the settings the work directory was learned with (kept in report.json), not the defaults:
+        # a relearning with other thresholds could switch a tool off that the proxy would keep.
+        from dataclasses import fields
+        from .evidence import Adaptive
         config = json.loads((work / "report.config.json").read_text()) if (work / "report.config.json").exists() else {}
-        Learner(work, config.get("auto", {}).get("min_runs", 5)).relearn()
+        report = json.loads((work / "report.json").read_text()) if (work / "report.json").exists() else {}
+        saved = (report.get("adaptive") or {}).get("settings") or {}
+        known = {f.name for f in fields(Adaptive)}
+        adaptive = Adaptive(**{k: v for k, v in saved.items() if k in known})
+        Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive).relearn()
     for p in data["promotions"]:
         mark = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"

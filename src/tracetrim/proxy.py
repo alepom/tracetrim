@@ -44,7 +44,8 @@ from pathlib import Path
 from . import skill
 from .about import VERSION
 from .contract import ToolCall, ToolResult
-from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
+from .contract import FILTERED
+from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
 
 MAX_SSE_EVENT = 16 * 1024 * 1024
@@ -383,7 +384,7 @@ def _server(o: Options):
             # The same reply whether the run was closed now or already: it asks for nothing more.
             text = DONE_REPLY
         elif params.name == "expand":
-            fields = [str(f) for f in args.get("fields") or []]
+            fields = requested_fields(args.get("fields"))
             cid = str(args.get("call_id", ""))
             text = engine.expand(cid, fields)
             live.expand(cid, fields, text)
@@ -425,15 +426,17 @@ def _server(o: Options):
                 rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
                                      ensure_ascii=False) + "\n")
                 rec.flush()
-            text = engine.observe(call, ToolResult(raw)).text
+            obs = engine.observe(call, ToolResult(raw))
+            text = obs.text
             live.call(params.name, raw, text)
             if text == raw:
                 # Nothing trimmed: the server's result goes back untouched,
                 # structured content and metadata included.
                 return r
-            if structured is not None and engine.policy is not None:
+            if structured is not None and engine.policy is not None and obs.exposure == FILTERED:
                 # The structured copy is trimmed like the text, or it would carry
-                # back everything the projection removed.
+                # back everything the projection removed. A result passed whole on
+                # purpose (sampled, or cheaper whole) keeps it whole as well.
                 projected = engine.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
                 try:
                     structured = json.loads(projected)

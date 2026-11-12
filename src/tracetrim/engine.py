@@ -19,7 +19,6 @@ from pathlib import Path
 
 from .contract import FILTERED, FULL_CHEAPER, SAMPLED, Observation, ToolCall, ToolResult
 from .evidence import is_broad
-from .projection import project
 from .runtime import Policy
 from .usage import leaves, parse_output
 
@@ -40,6 +39,16 @@ _INDEX = re.compile(r"\[(\d+)\]")
 _NOTHING = object()
 
 
+def requested_fields(value) -> list[str]:
+    """The `fields` of an `expand` call as a list of names: a model may send one
+    name as a plain string, which must not be read as a list of characters."""
+    if isinstance(value, str):
+        return [value] if value else []
+    if isinstance(value, (list, tuple)):
+        return [str(f) for f in value]
+    return []
+
+
 def generic(path: str) -> str:
     """`data[0].x` -> `data[].x`: the path of a field, whatever the element."""
     return _INDEX.sub("[]", path)
@@ -51,16 +60,34 @@ def _matches(wanted: str) -> re.Pattern:
     return re.compile(re.escape(wanted).replace(r"\[\]", r"\[\d+\]") + r"(?:$|\.|\[)")
 
 
-def _pick(node, wanted: list[re.Pattern], found: set, at: str = ""):
-    """What a result holds at the requested positions. Elements come in their
-    original order; those that hold nothing requested are left out."""
+def _elements(wanted: str) -> list[re.Pattern]:
+    """The list elements a requested path addresses: `data[].lines[1].sku`
+    addresses every element of `data` and the second of each `lines`."""
+    out, i = [], 0
+    while (m := re.compile(r"\[(\d*)\]").search(wanted, i)) is not None:
+        prefix = wanted[:m.end()]
+        out.append(re.compile(re.escape(prefix).replace(r"\[\]", r"\[\d+\]") + "$"))
+        i = m.end()
+    return out
+
+
+def _pick(node, wanted: list[re.Pattern], found: set, at: str = "", addressed: list[re.Pattern] = ()):
+    """What a result holds at the requested positions, in the original order.
+
+    An element of a list that a request addresses keeps its place even when it
+    lacks the field (an empty object, or null for a value), so that a value is
+    never read as another record's; elements no request addresses are left out.
+    A list in which nothing requested was found is left out whole."""
     if isinstance(node, dict):
         out = {k: r for k, v in node.items()
-               if (r := _pick(v, wanted, found, f"{at}.{k}" if at else k)) is not _NOTHING}
+               if (r := _pick(v, wanted, found, f"{at}.{k}" if at else k, addressed)) is not _NOTHING}
         return out or _NOTHING
     if isinstance(node, list):
-        out = [r for i, v in enumerate(node) if (r := _pick(v, wanted, found, f"{at}[{i}]")) is not _NOTHING]
-        return out or _NOTHING
+        picked = [(i, v, _pick(v, wanted, found, f"{at}[{i}]", addressed)) for i, v in enumerate(node)]
+        if all(r is _NOTHING for _, _, r in picked):
+            return _NOTHING
+        return [({} if isinstance(v, dict) else None) if r is _NOTHING else r for i, v, r in picked
+                if r is not _NOTHING or any(a.match(f"{at}[{i}]") for a in addressed)]
     if any(w.match(at) for w in wanted):
         found.add(generic(at))
         return node
@@ -104,8 +131,13 @@ class Trimmer:
             # off after too many expand requests): nothing is removed, so the result
             # is neither filtered, nor a candidate for sampling, nor "cheaper whole".
             return Observation(trimmed)
-        drop = proj.seen.get(tool, set()) - proj.keep[tool]
-        hidden = sorted({p for p, _ in leaves(payload) if p in drop})
+        # What the projection removes from this result: the fields seen while learning
+        # and not kept; with `unseen="drop"`, also every field it never saw.
+        if proj.unseen == "keep":
+            drop = proj.seen.get(tool, set()) - proj.keep[tool]
+            hidden = sorted({p for p, _ in leaves(payload) if p in drop})
+        else:
+            hidden = sorted({p for p, _ in leaves(payload) if p not in proj.keep[tool]})
         if not hidden:
             return Observation(trimmed)
         annotate = self.policy.expand_enabled(tool) or self.policy.config.get("expand_all")
@@ -152,28 +184,23 @@ class Trimmer:
 
         A path may name one element of a list by its position, from zero:
         `data[0].x` is `data[].x` for the first element of `data` only. The
-        reply then holds the requested elements alone, in their original order.
-        For what is learned from the request, an index counts as `[]`: asking
-        for a field of one element is asking for that field."""
+        reply holds the requested elements in their original order, and an
+        element that lacks the field keeps its place (an empty object), so that
+        no value can be read as another record's. For what is learned from the
+        request, an index counts as `[]`: asking for a field of one element is
+        asking for that field."""
         payload = self.originals.get(call_id)
         if payload is None:
             return self._unknown(call_id), ()
         hidden = self.hidden.get(call_id, set())
-        if "*" in wanted:
-            fields = set(hidden)
-        elif any(_INDEX.search(w) for w in wanted):
-            fields = set()
-            got = _pick(payload, [_matches(w) for w in wanted], fields)
-            if fields:
-                return json.dumps(got, ensure_ascii=False), tuple(sorted(fields))
-        else:
-            fields = {p for p, _ in leaves(payload)
-                      if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in wanted)}
+        requested = sorted(hidden) if "*" in wanted else wanted
+        fields: set[str] = set()
+        got = _pick(payload, [_matches(w) for w in requested], fields,
+                    addressed=[a for w in requested for a in _elements(w)])
         if not fields:
             groups = sorted({".".join(h.split(".")[:2]) for h in hidden})
             return ("Error: no field matches " + ", ".join(wanted)[:200] + ". Hidden groups: "
                     + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else ".")), ()
-        got = project(payload, fields)
         return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False), tuple(sorted(fields))
 
     def _unknown(self, call_id: str) -> str:

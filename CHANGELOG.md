@@ -102,6 +102,28 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
     skill. `--no-skill` restores the previous capabilities and instructions.
   - `serverInfo.version` is tracetrim's version; it was empty.
   - The description of `tracetrim_done`'s `answer` says "the answer only, not the conversation".
+- **Fixed, from a code review of 2026-11-12** (each defect reproduced by running code, each now a test):
+  - `expand` left out the list elements that lack a requested field, so a model reading the reply in order
+    could take one record's value for another's (in 0.3.5 too). An addressed element now keeps its place,
+    empty when it has nothing; `"*"` and indexed requests alike.
+  - With a projection learned with `--unseen drop`, fields never seen while learning were removed with no
+    `[trimmed]` line and could not be asked back (in 0.3.5 too). They are now listed and expandable.
+  - A top-level list trimmed to nothing became `{}` (in 0.3.5 too); it stays a list, `[]`.
+  - A result passed whole on purpose (sampled, or cheaper whole) went out with a trimmed `structuredContent`.
+  - The switch-off counted a run whose `expand` gave nothing back, and an expansion of a result filtered
+    before the tool's counters started again; a field the operator reverted was taken as settled by
+    ordinary learning, and wiped the tool's counters.
+  - `tracetrim promotions --revert/--restore` relearned with the default settings instead of those of the
+    work directory, and could switch off a tool the proxy would keep.
+  - `expand` called with one field name as a string read it as a list of characters.
+  - Two threads writing the same file of the work directory could collide on the temporary file.
+  - A tool that returned an empty string stopped the report with a division by zero (in 0.3.5 too).
+  - `AutoTrim.structural` can be set again, as up to 0.3.5.
+  - Automatic mode without a tokenizer (`tracetrim[measure]`) stopped at its first relearning, in the middle
+    of the agent's work (in 0.3.5 too); it now says so at start-up.
+  - `tracetrim proxy` accepted adaptive options it then ignored (`--promote-runs` without `--promote`,
+    `--sample-max-share` or `--sample-seed` without `--sample-rate`, any of them without `--auto`) and
+    answered an out-of-range value with a traceback; it now refuses them with a message.
 - **Fixed:** a tool could be switched off one run after its field had come back. When the agent asks a
   field back with `expand` and writes its value, ordinary learning keeps the field from the next run; the
   requests that asked for it still counted against the tool, and a tool called twice a run reached the

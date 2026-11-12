@@ -246,3 +246,61 @@ def test_the_http_proxy_builds_a_shared_engine_and_stdio_does_not(monkeypatch):
     # The proxy's default for the switch-off is the library's.
     from tracetrim.evidence import Adaptive
     assert proxy.Options().switch_off_runs == Adaptive().switch_off_runs
+
+
+# --- Review of 2026-11-12: defects found by running code, each pinned here. ---
+
+def test_an_expanded_value_keeps_the_place_of_its_record():
+    # The reply used to leave out the elements that lack the field: a model reading in order
+    # took C3's price for B2's. Now an addressed element keeps its place, empty when it has nothing.
+    from tracetrim.engine import Trimmer
+    from tracetrim.projection import Projection
+    from tracetrim.runtime import Policy
+    a, c = "10 EUR, " + "list price " * 40, "30 EUR, " + "list price " * 40     # long enough to be worth trimming
+    out = json.dumps({"data": [{"id": "A1", "price": a}, {"id": "B2"}, {"id": "C3", "price": c}]})
+    proj = Projection("prudent", "full", {"t": {"data[].id"}}, {"t": {"data[].id", "data[].price"}})
+    tr = Trimmer(Policy({"format": "tracetrim/config@1", "tools": {"t": {"trim": "auto", "expand": True}}}, proj))
+    obs = tr.observe("t", out)
+    assert obs.call_id
+    assert json.loads(tr.expand(obs.call_id, ["data[].price"])) == {"data": [{"price": a}, {}, {"price": c}]}
+    assert json.loads(tr.expand(obs.call_id, ["*"])) == {"data": [{"price": a}, {}, {"price": c}]}
+    assert json.loads(tr.expand(obs.call_id, ["data[1].price", "data[2].price"])) == {"data": [{}, {"price": c}]}
+
+
+def test_with_unseen_drop_every_removed_field_is_listed_and_can_be_expanded():
+    from tracetrim.engine import FILTERED, Trimmer
+    from tracetrim.projection import Projection
+    from tracetrim.runtime import Policy
+    out = json.dumps({"id": "a1", "x": "seen and dropped " * 5, "extra": "never seen " * 20})
+    proj = Projection("prudent", "full", {"t": {"id"}}, {"t": {"id", "x"}}, unseen="drop")
+    tr = Trimmer(Policy({"format": "tracetrim/config@1", "tools": {"t": {"trim": "auto", "expand": True}}}, proj))
+    obs = tr.observe("t", out)
+    assert obs.exposure == FILTERED and set(obs.hidden) == {"x", "extra"} and "extra" in obs.text
+    assert json.loads(tr.expand(obs.call_id, ["extra"])) == {"extra": "never seen " * 20}
+
+
+def test_a_top_level_list_trimmed_to_nothing_stays_a_list():
+    from tracetrim.projection import Projection
+    proj = Projection("prudent", "full", {"t": {"[].id"}}, {"t": {"[].id", "[].note"}})
+    assert proj.apply("t", json.dumps([{"note": "n"}, {"note": "m"}])) == "[]"
+
+
+def test_two_threads_can_write_the_same_file_atomically(tmp_path):
+    import threading
+
+    from tracetrim.store import write_atomic
+    errors = []
+
+    def work(tag):
+        for i in range(200):
+            try:
+                write_atomic(tmp_path / "state.json", f'{{"{tag}": {i}}}')
+            except Exception as e:       # noqa: BLE001
+                errors.append(e)
+    threads = [threading.Thread(target=work, args=(t,)) for t in "ab"]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert not errors and json.loads((tmp_path / "state.json").read_text())
+    assert not list(tmp_path.glob(".*.tmp"))

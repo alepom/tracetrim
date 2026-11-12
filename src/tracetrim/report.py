@@ -491,13 +491,14 @@ def _chart_tools(d) -> str:
     for label, name, raw, kept in rows:
         kept = min(kept, raw)
         cut = raw - kept
+        share = cut / raw if raw else 0.0          # a tool that returned nothing removes nothing
         parts = [
             (kept, "kept", _tip(f"{_n(kept, 'en')} tokens", f"{_n(kept, 'it')} token",
                                 f"{name} · reaches the agent", f"{name} · arriva all'agente")),
-            (cut, "removed", _tip(f"{_n(cut, 'en')} tokens ({cut / raw:.0%})", f"{_n(cut, 'it')} token ({cut / raw:.0%})",
+            (cut, "removed", _tip(f"{_n(cut, 'en')} tokens ({share:.0%})", f"{_n(cut, 'it')} token ({share:.0%})",
                                   f"{name} · removed", f"{name} · tolto")),
         ]
-        pct = f" · −{cut / raw:.0%}" if cut / raw >= 0.005 else ""
+        pct = f" · −{share:.0%}" if share >= 0.005 else ""
         out.append(
             f'<div class="brow"><div class="bname">{label}</div>'
             f'<div class="btrack"><div class="bbar" style="width:{raw / top * 82:.2f}%">{_segments(parts)}</div>'
