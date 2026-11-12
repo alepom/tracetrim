@@ -66,7 +66,22 @@ to run new agent sessions, also `pip install -r requirements-study.txt` (the ver
 
 ## The short way: automatic mode
 
-Your agent already uses one or more MCP servers. Copy their `mcpServers` block — the same JSON
+Your agent already uses one or more MCP servers. If its host is Claude Desktop, Claude Code, Cursor
+or VS Code, `tracetrim init` (since 0.5) puts tracetrim in front of them for you:
+
+```bash
+tracetrim init --host cursor            # dry run: shows what would change, writes nothing
+tracetrim init --host cursor --write    # backup, servers moved to a work directory, one entry in the host
+```
+
+It moves the servers it can stand in front of to `servers.json` in a work directory (readable only by
+you), leaves one `tracetrim` entry in the host, and says which servers stay where they are and why. It
+never prints a key, and `tracetrim init --undo BACKUP` puts the host's file back byte for byte.
+[docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md) has the details, and
+a table of what was verified host by host. Then restart the host and go to *Then use the agent as
+usual*, below.
+
+**By hand**, for any other host. Copy the `mcpServers` block of your servers — the same JSON
 Claude Desktop, Claude Code and Cursor use — into a file:
 
 ```json
@@ -94,7 +109,9 @@ call tracetrim_done once with the complete answer, before you show it; then show
 The agent sees the same tools with the same names (prefixed with the server name only if two
 servers share one), plus `expand` and `tracetrim_done`. The proxy also publishes these instructions
 as an Agent Skill over MCP (since 0.4; see [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)):
-a host that loads MCP skills needs no added line, the others keep it. Then use the agent as usual:
+a host that loads MCP skills needs no added line, the others keep it
+([which hosts do](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md#what-was-verified-host-by-host)).
+Then use the agent as usual:
 
 - **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
   (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent

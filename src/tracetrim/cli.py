@@ -12,6 +12,8 @@
                     [--switch-off-runs 2]
   tracetrim promotions WORKDIR [--revert [TOOL [FIELD]] | --restore TOOL FIELD]
   tracetrim skill   [--strategy] [--no-done] [--write DIR]   (the instructions the proxy publishes as a skill)
+  tracetrim init    --host claude-desktop|claude-code|cursor|vscode [--file PATH] [--write]   (dry run without --write)
+  tracetrim init    --undo BACKUP
 
 `measure` always starts by showing what it read: a parser that fails
 silently produces plausible, wrong numbers.
@@ -239,6 +241,12 @@ def cmd_skill(a):
         sys.stdout.write(skill.text(**kw))
 
 
+def cmd_init(a):
+    """Put tracetrim in front of the servers of a host's MCP configuration (tracetrim.init)."""
+    from . import init
+    init.run(a)
+
+
 def _upstreams(a) -> dict:
     from .proxy import Options, load_servers
     if bool(a.servers) == bool(a.upstream_url):
@@ -395,6 +403,33 @@ def main(argv=None):
                    help="leave out tracetrim_done (function calling: the loop passes the answer itself)")
     s.add_argument("--write", metavar="DIR", help="write DIR/tracetrim/SKILL.md instead of printing the text")
     s.set_defaults(func=cmd_skill)
+
+    from .init import HOSTS
+    s = sub.add_parser("init", help="put tracetrim in front of the MCP servers a host already uses (dry run unless --write)",
+                       description="Reads the host's MCP configuration and shows what would change: which servers go "
+                                   "behind tracetrim, which stay and why, the host's new entry, the servers file. "
+                                   "Nothing is written without --write. No value of the file is ever printed.")
+    s.add_argument("--host", choices=list(HOSTS), help="the host whose configuration is read")
+    s.add_argument("--file", metavar="PATH", help="the host's file, when it is not in the documented place")
+    s.add_argument("--scope", choices=["user", "project"],
+                   help="which of the host's files: the user's or the project's in the current directory "
+                        "(default: user for Claude Desktop and Cursor, project for Claude Code and VS Code)")
+    s.add_argument("--workdir", metavar="DIR",
+                   help="where servers.json, the traces and the report go (default: ~/.tracetrim/HOST for the user's "
+                        "file, ~/.tracetrim/HOST/PROJECT-HASH for a project's: tracetrim learns per directory)")
+    s.add_argument("--name", default="tracetrim", help="the name of the entry in the host (default: tracetrim)")
+    s.add_argument("--exclude", action="append", default=[], metavar="NAME",
+                   help="leave this server in the host (repeatable)")
+    s.add_argument("--http", type=int, metavar="PORT",
+                   help="for a host that reaches tracetrim over HTTP: the host's file is not rewritten, the steps are printed")
+    s.add_argument("--write", action="store_true",
+                   help="do it: backup of the host's file next to it, servers moved to WORKDIR/servers.json (mode 0600), "
+                        "one entry in the host")
+    s.add_argument("--force", action="store_true",
+                   help="write servers.json even inside a git repository that does not ignore it; with --undo, "
+                        "restore even if the host's file changed since")
+    s.add_argument("--undo", metavar="BACKUP", help="restore the host's file from the backup --write made, byte for byte")
+    s.set_defaults(func=cmd_init)
 
     for cmd, func, text in (("login", cmd_login, "log in to the OAuth servers (browser), once"),
                             ("logout", cmd_logout, "forget the OAuth tokens")):

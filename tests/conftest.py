@@ -38,3 +38,35 @@ def traces():
         pytest.skip("recorded traces not available: unzip the Zenodo dataset at the repository root")
     return TRACES
 
+
+
+# ---- No test may touch the user's real files (tracetrim init rewrites host configurations).
+REAL_HOME = Path.home()
+_HOME_VARS = ("HOME", "USERPROFILE", "APPDATA", "XDG_CONFIG_HOME")
+
+
+def _real_places():
+    """The files `tracetrim init` could reach under the real home. Only their
+    presence, size and time are looked at, never their content."""
+    from tracetrim.init import HOSTS
+    places = [h.user_path() for h in HOSTS.values() if h.user]
+    places += [REAL_HOME / ".claude.json", REAL_HOME / ".tracetrim"]
+    return {str(p): ((s := p.stat()).st_size, s.st_mtime_ns) if p.exists() else None for p in places}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def real_home_untouched():
+    before = _real_places()
+    yield
+    assert _real_places() == before, "a test changed a file under the real home"
+
+
+@pytest.fixture(autouse=True)
+def temp_home(tmp_path, monkeypatch):
+    """Every test runs with a home of its own."""
+    home = tmp_path / "home"
+    home.mkdir()
+    for var in _HOME_VARS:
+        monkeypatch.setenv(var, str(home / ".config") if var == "XDG_CONFIG_HOME" else
+                           str(home / "AppData" / "Roaming") if var == "APPDATA" else str(home))
+    return home
