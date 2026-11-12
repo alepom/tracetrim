@@ -93,7 +93,7 @@ call tracetrim_done once with the complete answer, before you show it; then show
 
 The agent sees the same tools with the same names (prefixed with the server name only if two
 servers share one), plus `expand` and `tracetrim_done`. The proxy also publishes these instructions
-as an Agent Skill over MCP (unreleased; see [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)):
+as an Agent Skill over MCP (since 0.4; see [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)):
 a host that loads MCP skills needs no added line, the others keep it. Then use the agent as usual:
 
 - **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
@@ -106,7 +106,7 @@ a host that loads MCP skills needs no added line, the others keep it. Then use t
   identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
   report as a manual action for you to review;
 - **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
-  trimmed, and the report says so. Unreleased, and off unless asked for: `--promote` keeps a single
+  trimmed, and the report says so. Since 0.4, and off unless asked for: `--promote` keeps a single
   field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
   result whole now and then to see whether the agent uses what is removed
   ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). Runs without `tracetrim_done` count for telemetry, not for learning.

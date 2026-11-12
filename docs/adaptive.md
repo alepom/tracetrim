@@ -1,8 +1,7 @@
 # Adaptive learning
 
 How automatic mode corrects a projection while the agent works: evidence from `expand`, promotion of
-fields, sampling without filter. Unreleased: this page describes the branch
-`feat/adaptive-learning-mcp-skills`. Everything here was checked by tests and by an offline demo with a
+fields, sampling without filter. Since 0.4. Everything here was checked by tests and by an offline demo with a
 scripted agent, and then measured on one model in a small experiment: [measures-v04.md](measures-v04.md).
 In short: fields the agent recovers and writes come back by themselves; promotion and sampling made no
 measurable difference there, and what they are for (a value used and never written, a field never asked

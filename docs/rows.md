@@ -5,7 +5,7 @@ ten results, each with fewer fields. This note is about what a cut of rows would
 of it is built. Nothing described here exists in the code.
 
 Numbers: `results/v04/rows.json`, recomputed from the recorded runs by `python -m experiments.rows`.
-Unreleased: this page describes the branch `feat/adaptive-learning-mcp-skills`.
+Since 0.4.
 
 ## What the agents asked for
 

@@ -1,7 +1,7 @@
 # The tracetrim skill
 
 What an agent needs to know to work behind tracetrim, written once and delivered three ways.
-Unreleased: this page describes the branch `feat/adaptive-learning-mcp-skills`.
+Since 0.4.
 
 ## Two levels
 

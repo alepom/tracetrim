@@ -31,6 +31,7 @@ same text and the same traces as 0.4.0, which a test checks with the new counts 
   a skill its uri, for a tool call the name of the tool. Never arguments, results, headers or tokens. It
   tells whether a host asked for the tracetrim skill
   ([docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)). Over stdio and HTTP.
+- README and docs no longer call the functions of 0.4 "unreleased".
 
 ## 0.4.0
 
