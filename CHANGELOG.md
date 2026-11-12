@@ -4,6 +4,42 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 0.7.0
+
+The release before 1.0: what is promised not to break, written down and held by tests, and the fixes of
+an independent review of everything added since 0.4.0. **Nothing changes in what the model receives.**
+
+- **[STABILITY.md](https://github.com/alepom/tracetrim/blob/master/STABILITY.md)**: what stays stable from
+  1.0 on (what the model receives, the command line, the Python API, the files and their formats), how a
+  change of behaviour is announced, and how deprecations work. `tests/test_stability.py` holds it, with a
+  work directory written by 0.6.0 that every later version must read and go on learning from.
+- `state.json` names its format (`tracetrim/state@1`), like every other file of the work directory; a
+  state without it loads the same.
+- The README is reordered for a first reader.
+- **Fixed, `tracetrim init`** (each defect reproduced, each now a test):
+  - an existing tracetrim entry in the host showed the values of its other fields (`auth`, `envFile`,
+    `cwd`, ...) in the dry run; now only what `init` itself writes is shown;
+  - the mask is ASCII (`****`): on a terminal that could not print the old one, `--write` wrote the files
+    and then failed without naming the backup;
+  - refused now: a servers file holding more than `mcpServers` (it lost the rest), servers left on disk by
+    an earlier `init` that was undone (they came back; `--force` keeps them), a `.claude.json` given with
+    `--file`, `--http` outside 1–65535 (`--http 0` rewrote the host);
+  - a tracetrim proxy entry in any form (`--servers=`, `python -m tracetrim.cli`, without `--servers`) is
+    never wrapped in a second one;
+  - the git check looks at the servers file actually written;
+  - on Windows, values that the proxy's expansion would change keep the server in the host;
+  - a host or servers file saved while `init` runs stops everything; `--undo --force` works with an
+    unreadable note; a field set to `null` leaves that server in the host instead of stopping the run;
+  - temporary files get random names and are created exclusively, never through a link.
+- **Fixed, elsewhere**:
+  - `--log-client` writes only the names of the capabilities a client declares, never their values
+    (`experimental` and the extensions are free-form);
+  - tool definitions: Gemini's groups of functions count as the functions they hold, provider built-ins
+    weigh but are never named as unused, `tracetrim report --tools` counts only runs that end with an
+    answer; the `unused_tools` action lists `{name, tokens}` objects;
+  - a `savings.json` of another shape never stops a closing; no `run-0000` from an `expand` before any
+    call; a tool output given to `AutoTrim` as bytes is read as UTF-8 text.
+
 ## 0.6.0
 
 What tool definitions weigh, measured and reported. **Nothing changes in what the model receives**: tool
