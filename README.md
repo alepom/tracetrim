@@ -224,6 +224,10 @@ schema, to adapt to your provider's tool format (`{"type": "function", ...}` for
 `description` / `input_schema` for Anthropic). `tt.instructions` is the text that explains `expand`
 to the model, for your system prompt; `AutoTrim(..., strategy=True)` adds optional notes on how to
 organise tool calls (off by default; what was measured on it: [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
+`tt.offered(tools)`, optional, takes the list as you send it to the model: the report then shows what the
+tool definitions weigh per turn and which tools were never called (the proxy records its own list; for
+`tracetrim report`, `--tools FILE`). Nothing the model receives changes, and tracetrim hides no tool:
+[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md) says why.
 
 Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
 tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a

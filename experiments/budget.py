@@ -4,7 +4,6 @@
   .venv/bin/python -m experiments.budget
   .venv/bin/python -m experiments.budget --c3-scale 0.5     # e.g. OpenAlex at 5 results per page
   .venv/bin/python -m experiments.budget --v04 [--json]     # the measures of protocol-v04.md (E1, E2)
-  .venv/bin/python -m experiments.budget --v06 [--json]     # the DRAFT of protocol-v06.md (E4): printed, never written
 
 Live run cost  = the pilot run's billed usage (cache included, as it happened).
 Replay cost    = the pilot's LAST turn: its input is the whole conversation
@@ -38,82 +37,6 @@ V04 = {
     # that call it, everything that calls it stops until the author has read the spend.
     "dataforseo_checkpoint_runs": 10,
 }
-
-
-# protocol-v06.md (a DRAFT until frozen): deferred tool definitions, on C1 with every tool of the
-# server enabled. Changing a number here is changing the protocol.
-V06 = {
-    "case": "C1",
-    "pilot": {"R": 1, "D": 1},                       # used in no result: does a run with 79 tools work at all?
-    "e4a": {"arms": ["R", "D"], "runs_per_arm": 5},  # the task as it is: independent runs, a fixed list in D
-    # the variant needs a tool that D hides: R as independent runs, D as one sequence that learns
-    "e4b": {"runs": {"R": 3, "D": 5}, "variant_factor": 1.25},
-    "dataforseo_checkpoint_runs": 4,
-}
-
-
-def v06() -> dict:
-    """The estimate for the draft of protocol-v06.md. Two figures per run, both from measured runs:
-
-    expected      a recorded run of C1 (E1, arm R: median) times what the counterfactual of
-                  `experiments.definitions` gives for 79 tools at a cold start;
-    conservative  the dearest recorded run, plus the added definitions at the uncached price on
-                  every turn of the longest run: no cache for them at all.
-
-    Arm D is costed like R in both: its searches may add turns, and the estimate must not count on
-    the saving it is there to measure. Nothing is written: the amounts go in the report only."""
-    import os
-    from pathlib import Path
-
-    from .paths import ROOT
-    res = ROOT / "results" / "v06" / "definitions.json"
-    if not res.exists():
-        sys.exit("results/v06/definitions.json is needed: python -m experiments.definitions")
-    sc = json.loads(res.read_text())["scenario_all_server_tools"]
-    traces = Path(os.environ.get("TRACETRIM_V04_TRACES") or ROOT / "traces")
-    metas = [json.loads(p.read_text()) for p in sorted((traces / V06["case"]).glob("E1-R-*.meta.json"))]
-    if not metas:
-        sys.exit(f"{traces / V06['case']}: the E1 runs of arm R are needed (set $TRACETRIM_V04_TRACES)")
-    added = sc["definitions"]["all_server_tools"] - sc["definitions"]["case_tools_12"]
-    expected = statistics.median(m["cost_usd"] for m in metas) * sc["cache"]["cold"]["R79_cost_vs_recorded"]["median"]
-    conservative = (max(m["cost_usd"] for m in metas)
-                    + added * max(m["turns"] for m in metas) * PRICES["input_per_mtok"] / 1e6)
-    calls, calls_max = statistics.median(m["calls"] for m in metas), max(m["calls"] for m in metas)
-    lines = []
-    for arm, n in V06["pilot"].items():
-        lines.append({"part": "pilot", "arm": arm, "runs": n, "factor": 1.0})
-    for arm in V06["e4a"]["arms"]:
-        lines.append({"part": "E4a", "arm": arm, "runs": V06["e4a"]["runs_per_arm"], "factor": 1.0})
-    for arm, n in V06["e4b"]["runs"].items():
-        lines.append({"part": "E4b", "arm": arm, "runs": n, "factor": V06["e4b"]["variant_factor"]})
-    for x in lines:
-        x["usd"], x["usd_conservative"] = x["runs"] * x["factor"] * expected, x["runs"] * x["factor"] * conservative
-    runs = sum(x["runs"] for x in lines)
-    return {"prices": {k: PRICES[k] for k in ("model", "input_per_mtok", "cached_input_per_mtok", "output_per_mtok")},
-            "measured": {"runs": len(metas), "source": "E1, arm R, C1 (12 tools)", "definitions_added_per_turn": added,
-                         "largest_request": sc["largest_request_R79"]},
-            "per_run": {"expected": expected, "conservative": conservative},
-            "design": V06, "lines": lines,
-            "totals": {"runs": runs, "usd": sum(x["usd"] for x in lines),
-                       "usd_conservative": sum(x["usd_conservative"] for x in lines),
-                       "tuning": caps("v06", "tuning")},
-            "dataforseo_calls": {"runs": runs, "calls": runs * calls, "calls_max": runs * calls_max}}
-
-
-def print_v06(r: dict) -> None:
-    print(f"\n  DRAFT of protocol-v06.md (E4). From {r['measured']['runs']} recorded runs: {r['measured']['source']}; "
-          f"{r['measured']['definitions_added_per_turn']:,} tokens of definitions added per turn")
-    print(f"  per run: expected {r['per_run']['expected']:.3f} USD, conservative {r['per_run']['conservative']:.3f}")
-    print(f"\n  {'part':<7}{'arm':<5}{'runs':>5}{'USD':>8}{'conservative':>14}")
-    for x in r["lines"]:
-        print(f"  {x['part']:<7}{x['arm']:<5}{x['runs']:>5}{x['usd']:>8.2f}{x['usd_conservative']:>14.2f}")
-    t = r["totals"]
-    print(f"\n  {t['runs']} runs: {t['usd']:.2f} USD expected, {t['usd_conservative']:.2f} conservative"
-          f" (+ tuning {t['tuning']:.2f}; cap {caps('v06')[1]:.0f}, warning at {caps('v06')[0]:.0f}: local, never published)")
-    d = r["dataforseo_calls"]
-    print(f"  DataForSEO calls: {d['runs']} runs x {d['calls'] / d['runs']:g} = {d['calls']:g}"
-          f" (at the maximum seen per run: {d['calls_max']:g}); billed apart, price per call not known here")
-    print(f"  largest request with 79 tools: {r['measured']['largest_request']:,} tokens (the price list changes above 272,000)\n")
 
 
 def measured(case: str) -> dict:
@@ -211,13 +134,8 @@ def main():
     a.add_argument("--phase-c", default="C1,C2,C4", help="cases with live expand runs")
     a.add_argument("--phase-c-runs", type=int, default=5, help="Phase C runs per arm")
     a.add_argument("--v04", action="store_true", help="estimate for protocol-v04.md (E1, E2)")
-    a.add_argument("--v06", action="store_true", help="estimate for the draft of protocol-v06.md (E4)")
     a.add_argument("--json", action="store_true")
     o = a.parse_args()
-    if o.v06:
-        r = v06()
-        print(json.dumps(r, indent=2)) if o.json else print_v06(r)
-        return
     if o.v04:
         r = v04()
         print(json.dumps(r, indent=2)) if o.json else print_v04(r)

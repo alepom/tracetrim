@@ -39,6 +39,8 @@ UNJUDGED_SHARE = 0.10     # non-judgeable kept fields >= 10% of a tool's field t
 ESCAPE_MIN_SAVING = 0.01  # re-serialising without escapes saves >= 1%
 MIN_CALLS = 5             # risk and review rules need enough calls to mean something
 REVIEW_MIN_SHARE = 0.01   # and a tool worth reviewing: >= 1% of all tool-output tokens
+# The rule on tool definitions has its thresholds in tracetrim.definitions.
+from .definitions import LIST_MAX as DEFINITIONS_LIST_MAX  # noqa: E402
 
 
 def _is_error(c) -> bool:
@@ -269,6 +271,28 @@ def suggestions(d: dict) -> list[dict]:
             f"In the {turns['runs']} recorded runs the agent nearly always makes one tool call per turn ({_p(several, 'en')} of the turns with calls make several), and about {_p(earlier, 'en')} of its calls had their arguments available before the turn in which they were made (an estimate: identifiers only). The strategy level of the tracetrim skill might reduce the turns: on one model that works this way it took a task from a median of 17 turns to 6 (`docs/measures-v04.md`, E3); on a model that already groups its calls it changed nothing.",
             f"Nelle {turns['runs']} esecuzioni registrate l'agente fa quasi sempre una chiamata per turno ({_il(several)} dei turni con chiamate ne fa più di una), e circa {_il(earlier)} delle chiamate aveva gli argomenti disponibili prima del turno in cui è partita (una stima: solo identificativi). La strategia della skill di tracetrim potrebbe ridurre i turni: su un modello che lavora così ha portato un compito da una mediana di 17 turni a 6 (`docs/measures-v04.md`, E3); su un modello che raggruppa già le chiamate non ha cambiato nulla.")
 
+    defs = d.get("definitions")
+    if defs and defs.get("suggest"):
+        k, n, runs = len(defs["never_called"]), defs["offered"], defs["runs"]
+        shown = min(k, DEFINITIONS_LIST_MAX)
+        listed_en = f"the first {shown} of {k} below" if k > shown else "below"
+        listed_it = f"i primi {shown} di {k} qui sotto" if k > shown else "qui sotto"
+        add("definitions", "review", None,
+            f"The tool definitions weigh {_n(defs['tokens_per_turn'], 'en')} tokens, and the model receives them on every turn. "
+            f"{k} of the {n} tools were never called in {runs} complete runs and weigh {_n(defs['never_called_tokens'], 'en')} "
+            f"of those tokens ({_p(defs['never_called_share'], 'en')}); heaviest first, {listed_en}. If this agent does not need "
+            "them, disable them in the host; or use native tool search where the host or the API has it, which loads a "
+            "definition only when it is needed (Claude Code: on by default for MCP tools; OpenAI Responses API: `tool_search` "
+            f"with `defer_loading`). Never called in {runs} runs does not mean never needed: a different request may need one "
+            "of them. tracetrim hides no tool by itself.",
+            f"Le definizioni dei tool pesano {_n(defs['tokens_per_turn'], 'it')} token, e il modello le riceve a ogni turno. "
+            f"{k} dei {n} tool non sono mai stati chiamati in {runs} esecuzioni complete e ne pesano {_n(defs['never_called_tokens'], 'it')} "
+            f"({_il(defs['never_called_share'])}); dal più pesante, {listed_it}. Se a questo agente non servono, disattivali "
+            "nell'host; oppure usa la ricerca nativa dei tool dove l'host o l'API ce l'ha, che carica una definizione solo quando "
+            "serve (Claude Code: attiva per default sui tool MCP; Responses API di OpenAI: `tool_search` con `defer_loading`). "
+            f"«Mai chiamato in {runs} esecuzioni» non vuol dire «mai necessario»: una richiesta diversa può averne bisogno. "
+            "tracetrim non nasconde nessun tool da solo.")
+
     for x in out:
         x["action"] = _action(x, d)
     order = {"warning": 0, "risk": 1, "saving": 2, "quick-win": 3, "review": 4, "limit": 5}
@@ -298,6 +322,11 @@ def _action(s: dict, d: dict) -> dict:
         return {"kind": "manual", "type": "review_fields", "tool": tool, "fields": unj[:10]}
     if s["rule"] == "prose":
         return {"kind": "manual", "type": "limit_text_output", "tool": tool}
+    if s["rule"] == "definitions":
+        # Manual, always: only a person knows whether a tool never called is a tool never needed.
+        never = d["definitions"]["never_called"][:DEFINITIONS_LIST_MAX]
+        return {"kind": "manual", "type": "unused_tools",
+                "tools": [f"{x['name']} · {x['tokens']}" for x in never]}
     if s["rule"] == "strategy":
         # Manual, always: the strategy is instructions for the model, and whether
         # to give them is the choice of who writes the agent's prompts.
@@ -322,6 +351,8 @@ ACTION_TEXT = {
                           "Riduci quante volte viene chiamato questo tool, o quanto testo restituisce."),
     "skill_strategy": ("Try the strategy level of the skill and compare the turns: `--skill-strategy` on the proxy, `AutoTrim(strategy=True)` for function calling, `tracetrim skill --strategy` to print the text. tracetrim never turns it on by itself.",
                        "Prova la strategia della skill e confronta i turni: `--skill-strategy` sul proxy, `AutoTrim(strategy=True)` con il function calling, `tracetrim skill --strategy` per stampare il testo. tracetrim non la accende mai da solo."),
+    "unused_tools": ("Tools never called, with the tokens of their definition. Disable those this agent does not need, in the host's settings; tracetrim does not:",
+                     "Tool mai chiamati, con i token della loro definizione. Disattiva nell'host quelli che a questo agente non servono; tracetrim non lo fa:"),
     "collect_traces": ("Collect more runs of the same task, then generate the report again.",
                        "Raccogli altre esecuzioni dello stesso compito, poi rigenera il report."),
 }
@@ -478,6 +509,22 @@ L = {
     "several": ("turns with several calls", "turni con più chiamate"),
     "could_earlier": ("calls that could have been made earlier", "chiamate che potevano partire prima"),
     "argument": ("argument", "argomento"), "distinct": ("distinct values", "valori distinti"),
+    "definitions": ("Tool definitions (a measure)", "Definizioni dei tool (una misura)"),
+    "defs_per_turn": ("tokens of definitions per turn", "token di definizioni per turno"),
+    "defs_offered": ("tools offered", "tool offerti"),
+    "defs_called": ("called in at least one complete run", "chiamati in almeno un'esecuzione completa"),
+    "defs_never": ("never called", "mai chiamati"),
+    "defs_never_tokens": ("tokens of the tools never called", "token dei tool mai chiamati"),
+    "defs_own": ("of which tracetrim's own tools", "di cui tool di tracetrim"),
+    "defs_note": (
+        "Counted on the JSON of each definition as published, with the tokenizer of this report: the provider bills its own "
+        "rendering of the definitions, usually somewhat less. The model receives them on every turn, so a run carries this "
+        "figure times its turns. tracetrim does not see the model's turns, so the weight per run is not estimated here.",
+        "Contati sul JSON di ogni definizione come viene pubblicata, con il tokenizer di questo report: il fornitore fattura "
+        "una sua resa delle definizioni, di solito un po' meno. Il modello le riceve a ogni turno, quindi un'esecuzione ne "
+        "porta questo numero per i suoi turni. tracetrim non vede i turni del modello, quindi il peso per esecuzione qui "
+        "non è stimato."),
+    "defs_list": ("Tools never called, heaviest first", "Tool mai chiamati, dal più pesante"),
     "method": ("How to read this report", "Come leggere questo report"),
     "method_text": (
         "Savings and misses are measured leave-one-out: each run is trimmed with a projection learned from the other runs. "
@@ -715,6 +762,27 @@ def _adaptive_html(d: dict) -> str:
     return "".join(out)
 
 
+def _definitions_html(d: dict) -> str:
+    """The section on tool definitions: only when the tool list is known."""
+    defs = d.get("definitions")
+    if not defs:
+        return ""
+    tiles = [("defs_per_turn", defs["tokens_per_turn"]), ("defs_offered", defs["offered"]),
+             ("defs_called", len(defs["called"])), ("defs_never", len(defs["never_called"])),
+             ("defs_never_tokens", defs["never_called_tokens"])]
+    tiles_html = "".join(f'<div class="tile"><div class="v">{_num(v)}</div><div class="k">{_t(k)}</div></div>'
+                         for k, v in tiles)
+    own = (f' · {_t("defs_own")}: {_num(defs["own_tokens"])} '
+           + ", ".join(f"<code>{html.escape(n)}</code>" for n in defs["own_tools"]) if defs["own_tools"] else "")
+    rows = "".join(f"<tr><td><code>{html.escape(x['name'])}</code></td><td>{_num(x['tokens'])}</td></tr>"
+                   for x in defs["never_called"])
+    table = (f"<details><summary>{_t('defs_list')} · {len(defs['never_called'])}</summary><table><thead><tr>"
+             f"<th>{_t('tool')}</th><th>{_t('tokens')}</th></tr></thead><tbody>{rows}</tbody></table></details>"
+             if rows else "")
+    return (f'<h2>{_t("definitions")}</h2><div class="tiles">{tiles_html}</div>'
+            f'<p class="method">{_t("defs_note")}{own}</p>{table}')
+
+
 def _about_html(g: dict) -> str:
     """Project and author, from about.py: only identifiers that exist."""
     a = html.escape
@@ -770,7 +838,7 @@ def render_html(d: dict, sugg: list[dict]) -> str:
 
     def act(a):
         en, it = ACTION_TEXT[a["type"]]
-        extra = a.get("examples") or a.get("fields") or []
+        extra = a.get("examples") or a.get("fields") or a.get("tools") or []
         items = "".join(f"<li><code>{html.escape(x)}</code></li>" for x in extra)
         badge = _t("auto") if a["kind"] == "auto" else _t("manual")
         return (f'<div class="act {a["kind"]}"><span class="badge">{badge}</span>'
@@ -903,6 +971,7 @@ pre {{ background:var(--card); border:1px solid var(--line); border-radius:6px; 
 <th>{_t("prudent")}</th><th>{_t("aggressive")}</th><th>{_t("misses")}</th><th>{_t("errors")}</th><th>{_t("prose")}</th></tr></thead>
 <tbody>{"".join(rows)}</tbody></table></div>
 <h2>{_t("fields")}</h2>{"".join(details)}
+{_definitions_html(d)}
 {_adaptive_html(d)}
 <h2>{_t("method")}</h2><p class="method">{_t("method_text")}</p>
 <h2>{_t("project")}</h2>{_about_html(d["generator"])}

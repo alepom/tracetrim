@@ -54,7 +54,7 @@ CASES = ("C1", "C2", "C4", "C5")
 # A turn's cached tokens "cover the static head" when they reach this share of the first turn's input.
 HEAD_SHARE = 0.9
 
-# DRAFT definitions of the two meta-tools (design of 0.6, not in the library yet): here only to count
+# Definitions of the two meta-tools of a design that was NOT built (docs/definitions.md): here only to count
 # what they would add to every turn.
 META_TOOLS = [
     {"type": "function", "name": "find_tools", "strict": False,
@@ -357,7 +357,9 @@ def measure() -> dict:
 
 
 def _s(x: dict, pct: bool = False, digits: int = 0) -> str:
-    f = (lambda v: f"{100 * v:.{digits}f}%") if pct else (lambda v: f"{v:,.{digits}f}")
+    # A median of an even number of counts can be a half: shown as such, not rounded away.
+    f = ((lambda v: f"{100 * v:.{digits}f}%") if pct else
+         (lambda v: f"{v:,.1f}" if not digits and v != int(v) else f"{v:,.{digits}f}"))
     return f(x["median"]) if x["min"] == x["max"] else f"{f(x['median'])} [{f(x['min'])}–{f(x['max'])}]"
 
 

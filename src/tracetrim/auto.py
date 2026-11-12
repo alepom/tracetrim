@@ -33,6 +33,7 @@ Everything lives in the work directory, so learning survives restarts:
   workdir/evidence.json           evidence per field, promotions and their reasons
   workdir/evidence/run-0001.jsonl how results were exposed and what expand was asked, per run
   workdir/savings.json            per run and tool: tokens sent by the tools, re-written whole, received
+  workdir/tools.json              the tool list as published (proxy), or as passed to AutoTrim.offered
 
 Every file is replaced whole (written aside, then renamed): a process killed
 while writing leaves the previous content, never half of a file.
@@ -48,7 +49,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import evidence, store, turns
+from . import definitions, evidence, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine, requested_fields
 from .evidence import Adaptive
@@ -202,6 +203,12 @@ class Learner:
         entry["expand"]["tokens"] += self._expand_sizes[1]
         store.write_json(self.savings_path, data)
         self._sizes, self._expand_sizes = {}, [0, 0]
+
+    def record_tools(self, tools: list[dict]) -> bool:
+        """The tool list as published to the model, for the report's section on
+        definitions. Changes nothing the model receives. True when it changed."""
+        with self.lock:
+            return definitions.record(self.dir, tools)
 
     def trimmed(self, tool: str) -> None:
         with self.lock:
@@ -369,6 +376,12 @@ class Learner:
         usages = [analyse(t) for t in traces]
         d = rp.compute([t.name for t in traces], usages)
         d["turns"] = turns.summarise(traces)
+        published = definitions.load(self.dir)
+        if published is not None:
+            # Tools called in complete runs only: a run with no answer says nothing of what a task needs.
+            called = [{c.tool for c in t.calls} for t in traces] if complete else []
+            d["definitions"] = definitions.summarise(published, called, self.count, self.min_runs)
+            d["definitions"]["unit"] = self._unit()
         sugg = rp.suggestions(d)
         config, projection = rp.build_config(d, sugg, usages, "report.projection.json")
         d["lists"] = lists.summarise([lists.element_usage(t) for t in traces])
@@ -517,6 +530,7 @@ class AutoTrim:
 
         tt = AutoTrim("tracetrim-data/", min_runs=5)
         tools = my_tools + [tt.expand_tool]        # adapt the schema to your provider
+        tt.offered(tools)                          # optional: the report weighs the tool definitions
         system_prompt += tt.instructions           # how to use expand (and, with strategy=True, tools in general)
         ...
         # in the loop, for every tool call the model makes:
@@ -586,6 +600,13 @@ class AutoTrim:
         `tracetrim_done`, which a function-calling loop does not need."""
         from .skill import text
         return text(strategy=self.strategy, done=False)
+
+    def offered(self, tools: list[dict]) -> None:
+        """Optional: the tools as you send them to the model, `expand` included, in
+        your provider's format. The report then has a section on what their
+        definitions weigh, and names the tools never called. Changes nothing the
+        model receives; call it again when the list changes."""
+        self.learner.record_tools([json.loads(json.dumps(t, default=str)) for t in tools])
 
     def output(self, tool: str, arguments: dict | str | None, raw: str, turn: int | None = None) -> str:
         """Record the call; return what the model should receive. `turn`: the

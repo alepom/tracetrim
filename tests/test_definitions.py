@@ -79,33 +79,53 @@ def test_no_amount_in_the_results_file():
     assert all(not k.startswith("_") for r in res["runs"] for k in r)
 
 
-def test_the_numbers_in_the_draft_protocol_are_those_the_scripts_compute():
-    """protocol-v06.md states what was known offline: kept equal to results/v06/definitions.json."""
-    from experiments.budget import V06
+
+def test_the_numbers_in_docs_definitions_are_those_the_script_computes():
+    """docs/definitions.md is typed prose: its numbers are kept equal to results/v06/definitions.json."""
     if not d.RESULTS.exists():
         pytest.skip("results/v06/definitions.json not generated here")
     res = json.loads(d.RESULTS.read_text())
-    sc, text = res["scenario_all_server_tools"], " ".join((d.ROOT / "protocol-v06.md").read_text().split())
-    g = next(x for x in res["groups"] if (x["case"], x["experiment"], x["arm"]) == ("C1", "E1", "R"))
-    defs, cache = sc["definitions"], sc["cache"]
-    med = lambda mode, key: f"{cache[mode][key]['median']:.2f}"                       # noqa: E731
-    for stated in (
-        f"**{sc['server_tools']} tools: {defs['all_server_tools']:,} tokens**",
-        f"the 12 of C1 weigh {defs['case_tools_12']:,}",
-        f"at least one recorded run {defs['tools_used_in_any_run']:,}",
-        f"definitions are {100 * g['definitions_share_of_input']['median']:.1f}% of the billed input tokens",
-        f"{100 * g['definitions_share_of_cost']['median']:.1f}% of the run's cost at the median",
-        f"first turn, {sc['billed_vs_counted']:.2f} of it",
-        f"cost {med('cold', 'R79_cost_vs_recorded')} times the recorded at a cold start",
-        f"{med('warm', 'R79_cost_vs_recorded')} at a warm one",
-        f"{med('cold', 'D_cost_vs_R79')} and {med('warm', 'D_cost_vs_R79')} of that at best",
-        f"({med('cold_as_billed', 'D_cost_vs_R79')} and {med('warm_as_billed', 'D_cost_vs_R79')} with the definitions as billed)",
-        f"input tokens {med('cold', 'D_input_vs_R79')}",
-        f"that is {len(sc['tools_used']['in_any_run'])} tools, {defs['hidden_tools']} hidden",
-    ):
+    text = (d.ROOT / "docs" / "definitions.md").read_text()
+    sc, defs = res["scenario_all_server_tools"], res["scenario_all_server_tools"]["definitions"]
+
+    def rng(x, fmt):
+        return fmt(x["median"]) if x["min"] == x["max"] else f"{fmt(x['median'])} [{fmt(x['min'])}–{fmt(x['max'])}]"
+
+    pct = lambda v: f"{100 * v:.1f}"                                             # noqa: E731
+    for g in res["groups"]:
+        if g["arm"] != "R":
+            continue
+        share = lambda k, f=pct: (f(g[k]["median"]) + "%" + ("" if g[k]["min"] == g[k]["max"]   # noqa: E731
+                                  else f" [{f(g[k]['min'])}–{f(g[k]['max'])}]"))
+        row = (f"| {g['case']} | {g['model']} | {g['runs']} | {g['tools_offered']['median']:.0f} "
+               f"| {g['definitions_per_turn']['median']:,.0f} | {rng(g['turns'], lambda v: f'{v:g}')} "
+               f"| {rng(g['definitions_per_run'], lambda v: f'{v:,.0f}')} | {share('definitions_share_of_input')} "
+               f"| {share('definitions_cached_share', lambda v: f'{100 * v:.0f}')} | {share('definitions_share_of_cost')} "
+               f"| {share('definitions_share_of_cost_if_never_cached')} |")
+        assert row in text, row
+    label = {"cold": "cold start: first turn not cached", "warm": "warm start: first turn cached too",
+             "none": "no cache at all", "cold_as_billed": f"cold start, definitions as billed (×{sc['billed_vs_counted']:.2f})",
+             "warm_as_billed": f"warm start, definitions as billed (×{sc['billed_vs_counted']:.2f})"}
+    two = lambda v: f"{v:.2f}"                                                    # noqa: E731
+    for k, name in label.items():
+        c = sc["cache"][k]
+        row = (f"| {name} | {rng(c['R79_cost_vs_recorded'], two)} | {rng(c['D_cost_vs_R79'], two)} "
+               f"| {rng(c['D_input_vs_R79'], two)} | {rng(c['extra_turns_that_cancel_the_gain'], lambda v: f'{v:.1f}')} |")
+        assert row in text, row
+    c = sc["cache"]["cold"]
+    for stated in (f"| R79: the {sc['server_tools']} tools of the server | {defs['all_server_tools']:,} |",
+                   f"| the 12 tools of the case, as recorded | {defs['case_tools_12']:,} |",
+                   f"| the 11 tools called in at least one run | {defs['tools_used_in_any_run']:,} |",
+                   f"| the two meta-tools | {defs['meta_tools_draft']:,} |",
+                   f"| D: 11 listed + meta-tools, {defs['hidden_tools']} hidden | {defs['deferred_visible_plus_meta']:,} |",
+                   f"| {defs['saved_per_turn']:,} ({100 * defs['saved_per_turn_share']:.0f}%) |",
+                   f"at most **{sc['billed_vs_counted']:.2f}** of our count",
+                   f"from {c['R79_first_turn_input']['median']:,.0f} to {c['D_first_turn_input']['median']:,.0f} tokens",
+                   f"from {c['R79_turn_max']['median']:,.0f} to {c['D_turn_max']['median']:,.0f}",
+                   f"{sc['hidden_tool_tokens']['median']:,.0f} tokens at the median "
+                   f"({sc['hidden_tool_tokens']['min']:,} to {sc['hidden_tool_tokens']['max']:,})",
+                   f"runs of the v0.4 measures (E1, E2, E3; `docs/traces-v04.md`): C1 {res['read']['by_case']['C1']},",
+                   f"The two meta-tools weigh {defs['meta_tools_draft']:,} tokens"):
         assert stated in text, stated
-    runs = (sum(V06["pilot"].values()) + len(V06["e4a"]["arms"]) * V06["e4a"]["runs_per_arm"]
-            + sum(V06["e4b"]["runs"].values()))
-    assert f"| **Total** | **{runs}** |" in text
-    # No amount, estimate or cap in the protocol: they stay local.
-    assert "usd" not in text.lower() and "$" not in text.replace("$TRACETRIM_V04_TRACES", "")
+    assert f"the {res['read']['runs']} recorded runs" in text
+    assert "usd" not in text.lower()

@@ -132,15 +132,15 @@ In a host such as Claude Code or Cursor, where a person talks to the agent:
 
 ## What was verified, host by host
 
-| Host | Connects over | Tools pass | Calls `tracetrim_done` | Loads the skill | `expand` works | Verified: when and how |
-|---|---|---|---|---|---|---|
-| OpenAI Playground | HTTP | yes | yes: 7 runs of 7, at least 2 of them without the line in the prompt | **no**: the client declares only the extension `io.modelcontextprotocol/ui` and asks neither `skills/list` nor `resources/read` | yes | skill: 12 November 2026, one run with `--log-client` (0.4.1); the rest: 12 November 2026, six runs on DataForSEO's server with the 0.4 branch and one with 0.4.1 |
-| Responses API | not verified | not verified | not verified | not verified | not verified | — |
-| Claude Desktop | not verified | not verified | not verified | not verified | not verified | — |
-| Claude Code | stdio, entry written by `tracetrim init` (references in `env` resolved by the host) | yes | yes: 1 run of 1, without the line in the prompt | **read, not loaded**: the client (2.1.322) declares only `io.modelcontextprotocol/tasks`, not the Skills extension; it lists the resources, and the model read `skill://tracetrim/SKILL.md` through its tool for MCP resources before the first call, after the server's instructions | not tried: nothing was trimmed yet | 12 November 2026, one run with `--log-client` (0.4.1 proxy, `init` of 0.5) on a simulated orders server |
-| Cursor | not verified | not verified | not verified | not verified | not verified | — |
-| VS Code | not verified | not verified | not verified | not verified | not verified | — |
-| MCP Inspector | stdio | not verified | does not apply: no model | the skill is served correctly: outcome `verified` | not verified | 11 November 2026, MCP Inspector CLI 2.13.0, `--method skills/list --verify` ([docs/skill.md](skill.md)) |
+| Host | Connects over | Tools pass | Calls `tracetrim_done` | Loads the skill | `expand` works | Hides tool definitions by itself | Verified: when and how |
+|---|---|---|---|---|---|---|---|
+| OpenAI Playground | HTTP | yes | yes: 7 runs of 7, at least 2 of them without the line in the prompt | **no**: the client declares only the extension `io.modelcontextprotocol/ui` and asks neither `skills/list` nor `resources/read` | yes | not verified | skill: 12 November 2026, one run with `--log-client` (0.4.1); the rest: 12 November 2026, six runs on DataForSEO's server with the 0.4 branch and one with 0.4.1 |
+| Responses API | not verified | not verified | not verified | not verified | not verified | **only if asked**: `tool_search` with `defer_loading: true` (`gpt-5.4` and later); documentation, read 12 November 2026 | — |
+| Claude Desktop | not verified | not verified | not verified | not verified | not verified | not verified | — |
+| Claude Code | stdio, entry written by `tracetrim init` (references in `env` resolved by the host) | yes | yes: 1 run of 1, without the line in the prompt | **read, not loaded**: the client (2.1.322) declares only `io.modelcontextprotocol/tasks`, not the Skills extension; it lists the resources, and the model read `skill://tracetrim/SKILL.md` through its tool for MCP resources before the first call, after the server's instructions | not tried: nothing was trimmed yet | **yes, by default**: MCP tool search defers the definitions (`ENABLE_TOOL_SEARCH=false` turns it off); documentation, read 12 November 2026 | 12 November 2026, one run with `--log-client` (0.4.1 proxy, `init` of 0.5) on a simulated orders server |
+| Cursor | not verified | not verified | not verified | not verified | not verified | according to its blog ("dynamic context discovery"), **not verified** | — |
+| VS Code | not verified | not verified | not verified | not verified | not verified | not verified | — |
+| MCP Inspector | stdio | not verified | does not apply: no model | the skill is served correctly: outcome `verified` | not verified | does not apply: no model | 11 November 2026, MCP Inspector CLI 2.13.0, `--method skills/list --verify` ([docs/skill.md](skill.md)) |
 
 Notes:
 
@@ -148,6 +148,13 @@ Notes:
   with `server/discover` (protocol 2026-07-28) and holds the conversation after `initialize`
   (2025-11-25). It called `tracetrim_done` guided by the tool's description alone.
 - MCP Inspector shows that the skill is served as the extension asks, not that a model follows it.
+- *Hides tool definitions by itself*: whether the host or the API loads tool definitions only when the
+  model looks for them. Where it does, the report's section on tool definitions counts what tracetrim
+  publishes, not what the model reads on each turn, and its suggestion on tools never called matters
+  less. Sources: Claude Code, <https://code.claude.com/docs/en/mcp> ("Configure tool search"); Responses
+  API, <https://developers.openai.com/api/docs/guides/tools-tool-search>; Cursor, a blog post,
+  <https://cursor.com/blog/dynamic-context-discovery>, not its documentation. The measure and the
+  reasons why tracetrim hides no tool: [docs/definitions.md](definitions.md).
 - `init` writes a stdio entry for Claude Desktop, Claude Code, Cursor and VS Code, in the format their
   documentation gives. That the host then starts it and passes the tools is what *not verified* means.
 

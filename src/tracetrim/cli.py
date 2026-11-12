@@ -129,6 +129,14 @@ def cmd_report(a):
     d = rp.compute([t.name for t in traces], usages, a.unseen, protect_ids=not a.v01)
     from . import turns
     d["turns"] = turns.summarise(traces, a.strategy_max_several, a.strategy_min_earlier, a.strategy_min_runs)
+    if a.tools:
+        from . import definitions, measure
+        published = definitions.read(a.tools)
+        if published is None:
+            raise SystemExit(f"{a.tools}: not a tool list (a JSON list of tools, or a tools/list result)")
+        print(f"tool list: {len(published)} tools read from {a.tools}")
+        d["definitions"] = definitions.summarise(published, [{c.tool for c in t.calls} for t in traces],
+                                                 measure.tokenizer(), rp.MIN_TRACES)
     sugg = rp.suggestions(d)
     out = Path(a.output)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -324,6 +332,9 @@ def main(argv=None):
     s = sub.add_parser("report", help="bilingual telemetry report (HTML + JSON)")
     s.add_argument("traces", nargs="+")
     s.add_argument("-o", "--output", default="report.html")
+    s.add_argument("--tools", metavar="FILE",
+                   help="the tool list the model was offered (a tools/list result, or a JSON list of tools): "
+                        "adds the section on what the definitions weigh and which tools were never called")
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
     s.add_argument("--v01", action="store_true",
                    help="tracetrim 0.1 behaviour (for comparisons): no identifier protection, no transformed values")

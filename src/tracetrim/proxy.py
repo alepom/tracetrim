@@ -389,6 +389,12 @@ def _server(o: Options):
             tools.append(types.Tool(**EXPAND))
         if learner:
             tools.append(types.Tool(**DONE))
+            # The list as published, for the report's section on tool definitions. A record
+            # that fails costs the section, never the listing.
+            try:
+                learner.record_tools([t.model_dump(mode="json", by_alias=True, exclude_none=True) for t in tools])
+            except OSError as e:
+                log(f"tool list not recorded: {e}")
         return types.ListToolsResult(tools=tools)
 
     async def call_tool(ctx, params):
