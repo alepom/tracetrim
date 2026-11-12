@@ -28,6 +28,7 @@ src/ imports it.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 from types import SimpleNamespace
@@ -35,6 +36,11 @@ from types import SimpleNamespace
 from .tools import env
 
 LOCATION = "global"
+# A request that fails with one of these is made again, here and not inside the SDK, so
+# that every repeated attempt is counted and written down. A failed request returns no
+# usage: nothing was generated, and nothing is billed for it.
+RETRY_STATUS = (408, 429, 500, 502, 503, 504)
+ATTEMPTS = 4
 
 
 def vertex_client():
@@ -50,9 +56,9 @@ def vertex_client():
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
     if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
         raise SystemExit("GOOGLE_APPLICATION_CREDENTIALS is needed in .env")
-    # Transient failures of the service are retried by the SDK, as in the author's framework.
-    retry = types.HttpRetryOptions(attempts=4, max_delay=60.0, http_status_codes=[408, 429, 500, 502, 503, 504])
-    return genai.Client(vertexai=True, location=LOCATION, http_options=types.HttpOptions(retry_options=retry))
+    # One attempt per request inside the SDK: the repeats are made by the adapter, where they are recorded.
+    return genai.Client(vertexai=True, location=LOCATION,
+                        http_options=types.HttpOptions(retry_options=types.HttpRetryOptions(attempts=1)))
 
 
 def function_response_payload(output: str) -> dict:
@@ -88,9 +94,10 @@ def access(model: str) -> dict:
 class Gemini:
     """`client.responses.create(**kwargs)` for a Gemini model on Vertex AI."""
 
-    def __init__(self, client=None):
+    def __init__(self, client=None, pause: float = 5.0):
         if client is None:
             client = vertex_client()
+        self.pause = pause                           # seconds before the first repeat; doubled at each one
         self.client = client
         self.history: dict[str, list] = {}           # response id -> the conversation up to and including it
         self.calls: dict[str, tuple[str, str | None]] = {}     # our call id -> (name, the model's own id)
@@ -118,7 +125,17 @@ class Gemini:
                                           parameters_json_schema=t.get("parameters") or {"type": "object"})
                 for t in tools])],
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True))
-        r = await self.client.aio.models.generate_content(model=model, contents=contents, config=config)
+        retries = []
+        for attempt in range(ATTEMPTS):
+            try:
+                r = await self.client.aio.models.generate_content(model=model, contents=contents, config=config)
+                break
+            except Exception as e:                   # noqa: BLE001
+                code = getattr(e, "code", None)
+                if code not in RETRY_STATUS or attempt == ATTEMPTS - 1:
+                    raise
+                retries.append({"attempt": attempt + 1, "code": code, "status": str(getattr(e, "status", ""))})
+                await asyncio.sleep(self.pause * 2 ** attempt)
         self.n += 1
         rid = f"gemini-{self.n}"
         candidate = r.candidates[0] if r.candidates else None
@@ -138,7 +155,7 @@ class Gemini:
         self.history[rid] = contents + ([content] if content is not None else [])
         u = r.usage_metadata
         return SimpleNamespace(
-            id=rid, output=out,
+            id=rid, output=out, retries=retries,
             finish_reason=str(getattr(candidate, "finish_reason", None)),
             usage=SimpleNamespace(
                 input_tokens=(u.prompt_token_count or 0) if u else 0,

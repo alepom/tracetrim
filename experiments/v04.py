@@ -468,6 +468,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
               "outputs_sent": {}, "expand_replies": 0, "final_answer": 0}
     exposure: dict[str, int] = {}
     outcomes: dict[str, int] = {}
+    model_retries: list[dict] = []
     schemas: list[dict] = []
     reached: dict[str, set] = {}          # needed field -> the ways it reached the model
     n_calls = n_expand = 0
@@ -487,10 +488,17 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                         "cached": getattr(getattr(u, "input_tokens_details", None), "cached_tokens", 0) or 0}
                 for k in total:
                     total[k] += turn[k]
+                # Requests of this turn that failed and were made again by the adapter (E3). A failed
+                # request returns no usage: its attempts are written down, with nothing to add to the tokens.
+                repeated = list(getattr(r, "retries", None) or [])
+                if repeated:
+                    turn["model_retries"] = repeated
+                    model_retries.extend({"turn": len(turns), **x} for x in repeated)
                 pending = []
                 for item in r.output:
                     if item.type == "message":
-                        events.append({"kind": "message", "text": text_of(item), "turn": len(turns)})
+                        events.append({"kind": "message", "text": text_of(item), "turn": len(turns),
+                                       **({"model_retries": len(repeated)} if repeated else {})})
                     elif item.type == "function_call":
                         pending.append(item)
                 outputs = []
@@ -501,6 +509,8 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                     failed_before = len(getattr(base, "tool_failures", []))
                     sent = await tools.call(fc.name, args)
                     e = {"kind": "call", "tool": fc.name, "arguments": fc.arguments, "output": sent, "turn": len(turns)}
+                    if repeated:
+                        e["model_retries"] = len(repeated)
                     if fc.name == "expand":
                         n_expand += 1
                         tokens["expand_replies"] += count(sent)
@@ -594,6 +604,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
         "tool_schemas": {s["name"]: s["sha256"] for s in schemas},
         # E3 on the DataForSEO cases: how the calls were answered from recorded outputs.
         "replay": replay, "pilot": run.pilot,
+        "model_retries": model_retries,
         "domain_rejections": rejections, "tool_failures": failures, "retries": retries,
         "flags": flags + (["tool_failure"] if failures else []),
         "adaptive": adaptive_meta, "cost_usd": round(cost(total), 4), "prices": acct["prices"],
@@ -601,7 +612,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     _ledger(acct["ledger"], {k: meta[k] for k in ("experiment", "case", "run", "arm", "model", "started", "cost_usd",
                                                     "dry_run")}
-            | {"usage": total, "dataforseo_calls": sum(dataforseo_calls.values())})
+            | {"usage": total, "dataforseo_calls": sum(dataforseo_calls.values()), "model_retries": len(model_retries)})
     return meta
 
 

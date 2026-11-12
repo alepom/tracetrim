@@ -124,6 +124,70 @@ def test_text_beside_calls_is_a_message_and_an_empty_response_ends_the_run():
     assert models.sent[1]["contents"][2].parts[0].function_response.id is None      # no id from the model: none sent back
 
 
+def test_a_request_that_fails_is_made_again_by_the_adapter_and_every_attempt_is_reported():
+    from google.genai import errors
+    from experiments.gemini import Gemini
+
+    class Flaky(FakeModels):
+        def __init__(self, failures, responses):
+            super().__init__(responses)
+            self.failures = list(failures)
+
+        async def generate_content(self, **kw):
+            if self.failures:
+                code = self.failures.pop(0)
+                raise errors.APIError(code, {"error": {"code": code, "message": "x", "status": "UNAVAILABLE"}})
+            return await super().generate_content(**kw)
+
+    models = Flaky([503, 429], [response([types.Part(text="{}")], prompt=50, answer=5)])
+    g = Gemini(SimpleNamespace(aio=SimpleNamespace(models=models)), pause=0)
+    r = asyncio.run(g.responses.create(model="m", instructions="S", tools=TOOLS, input=[{"role": "user", "content": "x"}]))
+    assert r.retries == [{"attempt": 1, "code": 503, "status": "UNAVAILABLE"}, {"attempt": 2, "code": 429, "status": "UNAVAILABLE"}]
+    assert (r.usage.input_tokens, r.usage.output_tokens) == (50, 5) and len(models.sent) == 1      # only the one that answered
+    # An error that is not transient is not repeated; and after the last attempt the error is raised.
+    for failures in ([403], [503, 503, 503, 503]):
+        g = Gemini(SimpleNamespace(aio=SimpleNamespace(models=Flaky(failures, []))), pause=0)
+        with pytest.raises(errors.APIError):
+            asyncio.run(g.responses.create(model="m", instructions="S", tools=TOOLS, input=[{"role": "user", "content": "x"}]))
+
+
+def test_the_repeats_are_written_in_the_trace_the_meta_file_and_the_ledger(tmp_path):
+    class Repeats(v04.Stub):
+        async def create(self, **kw):
+            r = await super().create(**kw)
+            r.retries = [{"attempt": 1, "code": 503, "status": "UNAVAILABLE"}] if self.n == 2 else []
+            return r
+
+    script = {"turns": [[{"tool": "order_status", "arguments": {"order": "o1"}}]], "answer": "{}"}
+
+    class Tools:
+        schemas, rejections, retries, tool_failures = [], 0, 0, []
+        async def __aenter__(self): return self
+        async def __aexit__(self, *a): return None
+        async def call(self, name, args): return "{}"
+
+    where = Where(tmp_path)
+    (tmp_path / "traces" / "C4").mkdir(parents=True)
+    for r in [r for r in e3.schedule() if r.pilot]:
+        (tmp_path / "traces" / r.case).mkdir(parents=True, exist_ok=True)
+        (tmp_path / "traces" / r.case / f"{r.id}.meta.json").write_text(json.dumps({"usage_per_turn": [{"calls": 1}]}))
+    e3.pilot_decision(where).parent.mkdir(parents=True)
+    e3.pilot_decision(where).write_text("{}")
+    real = v04.base_toolset
+    v04.base_toolset = lambda run, dry: Tools()
+    try:
+        m = asyncio.run(v04.execute(Run("E3", "C4", "R", 1), where, client=Repeats(script), model="stub", dry=True))
+    finally:
+        v04.base_toolset = real
+    assert m["model_retries"] == [{"turn": 1, "attempt": 1, "code": 503, "status": "UNAVAILABLE"}]
+    assert m["usage_per_turn"][1]["model_retries"] == [{"attempt": 1, "code": 503, "status": "UNAVAILABLE"}]
+    assert "model_retries" not in m["usage_per_turn"][0]
+    events = [json.loads(line) for line in (tmp_path / "traces" / "C4" / "E3-R-1.jsonl").open()]
+    assert [e.get("model_retries") for e in events if e["kind"] in ("call", "message")] == [None, 1]
+    [line] = v04.ledger(where, e3.ledger_path(where))
+    assert line["model_retries"] == 1
+
+
 def test_the_adapter_is_not_in_the_library():
     import subprocess
     code = ("import sys, tracetrim, tracetrim.engine, tracetrim.auto, tracetrim.proxy, tracetrim.skill; "
