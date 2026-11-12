@@ -18,12 +18,15 @@ course project `~/progetti/accademia-server-mcp` (scripts `misura-riuso.py`,
   Zenodo and GitHub materials.
 - **Nothing is published by Claude.** GitHub, Zenodo records and releases are
   created and published by the author.
-- **The paper does not report the budget** (author's decision, 2026-11-04): it
-  describes the design that results from it (runs, arms, traces) and its
-  limitations. Token counts and per-run costs measured by the study can appear.
-- API budget for the preprint experiments: **40 USD** (raised from 30 on 2026-11-04),
-  warned at 35, stopped at 40 by `experiments/run.py`. Recompute plans with
-  `python -m experiments.budget`, never by hand.
+- **What the tests cost is never published** (author's decision, 2026-11-12):
+  no amount spent, no spend estimate, no spend cap in the paper, the docs, the
+  protocols, the results files or any other versioned file. Costs appear only
+  as changes relative to a reference arm (at the providers' list prices, which
+  are public). Token counts can appear.
+- Spend caps and warnings are local: `experiments/caps.local.json` (git-ignored,
+  read by `experiments/caps.py`); without it every paid run is refused. Recompute
+  plans with `python -m experiments.budget`, never by hand, and keep the figures
+  out of versioned files. The spend ledgers stay in `out/`.
 
 ## Data constraints
 

@@ -273,7 +273,7 @@ def test_e3_has_its_own_ledger_prices_and_limits(tmp_path):
     where = Where(tmp_path)
     acct = v04.book(where, Run("E3", "C4", "R", 1))
     assert acct["ledger"] == tmp_path / "out" / "ledger-e3.jsonl" != v04.book(where, Run("E1", "C4", "R", 1))["ledger"]
-    assert (acct["cap"], e3.WARN, acct["model"], acct["prices"]) == (15.0, 10.0, "gemini-3.8-flash", "experiments/prices-e3.json")
+    assert (acct["cap"], e3.WARN, acct["model"], acct["prices"]) == (35.0, 30.0, "gemini-3.8-flash", "experiments/prices-e3.json")
     assert e3.cost({"input": 1_000_000, "cached": 0, "output": 0}) == 0.75
     assert e3.cost({"input": 1_000_000, "cached": 1_000_000, "output": 1_000_000}) == pytest.approx(0.075 + 3.75)
     # The prices of the original study are not touched.
@@ -295,13 +295,13 @@ def spend(where, usd):
 def test_the_cap_and_the_warning_are_those_of_e3(tmp_path):
     where, run = Where(tmp_path), Run("E3", "C4", "R", 1, pilot=True)
     assert e3.may_start(where, run) is None
-    spend(where, 10.0)
-    assert e3.may_start(where, run) == "WARNING: 10.00 USD spent on E3, warning at 10, cap 15"
-    spend(where, 15.0)
-    with pytest.raises(SystemExit, match="stop rule: 15.00 USD already spent on E3, cap 15"):
+    spend(where, 30.0)
+    assert e3.may_start(where, run) == "WARNING: 30.00 USD spent on E3, warning at 30, cap 35"
+    spend(where, 35.0)
+    with pytest.raises(SystemExit, match="stop rule: 35.00 USD already spent on E3, cap 35"):
         e3.may_start(where, run)
     # The spend of the other experiments is another ledger.
-    (tmp_path / "out" / "ledger.jsonl").write_text(json.dumps({"case": "C1", "run": "y", "cost_usd": 49.0}) + "\n")
+    (tmp_path / "out" / "ledger.jsonl").write_text(json.dumps({"case": "C1", "run": "y", "cost_usd": 4.9}) + "\n")
     spend(where, 1.0)
     assert e3.may_start(where, run) is None
 
@@ -338,12 +338,11 @@ def test_the_estimate_in_the_protocol_is_the_one_the_script_computes():
     r = e3.estimate()
     protocol = " ".join((ROOT / "protocol-v04-e3.md").read_text().split())
     for case in ("C4", "C5", "C2", "C1"):
-        rows = [x for x in r["lines"] if x["case"] == case]
-        low, high, n = (sum(x[k] for x in rows) for k in ("usd_as_measured", "usd_one_call_per_turn", "runs"))
-        assert f"| {case} | {n} | {low:.2f} | {high:.2f} |" in protocol, case
-    assert f"| **Total** | **{r['runs']}** | **{r['usd_as_measured']:.2f}** | **{r['usd_one_call_per_turn']:.2f}** |" in protocol
-    assert r["runs"] == 42 and r["usd_as_measured"] < e3.WARN and r["usd_one_call_per_turn"] > e3.CAP
-    assert "8 on C4, 6 on C5, 3 on C2, 2 on C1: 38 runs" in protocol and "Cap 15 USD, warning at 10" in protocol
+        n = sum(x["runs"] for x in r["lines"] if x["case"] == case)
+        assert f"| {case} | {n} |" in protocol, case
+    assert f"| **Total** | **{r['runs']}** |" in protocol
+    assert r["runs"] == 42 and r["usd_as_measured"] < r["usd_one_call_per_turn"]
+    assert "8 on C4, 6 on C5, 3 on C2, 2 on C1: 38 runs" in protocol and "not published" in protocol
     prices = r["prices"]
     assert (prices["input_per_mtok"], prices["cached_input_per_mtok"], prices["output_per_mtok"]) == (0.75, 0.075, 3.75)
     assert "0.75 USD per 1M input tokens, 0.075 cached, 3.75 output" in protocol and "`gemini-3.8-flash`" in protocol

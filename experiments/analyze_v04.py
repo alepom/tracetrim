@@ -447,6 +447,34 @@ def tables(res: dict) -> str:
     return "\n".join(lines)
 
 
+def publishable(res):
+    """What goes into results/v04: no amount spent (the author's decision, 2026-11-12).
+
+    Every key that holds US dollars is dropped, recursively, with the DataForSEO
+    rates read from the provider's panel. What stays of the costs is relative: for
+    each arm of a table, the median cost of a run against the arm without strategy
+    and without trimming of the same case (`cost_vs_R`, a fraction: -0.30 is 30% less).
+    """
+    def drop(x):
+        if isinstance(x, dict):
+            return {k: drop(v) for k, v in x.items() if "usd" not in k.lower() and k != "rates"}
+        if isinstance(x, list):
+            return [drop(v) for v in x]
+        return x
+
+    def relative(table):
+        for arms in table.values():
+            ref = (arms.get("R") or {}).get("cost_usd", {}).get("median")
+            for a in arms.values():
+                if ref and a.get("cost_usd", {}).get("median") is not None:
+                    a["cost_vs_R"] = round(a["cost_usd"]["median"] / ref - 1, 4)
+
+    for key in ("e1", "e3"):
+        if isinstance(res.get(key), dict):
+            relative(res[key])
+    return drop(res)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", help="the directory of another campaign, e.g. a dry run")
@@ -456,21 +484,21 @@ if __name__ == "__main__":
     if a.e3:
         res = analyse_e3(where)
         path = where.root / "results-e3.json" if a.root else ROOT / "results" / "v04" / "e3.json"
-        path.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n")
+        path.write_text(json.dumps(publishable(res), indent=2, ensure_ascii=False) + "\n")
         print(tables_e3(res))
         print(f"\n{path}")
         raise SystemExit(0)
     res = analyse(where)
     if a.root:
         out = [where.root / "results-v04.json"]
-        out[0].write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n")
+        out[0].write_text(json.dumps(publishable(res), indent=2, ensure_ascii=False) + "\n")
     else:
         out = [ROOT / "results" / "v04" / "e1.json", ROOT / "results" / "v04" / "e2.json"]
         head = {k: res[k] for k in ("protocol", "tokens", "dry_run")}
         head["dataforseo"] = res["dataforseo"]
-        out[0].write_text(json.dumps(head | {"e1": res["e1"], "e1_hypotheses": res["e1_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E1"]},
+        out[0].write_text(json.dumps(publishable(head | {"e1": res["e1"], "e1_hypotheses": res["e1_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E1"]}),
                                      indent=2, ensure_ascii=False) + "\n")
-        out[1].write_text(json.dumps(head | {"e2": res["e2"], "e2_hypotheses": res["e2_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E2"]},
+        out[1].write_text(json.dumps(publishable(head | {"e2": res["e2"], "e2_hypotheses": res["e2_hypotheses"], "per_run": [r for r in res["per_run"] if r["experiment"] == "E2"]}),
                                      indent=2, ensure_ascii=False) + "\n")
     print(tables(res))
     print("\n" + ", ".join(str(p) for p in out))

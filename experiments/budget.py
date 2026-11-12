@@ -17,12 +17,12 @@ import json
 import statistics
 import sys
 
+from .caps import caps
 from .paths import PRICES, STUDY_TRACES, TRACES, cost
 
 # protocol-v04.md: the design the estimate is computed for. Changing a number
 # here is changing the protocol.
 V04 = {
-    "cap_usd": 50.0, "warn_usd": 40.0,
     # C2 has no trimmed arm: the configuration tracetrim builds on its traces trims no tool.
     "e1": {"cases": ["C1", "C2", "C4"], "arms": {"C1": ["R", "S", "T", "ST"], "C2": ["R", "S"],
                                                  "C4": ["R", "S", "T", "ST"]}, "runs_per_arm": 5},
@@ -33,7 +33,6 @@ V04 = {
            # the original task's. An assumption, not a measure: the first runs will correct it.
            "variant_factor": 1.25,
            "sample_rate": 0.25, "sample_max_share": 0.5},
-    "tuning_usd": 5.0,           # prompts of the variants, dry runs of the harness: an allowance, not an estimate
     # DataForSEO is billed apart and its price per call is not known here: after this many runs
     # that call it, everything that calls it stops until the author has read the spend.
     "dataforseo_checkpoint_runs": 10,
@@ -88,9 +87,9 @@ def v04() -> dict:
     return {
         "prices": {k: PRICES[k] for k in ("model", "input_per_mtok", "cached_input_per_mtok", "output_per_mtok")},
         "measured_per_run": m, "design": V04, "skill_tokens_added": added, "e1": e1, "e2": e2,
-        "totals": {"e1": total(e1, "usd"), "e2": total(e2, "usd"), "tuning": V04["tuning_usd"],
-                   "all": total(e1, "usd") + total(e2, "usd") + V04["tuning_usd"],
-                   "all_if_every_run_costs_the_maximum_seen": total(e1, "usd_max") + total(e2, "usd_max") + V04["tuning_usd"],
+        "totals": {"e1": total(e1, "usd"), "e2": total(e2, "usd"), "tuning": caps("v04", "tuning"),
+                   "all": total(e1, "usd") + total(e2, "usd") + caps("v04", "tuning"),
+                   "all_if_every_run_costs_the_maximum_seen": total(e1, "usd_max") + total(e2, "usd_max") + caps("v04", "tuning"),
                    "runs": sum(r["runs"] for r in e1 + e2)},
         "dataforseo_calls": dfs,
     }
@@ -107,7 +106,7 @@ def print_v04(r: dict) -> None:
             print(f"       {x['case']:<5}{x['arm']:<20}{x['runs']:>5}{x['usd']:>8.2f}")
     t = r["totals"]
     print(f"\n  E1 {t['e1']:.2f} + E2 {t['e2']:.2f} + tuning {t['tuning']:.2f} = {t['all']:.2f} USD over {t['runs']} runs"
-          f"   (cap {r['design']['cap_usd']:.0f}, warning at {r['design']['warn_usd']:.0f})")
+          f"   (cap {caps('v04')[1]:.0f}, warning at {caps('v04')[0]:.0f}: local, never published)")
     print(f"  if every run cost the maximum seen: {t['all_if_every_run_costs_the_maximum_seen']:.2f} USD")
     for c, d in r["dataforseo_calls"].items():
         print(f"  DataForSEO calls, {c}: {d['runs']} runs x {d['calls'] / d['runs']:g} = {d['calls']:g}"

@@ -32,6 +32,7 @@ from tracetrim.structural import structural
 from tracetrim.traces import load
 from tracetrim.usage import analyse
 
+from .caps import caps
 from .run import LEDGER, PRICES, TRACES, cost, spent
 
 TRACE = "A3"            # chosen before looking at any Phase A content (protocol, Phase B)
@@ -108,7 +109,7 @@ def main():
     base_events = [e for e in trace.events if e.kind != "message"]
     for i in range(1, o.runs + 1):
         for arm in arms:              # interleaved: drifts hit every arm alike
-            if spent() >= PRICES["stop_usd"]:
+            if spent() >= caps("study")[1]:
                 sys.exit(f"stop rule: {spent():.2f} USD spent")
             dest = TRACES / o.case / f"{o.study}-{arm}-{i}.jsonl"
             if dest.exists():

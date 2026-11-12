@@ -51,11 +51,12 @@ from tracetrim.measure import tokenizer
 from tracetrim.usage import leaves, parse_output
 
 from .budget import V04
+from .caps import caps
 from .paths import PRICES, PROMPTS, ROOT, STUDY_TRACES, cost
 from .tools import BLOCKED, CASE_TOOLS, DataForSEO, domain_gate, to_args, toolset
 from .v04_preconditions import NEEDED, phase_a
 
-CAP, WARN = V04["cap_usd"], V04["warn_usd"]
+WARN, CAP = caps("v04")          # local, never published: experiments/caps.py
 DATAFORSEO = ("C1", "C2")                      # cases whose tools are billed by the provider
 GUARD_CALLS, GUARD_TURNS = 80, 40              # a safety guard, as in the original study: a run that hits it is flagged
 E1_ARMS = {"R": (False, False), "S": (True, False), "T": (False, True), "ST": (True, True)}      # strategy, trimming

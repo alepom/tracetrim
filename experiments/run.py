@@ -32,7 +32,11 @@ except ImportError:              # a dry run of protocol-v04.md needs no model c
 
 from .tools import ROOT, to_args, toolset
 
+from .caps import caps  # noqa: E402
 from .paths import ARMS, ARMS_D, LEDGER, PREFIX, PRICES, PROMPTS, TRACES, cost, keep_missing, spent  # noqa: E402,F401
+
+# The spend caps are local and never published (experiments/caps.py).
+WARN, STOP = caps("study")
 
 # A safety guard, not an experimental cap: well above the 50 calls the C1
 # prompt allows. If it fires, the run is flagged and excluded.
@@ -59,10 +63,10 @@ def phase_c_projection(case: str):
 
 async def run(case: str, run_id: str, model: str, arm: str = "raw") -> dict:
     before = spent()
-    if before >= PRICES["stop_usd"]:
-        sys.exit(f"stop rule: {before:.2f} USD already spent (cap {PRICES['stop_usd']})")
-    if before >= PRICES["warn_usd"]:
-        print(f"WARNING: {before:.2f} USD spent, cap {PRICES['stop_usd']}")
+    if before >= STOP:
+        sys.exit(f"stop rule: {before:.2f} USD already spent (cap {STOP})")
+    if before >= WARN:
+        print(f"WARNING: {before:.2f} USD spent, cap {STOP}")
 
     system = (PROMPTS / f"{case.lower()}-system.md").read_text(encoding="utf-8")
     user = (PROMPTS / f"{case.lower()}-user.md").read_text(encoding="utf-8")
@@ -131,7 +135,7 @@ async def _loop(case, run_id, model, arm, before, system, user, trace_path, meta
                   f"· output {turn['output']:>6,} · run {run_cost:.3f} USD", flush=True)
             if not pending:
                 break
-            if before + run_cost >= PRICES["stop_usd"]:
+            if before + run_cost >= STOP:
                 flags.append("stopped_by_budget")
                 break
             if n_calls >= GUARD_CALLS or len(turns) >= GUARD_TURNS:
@@ -187,7 +191,7 @@ def main():
                    help="Phase C: prudent = projection learned from Phase A, plus expand")
     a = p.parse_args()
     if a.spend or not a.case:
-        print(f"spent: {spent():.3f} USD of {PRICES['stop_usd']} (list prices, experiments/prices.json)")
+        print(f"spent: {spent():.3f} USD of {STOP} (list prices, experiments/prices.json)")
         return
     m = asyncio.run(run(a.case, a.run_id, a.model, a.arm))
     print(f"\n  {m['case']} {m['run']}: {m['turns']} turns, {m['calls']} calls, "

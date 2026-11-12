@@ -2,6 +2,10 @@
 
 Frozen on 2026-11-11 at commit `bfe25b3`, approved by the author (REVISIONE-01c).
 
+> **Redaction (2026-11-12).** At the author's request, amounts spent, spend estimates and spend caps were removed
+> from this document before the v0.4 release. The rules they governed (estimate before running, warning, automatic
+> stop at the cap, DataForSEO checkpoint) are unchanged and were applied as frozen.
+
 Status: **frozen on 2026-11-11**, approved by the author, before any paid run. The commit that froze it is
 recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
 at the bottom, dated, with the reason.
@@ -232,22 +236,20 @@ run is costed like a raw live run of its case in the original study (median of P
 Phase C), which is conservative for the trimmed arms; the skill text is added at the uncached price for every
 turn; E2's variants are assumed to cost 1.25 times the original task, an assumption the first runs will correct.
 
-| | Runs | USD |
-|---|---:|---:|
-| E1 on C1: 4 arms × 5 runs | 20 | 8.43 |
-| E1 on C2: 2 arms × 5 runs | 10 | 2.22 |
-| E1 on C4: 4 arms × 5 runs | 20 | 1.68 |
-| E2 on C1: 4 arms × 2 sequences × 5 runs | 40 | 20.85 |
-| E2 on C4: 4 arms × 2 sequences × 5 runs | 40 | 4.13 |
-| Tuning: prompts of the variants, dry runs of the harness (an allowance) | | 5.00 |
-| **Total** | **130** | **42.30** |
+| | Runs |
+|---|---:|
+| E1 on C1: 4 arms × 5 runs | 20 |
+| E1 on C2: 2 arms × 5 runs | 10 |
+| E1 on C4: 4 arms × 5 runs | 20 |
+| E2 on C1: 4 arms × 2 sequences × 5 runs | 40 |
+| E2 on C4: 4 arms × 2 sequences × 5 runs | 40 |
+| Tuning: prompts of the variants, dry runs of the harness (an allowance) | |
+| **Total** | **130** |
 
-The estimate is above the warning and below the cap, and so stated: the author is warned at 40 USD and decides
-whether to go on. If every run cost the maximum seen for its case: 49.48 USD, half a dollar under the cap; in that
-case the last runs of E2 would not start. Measured cost per raw live run: C1 0.415 (maximum 0.506), C2 0.219
-(0.244), C4 0.082 (0.091).
+The estimate was compared with the spend cap and a warning threshold below it, both set by the author and not
+published; the author is warned at the threshold and decides whether to go on.
 
-- **Cap 50 USD, warning at 40**, on a new ledger (`out/ledger.jsonl` of this checkout; the original study's is
+- **Spend cap and warning**, on a new ledger (`out/ledger.jsonl` of this checkout; the original study's is
   not touched). The running total is computed from `usage` after every run, aborted ones included; at the cap
   `experiments/run.py` refuses to start a run, as it did.
 - Prices: `experiments/prices.json`, verified on 2026-11-04.
@@ -308,13 +310,13 @@ and what they hold is in `docs/traces-v04.md`.
 **3 — 2026-11-11, before any paid run: order of E2 and two more stops (same commit).** E2 runs the first sequence
 of every arm, run by run across the arms, then the second, instead of alternating the two sequences: if the
 budget stops the runs early, it takes about as many from each arm. Two stops are added to those of "Budget and
-stop rule": E2 starts only after the report on E1 has been reviewed, and at the 40 USD warning everything stops
+stop rule": E2 starts only after the report on E1 has been reviewed, and at the spend warning everything stops
 until the report on the spend has been reviewed. Runs, arms, measures and hypotheses are unchanged.
 
 **4 — 2026-11-11, after E1 and before any run of E2: E2 on the real case (commit `1c61ba9`).** At the
-DataForSEO checkpoint the author read the spend on the provider's panel: 2.81 USD for the first 199 calls, about
-0.38 USD per run of C1. E2 on C1 with two sequences per arm would cost about 15 USD there, on top of the 7.9
-estimated for E1, against the 10 the author had in mind. Decided on the cost alone, with no result of E2 seen:
+DataForSEO checkpoint the author read the spend on the provider's panel and related it to the calls: E2 on C1
+with two sequences per arm would have exceeded what the author had in mind for that provider. Decided on the cost
+alone, with no result of E2 seen:
 (a) E2 on C4 runs first, and the runs stop for a report; (b) E2 on C1 starts only when the decision taken on
 that report is recorded; (c) E2 on C1 has **one sequence per arm** (20 runs) instead of two, unless that decision
 restores the second. With one sequence per arm, what E2 shows on the real case is a single trajectory per arm:

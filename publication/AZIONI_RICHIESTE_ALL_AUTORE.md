@@ -21,7 +21,7 @@ Zenodo e repository.
 |---|---|---|
 | 8 | Nome della libreria e del repository | `tracetrim`, repository `github.com/alepom/tracetrim` (il nome è provvisorio: verifica che sia libero su GitHub e su PyPI) |
 | 9 | Pubblicare anche su PyPI | facoltativo: rende possibile `pip install tracetrim`; si può fare dopo |
-| 10 | `protocol.md` cita il tetto di spesa | il paper non riporta il budget; nel repository il protocollo resta com'era quando è stato congelato (consigliato: lasciarlo, è il documento storico) |
+| 10 | `protocol.md` cita il tetto di spesa | superato: dal 2026-11-12 nessun importo di spesa, stima o tetto compare nei file versionati (decisione dell'autore); i protocolli riportano una nota di redazione |
 | 11 | Dove pubblicare il dataset | nel record Zenodo del software (consigliato), non in git |
 
 ## Azioni esterne

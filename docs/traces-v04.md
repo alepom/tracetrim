@@ -11,7 +11,7 @@ fields lost; questions about the quality of an agent's answer need live runs.
 |---|---|---|
 | One run: trace, meta file, tool schemas | `traces/<case>/<run>.jsonl`, `.meta.json`, `.tools.json` | no |
 | E2: the work directory of a sequence (tracetrim's own traces, evidence, reports) | `out/v04/e2/<case>/<arm>-s<n>/` | no |
-| Spend ledger | `out/ledger.jsonl` | no |
+| Spend ledger (never published) | `out/ledger.jsonl` | no |
 | Tables, with counts, shares and field paths only | `results/v04/` | yes |
 
 `traces/` and `out/` are git-ignored: the runs on C1 and C2 hold third-party API responses, which are not

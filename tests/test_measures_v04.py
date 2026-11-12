@@ -36,7 +36,7 @@ def test_the_figures_of_e1_are_those_of_the_results_file():
     for case, saving, cost in (("C1", 44, 30), ("C4", 44, 24)):
         a, r = t[case]["T"], t[case]["R"]
         assert round((1 - a["tokens_outputs_sent"]["median"] / a["tokens_outputs_original"]["median"]) * 100) == saving
-        assert round((1 - a["cost_usd"]["median"] / r["cost_usd"]["median"]) * 100) == cost
+        assert round(-a["cost_vs_R"] * 100) == cost and r["cost_vs_R"] == 0
         assert a["gates_passed"] == 5
     assert "down 44% on C1 and on C4, cost of a run down 30% and 24%" in DOC
     did_not = {(c, arm): a["did_not_do_the_task"] for c, arms in t.items() for arm, a in arms.items()}
@@ -63,19 +63,33 @@ def test_the_figures_of_e2_are_those_of_the_results_file():
     assert (round(min(samp) * 100), round(max(samp) * 100)) == (35, 40)
 
 
-def test_the_spend_and_the_calls_are_those_of_the_runs():
-    cost = lambda rows: sum(r["cost_usd"] for r in rows)       # noqa: E731
-    c4 = [r for r in E2["per_run"] if r["case"] == "C4"]
-    c1 = [r for r in E2["per_run"] if r["case"] == "C1"]
-    # The table has what the ledger says, attempts cut short included: within a few cents of the completed runs.
-    for stated, rows in ((12.46, E1["per_run"]), (2.63, c4), (3.99, c1)):
-        assert 0 <= stated - cost(rows) < 0.05
-    assert "| **Total** | **100** | **19.08** |" in DOC and abs(19.08 - 12.46 - 2.63 - 3.99) < 0.005
+def test_the_runs_and_the_calls_are_those_of_the_results_and_no_amount_is_published():
+    assert len(E1["per_run"]) == 50 and len(E2["per_run"]) == 50
     assert E2["dataforseo"]["calls"] == 813 and "813 calls" in DOC
+    # The author's decision (2026-11-12): no amount spent anywhere in what is published.
+    import json
+    import re
+    for name in ("e1", "e2", "e3"):
+        text = (ROOT / "results" / "v04" / f"{name}.json").read_text()
+        assert "usd" not in text.lower(), name
+    assert "usd" not in json.dumps(json.loads((ROOT / "results" / "phase_c.json").read_text())).lower()
+    for path in [ROOT / "docs" / "measures-v04.md", ROOT / "CHANGELOG.md", ROOT / "protocol.md",
+                 ROOT / "protocol-v04.md", ROOT / "protocol-v04-e3.md", ROOT / "CLAUDE.md"]:
+        text = path.read_text()
+        # A list price per million tokens is public; an amount in US dollars of our own is not.
+        amounts = re.findall(r"[0-9][0-9.,]*\s*USD(?!\s*(?:/\s*1M|per 1M|/day))", text)
+        assert not amounts, (path.name, amounts)
 
 
 def _n(x):
     return f"{x:g}"
+
+
+def cost(change, arm):
+    if arm == "R":
+        return "—"
+    pct = round(change * 100)
+    return f"{'+' if pct > 0 else '−'}{abs(pct)}%"
 
 
 def test_the_table_of_e3_is_that_of_the_results_file():
@@ -87,9 +101,9 @@ def test_the_table_of_e3_is_that_of_the_results_file():
             a = arms[arm]
             line = (f"| {case} | {name} | {a['runs']} | {rng(a['turns'])} | {rng(a['calls'])} | "
                     f"{rng(a['several_calls_share_per_run'], True)} | {round(a['billed_input']['median']):,} | "
-                    f"{a['cost_usd']['median']:.3f} |")
+                    f"{cost(a['cost_vs_R'], arm)} |")
             assert line in DOC, line
-    assert f"42 runs, pilot included, for {E3['cost_usd']:.2f} USD" in DOC
+    assert "E3: 42 runs, pilot" in " ".join(DOC.split()) and E3["runs"] + E3["pilot_runs"] == 42
 
 
 def test_the_outcomes_of_e3_are_those_computed():
@@ -106,7 +120,7 @@ def test_the_outcomes_of_e3_are_those_computed():
     # What the text says of C5 and C4, in both pages.
     c5 = {a: sorted(r["turns"] for r in E3["per_run"] if (r["case"], r["arm"]) == ("C5", a) and not r.get("pilot")) for a in "RS"}
     assert c5["R"][0] == 5 and (c5["R"][1], c5["R"][-1]) == (14, 19) and (c5["S"][0], c5["S"][-1]) == (5, 8)
-    assert round((1 - t["C5"]["S"]["cost_usd"]["median"] / t["C5"]["R"]["cost_usd"]["median"]) * 100) == 15
+    assert round(-t["C5"]["S"]["cost_vs_R"] * 100) == 15
     assert t["C5"]["S"]["billed_input"]["median"] < t["C5"]["R"]["billed_input"]["median"] / 2
     for doc in (DOC, SKILL):
         assert "down 15%" in doc and "more than halved" in doc

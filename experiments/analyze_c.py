@@ -17,6 +17,19 @@ from .checks import check
 from .quality import quality
 from .paths import ROOT, TRACES, cost, keep_missing
 
+
+def relative_costs(res: dict) -> dict:
+    """No amount spent is published (the author's decision, 2026-11-12): the cost of each
+    run becomes `cost_index`, its cost over the median cost of the raw runs of its case.
+    The paper's change in cost per run, median over median, is the same number."""
+    for arms in res["cases"].values():
+        if "cost_usd" not in arms.get("raw", {}):
+            continue                               # already relative
+        ref = statistics.median(arms["raw"]["cost_usd"])
+        for a in arms.values():
+            a["cost_index"] = [round(c / ref, 4) for c in a.pop("cost_usd")]
+    return res
+
 OUT = ROOT / "results" / "phase_c.json"
 
 
@@ -57,14 +70,16 @@ def main():
         for key, label in (("billed_input", "input tokens"), ("uncached_input", "uncached input"),
                            ("turns", "turns"), ("calls", "tool calls"), ("expand_calls", "expand calls")):
             print(f"    {label:<14}" + "".join(f"{mm(a[key]):>30}" for a in arms.values()))
-        print(f"    {'cost (USD)':<14}" + "".join(
-            f"{statistics.median(a['cost_usd']):>30.3f}" for a in arms.values()))
+        if "raw" in arms:
+            ref = statistics.median(arms["raw"]["cost_usd"])
+            print(f"    {'cost vs raw':<14}" + "".join(
+                f"{statistics.median(a['cost_usd']) / ref - 1:>+30.0%}" for a in arms.values()))
         print(f"    {'gates passed':<14}" + "".join(f"{str(a['gates_passed']) + '/' + str(len(a['runs'])):>30}" for a in arms.values()))
         for a_name, a in arms.items():
             for p, t in zip(a["runs"], a["thermometers"]):
                 print(f"      {a_name:<8}{p:<14}{json.dumps(t, ensure_ascii=False)}")
         print()
-    res = keep_missing(res, OUT, ("C1", "C4"))
+    res = relative_costs(keep_missing(res, OUT, ("C1", "C4")))
     OUT.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"  written: {OUT.relative_to(ROOT)}  (prices assumed: experiments/prices.json)\n")
 

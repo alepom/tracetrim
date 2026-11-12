@@ -217,7 +217,7 @@ def main():
             if "raw" in arms and "prudent" in arms:
                 rr, pp = arms["raw"], arms["prudent"]
                 case = c
-                for k, label in (("billed_input", "Input"), ("uncached_input", "Uncached"), ("cost_usd", "Cost")):
+                for k, label in (("billed_input", "Input"), ("uncached_input", "Uncached"), ("cost_index", "Cost")):
                     m(f"PhaseCChange{label}{R}", apct(statistics.median(pp[k]) / statistics.median(rr[k]) - 1))
                 if case == "C4":
                     # Tickets diagnosed correctly (frozen thermometer), worst run of each arm.

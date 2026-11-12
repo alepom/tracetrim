@@ -11,8 +11,9 @@
                              (analysed as in Study 1)
   dataset/MANIFEST.json      every file with its sha256
 
-Pilot runs are excluded, as in every analysis. The C1/C2 metadata files keep
-usage and cost but drop the tool-failure arguments, which can contain
+Pilot runs are excluded, as in every analysis. Metadata files keep the token
+usage and never the cost of a run (no amount spent is published: the author's
+decision, 2026-11-12). The C1/C2 metadata files also drop the tool-failure arguments, which can contain
 keywords and URLs typed by the agent.
 """
 from __future__ import annotations
@@ -33,6 +34,11 @@ DERIVED = ("C1", "C2")
 PHASES = ("A*", "B-*", "C-*", "D-*")
 
 
+
+def without_amounts(meta: dict) -> dict:
+    """A run's metadata without what it cost: every key that holds US dollars goes."""
+    return {k: v for k, v in meta.items() if "usd" not in k.lower()}
+
 def runs(case):
     for pat in PHASES:
         yield from sorted((TRACES / case).glob(f"{pat}.jsonl"))
@@ -47,7 +53,8 @@ def main():
         d.mkdir(parents=True)
         for p in runs(case):
             shutil.copy2(p, d / p.name)
-            shutil.copy2(p.with_suffix(".meta.json"), d / p.with_suffix(".meta.json").name)
+            meta = json.loads(p.with_suffix(".meta.json").read_text())
+            (d / p.with_suffix(".meta.json").name).write_text(json.dumps(without_amounts(meta), indent=2) + "\n")
     for case in DERIVED:
         d = OUT / "derived" / case
         d.mkdir(parents=True)
@@ -67,7 +74,7 @@ def main():
                     }) + "\n")
             meta = json.loads(p.with_suffix(".meta.json").read_text())
             meta.pop("tool_failures", None)
-            (d / p.with_suffix(".meta.json").name).write_text(json.dumps(meta, indent=2) + "\n")
+            (d / p.with_suffix(".meta.json").name).write_text(json.dumps(without_amounts(meta), indent=2) + "\n")
     files = sorted(f for f in OUT.rglob("*") if f.is_file())
     manifest = {str(f.relative_to(OUT)): hashlib.sha256(f.read_bytes()).hexdigest() for f in files}
     (OUT / "MANIFEST.json").write_text(json.dumps(manifest, indent=1) + "\n")

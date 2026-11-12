@@ -220,7 +220,7 @@ class OpenAlex:
                 if args.get(k):
                     p[k] = args[k]
             # Capped in the tool, not in the prompt: one work weighs ~6,000
-            # tokens, and the pilot's 10 per page cost 1.14 USD in one run.
+            # tokens, and the pilot's 10 per page made a single run too expensive.
             p["per_page"] = max(1, min(5, int(args.get("per_page") or 5)))
             return self._get("/works", p)
         if name == "openalex_get_work":

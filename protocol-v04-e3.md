@@ -2,6 +2,10 @@
 
 Frozen on 2026-11-12 at commit `4dd774b`, approved by the author (REVISIONE-02a).
 
+> **Redaction (2026-11-12).** At the author's request, amounts spent, spend estimates and spend caps were removed
+> from this document before the v0.4 release. The rules they governed are unchanged and were applied as frozen.
+> The model's list prices are public and stay.
+
 Status: **frozen on 2026-11-12**, approved by the author, before any paid run. The commit that froze it is
 recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
 at the bottom, dated, with the reason.
@@ -131,15 +135,15 @@ model's prices. Two figures: the cost if this model works as the other did, and 
 turn, which is the case E3 is run for; no cache discount in either, output tokens doubled as an allowance for
 thinking tokens.
 
-| Case | Runs, pilot included | As measured on the other model, USD | One call per turn, USD |
-|---|---:|---:|---:|
-| C4 | 18 | 1.01 | 2.32 |
-| C5 | 14 | 1.82 | 5.84 |
-| C2 | 6 | 1.38 | 4.25 |
-| C1 | 4 | 2.36 | 5.40 |
-| **Total** | **42** | **6.58** | **17.81** |
+| Case | Runs, pilot included |
+|---|---:|
+| C4 | 18 |
+| C5 | 14 |
+| C2 | 6 |
+| C1 | 4 |
+| **Total** | **42** |
 
-**The upper figure is above the cap.** It assumes that every call takes a turn of its own and that nothing is
+**The upper figure was above the cap.** It assumes that every call takes a turn of its own and that nothing is
 cached; if it came true the last runs would not start. Those are runs of C2 and C1, the cases with recorded
 outputs: the simulated cases would be complete. The cost of a run is known after the pilot, and
 is reported before the measured runs go on.
@@ -148,7 +152,7 @@ is reported before the measured runs go on.
   page, Gemini 3.8 Flash, standard pay-as-you-go, global endpoint: 0.75 USD per 1M input tokens, 0.075 cached,
   3.75 output, thinking tokens included. Introductory prices, valid through 2026-12-31; confirmed by the author
   on the pricing page on 2026-11-12. `experiments/prices.json` of the original study is not touched.
-- **Cap 15 USD, warning at 10**, on a ledger of its own (`out/ledger-e3.jsonl`). The total is computed from the
+- **A spend cap and a warning threshold** set by the author and not published, on a ledger of its own (`out/ledger-e3.jsonl`). The total is computed from the
   API's usage after every run, aborted ones included; at the cap no run starts, and a run that crosses it stops.
 - **The provider of C1 and C2 is not called**: zero calls, zero spend.
 

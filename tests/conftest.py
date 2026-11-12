@@ -9,6 +9,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
+# The spend caps are local and never published (experiments/caps.py): the tests of the
+# stop rules run with fixed caps of their own, whatever the author's local file says.
+os.environ["TRACETRIM_CAPS"] = str(ROOT / "tests" / "fixtures" / "caps.json")
 _PLACES = [Path(p) for p in [os.environ.get("TRACETRIM_TRACES")] if p] + [ROOT / "traces", ROOT / "dataset" / "traces"]
 # A place counts when it holds the recorded runs of the original study (Phase A): a
 # checkout's own traces/ can exist with only the runs of later measures in it.
@@ -34,3 +37,4 @@ def traces():
     if TRACES is None:
         pytest.skip("recorded traces not available: unzip the Zenodo dataset at the repository root")
     return TRACES
+

@@ -1,0 +1,15 @@
+{
+  "_note": "made-up caps for the tests; the real ones are local and never published",
+  "study": {
+    "warn": 70.0,
+    "stop": 80.0
+  },
+  "v04": {
+    "warn": 80.0,
+    "stop": 100.0
+  },
+  "e3": {
+    "warn": 30.0,
+    "stop": 35.0
+  }
+}

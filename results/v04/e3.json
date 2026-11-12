@@ -7,7 +7,6 @@
   ],
   "runs": 38,
   "pilot_runs": 4,
-  "cost_usd": 5.2372,
   "provider_calls": 0,
   "pilot": {
     "turns_with_calls": 40,
@@ -52,7 +51,6 @@
         "flagged": 0,
         "gates_passed": null,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": null,
         "turns": {
           "median": 14.0,
@@ -102,11 +100,6 @@
           "min": 12425,
           "max": 12482
         },
-        "cost_usd": {
-          "median": 0.1951,
-          "min": 0.1635,
-          "max": 0.2267
-        },
         "tokens_tool_definitions": {
           "median": 7699.0,
           "min": 7699,
@@ -141,7 +134,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": 0.0
       },
       "S": {
         "several_calls_share_per_run": {
@@ -153,7 +147,6 @@
         "flagged": 0,
         "gates_passed": null,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": null,
         "turns": {
           "median": 10.5,
@@ -203,11 +196,6 @@
           "min": 14462,
           "max": 15369
         },
-        "cost_usd": {
-          "median": 0.19165,
-          "min": 0.1766,
-          "max": 0.2067
-        },
         "tokens_tool_definitions": {
           "median": 7699.0,
           "min": 7699,
@@ -242,7 +230,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": -0.0177
       }
     },
     "C2": {
@@ -256,7 +245,6 @@
         "flagged": 0,
         "gates_passed": null,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": null,
         "turns": {
           "median": 6,
@@ -306,11 +294,6 @@
           "min": 7474,
           "max": 8972
         },
-        "cost_usd": {
-          "median": 0.0803,
-          "min": 0.0784,
-          "max": 0.0888
-        },
         "tokens_tool_definitions": {
           "median": 621,
           "min": 621,
@@ -345,7 +328,8 @@
           "median": 0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": 0.0
       },
       "S": {
         "several_calls_share_per_run": {
@@ -357,7 +341,6 @@
         "flagged": 0,
         "gates_passed": null,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": null,
         "turns": {
           "median": 5,
@@ -407,11 +390,6 @@
           "min": 8032,
           "max": 9269
         },
-        "cost_usd": {
-          "median": 0.0815,
-          "min": 0.0773,
-          "max": 0.0965
-        },
         "tokens_tool_definitions": {
           "median": 621,
           "min": 621,
@@ -446,7 +424,8 @@
           "median": 0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": 0.0149
       }
     },
     "C4": {
@@ -460,7 +439,6 @@
         "flagged": 0,
         "gates_passed": 8,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": {
           "median": 1.0,
           "min": 1.0,
@@ -514,11 +492,6 @@
           "min": 7030,
           "max": 10454
         },
-        "cost_usd": {
-          "median": 0.05165,
-          "min": 0.038,
-          "max": 0.0692
-        },
         "tokens_tool_definitions": {
           "median": 665.0,
           "min": 665,
@@ -553,7 +526,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": 0.0
       },
       "S": {
         "several_calls_share_per_run": {
@@ -565,7 +539,6 @@
         "flagged": 0,
         "gates_passed": 8,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": {
           "median": 1.0,
           "min": 1.0,
@@ -619,11 +592,6 @@
           "min": 7890,
           "max": 9761
         },
-        "cost_usd": {
-          "median": 0.041550000000000004,
-          "min": 0.0401,
-          "max": 0.0511
-        },
         "tokens_tool_definitions": {
           "median": 665.0,
           "min": 665,
@@ -658,7 +626,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": -0.1955
       }
     },
     "C5": {
@@ -672,7 +641,6 @@
         "flagged": 0,
         "gates_passed": 6,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": {
           "median": 1.0,
           "min": 1.0,
@@ -726,11 +694,6 @@
           "min": 15526,
           "max": 27656
         },
-        "cost_usd": {
-          "median": 0.23275,
-          "min": 0.1849,
-          "max": 0.2807
-        },
         "tokens_tool_definitions": {
           "median": 792.0,
           "min": 792,
@@ -765,7 +728,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": 0.0
       },
       "S": {
         "several_calls_share_per_run": {
@@ -777,7 +741,6 @@
         "flagged": 0,
         "gates_passed": 6,
         "did_not_do_the_task": 0,
-        "dataforseo_usd_estimated": null,
         "coverage": {
           "median": 1.0,
           "min": 1.0,
@@ -831,11 +794,6 @@
           "min": 21285,
           "max": 29922
         },
-        "cost_usd": {
-          "median": 0.19765,
-          "min": 0.1831,
-          "max": 0.2155
-        },
         "tokens_tool_definitions": {
           "median": 792.0,
           "min": 792,
@@ -870,7 +828,8 @@
           "median": 0.0,
           "min": 0,
           "max": 0
-        }
+        },
+        "cost_vs_R": -0.1508
       }
     }
   },
@@ -1041,7 +1000,6 @@
         "cached": 1129079,
         "output": 12425
       },
-      "cost_usd": 0.2267,
       "tokens": {
         "tool_definitions": 7699,
         "instructions_added": 0,
@@ -1212,7 +1170,6 @@
         "cached": 704979,
         "output": 12482
       },
-      "cost_usd": 0.1635,
       "tokens": {
         "tool_definitions": 7699,
         "instructions_added": 0,
@@ -1374,7 +1331,6 @@
         "cached": 452393,
         "output": 14462
       },
-      "cost_usd": 0.2067,
       "tokens": {
         "tool_definitions": 7699,
         "instructions_added": 549,
@@ -1537,7 +1493,6 @@
         "cached": 608220,
         "output": 15369
       },
-      "cost_usd": 0.1766,
       "tokens": {
         "tool_definitions": 7699,
         "instructions_added": 549,
@@ -1687,7 +1642,6 @@
         "cached": 77244,
         "output": 7915
       },
-      "cost_usd": 0.0784,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 0,
@@ -1783,7 +1737,6 @@
         "cached": 110932,
         "output": 7474
       },
-      "cost_usd": 0.0803,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 0,
@@ -1880,7 +1833,6 @@
         "cached": 114230,
         "output": 8972
       },
-      "cost_usd": 0.0888,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 0,
@@ -1975,7 +1927,6 @@
         "cached": 83079,
         "output": 9269
       },
-      "cost_usd": 0.0773,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 549,
@@ -2072,7 +2023,6 @@
         "cached": 177419,
         "output": 9197
       },
-      "cost_usd": 0.0965,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 549,
@@ -2166,7 +2116,6 @@
         "cached": 48500,
         "output": 8032
       },
-      "cost_usd": 0.0815,
       "tokens": {
         "tool_definitions": 621,
         "instructions_added": 549,
@@ -2262,7 +2211,6 @@
         "cached": 59379,
         "output": 10306
       },
-      "cost_usd": 0.0692,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2376,7 +2324,6 @@
         "cached": 64866,
         "output": 10454
       },
-      "cost_usd": 0.0684,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2485,7 +2432,6 @@
         "cached": 0,
         "output": 7030
       },
-      "cost_usd": 0.0401,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2596,7 +2542,6 @@
         "cached": 28158,
         "output": 10170
       },
-      "cost_usd": 0.0605,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2705,7 +2650,6 @@
         "cached": 0,
         "output": 9849
       },
-      "cost_usd": 0.0527,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2815,7 +2759,6 @@
         "cached": 10896,
         "output": 8468
       },
-      "cost_usd": 0.0466,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -2924,7 +2867,6 @@
         "cached": 0,
         "output": 10411
       },
-      "cost_usd": 0.0506,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -3033,7 +2975,6 @@
         "cached": 0,
         "output": 7048
       },
-      "cost_usd": 0.038,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -3142,7 +3083,6 @@
         "cached": 3676,
         "output": 9246
       },
-      "cost_usd": 0.045,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3251,7 +3191,6 @@
         "cached": 3665,
         "output": 9761
       },
-      "cost_usd": 0.0511,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3360,7 +3299,6 @@
         "cached": 3642,
         "output": 7890
       },
-      "cost_usd": 0.0421,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3469,7 +3407,6 @@
         "cached": 3691,
         "output": 8707
       },
-      "cost_usd": 0.0431,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3578,7 +3515,6 @@
         "cached": 3730,
         "output": 7901
       },
-      "cost_usd": 0.0401,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3687,7 +3623,6 @@
         "cached": 3667,
         "output": 8051
       },
-      "cost_usd": 0.0405,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3796,7 +3731,6 @@
         "cached": 3684,
         "output": 8166
       },
-      "cost_usd": 0.041,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -3905,7 +3839,6 @@
         "cached": 3631,
         "output": 8180
       },
-      "cost_usd": 0.041,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 549,
@@ -4014,7 +3947,6 @@
         "cached": 0,
         "output": 8451
       },
-      "cost_usd": 0.0455,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -4127,7 +4059,6 @@
         "cached": 42355,
         "output": 10882
       },
-      "cost_usd": 0.0649,
       "tokens": {
         "tool_definitions": 665,
         "instructions_added": 0,
@@ -4260,7 +4191,6 @@
         "cached": 933222,
         "output": 27199
       },
-      "cost_usd": 0.2807,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -4396,7 +4326,6 @@
         "cached": 725110,
         "output": 22315
       },
-      "cost_usd": 0.2348,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -4520,7 +4449,6 @@
         "cached": 745236,
         "output": 20149
       },
-      "cost_usd": 0.2307,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -4633,7 +4561,6 @@
         "cached": 192075,
         "output": 27656
       },
-      "cost_usd": 0.1849,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -4766,7 +4693,6 @@
         "cached": 534426,
         "output": 15526
       },
-      "cost_usd": 0.1857,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -4891,7 +4817,6 @@
         "cached": 790362,
         "output": 21936
       },
-      "cost_usd": 0.2383,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -5016,7 +4941,6 @@
         "cached": 239087,
         "output": 26427
       },
-      "cost_usd": 0.196,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5142,7 +5066,6 @@
         "cached": 308827,
         "output": 29922
       },
-      "cost_usd": 0.2155,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5269,7 +5192,6 @@
         "cached": 442270,
         "output": 21642
       },
-      "cost_usd": 0.1993,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5395,7 +5317,6 @@
         "cached": 274652,
         "output": 25004
       },
-      "cost_usd": 0.1831,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5519,7 +5440,6 @@
         "cached": 243494,
         "output": 25051
       },
-      "cost_usd": 0.1887,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5635,7 +5555,6 @@
         "cached": 500589,
         "output": 21285
       },
-      "cost_usd": 0.2028,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 549,
@@ -5774,7 +5693,6 @@
         "cached": 960169,
         "output": 30926
       },
-      "cost_usd": 0.3003,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,
@@ -5909,7 +5827,6 @@
         "cached": 718214,
         "output": 24828
       },
-      "cost_usd": 0.2397,
       "tokens": {
         "tool_definitions": 792,
         "instructions_added": 0,

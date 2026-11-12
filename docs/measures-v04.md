@@ -80,16 +80,16 @@ text, no trimming. Four agents: billing support and a CI-failure report on simul
 search-data agents of E1 (C1, C2) with **recorded outputs in place of the provider**, which was never called.
 Results: `results/v04/e3.json`. Median and range per arm:
 
-| Case | Arm | Runs | Turns | Tool calls | Turns with several calls, per run | Billed input tokens | Cost, USD |
+| Case | Arm | Runs | Turns | Tool calls | Turns with several calls, per run | Billed input tokens | Cost of a run, vs without |
 |---|---|---:|---:|---:|---:|---:|---:|
-| C4 | without | 8 | 3.5 [3–8] | 11.5 [10–14] | 88% [43–100] | 25,316 | 0.052 |
-| C4 | strategy | 8 | 3 [3–3] | 10 [10–12] | 100% [100–100] | 17,196 | 0.042 |
-| C5 | without | 6 | 17 [5–19] | 16 [13–18] | 0% [0–100] | 865,862 | 0.233 |
-| C5 | strategy | 6 | 6 [5–8] | 16.5 [15–20] | 90% [57–100] | 391,018 | 0.198 |
-| C2 | without | 3 | 6 [6–7] | 15 [14–16] | 100% [100–100] | 169,493 | 0.080 |
-| C2 | strategy | 3 | 5 [4–7] | 14 [13–19] | 100% [100–100] | 131,489 | 0.082 |
-| C1 | without | 2 | 14 [13–15] | 23 [21–25] | 47% [36–58] | 1,023,210 | 0.195 |
-| C1 | strategy | 2 | 10.5 [10–11] | 18 [17–19] | 53% [50–56] | 658,204 | 0.192 |
+| C4 | without | 8 | 3.5 [3–8] | 11.5 [10–14] | 88% [43–100] | 25,316 | — |
+| C4 | strategy | 8 | 3 [3–3] | 10 [10–12] | 100% [100–100] | 17,196 | −20% |
+| C5 | without | 6 | 17 [5–19] | 16 [13–18] | 0% [0–100] | 865,862 | — |
+| C5 | strategy | 6 | 6 [5–8] | 16.5 [15–20] | 90% [57–100] | 391,018 | −15% |
+| C2 | without | 3 | 6 [6–7] | 15 [14–16] | 100% [100–100] | 169,493 | — |
+| C2 | strategy | 3 | 5 [4–7] | 14 [13–19] | 100% [100–100] | 131,489 | +1% |
+| C1 | without | 2 | 14 [13–15] | 23 [21–25] | 47% [36–58] | 1,023,210 | — |
+| C1 | strategy | 2 | 10.5 [10–11] | 18 [17–19] | 53% [50–56] | 658,204 | −2% |
 
 The two hypotheses on the organisation of calls compare the median of one arm with the best run of the other,
 and **both failed as stated**. What the runs show is different on the two simulated cases, and they are read apart.
@@ -175,20 +175,13 @@ gave nothing back, 7 asked for more rows with an id that did not exist, and 2 na
 which `expand` now accepts. On the search-data API the rows a run reuses are the first ones in 25% of the calls,
 and a cut to five rows would have removed a reused one in 92%: [rows.md](rows.md).
 
-## Spend
+## Runs
 
-| | Runs | Model, USD |
-|---|---:|---:|
-| E1 | 50 | 12.46 |
-| E2, simulated case | 40 | 2.63 |
-| E2, real case | 10 | 3.99 |
-| **Total** | **100** | **19.08** |
-
-Three more attempts were cut short by errors of the model's service and repeated; their cost is in the totals. The
-real cases made 813 calls to the search-data provider, billed apart.
-
-E3 had its own cap, 15 USD: 42 runs, pilot included, for 5.24 USD of the second model, and no call to the
-provider. One attempt was refused before anything was generated, at no cost; no request was repeated.
+E1: 50 runs. E2: 40 on the simulated case and 10 on the real case. Three more attempts were cut short by errors of
+the model's service and repeated. The real cases made 813 calls to the search-data provider. E3: 42 runs, pilot
+included, and no call to the provider; one attempt was refused before anything was generated, and no request was
+repeated. Amounts spent are not published: costs appear only as changes relative to the arm without strategy and
+without trimming, at the providers' list prices.
 
 ## What these measures do not show
 

@@ -6,7 +6,5 @@
   "input_per_mtok": 0.75,
   "cached_input_per_mtok": 0.075,
   "output_per_mtok": 3.75,
-  "output_includes": "response and reasoning (thinking) tokens",
-  "warn_usd": 10.0,
-  "stop_usd": 15.0
+  "output_includes": "response and reasoning (thinking) tokens"
 }

@@ -24,3 +24,4 @@ build/
 dist/
 *:Zone.Identifier
 credentials*.json
+experiments/caps.local.json

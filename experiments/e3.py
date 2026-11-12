@@ -27,11 +27,12 @@ import json
 from pathlib import Path
 from statistics import median
 
+from .caps import caps
 from .paths import PROMPTS, ROOT, STUDY_TRACES
 from .v04 import HERE, Run, Where, execute, ledger, spent, stub_for
 
 PRICES = json.loads((ROOT / "experiments" / "prices-e3.json").read_text())
-CAP, WARN = PRICES["stop_usd"], PRICES["warn_usd"]
+WARN, CAP = caps("e3")           # local, never published: experiments/caps.py
 ARMS = ("R", "S")
 # Runs per arm. More on the simulated cases, whose runs are cheap; fewer on the two cases
 # with recorded outputs, whose long tool outputs are re-read at every turn.

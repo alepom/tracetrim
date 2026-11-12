@@ -53,7 +53,7 @@ def test_the_e2_arms_are_the_settings_of_the_protocol():
     assert v04.E2_ARMS["base"] == {} and v04.E2_ARMS["promotion"] == {"promote": True}
     assert v04.E2_ARMS["sampling"] == {"sample_rate": 0.25, "sample_max_share": 0.5}
     assert v04.E2_ARMS["promotion+sampling"] == {"promote": True, "sample_rate": 0.25, "sample_max_share": 0.5}
-    assert (v04.CAP, v04.WARN, v04.MIN_RUNS) == (50.0, 40.0, 5)
+    assert (v04.CAP, v04.WARN, v04.MIN_RUNS) == (100.0, 80.0, 5)              # the tests' made-up caps
 
 
 # -- which text reaches the system prompt -------------------------------------------
@@ -87,17 +87,17 @@ def spend(where: Where, usd: float, dataforseo_runs: int = 0):
 def test_the_warning_and_the_cap_are_those_of_the_protocol(tmp_path):
     where, run = Where(tmp_path), Run("E1", "C4", "R", 1)
     assert v04.may_start(where, run) is None                           # no ledger yet: nothing spent
-    spend(where, 39.99)
+    spend(where, 79.99)
     assert v04.may_start(where, run) is None
-    spend(where, 40.0)
+    spend(where, 80.0)
     # At the warning everything stops for a report, until its review is recorded.
-    with pytest.raises(SystemExit, match="warning: 40.00 USD spent .warning at 40, cap 50.. Report the spend"):
+    with pytest.raises(SystemExit, match="warning: 80.00 USD spent .warning at 80, cap 100.. Report the spend"):
         v04.may_start(where, run)
     where.warning_reviewed.parent.mkdir(parents=True)
     where.warning_reviewed.write_text('{"reviewed": true}\n')
-    assert v04.may_start(where, run) == "WARNING: 40.00 USD spent, warning at 40, cap 50"
-    spend(where, 50.0)
-    with pytest.raises(SystemExit, match="stop rule: 50.00 USD already spent, cap 50"):
+    assert v04.may_start(where, run) == "WARNING: 80.00 USD spent, warning at 80, cap 100"
+    spend(where, 100.0)
+    with pytest.raises(SystemExit, match="stop rule: 100.00 USD already spent, cap 100"):
         v04.may_start(where, run)
     assert not (ROOT / "out" / "ledger.jsonl").exists() or v04.HERE.ledger != where.ledger
 
@@ -424,7 +424,7 @@ def test_e2_on_the_real_case_waits_for_its_own_decision_which_also_fixes_its_seq
 
 def test_the_decision_on_the_real_case_can_name_its_arms_and_the_others_are_refused(tmp_path):
     where = Where(tmp_path)
-    spend(where, 15.0)
+    spend(where, 1.0)
     for gate in (where.e1_reviewed, where.checkpoint):
         gate.parent.mkdir(parents=True, exist_ok=True)
         gate.write_text('{"ok": true}\n')
@@ -445,16 +445,16 @@ def test_the_decision_on_the_real_case_can_name_its_arms_and_the_others_are_refu
 
 def test_a_run_that_crosses_the_cap_stops_and_is_flagged(dry, tmp_path):
     where = Where(tmp_path)
-    spend(where, 49.99)
+    spend(where, 99.99)
     where.warning_reviewed.parent.mkdir(parents=True)
     where.warning_reviewed.write_text('{"reviewed": true}\n')
     run = Run("E1", "C4", "R", 1)
     m = asyncio.run(v04.execute(run, where, client=v04.stub_for(run), model="stub", dry=True))
     # Stopped at the turn that crossed the cap, before the run was over.
     assert m["flags"] == ["stopped_by_budget"] and m["turns"] < by(dry, "E1", "C4", "R")["turns"]
-    assert v04.spent(where) >= 50 and len(v04.ledger(where)) == 2
+    assert v04.spent(where) >= 100 and len(v04.ledger(where)) == 2
     # And nothing starts after it: the cap is checked before anything else.
-    with pytest.raises(SystemExit, match="stop rule: 50.0. USD already spent, cap 50"):
+    with pytest.raises(SystemExit, match="stop rule: 100.0. USD already spent, cap 100"):
         asyncio.run(v04.execute(Run("E1", "C4", "S", 1), where, client=v04.stub_for(run), model="stub", dry=True))
 
 
