@@ -137,7 +137,7 @@ In a host such as Claude Code or Cursor, where a person talks to the agent:
 | OpenAI Playground | HTTP | yes | yes: 7 runs of 7, at least 2 of them without the line in the prompt | **no**: the client declares only the extension `io.modelcontextprotocol/ui` and asks neither `skills/list` nor `resources/read` | yes | skill: 12 November 2026, one run with `--log-client` (0.4.1); the rest: 12 November 2026, six runs on DataForSEO's server with the 0.4 branch and one with 0.4.1 |
 | Responses API | not verified | not verified | not verified | not verified | not verified | — |
 | Claude Desktop | not verified | not verified | not verified | not verified | not verified | — |
-| Claude Code | not verified | not verified | not verified | not verified | not verified | — |
+| Claude Code | stdio, entry written by `tracetrim init` (references in `env` resolved by the host) | yes | yes: 1 run of 1, without the line in the prompt | **read, not loaded**: the client (2.1.322) declares only `io.modelcontextprotocol/tasks`, not the Skills extension; it lists the resources, and the model read `skill://tracetrim/SKILL.md` through its tool for MCP resources before the first call, after the server's instructions | not tried: nothing was trimmed yet | 12 November 2026, one run with `--log-client` (0.4.1 proxy, `init` of 0.5) on a simulated orders server |
 | Cursor | not verified | not verified | not verified | not verified | not verified | — |
 | VS Code | not verified | not verified | not verified | not verified | not verified | — |
 | MCP Inspector | stdio | not verified | does not apply: no model | the skill is served correctly: outcome `verified` | not verified | 11 November 2026, MCP Inspector CLI 2.13.0, `--method skills/list --verify` ([docs/skill.md](skill.md)) |
@@ -163,6 +163,7 @@ request of the client; it never holds arguments, results, headers or tokens
 | the host connects and the tools pass | `initialize` (or `server/discover`), then `tools/list` and a `tools/call` with the name of one of your tools |
 | it calls `tracetrim_done` | a `tools/call` named `tracetrim_done` at the end of the run |
 | it loads the skill | `io.modelcontextprotocol/skills` among the extensions it declares, then `skills/list` or `skills/get`, or `resources/read` of `skill://tracetrim/SKILL.md` |
+| its model reads the skill anyway | no Skills extension declared, but `resources/list` and then `resources/read` of `skill://tracetrim/SKILL.md` in the middle of a conversation: the model fetched it through the host's tool for MCP resources (Claude Code does this) |
 | `expand` works | after learning has started trimming, a `tools/call` named `expand` (and the report's count of expansions) |
 
 To report what you found, open an issue at <https://github.com/alepom/tracetrim/issues> with the name

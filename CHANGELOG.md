@@ -32,6 +32,8 @@ receives**: the engine, the proxy, learning and the skill are untouched.
   host with its source, and a table of what was verified host by host (connection, tools,
   `tracetrim_done`, the skill, `expand`), with how to verify a host yourself using `--log-client`. The
   README's short way starts from `tracetrim init`.
+- **Hosts checked**: the OpenAI Playground does not ask for the skill; in Claude Code (2.1.322) the model
+  reads it as an MCP resource, and an entry written by `init` starts and closes its run with `tracetrim_done`.
 
 ## 0.4.1
 
