@@ -6,7 +6,7 @@
   python -m experiments.run --e3 pilot              # what the pilot showed, and whether the runs may go on
   python -m experiments.run --e3 dry-run DIR        # every arm and case with a stub in place of the model: no spend
   python -m experiments.run --e3 estimate [--json]  # the cost estimate, from E1's measured runs
-  python -m experiments.run --e3 check              # can the project in .env use the model? (not billed)
+  python -m experiments.run --e3 check              # can the service account use the model? (not billed)
 
 The loop, the traces and the meta files are those of experiments/v04.py. What E3 has of its own:
 
@@ -222,7 +222,7 @@ def main(argv=None):
         r = access(PRICES["model"])
         print(json.dumps(r, indent=2))
         if not r["accepted"]:
-            raise SystemExit("the project in .env cannot use the model: nothing can be run")
+            raise SystemExit("the service account cannot use the model: nothing can be run")
     elif a.cmd == "dry-run":
         metas = asyncio.run(dry_run(a.directory))
         print(f"\n{len(metas)} dry runs in {a.directory}: nothing spent")
@@ -248,7 +248,7 @@ def main(argv=None):
         from .gemini import access
         r = access(PRICES["model"])
         if not r["accepted"]:               # before anything is spent or written
-            raise SystemExit(f"E3: the project in .env cannot use {PRICES['model']} ({r['error']}). "
+            raise SystemExit(f"E3: the service account cannot use {PRICES['model']} ({r['error']}). "
                              "See `python -m experiments.run --e3 check`.")
         m = asyncio.run(execute(run))
         print(f"\n  {m['case']} {m['run']}: {m['turns']} turns, {m['calls']} calls, {m['cost_usd']:.3f} USD, flags {m['flags']}"

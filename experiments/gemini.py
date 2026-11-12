@@ -37,6 +37,24 @@ from .tools import env
 LOCATION = "global"
 
 
+def vertex_client():
+    """The SDK's client for Vertex AI, built as the author's other projects build it:
+    the service account is found through GOOGLE_APPLICATION_CREDENTIALS and the
+    project is the service account's own, which the SDK reads by itself. No project
+    is named here. (GCP_PROJECT in .env is not used: on 2026-11-12 its value was not
+    the service account's project, and Vertex AI refused it.) The file of the
+    credentials is never opened by the study's code."""
+    from google import genai
+    from google.genai import types
+    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") and env("GOOGLE_APPLICATION_CREDENTIALS"):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
+    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+        raise SystemExit("GOOGLE_APPLICATION_CREDENTIALS is needed in .env")
+    # Transient failures of the service are retried by the SDK, as in the author's framework.
+    retry = types.HttpRetryOptions(attempts=4, max_delay=60.0, http_status_codes=[408, 429, 500, 502, 503, 504])
+    return genai.Client(vertexai=True, location=LOCATION, http_options=types.HttpOptions(retry_options=retry))
+
+
 def function_response_payload(output: str) -> dict:
     """A tool's text as the object a function response carries. JSON objects go
     as they are; anything else (a list, an error text) under one key."""
@@ -48,23 +66,13 @@ def function_response_payload(output: str) -> dict:
 
 
 def access(model: str) -> dict:
-    """Can the project named in .env use the model? Asked with a token count, which
-    generates nothing and is not billed. No value of the configuration is returned:
-    a metadata request on the model is not enough, it does not check the project."""
-    import google.auth
-    from google import genai
-    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") and env("GOOGLE_APPLICATION_CREDENTIALS"):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
-    project = os.environ.get("GCP_PROJECT") or env("GCP_PROJECT")
-    out = {"model": model, "location": LOCATION, "GCP_PROJECT_is_set": bool(project), "accepted": False, "error": None}
+    """Can the service account use the model on Vertex AI? Asked with a token count,
+    which generates nothing and is not billed. No value of the configuration is
+    returned. (A metadata request on the model is not enough: it does not check the project.)"""
+    out = {"model": model, "location": LOCATION, "project": "the service account's own, read by the SDK",
+           "accepted": False, "error": None}
     try:
-        _, own = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-        out["GCP_PROJECT_is_the_service_accounts_project"] = own == project
-    except Exception as e:                                   # noqa: BLE001
-        out["error"] = f"credentials: {type(e).__name__}"
-        return out
-    try:
-        client = genai.Client(vertexai=True, project=project, location=LOCATION)     # kept: a client dropped mid-call closes
+        client = vertex_client()                             # kept: a client dropped mid-call closes
         client.models.count_tokens(model=model, contents="ciao")
         out["accepted"] = True
     except Exception as e:                                   # noqa: BLE001
@@ -82,15 +90,7 @@ class Gemini:
 
     def __init__(self, client=None):
         if client is None:
-            from google import genai
-            # The service account is found by the SDK through this variable: the file is never opened here.
-            for name in ("GOOGLE_APPLICATION_CREDENTIALS",):
-                if not os.environ.get(name) and env(name):
-                    os.environ[name] = env(name)
-            project = os.environ.get("GCP_PROJECT") or env("GCP_PROJECT")
-            if not project or not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
-                raise SystemExit("GOOGLE_APPLICATION_CREDENTIALS and GCP_PROJECT are needed in .env")
-            client = genai.Client(vertexai=True, project=project, location=LOCATION)
+            client = vertex_client()
         self.client = client
         self.history: dict[str, list] = {}           # response id -> the conversation up to and including it
         self.calls: dict[str, tuple[str, str | None]] = {}     # our call id -> (name, the model's own id)
