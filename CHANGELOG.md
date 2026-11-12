@@ -4,7 +4,7 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
-## Unreleased
+## 0.4.1
 
 Clearer reports and diagnostics. **Nothing changes in what the model receives**: the same calls give the
 same text and the same traces as 0.4.0, which a test checks with the new counts on and off.
@@ -32,6 +32,8 @@ same text and the same traces as 0.4.0, which a test checks with the new counts 
   tells whether a host asked for the tracetrim skill
   ([docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)). Over stdio and HTTP.
 - README and docs no longer call the functions of 0.4 "unreleased".
+- `docs/skill.md` records the first host checked with `--log-client`: the OpenAI Playground does not ask
+  for the skill, and calls `tracetrim_done` from the tool's description.
 
 ## 0.4.0
 

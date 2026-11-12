@@ -170,6 +170,12 @@ per request of the client, with the time, an anonymous id of the session and the
   read it: the tool descriptions are all its model saw.
 - Reading is not following: the line says the host fetched the text, not that it gave it to the model.
 
+Checked so far: the **OpenAI Playground** (client `openai-mcp (Responses API)` 1.0.0, 12 November 2026)
+declares only the `io.modelcontextprotocol/ui` extension and never asks for the skill; it called
+`tracetrim_done` anyway, from the tool's description, in every run of two tests (seven runs, at least two
+without the added line in the prompt). On hosts like this one the line in the agent's instructions is
+optional but harmless.
+
 The file never holds arguments, results, headers or tokens: a tool call leaves the name of the tool
 and nothing else (`tracetrim.clientlog` has the list of what is written, per method). Over HTTP,
 sessions are told apart by the id; on the protocol without sessions (2026-07-28) each request is its
