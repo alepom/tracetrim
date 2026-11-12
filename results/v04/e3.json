@@ -1,0 +1,5963 @@
+{
+  "protocol": "protocol-v04-e3.md",
+  "tokens": "billed tokens from the model's API usage; other counts tiktoken o200k_base",
+  "dry_run": false,
+  "models": [
+    "gemini-3.8-flash"
+  ],
+  "runs": 38,
+  "pilot_runs": 4,
+  "cost_usd": 5.2372,
+  "provider_calls": 0,
+  "pilot": {
+    "turns_with_calls": 40,
+    "calls_per_turn_median": 1.0,
+    "share_of_turns_with_several_calls": 0.125
+  },
+  "replay": {
+    "C1": {
+      "exact": 21,
+      "nearest": 61,
+      "none": 0,
+      "per_run_exact_share": [
+        0.4,
+        0.3333,
+        0.1176,
+        0.1053
+      ]
+    },
+    "C2": {
+      "exact": 6,
+      "nearest": 85,
+      "none": 0,
+      "per_run_exact_share": [
+        0.0714,
+        0.0667,
+        0.0625,
+        0.0769,
+        0.0526,
+        0.0714
+      ]
+    }
+  },
+  "e3": {
+    "C1": {
+      "R": {
+        "several_calls_share_per_run": {
+          "median": 0.4702,
+          "min": 0.3571,
+          "max": 0.5833
+        },
+        "runs": 2,
+        "flagged": 0,
+        "gates_passed": null,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": null,
+        "turns": {
+          "median": 14.0,
+          "min": 13,
+          "max": 15
+        },
+        "calls": {
+          "median": 23.0,
+          "min": 21,
+          "max": 25
+        },
+        "calls_per_turn_max": {
+          "median": 3.5,
+          "min": 3,
+          "max": 4
+        },
+        "turns_with_calls": 26,
+        "share_of_turns_with_several_calls": 0.4615,
+        "calls_per_turn_median": 1.0,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 1023209.5,
+          "min": 790074,
+          "max": 1256345
+        },
+        "billed_cached": {
+          "median": 917029.0,
+          "min": 704979,
+          "max": 1129079
+        },
+        "billed_output": {
+          "median": 12453.5,
+          "min": 12425,
+          "max": 12482
+        },
+        "cost_usd": {
+          "median": 0.1951,
+          "min": 0.1635,
+          "max": 0.2267
+        },
+        "tokens_tool_definitions": {
+          "median": 7699.0,
+          "min": 7699,
+          "max": 7699
+        },
+        "tokens_instructions_added": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 106518.0,
+          "min": 87074,
+          "max": 125962
+        },
+        "tokens_outputs_sent": {
+          "median": 106518.0,
+          "min": 87074,
+          "max": 125962
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 5330.0,
+          "min": 4899,
+          "max": 5761
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "S": {
+        "several_calls_share_per_run": {
+          "median": 0.5278,
+          "min": 0.5,
+          "max": 0.5556
+        },
+        "runs": 2,
+        "flagged": 0,
+        "gates_passed": null,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": null,
+        "turns": {
+          "median": 10.5,
+          "min": 10,
+          "max": 11
+        },
+        "calls": {
+          "median": 18.0,
+          "min": 17,
+          "max": 19
+        },
+        "calls_per_turn_max": {
+          "median": 3.5,
+          "min": 3,
+          "max": 4
+        },
+        "turns_with_calls": 19,
+        "share_of_turns_with_several_calls": 0.5263,
+        "calls_per_turn_median": 2,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 658203.5,
+          "min": 610439,
+          "max": 705968
+        },
+        "billed_cached": {
+          "median": 530306.5,
+          "min": 452393,
+          "max": 608220
+        },
+        "billed_output": {
+          "median": 14915.5,
+          "min": 14462,
+          "max": 15369
+        },
+        "cost_usd": {
+          "median": 0.19165,
+          "min": 0.1766,
+          "max": 0.2067
+        },
+        "tokens_tool_definitions": {
+          "median": 7699.0,
+          "min": 7699,
+          "max": 7699
+        },
+        "tokens_instructions_added": {
+          "median": 549.0,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 85975.5,
+          "min": 81420,
+          "max": 90531
+        },
+        "tokens_outputs_sent": {
+          "median": 85975.5,
+          "min": 81420,
+          "max": 90531
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 6397.5,
+          "min": 6171,
+          "max": 6624
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    "C2": {
+      "R": {
+        "several_calls_share_per_run": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "runs": 3,
+        "flagged": 0,
+        "gates_passed": null,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": null,
+        "turns": {
+          "median": 6,
+          "min": 6,
+          "max": 7
+        },
+        "calls": {
+          "median": 15,
+          "min": 14,
+          "max": 16
+        },
+        "calls_per_turn_max": {
+          "median": 3,
+          "min": 3,
+          "max": 4
+        },
+        "turns_with_calls": 16,
+        "share_of_turns_with_several_calls": 1.0,
+        "calls_per_turn_median": 3.0,
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 169493,
+          "min": 134473,
+          "max": 176294
+        },
+        "billed_cached": {
+          "median": 110932,
+          "min": 77244,
+          "max": 114230
+        },
+        "billed_output": {
+          "median": 7915,
+          "min": 7474,
+          "max": 8972
+        },
+        "cost_usd": {
+          "median": 0.0803,
+          "min": 0.0784,
+          "max": 0.0888
+        },
+        "tokens_tool_definitions": {
+          "median": 621,
+          "min": 621,
+          "max": 621
+        },
+        "tokens_instructions_added": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 58989,
+          "min": 55290,
+          "max": 61775
+        },
+        "tokens_outputs_sent": {
+          "median": 58989,
+          "min": 55290,
+          "max": 61775
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 3074,
+          "min": 2894,
+          "max": 3153
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "S": {
+        "several_calls_share_per_run": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "runs": 3,
+        "flagged": 0,
+        "gates_passed": null,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": null,
+        "turns": {
+          "median": 5,
+          "min": 4,
+          "max": 7
+        },
+        "calls": {
+          "median": 14,
+          "min": 13,
+          "max": 19
+        },
+        "calls_per_turn_max": {
+          "median": 7,
+          "min": 6,
+          "max": 7
+        },
+        "turns_with_calls": 13,
+        "share_of_turns_with_several_calls": 1.0,
+        "calls_per_turn_median": 3,
+        "repeated_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 2
+        },
+        "error_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 131489,
+          "min": 112122,
+          "max": 242373
+        },
+        "billed_cached": {
+          "median": 83079,
+          "min": 48500,
+          "max": 177419
+        },
+        "billed_output": {
+          "median": 9197,
+          "min": 8032,
+          "max": 9269
+        },
+        "cost_usd": {
+          "median": 0.0815,
+          "min": 0.0773,
+          "max": 0.0965
+        },
+        "tokens_tool_definitions": {
+          "median": 621,
+          "min": 621,
+          "max": 621
+        },
+        "tokens_instructions_added": {
+          "median": 549,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 68840,
+          "min": 51477,
+          "max": 70568
+        },
+        "tokens_outputs_sent": {
+          "median": 68840,
+          "min": 51477,
+          "max": 70568
+        },
+        "tokens_expand_replies": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 2632,
+          "min": 2491,
+          "max": 2829
+        },
+        "dataforseo_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    "C4": {
+      "R": {
+        "several_calls_share_per_run": {
+          "median": 0.875,
+          "min": 0.4286,
+          "max": 1.0
+        },
+        "runs": 8,
+        "flagged": 0,
+        "gates_passed": 8,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 3.5,
+          "min": 3,
+          "max": 8
+        },
+        "calls": {
+          "median": 11.5,
+          "min": 10,
+          "max": 14
+        },
+        "calls_per_turn_max": {
+          "median": 5.0,
+          "min": 5,
+          "max": 7
+        },
+        "turns_with_calls": 29,
+        "share_of_turns_with_several_calls": 0.6552,
+        "calls_per_turn_median": 3,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 25315.5,
+          "min": 15373,
+          "max": 97337
+        },
+        "billed_cached": {
+          "median": 5448.0,
+          "min": 0,
+          "max": 64866
+        },
+        "billed_output": {
+          "median": 10009.5,
+          "min": 7030,
+          "max": 10454
+        },
+        "cost_usd": {
+          "median": 0.05165,
+          "min": 0.038,
+          "max": 0.0692
+        },
+        "tokens_tool_definitions": {
+          "median": 665.0,
+          "min": 665,
+          "max": 665
+        },
+        "tokens_instructions_added": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 23585.5,
+          "min": 16561,
+          "max": 31149
+        },
+        "tokens_outputs_sent": {
+          "median": 23585.5,
+          "min": 16561,
+          "max": 31149
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 2323.5,
+          "min": 1966,
+          "max": 2710
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "S": {
+        "several_calls_share_per_run": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "runs": 8,
+        "flagged": 0,
+        "gates_passed": 8,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 3.0,
+          "min": 3,
+          "max": 3
+        },
+        "calls": {
+          "median": 10.0,
+          "min": 10,
+          "max": 12
+        },
+        "calls_per_turn_max": {
+          "median": 5.0,
+          "min": 5,
+          "max": 7
+        },
+        "turns_with_calls": 16,
+        "share_of_turns_with_several_calls": 1.0,
+        "calls_per_turn_median": 5.0,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 17195.5,
+          "min": 17034,
+          "max": 22635
+        },
+        "billed_cached": {
+          "median": 3671.5,
+          "min": 3631,
+          "max": 3730
+        },
+        "billed_output": {
+          "median": 8173.0,
+          "min": 7890,
+          "max": 9761
+        },
+        "cost_usd": {
+          "median": 0.041550000000000004,
+          "min": 0.0401,
+          "max": 0.0511
+        },
+        "tokens_tool_definitions": {
+          "median": 665.0,
+          "min": 665,
+          "max": 665
+        },
+        "tokens_instructions_added": {
+          "median": 549.0,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 16561.0,
+          "min": 16561,
+          "max": 25704
+        },
+        "tokens_outputs_sent": {
+          "median": 16561.0,
+          "min": 16561,
+          "max": 25704
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 2357.5,
+          "min": 2149,
+          "max": 2516
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    "C5": {
+      "R": {
+        "several_calls_share_per_run": {
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "runs": 6,
+        "flagged": 0,
+        "gates_passed": 6,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 17.0,
+          "min": 5,
+          "max": 19
+        },
+        "calls": {
+          "median": 16.0,
+          "min": 13,
+          "max": 18
+        },
+        "calls_per_turn_max": {
+          "median": 1.0,
+          "min": 1,
+          "max": 5
+        },
+        "turns_with_calls": 83,
+        "share_of_turns_with_several_calls": 0.0482,
+        "calls_per_turn_median": 1,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 865861.5,
+          "min": 281129,
+          "max": 1078177
+        },
+        "billed_cached": {
+          "median": 735173.0,
+          "min": 192075,
+          "max": 933222
+        },
+        "billed_output": {
+          "median": 22125.5,
+          "min": 15526,
+          "max": 27656
+        },
+        "cost_usd": {
+          "median": 0.23275,
+          "min": 0.1849,
+          "max": 0.2807
+        },
+        "tokens_tool_definitions": {
+          "median": 792.0,
+          "min": 792,
+          "max": 792
+        },
+        "tokens_instructions_added": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_outputs_original": {
+          "median": 89762.0,
+          "min": 79078,
+          "max": 93804
+        },
+        "tokens_outputs_sent": {
+          "median": 89762.0,
+          "min": 79078,
+          "max": 93804
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 531.5,
+          "min": 506,
+          "max": 545
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "S": {
+        "several_calls_share_per_run": {
+          "median": 0.9,
+          "min": 0.5714,
+          "max": 1.0
+        },
+        "runs": 6,
+        "flagged": 0,
+        "gates_passed": 6,
+        "did_not_do_the_task": 0,
+        "dataforseo_usd_estimated": null,
+        "coverage": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "turns": {
+          "median": 6.0,
+          "min": 5,
+          "max": 8
+        },
+        "calls": {
+          "median": 16.5,
+          "min": 15,
+          "max": 20
+        },
+        "calls_per_turn_max": {
+          "median": 5.0,
+          "min": 5,
+          "max": 5
+        },
+        "turns_with_calls": 31,
+        "share_of_turns_with_several_calls": 0.8387,
+        "calls_per_turn_median": 3,
+        "repeated_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "error_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "expand_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "billed_input": {
+          "median": 391018.5,
+          "min": 344410,
+          "max": 614505
+        },
+        "billed_cached": {
+          "median": 291739.5,
+          "min": 239087,
+          "max": 500589
+        },
+        "billed_output": {
+          "median": 25027.5,
+          "min": 21285,
+          "max": 29922
+        },
+        "cost_usd": {
+          "median": 0.19765,
+          "min": 0.1831,
+          "max": 0.2155
+        },
+        "tokens_tool_definitions": {
+          "median": 792.0,
+          "min": 792,
+          "max": 792
+        },
+        "tokens_instructions_added": {
+          "median": 549.0,
+          "min": 549,
+          "max": 549
+        },
+        "tokens_outputs_original": {
+          "median": 93824.0,
+          "min": 79034,
+          "max": 93864
+        },
+        "tokens_outputs_sent": {
+          "median": 93824.0,
+          "min": 79034,
+          "max": 93864
+        },
+        "tokens_expand_replies": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "tokens_final_answer": {
+          "median": 545.5,
+          "min": 513,
+          "max": 557
+        },
+        "dataforseo_calls": {
+          "median": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  "e3_hypotheses": {
+    "H8": {
+      "per_case": {
+        "C1": {
+          "turns_median_S": 10.5,
+          "turns_min_R": 13,
+          "holds": true
+        },
+        "C2": {
+          "turns_median_S": 5,
+          "turns_min_R": 6,
+          "holds": true
+        },
+        "C4": {
+          "turns_median_S": 3.0,
+          "turns_min_R": 3,
+          "holds": false
+        },
+        "C5": {
+          "turns_median_S": 6.0,
+          "turns_min_R": 5,
+          "holds": false
+        }
+      },
+      "holds": false,
+      "cases_where_it_holds": 2
+    },
+    "H9": {
+      "per_case": {
+        "C1": {
+          "share_median_S": 0.5278,
+          "share_max_R": 0.5833,
+          "holds": false
+        },
+        "C2": {
+          "share_median_S": 1.0,
+          "share_max_R": 1.0,
+          "holds": false
+        },
+        "C4": {
+          "share_median_S": 1.0,
+          "share_max_R": 1.0,
+          "holds": false
+        },
+        "C5": {
+          "share_median_S": 0.9,
+          "share_max_R": 1.0,
+          "holds": false
+        }
+      },
+      "holds": false,
+      "cases_where_it_holds": 0
+    },
+    "H10": {
+      "per_case": {
+        "C4": {
+          "gates": [
+            8,
+            8
+          ],
+          "coverage_median_S": 1.0,
+          "coverage_min_R": 1.0,
+          "holds": true
+        },
+        "C5": {
+          "gates": [
+            6,
+            6
+          ],
+          "coverage_median_S": 1.0,
+          "coverage_min_R": 1.0,
+          "holds": true
+        }
+      },
+      "holds": true
+    },
+    "H11": {
+      "checks": 9,
+      "passed": 9,
+      "failed": [],
+      "holds": true
+    }
+  },
+  "did_not_do_the_task": [],
+  "per_run": [
+    {
+      "experiment": "E3",
+      "case": "C1",
+      "arm": "R",
+      "run": "E3-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 19459,
+      "facts": [
+        64,
+        64
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 15,
+      "calls": 25,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 4
+      },
+      "calls_in_turns": [
+        4,
+        1,
+        1,
+        1,
+        3,
+        1,
+        4,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.3571,
+      "pilot": false,
+      "replay": {
+        "exact": 10,
+        "nearest": 15,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 7,
+        "dataforseo_labs_google_ranked_keywords": 2,
+        "dataforseo_labs_google_related_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 2,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 3,
+        "serp_youtube_organic_live_advanced": 1
+      },
+      "billed": {
+        "input": 1256345,
+        "cached": 1129079,
+        "output": 12425
+      },
+      "cost_usd": 0.2267,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 125962,
+        "outputs_sent": {
+          "full": 125962
+        },
+        "expand_replies": 0,
+        "final_answer": 4899
+      },
+      "exposure": {
+        "full": 25
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 1,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 7,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 3
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 9.0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 1,
+          "received": 9,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 2,
+          "received": 10.0,
+          "reused": 5.0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 1,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 1
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 3,
+          "received": 11,
+          "reused": 3,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 4,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C1",
+      "arm": "R",
+      "run": "E3-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 22783,
+      "facts": [
+        76,
+        76
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 13,
+      "calls": 21,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.0,
+        "max": 3
+      },
+      "calls_in_turns": [
+        2,
+        2,
+        1,
+        3,
+        3,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.5833,
+      "pilot": false,
+      "replay": {
+        "exact": 7,
+        "nearest": 14,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 5,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 5,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 2,
+        "serp_youtube_organic_live_advanced": 1
+      },
+      "billed": {
+        "input": 790074,
+        "cached": 704979,
+        "output": 12482
+      },
+      "cost_usd": 0.1635,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 0,
+        "outputs_original": 87074,
+        "outputs_sent": {
+          "full": 87074
+        },
+        "expand_replies": 0,
+        "final_answer": 5761
+      },
+      "exposure": {
+        "full": 21
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 2,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 5,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 3
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 24,
+          "reused": 2,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 5,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 0,
+          "reused_from_top": 1
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 11.0,
+          "reused": 5.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 3,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C1",
+      "arm": "S",
+      "run": "E3-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 24700,
+      "facts": [
+        47,
+        49
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 10,
+      "calls": 17,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 3
+      },
+      "calls_in_turns": [
+        3,
+        1,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.5556,
+      "pilot": false,
+      "replay": {
+        "exact": 2,
+        "nearest": 15,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 4,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 2,
+        "serp_organic_live_advanced": 2,
+        "serp_youtube_organic_live_advanced": 1
+      },
+      "billed": {
+        "input": 610439,
+        "cached": 452393,
+        "output": 14462
+      },
+      "cost_usd": 0.2067,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 81420,
+        "outputs_sent": {
+          "full": 81420
+        },
+        "expand_replies": 0,
+        "final_answer": 6171
+      },
+      "exposure": {
+        "full": 17
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 8,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 4,
+          "received": 10.0,
+          "reused": 10.0,
+          "reused_from_top": 3
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.5,
+          "reused_from_top": 1
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 11.0,
+          "reused": 4.0,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 4,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C1",
+      "arm": "S",
+      "run": "E3-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 26585,
+      "facts": [
+        95,
+        98
+      ],
+      "coverage": {
+        "checks": {
+          "short-term plan has 10 to 15 items": true,
+          "medium-term plan has 10 to 15 items": true,
+          "at most 50 tool calls": true,
+          "every limit is 10": true,
+          "every SERP depth is 10": true,
+          "at most 5 keywords per Trends call": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 11,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.5,
+        "max": 4
+      },
+      "calls_in_turns": [
+        2,
+        1,
+        3,
+        4,
+        1,
+        3,
+        1,
+        1,
+        1,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.5,
+      "pilot": false,
+      "replay": {
+        "exact": 2,
+        "nearest": 17,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": 1,
+        "dataforseo_labs_google_keyword_ideas": 1,
+        "dataforseo_labs_google_keyword_suggestions": 5,
+        "dataforseo_labs_google_ranked_keywords": 1,
+        "dataforseo_labs_google_relevant_pages": 1,
+        "dataforseo_labs_search_intent": 1,
+        "kw_data_google_ads_search_volume": 3,
+        "kw_data_google_trends_explore": 3,
+        "serp_organic_live_advanced": 2,
+        "serp_youtube_organic_live_advanced": 1
+      },
+      "billed": {
+        "input": 705968,
+        "cached": 608220,
+        "output": 15369
+      },
+      "cost_usd": 0.1766,
+      "tokens": {
+        "tool_definitions": 7699,
+        "instructions_added": 549,
+        "outputs_original": 90531,
+        "outputs_sent": {
+          "full": 90531
+        },
+        "expand_replies": 0,
+        "final_answer": 6624
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 9,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 5,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 4
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 10,
+          "reused_from_top": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 0
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 3,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 1
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 3,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 2
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 2,
+          "received": 10.5,
+          "reused": 4.5,
+          "reused_from_top": 0
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 1,
+          "received": 20,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "R",
+      "run": "E3-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 12561,
+      "facts": [
+        22,
+        39
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 14,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 3
+      },
+      "calls_in_turns": [
+        3,
+        3,
+        3,
+        2,
+        3
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 13,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 3,
+        "serp_organic_live_advanced": 11
+      },
+      "billed": {
+        "input": 134473,
+        "cached": 77244,
+        "output": 7915
+      },
+      "cost_usd": 0.0784,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 55290,
+        "outputs_sent": {
+          "full": 55290
+        },
+        "expand_replies": 0,
+        "final_answer": 3153
+      },
+      "exposure": {
+        "full": 14
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 11,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "R",
+      "run": "E3-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 11585,
+      "facts": [
+        27,
+        33
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 15,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 4
+      },
+      "calls_in_turns": [
+        4,
+        4,
+        3,
+        2,
+        2
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 14,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 2,
+        "serp_organic_live_advanced": 13
+      },
+      "billed": {
+        "input": 169493,
+        "cached": 110932,
+        "output": 7474
+      },
+      "cost_usd": 0.0803,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 61775,
+        "outputs_sent": {
+          "full": 61775
+        },
+        "expand_replies": 0,
+        "final_answer": 2894
+      },
+      "exposure": {
+        "full": 15
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 13,
+          "received": 10,
+          "reused": 6,
+          "reused_from_top": 3
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "R",
+      "run": "E3-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 11418,
+      "facts": [
+        38,
+        38
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 7,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.0,
+        "max": 3
+      },
+      "calls_in_turns": [
+        3,
+        3,
+        3,
+        3,
+        2,
+        2
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 15,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 2,
+        "serp_organic_live_advanced": 14
+      },
+      "billed": {
+        "input": 176294,
+        "cached": 114230,
+        "output": 8972
+      },
+      "cost_usd": 0.0888,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 0,
+        "outputs_original": 58989,
+        "outputs_sent": {
+          "full": 58989
+        },
+        "expand_replies": 0,
+        "final_answer": 3074
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 14,
+          "received": 10.0,
+          "reused": 9.0,
+          "reused_from_top": 2
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "S",
+      "run": "E3-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 10439,
+      "facts": [
+        28,
+        30
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.0,
+        "max": 7
+      },
+      "calls_in_turns": [
+        7,
+        2,
+        2,
+        2
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 12,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 2,
+        "serp_organic_live_advanced": 11
+      },
+      "billed": {
+        "input": 131489,
+        "cached": 83079,
+        "output": 9269
+      },
+      "cost_usd": 0.0773,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 51477,
+        "outputs_sent": {
+          "full": 51477
+        },
+        "expand_replies": 0,
+        "final_answer": 2632
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 11,
+          "received": 10,
+          "reused": 5,
+          "reused_from_top": 2
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "S",
+      "run": "E3-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": false,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 11258,
+      "facts": [
+        16,
+        31
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 7,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.5,
+        "max": 7
+      },
+      "calls_in_turns": [
+        7,
+        3,
+        2,
+        2,
+        2,
+        3
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 18,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 2,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 3,
+        "serp_organic_live_advanced": 16
+      },
+      "billed": {
+        "input": 242373,
+        "cached": 177419,
+        "output": 9197
+      },
+      "cost_usd": 0.0965,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 70568,
+        "outputs_sent": {
+          "full": 70568
+        },
+        "expand_replies": 0,
+        "final_answer": 2829
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 16,
+          "received": 10.0,
+          "reused": 3.0,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C2",
+      "arm": "S",
+      "run": "E3-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 9871,
+      "facts": [
+        30,
+        30
+      ],
+      "coverage": {
+        "checks": {
+          "three themes": true,
+          "2 or 3 queries analysed per theme": true,
+          "a page of the site per theme": true,
+          "every gap has an evidence URL": true,
+          "every SERP call asks Italy, Italian, depth 10": true,
+          "proposals for every theme": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 14,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        6,
+        3,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": {
+        "exact": 1,
+        "nearest": 13,
+        "none": 0
+      },
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "on_page_content_parsing": 2,
+        "serp_organic_live_advanced": 12
+      },
+      "billed": {
+        "input": 112122,
+        "cached": 48500,
+        "output": 8032
+      },
+      "cost_usd": 0.0815,
+      "tokens": {
+        "tool_definitions": 621,
+        "instructions_added": 549,
+        "outputs_original": 68840,
+        "outputs_sent": {
+          "full": 68840
+        },
+        "expand_replies": 0,
+        "final_answer": 2491
+      },
+      "exposure": {
+        "full": 14
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 12,
+          "received": 10.0,
+          "reused": 5.0,
+          "reused_from_top": 1
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 8893,
+      "facts": [
+        19,
+        19
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.4286,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 4,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 94143,
+        "cached": 59379,
+        "output": 10306
+      },
+      "cost_usd": 0.0692,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 29980,
+        "outputs_sent": {
+          "full": 29980
+        },
+        "expand_replies": 0,
+        "final_answer": 2710
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 4,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 4
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 8474,
+      "facts": [
+        20,
+        20
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 14,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        2,
+        3,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.4286,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 4,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 97337,
+        "cached": 64866,
+        "output": 10454
+      },
+      "cost_usd": 0.0684,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 31149,
+        "outputs_sent": {
+          "full": 31149
+        },
+        "expand_replies": 0,
+        "final_answer": 2591
+      },
+      "exposure": {
+        "full": 14
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 4,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 4
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7617,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 18300,
+        "cached": 0,
+        "output": 7030
+      },
+      "cost_usd": 0.0401,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 21467,
+        "outputs_sent": {
+          "full": 21467
+        },
+        "expand_replies": 0,
+        "final_answer": 2280
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 8408,
+      "facts": [
+        20,
+        20
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3.5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        4,
+        3,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.75,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 4,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 55194,
+        "cached": 28158,
+        "output": 10170
+      },
+      "cost_usd": 0.0605,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 29980,
+        "outputs_sent": {
+          "full": 29980
+        },
+        "expand_replies": 0,
+        "final_answer": 2655
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 4,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 4
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7519,
+      "facts": [
+        18,
+        18
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 6.0,
+        "max": 7
+      },
+      "calls_in_turns": [
+        5,
+        7
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 3,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 21055,
+        "cached": 0,
+        "output": 9849
+      },
+      "cost_usd": 0.0527,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 25704,
+        "outputs_sent": {
+          "full": 25704
+        },
+        "expand_replies": 0,
+        "final_answer": 2254
+      },
+      "exposure": {
+        "full": 12
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 3,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 3
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-6",
+      "sequence": null,
+      "n": 6,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7352,
+      "facts": [
+        18,
+        18
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 4,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 29576,
+        "cached": 10896,
+        "output": 8468
+      },
+      "cost_usd": 0.0466,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 21467,
+        "outputs_sent": {
+          "full": 21467
+        },
+        "expand_replies": 0,
+        "final_answer": 2195
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-7",
+      "sequence": null,
+      "n": 7,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7735,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 15373,
+        "cached": 0,
+        "output": 10411
+      },
+      "cost_usd": 0.0506,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2367
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-R-8",
+      "sequence": null,
+      "n": 8,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 6657,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 15461,
+        "cached": 0,
+        "output": 7048
+      },
+      "cost_usd": 0.038,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 1966
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7712,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17091,
+        "cached": 3676,
+        "output": 9246
+      },
+      "cost_usd": 0.045,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2359
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 8230,
+      "facts": [
+        19,
+        19
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 12,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 6.0,
+        "max": 7
+      },
+      "calls_in_turns": [
+        5,
+        7
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 3,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 22635,
+        "cached": 3665,
+        "output": 9761
+      },
+      "cost_usd": 0.0511,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 25704,
+        "outputs_sent": {
+          "full": 25704
+        },
+        "expand_replies": 0,
+        "final_answer": 2516
+      },
+      "exposure": {
+        "full": 12
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 3,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 3
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7654,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 19943,
+        "cached": 3642,
+        "output": 7890
+      },
+      "cost_usd": 0.0421,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 21467,
+        "outputs_sent": {
+          "full": 21467
+        },
+        "expand_replies": 0,
+        "final_answer": 2264
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7130,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17289,
+        "cached": 3691,
+        "output": 8707
+      },
+      "cost_usd": 0.0431,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2149
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7750,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17337,
+        "cached": 3730,
+        "output": 7901
+      },
+      "cost_usd": 0.0401,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2356
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-6",
+      "sequence": null,
+      "n": 6,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 8028,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17102,
+        "cached": 3667,
+        "output": 8051
+      },
+      "cost_usd": 0.0405,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2421
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-7",
+      "sequence": null,
+      "n": 7,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7548,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17100,
+        "cached": 3684,
+        "output": 8166
+      },
+      "cost_usd": 0.041,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2297
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "S",
+      "run": "E3-S-8",
+      "sequence": null,
+      "n": 8,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7794,
+      "facts": [
+        17,
+        17
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 10,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 1,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 17034,
+        "cached": 3631,
+        "output": 8180
+      },
+      "cost_usd": 0.041,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 549,
+        "outputs_original": 16561,
+        "outputs_sent": {
+          "full": 16561
+        },
+        "expand_replies": 0,
+        "final_answer": 2363
+      },
+      "exposure": {
+        "full": 10
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 1,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-pilot-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7522,
+      "facts": [
+        18,
+        18
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 3,
+      "calls": 11,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 5.5,
+        "max": 6
+      },
+      "calls_in_turns": [
+        5,
+        6
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": true,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 2,
+        "stripe_list_subscriptions": 1,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 18411,
+        "cached": 0,
+        "output": 8451
+      },
+      "cost_usd": 0.0455,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 21467,
+        "outputs_sent": {
+          "full": 21467
+        },
+        "expand_replies": 0,
+        "final_answer": 2220
+      },
+      "exposure": {
+        "full": 11
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 2,
+          "received": 3.0,
+          "reused": 3.0,
+          "reused_from_top": 2
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C4",
+      "arm": "R",
+      "run": "E3-pilot-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 7849,
+      "facts": [
+        18,
+        18
+      ],
+      "coverage": {
+        "checks": {
+          "five tickets": true,
+          "a customer id per ticket": true,
+          "a diagnosis per ticket": true,
+          "evidence per ticket": true,
+          "a reply per ticket": true,
+          "no technical identifier in the replies": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 14,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2,
+        "max": 5
+      },
+      "calls_in_turns": [
+        5,
+        5,
+        1,
+        2,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.6,
+      "pilot": true,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "stripe_list_charges": 3,
+        "stripe_list_invoices": 3,
+        "stripe_list_refunds": 1,
+        "stripe_list_subscriptions": 2,
+        "stripe_search_customers": 5
+      },
+      "billed": {
+        "input": 70268,
+        "cached": 42355,
+        "output": 10882
+      },
+      "cost_usd": 0.0649,
+      "tokens": {
+        "tool_definitions": 665,
+        "instructions_added": 0,
+        "outputs_original": 27243,
+        "outputs_sent": {
+          "full": 27243
+        },
+        "expand_replies": 0,
+        "final_answer": 2372
+      },
+      "exposure": {
+        "full": 14
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 3,
+          "received": 4,
+          "reused": 4,
+          "reused_from_top": 3
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 3,
+          "received": 3,
+          "reused": 3,
+          "reused_from_top": 3
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 1,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 1
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 1.0,
+          "reused_from_top": 2
+        },
+        "stripe_search_customers data[]": {
+          "calls": 5,
+          "received": 1,
+          "reused": 1,
+          "reused_from_top": 5
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2170,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 19,
+      "calls": 18,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 2,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 1078177,
+        "cached": 933222,
+        "output": 27199
+      },
+      "cost_usd": 0.2807,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 93804,
+        "outputs_sent": {
+          "full": 93804
+        },
+        "expand_replies": 0,
+        "final_answer": 527
+      },
+      "exposure": {
+        "full": 18
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.5,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2204,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 17,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 854117,
+        "cached": 725110,
+        "output": 22315
+      },
+      "cost_usd": 0.2348,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 89762,
+        "outputs_sent": {
+          "full": 89762
+        },
+        "expand_replies": 0,
+        "final_answer": 536
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2152,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 17,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 877606,
+        "cached": 745236,
+        "output": 20149
+      },
+      "cost_usd": 0.2307,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 89762,
+        "outputs_sent": {
+          "full": 89762
+        },
+        "expand_replies": 0,
+        "final_answer": 517
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2190,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 17,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4.5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        5,
+        5,
+        4
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 4,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 1,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 281129,
+        "cached": 192075,
+        "output": 27656
+      },
+      "cost_usd": 0.1849,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 79078,
+        "outputs_sent": {
+          "full": 79078
+        },
+        "expand_replies": 0,
+        "final_answer": 545
+      },
+      "exposure": {
+        "full": 17
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 1,
+          "received": 4,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 5,
+          "reused": 5,
+          "reused_from_top": 1
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2092,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 14,
+      "calls": 13,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 1,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 651005,
+        "cached": 534426,
+        "output": 15526
+      },
+      "cost_usd": 0.1857,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 89744,
+        "outputs_sent": {
+          "full": 89744
+        },
+        "expand_replies": 0,
+        "final_answer": 506
+      },
+      "exposure": {
+        "full": 13
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 1,
+          "received": 4,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-R-6",
+      "sequence": null,
+      "n": 6,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2248,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 17,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 1,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 919376,
+        "cached": 790362,
+        "output": 21936
+      },
+      "cost_usd": 0.2383,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 91688,
+        "outputs_sent": {
+          "full": 91688
+        },
+        "expand_replies": 0,
+        "final_answer": 545
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 1,
+          "received": 0,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 1,
+          "received": 2,
+          "reused": 0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2095,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 17,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4.5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        5,
+        5,
+        4
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 4,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 1,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 344410,
+        "cached": 239087,
+        "output": 26427
+      },
+      "cost_usd": 0.196,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 93846,
+        "outputs_sent": {
+          "full": 93846
+        },
+        "expand_replies": 0,
+        "final_answer": 519
+      },
+      "exposure": {
+        "full": 17
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.5,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 1,
+          "received": 4,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2296,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        1,
+        5,
+        5,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.8,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 2,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 1,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 415722,
+        "cached": 308827,
+        "output": 29922
+      },
+      "cost_usd": 0.2155,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 93802,
+        "outputs_sent": {
+          "full": 93802
+        },
+        "expand_replies": 0,
+        "final_answer": 557
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 1,
+          "received": 4,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-3",
+      "sequence": null,
+      "n": 3,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2098,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 7,
+      "calls": 19,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 2.5,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        5,
+        5,
+        2,
+        2,
+        2
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 4,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 555515,
+        "cached": 442270,
+        "output": 21642
+      },
+      "cost_usd": 0.1993,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 93848,
+        "outputs_sent": {
+          "full": 93848
+        },
+        "expand_replies": 0,
+        "final_answer": 513
+      },
+      "exposure": {
+        "full": 19
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-4",
+      "sequence": null,
+      "n": 4,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2172,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 6,
+      "calls": 16,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        5,
+        5,
+        1,
+        2
+      ],
+      "share_of_turns_with_several_calls": 0.8,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 2,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 1,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 366315,
+        "cached": 274652,
+        "output": 25004
+      },
+      "cost_usd": 0.1831,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 79034,
+        "outputs_sent": {
+          "full": 79034
+        },
+        "expand_replies": 0,
+        "final_answer": 545
+      },
+      "exposure": {
+        "full": 16
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 1,
+          "received": 4,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 2.5,
+          "reused": 2.5,
+          "reused_from_top": 1
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-5",
+      "sequence": null,
+      "n": 5,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2267,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 5,
+      "calls": 15,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 4.0,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        5,
+        5,
+        2
+      ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 345495,
+        "cached": 243494,
+        "output": 25051
+      },
+      "cost_usd": 0.1887,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 89746,
+        "outputs_sent": {
+          "full": 89746
+        },
+        "expand_replies": 0,
+        "final_answer": 553
+      },
+      "exposure": {
+        "full": 15
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "S",
+      "run": "E3-S-6",
+      "sequence": null,
+      "n": 6,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2239,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 8,
+      "calls": 20,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 3,
+        "max": 5
+      },
+      "calls_in_turns": [
+        3,
+        1,
+        5,
+        5,
+        1,
+        1,
+        4
+      ],
+      "share_of_turns_with_several_calls": 0.5714,
+      "pilot": false,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 4,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 614505,
+        "cached": 500589,
+        "output": 21285
+      },
+      "cost_usd": 0.2028,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 549,
+        "outputs_original": 93864,
+        "outputs_sent": {
+          "full": 93864
+        },
+        "expand_replies": 0,
+        "final_answer": 546
+      },
+      "exposure": {
+        "full": 20
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": true,
+        "expand": false,
+        "tokens": 549
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.5,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 3.5,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-pilot-R-1",
+      "sequence": null,
+      "n": 1,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2246,
+      "facts": [
+        15,
+        15
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 19,
+      "calls": 18,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1.0,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": true,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_get_issue": 2,
+        "gh_list_issues": 1,
+        "gh_list_jobs_for_workflow_run": 6,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 2
+      },
+      "billed": {
+        "input": 1109959,
+        "cached": 960169,
+        "output": 30926
+      },
+      "cost_usd": 0.3003,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 96299,
+        "outputs_sent": {
+          "full": 96299
+        },
+        "expand_replies": 0,
+        "final_answer": 532
+      },
+      "exposure": {
+        "full": 18
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_get_issue assignees[]": {
+          "calls": 2,
+          "received": 1.0,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_get_issue labels[]": {
+          "calls": 2,
+          "received": 1.5,
+          "reused": 0.0,
+          "reused_from_top": 0
+        },
+        "gh_list_issues []": {
+          "calls": 1,
+          "received": 10,
+          "reused": 3,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 6,
+          "received": 3.0,
+          "reused": 2.0,
+          "reused_from_top": 6
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 4.0,
+          "reused_from_top": 0
+        }
+      }
+    },
+    {
+      "experiment": "E3",
+      "case": "C5",
+      "arm": "R",
+      "run": "E3-pilot-R-2",
+      "sequence": null,
+      "n": 2,
+      "dry_run": false,
+      "flags": [],
+      "gates_passed": true,
+      "no_tool_call": false,
+      "answer_is_not_the_json_asked": false,
+      "messages": 1,
+      "final_answer_chars": 2260,
+      "facts": [
+        16,
+        16
+      ],
+      "coverage": {
+        "checks": {
+          "at least one root cause": true,
+          "runs for every cause": true,
+          "workflow, job and step for every cause": true,
+          "an error line for every cause": true,
+          "a next action for every cause": true,
+          "a summary for the team": true
+        },
+        "passed": 6,
+        "of": 6,
+        "share": 1.0
+      },
+      "turns": 16,
+      "calls": 15,
+      "expand_calls": 0,
+      "calls_per_turn": {
+        "median": 1,
+        "max": 1
+      },
+      "calls_in_turns": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "share_of_turns_with_several_calls": 0.0,
+      "pilot": true,
+      "replay": null,
+      "model": "gemini-3.8-flash",
+      "repeated_calls": 0,
+      "error_calls": 0,
+      "calls_per_tool": {
+        "gh_download_job_logs": 5,
+        "gh_list_issues": 2,
+        "gh_list_jobs_for_workflow_run": 5,
+        "gh_list_pull_requests": 2,
+        "gh_list_workflow_runs": 1
+      },
+      "billed": {
+        "input": 841808,
+        "cached": 718214,
+        "output": 24828
+      },
+      "cost_usd": 0.2397,
+      "tokens": {
+        "tool_definitions": 792,
+        "instructions_added": 0,
+        "outputs_original": 89746,
+        "outputs_sent": {
+          "full": 89746
+        },
+        "expand_replies": 0,
+        "final_answer": 544
+      },
+      "exposure": {
+        "full": 15
+      },
+      "dataforseo_calls": {},
+      "domain_rejections": 0,
+      "skill": {
+        "version": "1",
+        "strategy": false,
+        "expand": false,
+        "tokens": 0
+      },
+      "tools_trimmed": [],
+      "lists": {
+        "gh_list_issues []": {
+          "calls": 2,
+          "received": 5.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 5,
+          "received": 3,
+          "reused": 2,
+          "reused_from_top": 5
+        },
+        "gh_list_pull_requests []": {
+          "calls": 2,
+          "received": 2.0,
+          "reused": 1.5,
+          "reused_from_top": 1
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 1,
+          "received": 10,
+          "reused": 7,
+          "reused_from_top": 0
+        }
+      }
+    }
+  ]
+}

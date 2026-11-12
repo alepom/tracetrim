@@ -28,7 +28,7 @@ on a real search-data API, billing support on a simulated API), five runs per ar
   cost stayed inside the ranges of the arms without it. The three hypotheses stated before the runs failed.
 - **This model already issues calls together.** Without the strategy, 77%, 68% and 77% of the turns that
   made a call made more than one (median 2, 3 and 5 calls per turn in the three cases). There was little left
-  for the strategy to organise. **Its effect on a model that issues calls one at a time was not measured.**
+  for the strategy to organise.
 - **It did not override the prompts.** The values the prompts prescribe (`limit` 10, `depth` 10, at most five
   keywords per call) were respected in all 50 runs, with and without the strategy.
 - **One run asked a question instead of working**: in the arm with strategy and trimming, the model
@@ -36,7 +36,26 @@ on a real search-data API, billing support on a simulated API), five runs per ar
   none in 25 without, and none in the 60 live runs of the original study: too few to blame the text, which
   does say to ask for information "when it is indispensable".
 
-So the strategy stays off by default, and nothing here says it is useless on other models.
+Experiment E3 of `protocol-v04-e3.md` (2026-11-12, `results/v04/e3.json`): 38 runs of `gemini-3.8-flash`,
+with and without the strategy text, no trimming, on four agents (the three above, the two on the search-data
+API fed with recorded outputs, and a CI-failure report on a simulated API).
+
+- **Where that model issued one call per turn, with the strategy it grouped them.** On the CI-failure agent,
+  five runs of six without the strategy made 13 to 18 calls in as many turns; with it, all six runs took 5 to 8
+  turns for the same calls. Median 17 turns against 6, billed input more than halved, cost of a run down 15%.
+  The task needed four turns: most of those calls did not depend on the one before.
+- **Where it already issued calls together, little changed**: on billing support, 3 to 8 turns without the
+  strategy and always 3 with it, three being the least the task needs.
+- **Nothing was lost for it**: gates passed and requirements covered in every run of both arms on the two
+  simulated agents, and the values the prompts prescribe respected in every strategy run.
+- **The two hypotheses on turns failed as stated.** They asked the median with the strategy to beat the best
+  run without it, and on each simulated case one run without the strategy did as well. Few runs (2 to 8 per
+  arm), one task per agent.
+
+So the strategy stays off by default: it did nothing measurable on a model that already groups its calls, and
+on one that often does not it shortened the runs of one agent, in an experiment too small to say more. Turn it
+on when your traces show one call per turn where the calls do not depend on each other; the numbers are in
+[measures-v04.md](measures-v04.md).
 
 ## Three ways to deliver it
 

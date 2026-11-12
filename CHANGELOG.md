@@ -56,9 +56,12 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
     for did not occur. Both stay off by default.
   - *Trimming*, in the same runs: tool-output tokens down 44% and the cost of a run down 30% and 24% on the two
     cases with trimmed arms, with the gates passed in 5 runs of 5.
-- **A further experiment, prepared and not run**: `protocol-v04-e3.md` (frozen on 2026-11-12)
-  measures the strategy on `gemini-3.8-flash`, a model said to issue fewer calls together, with simulated tools
-  and with outputs already recorded in place of the search-data provider. `python -m experiments.run --e3 ...`.
+- **The strategy on a second model** (E3, `protocol-v04-e3.md`, frozen on 2026-11-12): 38 runs of
+  `gemini-3.8-flash`, with simulated tools and with outputs already recorded in place of the search-data
+  provider. The two hypotheses on turns failed as stated. On the agent where that model issues one call per
+  turn, the median went from 17 turns to 6 with the strategy, at the same completeness; where it already
+  groups its calls, little changed. The strategy stays off by default.
+  `python -m experiments.run --e3 ...`, `python -m experiments.analyze_v04 --e3`.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists

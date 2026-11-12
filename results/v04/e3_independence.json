@@ -1,0 +1,274 @@
+{
+  "what": "post-hoc analysis of E3, not in its protocol: turns a run needed given what each call depended on",
+  "rule": "identifiers only, by argument name or shape; a lower bound on the turns",
+  "cases": {
+    "C4": {
+      "R": {
+        "runs": 8,
+        "turns_median": 3.5,
+        "fewest_turns_median": 3.0,
+        "calls": 94,
+        "share_depending_on_an_earlier_result": 0.5745,
+        "share_that_could_have_been_made_earlier": 0.1915,
+        "per_run": [
+          {
+            "calls": 13,
+            "turns": 8,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 8,
+            "calls_that_could_have_been_made_earlier": 6,
+            "run": "E3-R-1"
+          },
+          {
+            "calls": 14,
+            "turns": 8,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 9,
+            "calls_that_could_have_been_made_earlier": 7,
+            "run": "E3-R-2"
+          },
+          {
+            "calls": 11,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 6,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-R-3"
+          },
+          {
+            "calls": 13,
+            "turns": 5,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 8,
+            "calls_that_could_have_been_made_earlier": 4,
+            "run": "E3-R-4"
+          },
+          {
+            "calls": 12,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 7,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-R-5"
+          },
+          {
+            "calls": 11,
+            "turns": 4,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 6,
+            "calls_that_could_have_been_made_earlier": 1,
+            "run": "E3-R-6"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-R-7"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-R-8"
+          }
+        ]
+      },
+      "S": {
+        "runs": 8,
+        "turns_median": 3.0,
+        "fewest_turns_median": 3.0,
+        "calls": 83,
+        "share_depending_on_an_earlier_result": 0.5181,
+        "share_that_could_have_been_made_earlier": 0.0,
+        "per_run": [
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-1"
+          },
+          {
+            "calls": 12,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 7,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-2"
+          },
+          {
+            "calls": 11,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 6,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-3"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-4"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-5"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-6"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-7"
+          },
+          {
+            "calls": 10,
+            "turns": 3,
+            "fewest_turns": 3,
+            "calls_that_depend_on_an_earlier_result": 5,
+            "calls_that_could_have_been_made_earlier": 0,
+            "run": "E3-S-8"
+          }
+        ]
+      }
+    },
+    "C5": {
+      "R": {
+        "runs": 6,
+        "turns_median": 17.0,
+        "fewest_turns_median": 4.0,
+        "calls": 96,
+        "share_depending_on_an_earlier_result": 0.6979,
+        "share_that_could_have_been_made_earlier": 0.7708,
+        "per_run": [
+          {
+            "calls": 18,
+            "turns": 19,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 12,
+            "calls_that_could_have_been_made_earlier": 17,
+            "run": "E3-R-1"
+          },
+          {
+            "calls": 16,
+            "turns": 17,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 10,
+            "calls_that_could_have_been_made_earlier": 15,
+            "run": "E3-R-2"
+          },
+          {
+            "calls": 16,
+            "turns": 17,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 10,
+            "calls_that_could_have_been_made_earlier": 15,
+            "run": "E3-R-3"
+          },
+          {
+            "calls": 17,
+            "turns": 5,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 14,
+            "calls_that_could_have_been_made_earlier": 4,
+            "run": "E3-R-4"
+          },
+          {
+            "calls": 13,
+            "turns": 14,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 10,
+            "calls_that_could_have_been_made_earlier": 10,
+            "run": "E3-R-5"
+          },
+          {
+            "calls": 16,
+            "turns": 17,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 11,
+            "calls_that_could_have_been_made_earlier": 13,
+            "run": "E3-R-6"
+          }
+        ]
+      },
+      "S": {
+        "runs": 6,
+        "turns_median": 6.0,
+        "fewest_turns_median": 4.0,
+        "calls": 103,
+        "share_depending_on_an_earlier_result": 0.7379,
+        "share_that_could_have_been_made_earlier": 0.4369,
+        "per_run": [
+          {
+            "calls": 17,
+            "turns": 5,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 14,
+            "calls_that_could_have_been_made_earlier": 4,
+            "run": "E3-S-1"
+          },
+          {
+            "calls": 16,
+            "turns": 6,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 12,
+            "calls_that_could_have_been_made_earlier": 13,
+            "run": "E3-S-2"
+          },
+          {
+            "calls": 19,
+            "turns": 7,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 14,
+            "calls_that_could_have_been_made_earlier": 6,
+            "run": "E3-S-3"
+          },
+          {
+            "calls": 16,
+            "turns": 6,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 12,
+            "calls_that_could_have_been_made_earlier": 3,
+            "run": "E3-S-4"
+          },
+          {
+            "calls": 15,
+            "turns": 5,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 10,
+            "calls_that_could_have_been_made_earlier": 2,
+            "run": "E3-S-5"
+          },
+          {
+            "calls": 20,
+            "turns": 8,
+            "fewest_turns": 4,
+            "calls_that_depend_on_an_earlier_result": 14,
+            "calls_that_could_have_been_made_earlier": 17,
+            "run": "E3-S-6"
+          }
+        ]
+      }
+    }
+  }
+}

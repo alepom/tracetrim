@@ -6,6 +6,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DOC = " ".join((ROOT / "docs" / "measures-v04.md").read_text().split())
 E1 = json.loads((ROOT / "results" / "v04" / "e1.json").read_text())
 E2 = json.loads((ROOT / "results" / "v04" / "e2.json").read_text())
+E3 = json.loads((ROOT / "results" / "v04" / "e3.json").read_text())
+IND = json.loads((ROOT / "results" / "v04" / "e3_independence.json").read_text())
+SKILL = " ".join((ROOT / "docs" / "skill.md").read_text().split())
 
 
 def test_the_outcomes_of_the_hypotheses_are_those_computed():
@@ -69,3 +72,69 @@ def test_the_spend_and_the_calls_are_those_of_the_runs():
         assert 0 <= stated - cost(rows) < 0.05
     assert "| **Total** | **100** | **19.08** |" in DOC and abs(19.08 - 12.46 - 2.63 - 3.99) < 0.005
     assert E2["dataforseo"]["calls"] == 813 and "813 calls" in DOC
+
+
+def _n(x):
+    return f"{x:g}"
+
+
+def test_the_table_of_e3_is_that_of_the_results_file():
+    rng = lambda m, pct=False: (f"{round(m['median'] * 100)}% [{round(m['min'] * 100)}–{round(m['max'] * 100)}]" if pct  # noqa: E731
+                                else f"{_n(m['median'])} [{_n(m['min'])}–{_n(m['max'])}]")
+    assert (E3["runs"], E3["pilot_runs"], E3["provider_calls"], E3["models"]) == (38, 4, 0, ["gemini-3.8-flash"])
+    for case, arms in E3["e3"].items():
+        for arm, name in (("R", "without"), ("S", "strategy")):
+            a = arms[arm]
+            line = (f"| {case} | {name} | {a['runs']} | {rng(a['turns'])} | {rng(a['calls'])} | "
+                    f"{rng(a['several_calls_share_per_run'], True)} | {round(a['billed_input']['median']):,} | "
+                    f"{a['cost_usd']['median']:.3f} |")
+            assert line in DOC, line
+    assert f"42 runs, pilot included, for {E3['cost_usd']:.2f} USD" in DOC
+
+
+def test_the_outcomes_of_e3_are_those_computed():
+    h = E3["e3_hypotheses"]
+    assert (h["H8"]["holds"], h["H8"]["cases_where_it_holds"]) == (False, 2)
+    assert [c for c, v in h["H8"]["per_case"].items() if v["holds"]] == ["C1", "C2"]
+    assert (h["H9"]["holds"], h["H9"]["cases_where_it_holds"]) == (False, 0)
+    assert all(v["share_max_R"] >= v["share_median_S"] for v in h["H9"]["per_case"].values())
+    assert h["H10"]["holds"] and {c: v["gates"] for c, v in h["H10"]["per_case"].items()} == {"C4": [8, 8], "C5": [6, 6]}
+    assert (h["H11"]["holds"], h["H11"]["checks"], h["H11"]["passed"]) == (True, 9, 9)
+    t = E3["e3"]
+    assert all(t[c][a]["gates_passed"] == t[c][a]["runs"] and t[c][a]["coverage"]["min"] == 1 for c in ("C4", "C5") for a in "RS")
+    assert not E3["did_not_do_the_task"] and all(t[c][a]["flagged"] == 0 for c in t for a in "RS")
+    # What the text says of C5 and C4, in both pages.
+    c5 = {a: sorted(r["turns"] for r in E3["per_run"] if (r["case"], r["arm"]) == ("C5", a) and not r.get("pilot")) for a in "RS"}
+    assert c5["R"][0] == 5 and (c5["R"][1], c5["R"][-1]) == (14, 19) and (c5["S"][0], c5["S"][-1]) == (5, 8)
+    assert round((1 - t["C5"]["S"]["cost_usd"]["median"] / t["C5"]["R"]["cost_usd"]["median"]) * 100) == 15
+    assert t["C5"]["S"]["billed_input"]["median"] < t["C5"]["R"]["billed_input"]["median"] / 2
+    for doc in (DOC, SKILL):
+        assert "down 15%" in doc and "more than halved" in doc
+    assert "Median 17 turns against 6" in SKILL and "13 to 18 calls in as many turns" in SKILL
+    calls = sorted(r["calls"] for r in E3["per_run"] if (r["case"], r["arm"]) == ("C5", "R") and not r.get("pilot") and r["turns"] > 5)
+    assert (calls[0], calls[-1]) == (13, 18)
+    c4 = {a: (t["C4"][a]["turns"]["min"], t["C4"][a]["turns"]["max"]) for a in "RS"}
+    assert c4 == {"R": (3, 8), "S": (3, 3)}
+    share = {c: sorted(E3["replay"][c]["per_run_exact_share"]) for c in ("C1", "C2")}
+    assert [round(share[c][i] * 100) for c in ("C1", "C2") for i in (0, -1)] == [11, 40, 5, 8]
+    assert "exactly in 11% to 40% of the calls of a run on C1 and in 5% to 8% on C2" in DOC
+    assert all(E3["replay"][c]["none"] == 0 for c in ("C1", "C2"))
+
+
+def test_the_post_hoc_table_of_e3_is_that_of_its_file():
+    for case, arms in IND["cases"].items():
+        for arm, name in (("R", "without"), ("S", "strategy")):
+            a = arms[arm]
+            assert (f"| {case} | {name} | {_n(a['turns_median'])} | {_n(a['fewest_turns_median'])} | "
+                    f"{round(a['share_that_could_have_been_made_earlier'] * 100)}% |") in DOC
+            assert a["turns_median"] == E3["e3"][case][arm]["turns"]["median"]
+    c5 = IND["cases"]["C5"]
+    assert all(r["fewest_turns"] == 4 for a in "RS" for r in c5[a]["per_run"])
+    assert all(round(c5[a]["share_depending_on_an_earlier_result"], 1) == 0.7 for a in "RS")
+
+
+def test_e1_beside_e3_is_what_the_two_files_say():
+    med = lambda res, key, arm: [_n(res[key][c][arm]["turns"]["median"]) for c in ("C4", "C2", "C1")]  # noqa: E731
+    r1, r3, s1, s3 = med(E1, "e1", "R"), med(E3, "e3", "R"), med(E1, "e1", "S"), med(E3, "e3", "S")
+    assert f"a median of {r1[0]} turns on C4, {r1[1]} on C2 and {r1[2]} on C1; `gemini-3.8-flash` {r3[0]}, {r3[1]} and {r3[2]}" in DOC
+    assert f"With it, {s1[0]}, {s1[1]} and {s1[2]} against {s3[0]}, {s3[1]} and {s3[2]}" in DOC

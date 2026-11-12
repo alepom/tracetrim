@@ -431,3 +431,22 @@ def test_the_tables_of_e3_are_computed_from_the_runs(dry):
     assert h["H8"]["holds"] is False and h["H9"]["holds"] is False        # the stub does the same in both arms
     assert h["H11"] == {"checks": 4, "passed": 4, "failed": [], "holds": True}
     assert set(res["replay"]) == {"C1", "C2"} and "DRY RUN" in tables_e3(res)
+
+
+def test_a_call_can_be_made_as_soon_as_what_it_names_has_been_returned(tmp_path):
+    """The post-hoc analysis: the fewest turns are the longest chain of results a call depends on."""
+    from experiments import e3_independence as ind
+    assert ind.references({"run_id": 18204065799, "branch": "main", "per_page": 50}) == ["18204065799"]
+    assert ind.references({"customer": "cus_Qx81kLmN2pZr", "limit": 10, "email": "a@example.com"}) == ["cus_Qx81kLmN2pZr"]
+    call = lambda turn, tool, args, out: {"kind": "call", "tool": tool, "arguments": args, "output": out, "turn": turn, "outcome": "ok"}  # noqa: E731
+    events = [{"kind": "prompt", "text": "Report the failures on main."},
+              call(0, "list_runs", {"branch": "main"}, '{"runs": [{"id": 111111}, {"id": 222222}]}'),
+              call(1, "list_jobs", {"run_id": 111111}, '{"jobs": [{"id": 333333}]}'),
+              call(2, "logs", {"job_id": 333333}, "boom"),
+              call(3, "list_jobs", {"run_id": 222222}, '{"jobs": [{"id": 444444}]}'),      # could have gone with turn 1
+              call(4, "logs", {"job_id": 444444}, "bang")]                                   # and this with turn 2
+    trace = tmp_path / "E3-R-1.jsonl"
+    trace.write_text("\n".join(json.dumps(e) for e in events) + "\n")
+    r = ind.run(trace)
+    assert (r["calls"], r["turns"], r["fewest_turns"]) == (5, 6, 4)
+    assert (r["calls_that_depend_on_an_earlier_result"], r["calls_that_could_have_been_made_earlier"]) == (4, 2)
