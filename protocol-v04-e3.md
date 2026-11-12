@@ -179,5 +179,5 @@ client is now built as in the author's other projects, with no project named, so
 account's; a check that is not billed (a token count) runs before every run; a request that fails with a
 transient error is made again, by the adapter, and every repeated attempt is written in the trace, in the meta
 file and in the ledger (a failed request returns no usage: there are no tokens to count for it). The four runs
-of the pilot were made with the first three commits, before the repeats were moved into the adapter; none of
-them had a repeat. No measure changes.
+of the pilot were made with the first three commits, when repeats were still made inside the SDK and not
+written down: whether one occurred in them is not known. No measure changes.
