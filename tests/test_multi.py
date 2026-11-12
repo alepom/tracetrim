@@ -7,12 +7,17 @@ spend.
 """
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
 from tracetrim.proxy import Options, load_servers, route_names
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The proxy runs from this checkout's source, whatever tracetrim the interpreter
+# has installed.
+CHECKOUT_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 
 
 def test_names_are_kept_unless_two_servers_share_one():
@@ -55,7 +60,7 @@ def test_one_proxy_learns_and_trims_tools_of_two_servers(tmp_path, traces, specs
         "billing": {"command": sys.executable, "args": ["-m", "experiments.simulated.server_c4"], "cwd": str(ROOT)},
         "code": {"command": sys.executable, "args": ["-m", "experiments.simulated.server_c5"], "cwd": str(ROOT)}}}))
     work = tmp_path / "auto"
-    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=CHECKOUT_ENV, args=[
         "-m", "tracetrim.cli", "proxy", "--servers", str(servers), "--auto", str(work), "--min-runs", "2", "--quiet"])
 
     async def main():

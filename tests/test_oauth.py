@@ -48,7 +48,7 @@ def _env(tmp_path, browser_follows: bool):
     browser.write_text("#!/bin/sh\n" + ('curl -s -L -o /dev/null "$1"\n' if browser_follows else "exit 0\n"))
     browser.chmod(0o755)
     return {**os.environ, "XDG_CONFIG_HOME": str(tmp_path / "config"), "BROWSER": str(browser),
-            "TRACETRIM_LOGIN_TIMEOUT": "15"}
+            "TRACETRIM_LOGIN_TIMEOUT": "15", "PYTHONPATH": str(ROOT / "src")}
 
 
 def _tracetrim(args, env):

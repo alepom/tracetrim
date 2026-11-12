@@ -204,3 +204,19 @@ def test_the_report_explains_the_runs_followed_by_calls(pause, en, it):
                  "ha chiuso l&#x27;esecuzione troppo presto", "cresce a ogni esecuzione", ": 5."):
         assert text in note, text
     assert _followed_note({"answered_runs_followed_by_calls": 0, "idle_seconds": 300}) == ""
+
+
+def test_an_expand_after_a_closing_counts_for_the_run_it_is_about(tmp_path):
+    engine = Engine(Learner(tmp_path, min_runs=3))
+    for i in range(3):
+        engine.observe(call(i), ToolResult(indented(i)))
+        engine.close(answer(i))
+    obs = engine.observe(call(3), ToolResult(indented(3)))
+    assert obs.exposure == FILTERED
+    engine.close(answer(3))                                        # run 4 closed ...
+    reply = engine.expand(obs.call_id, ["data[].footer"])          # ... then its result is expanded
+    engine.observe(call(4), ToolResult(indented(4)))
+    engine.close(answer(4))
+    runs = json.loads((tmp_path / "savings.json").read_text())["runs"]
+    assert runs["run-0004"]["expand"] == {"calls": 1, "tokens": count(reply)}
+    assert runs["run-0005"]["expand"] == {"calls": 0, "tokens": 0}

@@ -3,6 +3,7 @@ keeps its metadata when it does (external review, round 2)."""
 import asyncio
 import json
 import subprocess
+import os
 import sys
 from pathlib import Path
 
@@ -10,6 +11,10 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The proxy runs from this checkout's source, whatever tracetrim the interpreter
+# has installed.
+CHECKOUT_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 FIXTURE = ROOT / "tests" / "fixtures" / "meta_server.py"
 sys.path.insert(0, str(FIXTURE.parent))
 from meta_server import PAYLOAD  # noqa: E402
@@ -18,7 +23,7 @@ SERVER = f"{sys.executable} {FIXTURE}"
 
 
 def call(extra_args):
-    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=CHECKOUT_ENV, args=[
         "-m", "tracetrim.cli", "proxy", "--upstream-cmd", SERVER, "--quiet", *extra_args])
 
     async def go():
@@ -56,7 +61,7 @@ def test_a_result_passed_whole_on_purpose_keeps_its_structured_copy_whole(tmp_pa
     # Review of 2026-11-12: a sampled result went out with the whole text and a trimmed
     # structuredContent, with no [trimmed] line to recover the difference.
     monkeypatch.setenv("META_INDENT", "2")
-    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=CHECKOUT_ENV, args=[
         "-m", "tracetrim.cli", "proxy", "--upstream-cmd", SERVER, "--quiet", "--auto", str(tmp_path / "w"),
         "--min-runs", "2", "--sample-rate", "1", "--sample-max-share", "100"])
     seen = []

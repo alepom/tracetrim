@@ -9,6 +9,7 @@ directory exactly as 0.3.5 left it; `fixtures/formats` holds older files.
 import asyncio
 import json
 import shutil
+import os
 import sys
 from pathlib import Path
 
@@ -21,6 +22,10 @@ from tracetrim.projection import Projection
 from tracetrim.runtime import Policy
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The proxy runs from this checkout's source, whatever tracetrim the interpreter
+# has installed.
+CHECKOUT_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 FIXTURES = ROOT / "tests" / "fixtures"
 sys.path.insert(0, str(FIXTURES))
 import billing  # noqa: E402
@@ -48,7 +53,7 @@ def proxy_session(work, script, min_runs=2):
     """Drive the proxy over stdio, in automatic mode, in front of the fixture server."""
     from mcp import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
-    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+    params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=CHECKOUT_ENV, args=[
         "-m", "tracetrim.cli", "proxy", "--upstream-cmd", f"{sys.executable} {FIXTURES / 'meta_server.py'}",
         "--auto", str(work), "--min-runs", str(min_runs), "--quiet"])
 

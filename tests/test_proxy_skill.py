@@ -16,6 +16,7 @@ import asyncio
 import hashlib
 import json
 import subprocess
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,10 @@ from tracetrim import skill
 from tracetrim.about import VERSION
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The proxy runs from this checkout's source, whatever tracetrim the interpreter
+# has installed.
+CHECKOUT_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 FIXTURES = ROOT / "tests" / "fixtures"
 ANSWER = "spa weekend has 1600 searches a month."
 ANY = TypeAdapter(dict[str, Any])
@@ -40,7 +45,7 @@ class Raw(types.Request[dict, str]):
 
 
 def params(*flags) -> StdioServerParameters:
-    return StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+    return StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=CHECKOUT_ENV, args=[
         "-m", "tracetrim.cli", "proxy", "--upstream-cmd", f"{sys.executable} {FIXTURES / 'meta_server.py'}",
         "--quiet", *map(str, flags)])
 

@@ -173,14 +173,18 @@ class Learner:
                 t[i] += v
 
     def expand_measured(self, size: int) -> None:
-        """What a reply of `expand` weighs: kept apart from the results' counts."""
+        """What a reply of `expand` weighs: kept apart from the results' counts.
+        A reply that arrives after a closing, before the next call, is about the
+        run just closed: it is added to that run at once, as its evidence is."""
         with self.lock:
             self._expand_sizes[0] += 1
             self._expand_sizes[1] += size
+            if not self.events and self.state["runs"]:
+                self._save_sizes(f"run-{self.state['runs']:04d}")
 
     def _save_sizes(self, run: str) -> None:
-        """Add the counts of the open run to savings.json, under `run`, and start again.
-        Replies of `expand` that arrive after a closing are about the run just closed."""
+        """Add the counts gathered since the last save to savings.json, under `run`,
+        and start again."""
         if not self._sizes and not self._expand_sizes[0]:
             return
         data = {"format": "tracetrim/savings@1", "unit": self._unit(), "runs": {}}
