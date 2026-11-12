@@ -99,8 +99,8 @@ def test_dry_run_writes_nothing_and_says_what_would_change(temp_home, run):
     assert failure is None and tree(temp_home) == before
     assert "Dry run" in text and "Behind tracetrim (2)" in text and "Left in the host (1)" in text
     assert "envFile" in text                                   # why notes stays
-    assert "https://billing.example" in text and "Authorization=••••" in text
-    assert "python3 (4 args)" in text and "API_KEY=••••" in text and "REGION=••••" in text
+    assert "https://billing.example" in text and "Authorization=****" in text
+    assert "python3 (4 args)" in text and "API_KEY=****" in text and "REGION=****" in text
     assert EXE in text and str(temp_home / ".tracetrim" / "cursor" / "servers.json") in text
     assert "tracetrim_done" in text and "report.html" in text
 
@@ -242,7 +242,7 @@ def test_claude_code_references_are_passed_by_the_host(temp_home, tmp_path, run,
         "db": {"command": "db-server", "args": ["--dsn", "${DSN}"], "env": {"TOKEN": "${API_TOKEN}", "MODE": "fast"}}}})
     monkeypatch.chdir(project)
     failure, text = run("--host", "claude-code", "--write")
-    assert failure is None and "References translated" in text and "${API_BASE:-••••}" in text
+    assert failure is None and "References translated" in text and "${API_BASE:-****}" in text
     work = init.default_workdir(init.HOSTS["claude-code"], "project", project)[0]
     assert work.parent == temp_home / ".tracetrim" / "claude-code" and work.name.startswith("shop-")
     assert str(work) in text and "per project" in text

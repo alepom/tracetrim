@@ -21,6 +21,7 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import shutil
 import subprocess
 import sys
@@ -29,7 +30,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlsplit
 
-MASK = "••••"
+MASK = "****"                  # ASCII: any terminal encoding can show it
 BACKUP_MARK = ".tracetrim-backup-"
 DONE_LINE = ("Last step, required if the tool tracetrim_done is available: when your final answer is ready, "
              "call tracetrim_done once with the complete answer, before you show it; then show the same answer.")
@@ -77,7 +78,10 @@ _CC = re.compile(r"\$\{(" + _NAME + r")(?::-([^}]*))?\}")          # ${VAR}  ${V
 _ENV = re.compile(r"\$\{env:(" + _NAME + r")\}")                    # ${env:NAME}
 _HOSTVAR = re.compile(r"\$\{(input):[^}]*\}|\$\{(workspaceFolder|workspaceFolderBasename|userHome|pathSeparator|/)\}")
 # What os.path.expandvars, which the proxy applies to servers.json, would take for a variable.
-_EXPANDS = re.compile(r"\$[A-Za-z0-9_{]" + (r"|%[^%]+%" if os.name == "nt" else ""))
+# On Windows (ntpath) also $-name, %NAME%, and $$ and %% that it always collapses to one character.
+_NT = os.name == "nt"            # a flag of the module, so that the tests can try Windows' rules
+_EXPANDS = re.compile(r"\$[A-Za-z0-9_{]")
+_EXPANDS_NT = re.compile(r"\$[A-Za-z0-9_{-]|%[^%]+%|\$\$|%%")
 
 
 class Refuse(Exception):
@@ -87,6 +91,9 @@ class Refuse(Exception):
 def _check_shape(spec) -> None:
     if not isinstance(spec, dict):
         raise Refuse("not an object")
+    nulls = sorted(k for k, v in spec.items() if v is None)
+    if nulls:                  # what a host does with null is not documented: the server stays as it is
+        raise Refuse("a field set to null: " + ", ".join(_safe_key(k) for k in nulls))
     unknown = sorted(k for k in spec if k not in KNOWN)
     if unknown:
         raise Refuse("field tracetrim does not know: " + ", ".join(_safe_key(k) for k in unknown))
@@ -134,7 +141,10 @@ def _translate(host: Host, spec: dict, http: bool) -> tuple[dict, dict]:
             rest, s = _CC.sub("", s), _CC.sub(sub, s)
         elif resolved and host.variables == "env-colon":
             rest, s = _ENV.sub("", s), _ENV.sub(sub, s)
-        if _EXPANDS.search(rest):
+        # On Windows the translated value too: ntpath collapses $$ and %% anywhere, and leaves
+        # a reference between single quotes as it is.
+        if (_EXPANDS_NT if _NT else _EXPANDS).search(rest) or _NT and (
+                re.search(r"\$\$|%%", s) or (s != rest and "'" in s)):
             raise Refuse("a '$' that tracetrim would expand and the host leaves as it is" if host.variables == "none"
                          else "a '$' form that tracetrim would expand and the host does not document there")
         return s
@@ -216,14 +226,19 @@ def _indent(raw: bytes):
 
 def _write(path: Path, data: bytes, mode: int) -> None:
     """Atomically, and with its permissions from the first byte."""
-    tmp = path.with_name(f".{path.name}.tracetrim-tmp-{os.getpid()}")
-    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, mode)
+    # A name nobody can guess, created here and nowhere else: not a file or a link put there beforehand.
+    tmp = path.with_name(f".{path.name}.tracetrim-tmp-{secrets.token_hex(8)}")
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    fd = os.open(tmp, flags, mode)              # outside the try: a name that exists is not ours to delete
     try:
         with os.fdopen(fd, "wb") as f:
             f.write(data)
             f.flush()
+            if hasattr(os, "fchmod"):
+                os.fchmod(f.fileno(), mode)     # the mode asked for, whatever the umask
             os.fsync(f.fileno())
-        os.chmod(tmp, mode)                     # the mode asked for, whatever the umask
+        if not hasattr(os, "fchmod"):
+            os.chmod(tmp, mode)
         os.replace(tmp, path)
     except BaseException:
         Path(tmp).unlink(missing_ok=True)
@@ -256,8 +271,20 @@ def executable() -> list[str]:
     return [str(Path(sys.executable).absolute()), "-m", "tracetrim.cli"]
 
 
+def _option(args: list[str], name: str) -> str | None:
+    """The value of `--name VALUE` or `--name=VALUE`, as argparse reads them."""
+    for i, a in enumerate(args):
+        if a == name and i + 1 < len(args):
+            return args[i + 1]
+        if a.startswith(name + "="):
+            return a[len(name) + 1:]
+    return None
+
+
 def _ours(spec) -> dict | None:
-    """If this entry is one `init` writes: where its servers file and work directory are."""
+    """If this entry is a tracetrim proxy: where its servers file and work directory are.
+    {"servers": None} for one without --servers (--upstream-url / --upstream-cmd): it is
+    tracetrim all the same, and must not be wrapped in a second one."""
     if not isinstance(spec, dict) or not isinstance(spec.get("command"), str) or not isinstance(spec.get("args"), list):
         return None
     args = [a for a in spec["args"] if isinstance(a, str)]
@@ -267,10 +294,11 @@ def _ours(spec) -> dict | None:
         if args[:2] != ["-m", "tracetrim.cli"]:
             return None
         args = args[2:]
-    if args[:1] != ["proxy"] or "--servers" not in args[:-1]:
+    if args[:1] != ["proxy"]:
         return None
-    servers = args[args.index("--servers") + 1]
-    work = args[args.index("--auto") + 1] if "--auto" in args[:-1] else None
+    servers, work = _option(args, "--servers"), _option(args, "--auto")
+    if not servers:
+        return {"servers": None, "workdir": None}
     return {"servers": Path(servers), "workdir": Path(work) if work else Path(servers).parent}
 
 
@@ -315,8 +343,19 @@ def _git(args: list[str], cwd: Path) -> int | None:
         return None
 
 
-def git_problems(workdir: Path) -> tuple[str | None, list[str]]:
-    """(why servers.json may not be written there, warnings)."""
+def _unignored_repo(file: Path) -> Path | None:
+    """The git repository that holds `file` without ignoring it, if any."""
+    existing = next(p for p in file.parents if p.is_dir())
+    repo = next((d for d in [existing, *existing.parents] if (d / ".git").exists()), None)
+    if repo is None or _git(["check-ignore", "-q", str(file)], existing) == 0:
+        return None
+    return repo
+
+
+def git_problems(workdir: Path, servers: Path | None = None) -> tuple[str | None, list[str]]:
+    """(why the servers file may not be written, warnings). `servers` is the file that is
+    written: an existing entry's can be outside the work directory."""
+    servers = servers or workdir / "servers.json"
     existing = next(p for p in [workdir, *workdir.parents] if p.is_dir())
     warnings = []
     for d in [existing, *existing.parents]:
@@ -324,13 +363,13 @@ def git_problems(workdir: Path) -> tuple[str | None, list[str]]:
             warnings.append(f"{workdir} is inside {d}, a project whose .mcp.json is under version control: "
                             "the keys in servers.json sit next to files that are shared")
             break
-    repo = next((d for d in [existing, *existing.parents] if (d / ".git").exists()), None)
-    if repo is None:
-        return None, warnings
-    if _git(["check-ignore", "-q", str(workdir / "servers.json")], existing) == 0:
-        return None, warnings
-    return (f"{workdir} is inside the git repository {repo} and servers.json would not be ignored there: "
-            "it holds keys. Choose another --workdir, add it to .gitignore, or pass --force"), warnings
+    if (repo := _unignored_repo(workdir / "servers.json")) is not None:
+        return (f"{workdir} is inside the git repository {repo} and servers.json would not be ignored there: "
+                "it holds keys. Choose another --workdir, add it to .gitignore, or pass --force"), warnings
+    if servers != workdir / "servers.json" and (repo := _unignored_repo(servers)) is not None:
+        return (f"the servers file {servers} is inside the git repository {repo} and would not be ignored there: "
+                "it holds keys. Add it to .gitignore, or pass --force"), warnings
+    return None, warnings
 
 
 # ---------------------------------------------------------------- the plan
@@ -346,6 +385,7 @@ class Plan:
     http: int | None = None
     raw: bytes = b""
     config: dict = field(default_factory=dict)
+    servers_raw: bytes | None = None                 # the servers file as read, None if there was none
     existing: dict | None = None                     # the entry already in the host, if any
     moved: dict = field(default_factory=dict)        # name -> spec for servers.json
     already: list = field(default_factory=list)      # in the host and, identical, in servers.json already
@@ -378,6 +418,8 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
         raise SystemExit("tracetrim init: --exclude names no server of the file: " + ", ".join(map(_safe_key, unknown)))
 
     found = {n: o for n, s in block.items() if (o := _ours(s))}
+    bare = [n for n in found if found[n]["servers"] is None]
+    found = {n: o for n, o in found.items() if n not in bare}
     if len(found) > 1:
         raise SystemExit("tracetrim init: the file has more than one tracetrim entry (" +
                          ", ".join(map(_safe_key, found)) + "): keep one")
@@ -385,7 +427,7 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
     if workdir:
         wd, why = Path(workdir).expanduser().absolute(), "given with --workdir"
     p = Plan(host, file, scope, wd, why, name, http, raw, config)
-    if found and http:
+    if found and http is not None:
         raise SystemExit("tracetrim init: this host already goes through tracetrim over stdio (entry " +
                          ", ".join(map(_safe_key, found)) + "): undo first to move to --http")
     if found:
@@ -394,16 +436,21 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
             raise SystemExit(f"tracetrim init: this host already goes through tracetrim with the work directory "
                              f"{p.existing['workdir']}: leave --workdir out, or undo first")
         p.workdir, p.why_workdir = p.existing["workdir"], "the one the host's tracetrim entry already uses"
-    elif name in block and not http:      # over HTTP nothing is added to the file
+    elif name in block and http is None:      # over HTTP nothing is added to the file
         raise SystemExit(f"tracetrim init: the host already has a server called {_safe_key(name)} that is not "
                          "the entry of `tracetrim init`: choose another name with --name")
 
     on_disk = {}
     if p.servers_path.exists():
-        _, data = _read_json(p.servers_path, "the servers file")
+        p.servers_raw, data = _read_json(p.servers_path, "the servers file")
         on_disk = data.get("mcpServers", data) if isinstance(data, dict) else None
         if not isinstance(on_disk, dict):
             raise SystemExit(f"tracetrim init: {p.servers_path} is not a servers file")
+        if "mcpServers" in data and len(data) > 1:     # a whole client's file: rewriting it would lose the rest
+            raise SystemExit(f"tracetrim init: {p.servers_path} holds more than an 'mcpServers' object ("
+                             + ", ".join(sorted(_safe_key(k) for k in data if k != "mcpServers"))
+                             + "): tracetrim init only rewrites a file of servers. Nothing was written: point the "
+                             "entry's --servers to a file of its own")
 
     env = block[p.name].get("env") if p.existing else None
     p.refs = dict(env) if isinstance(env, dict) else {}
@@ -411,12 +458,15 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
     for n, spec in block.items():
         if n in found:
             continue
+        if n in bare:
+            p.left[n] = "a tracetrim proxy without --servers (--upstream-url or --upstream-cmd): left as it is"
+            continue
         if n in exclude:
             p.left[n] = "excluded with --exclude"
             continue
         try:
             _check_shape(spec)
-            out, refs = _translate(host, spec, bool(http))
+            out, refs = _translate(host, spec, http is not None)
             for var, expr in refs.items():
                 if p.refs.get(var, expr) != expr:
                     raise Refuse(f"variable {var} is already passed to tracetrim with another expression")
@@ -435,6 +485,19 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
             p.moved[n] = out
 
     p.servers_file = {**on_disk, **p.moved}
+    stray = [n for n in on_disk if n not in p.leaving]
+    if stray and not p.existing and p.leaving:
+        # Left by an earlier init (then undone): with them in the file, servers the user removed
+        # from the host would come back behind tracetrim.
+        p.refuse = (f"{p.servers_path} already holds servers that are not among those moved now: "
+                    + ", ".join(map(_safe_key, stray)) + ". They would be served again through tracetrim. "
+                    "Remove them from that file, choose another --workdir, or pass --force to keep them")
+    # The references of the whole servers file, not only of the servers moved now: the host passes them.
+    host_expr = {"claude-code": "${{{}}}", "env-colon": "${{env:{}}}"}.get(host.variables)
+    if host_expr:
+        for spec in p.servers_file.values():
+            for var in re.findall(r"\$\{(" + _NAME + r")\}", json.dumps(spec)):
+                p.refs.setdefault(var, host_expr.format(var))
     if p.existing:
         p.entry = dict(block[p.name])
         if p.refs != kept_refs:
@@ -443,8 +506,9 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
         p.entry = {**({"type": "stdio"} if host.typed else {}), "command": (exe := executable())[0],
                    "args": [*exe[1:], "proxy", "--servers", str(p.servers_path), "--auto", str(p.workdir)],
                    **({"env": dict(p.refs)} if p.refs else {})}
-    if p.leaving or http:
-        p.refuse, p.warnings = git_problems(p.workdir)
+    if p.leaving or http is not None:
+        refuse, p.warnings = git_problems(p.workdir, p.servers_path)
+        p.refuse = " ".join(r for r in (p.refuse, refuse) if r) or None
     return p
 
 
@@ -466,15 +530,26 @@ def rewritten(p: Plan) -> bytes:
 # ---------------------------------------------------------------- output
 
 def _entry_text(p: Plan) -> str:
-    shown = dict(p.entry)
-    if isinstance(shown.get("env"), dict):    # references are shown, a default or anything else is not
-        shown["env"] = {k: v if isinstance(v, str) and _ENV.fullmatch(v) else
-                        _show_ref(v) if isinstance(v, str) and _CC.fullmatch(v) else MASK
-                        for k, v in shown["env"].items()}
-    if p.existing:            # an entry the user may have edited
-        shown["args"] = [a if a in ("proxy", "--servers", "--auto", str(p.servers_path), str(p.workdir)) or
-                         re.fullmatch(r"--[a-z-]+|-m|tracetrim\.cli", a) else MASK for a in shown.get("args", [])]
-    return json.dumps({p.name: shown}, indent=2, ensure_ascii=False)
+    """The host's entry. An existing one is the user's to edit (auth, envFile, cwd, ...): of it
+    only what init itself writes is shown, every other field by its name alone."""
+    shown, ok_args = {}, {"proxy", "--servers", "--auto", "-m", "tracetrim.cli", str(p.servers_path), str(p.workdir),
+                          f"--servers={p.servers_path}", f"--auto={p.workdir}"}
+    for k, v in p.entry.items():
+        if k == "type":
+            shown[k] = v if v == "stdio" else MASK
+        elif k == "command":
+            base = re.split(r"[\\/]", v)[-1] if isinstance(v, str) else ""
+            shown[k] = (v if not p.existing or v == executable()[0] else
+                        MASK + "/" + base if re.fullmatch(r"[\w.+-]{1,40}", base) else MASK)
+        elif k == "args" and isinstance(v, list):
+            shown[k] = [a if not p.existing or isinstance(a, str) and (a in ok_args or re.fullmatch(r"--[a-z-]+", a))
+                        else MASK for a in v]
+        elif k == "env" and isinstance(v, dict):    # references are shown, a default or anything else is not
+            shown[k] = {_safe_key(n): x if isinstance(x, str) and _ENV.fullmatch(x) else
+                        _show_ref(x) if isinstance(x, str) and _CC.fullmatch(x) else MASK for n, x in v.items()}
+        else:
+            shown[_safe_key(k)] = MASK
+    return json.dumps({_safe_key(p.name): shown}, indent=2, ensure_ascii=False)
 
 
 def render(p: Plan, write: bool) -> str:
@@ -490,7 +565,7 @@ def render(p: Plan, write: bool) -> str:
         L += [f"  {_safe_key(n):<{width}}{describe(s)}" for n, s in p.moved.items()]
     if p.already:
         L += ["", f"Already in {p.servers_path.name}, not duplicated ({len(p.already)})"]
-        L += [f"  {_safe_key(n):<{width}}" + ("removed from the host" if not p.http else "") for n in p.already]
+        L += [f"  {_safe_key(n):<{width}}" + ("removed from the host" if p.http is None else "") for n in p.already]
     if p.left:
         L += ["", f"Left in the host ({len(p.left)})"]
         L += [f"  {_safe_key(n):<{width}}{why}" for n, why in p.left.items()]
@@ -504,7 +579,7 @@ def render(p: Plan, write: bool) -> str:
 
     L += ["", f"Work directory  {p.workdir}", f"                {p.why_workdir}"]
     L += [f"Servers file    {p.servers_path}  (mode 0600; {', '.join(map(_safe_key, p.servers_file))}; values as they are)"]
-    if p.http:
+    if p.http is not None:
         L += _http_steps(p)
     else:
         L += ["", "Host entry" + (" (updated)" if p.existing and p.entry != p.config[h.key][p.name] else ""),
@@ -535,7 +610,7 @@ def closing(p: Plan, written: bool, backup: Path | None) -> str:
     L = [""]
     if written and backup:
         L += [f"Backup          {backup}", f"Undo            tracetrim init --undo {backup}"]
-    if not p.http:
+    if p.http is None:
         L += [f"Then: restart {p.host.title}, so that it reads the file again."]
         if p.scope == "project":
             L += ["A project's file is usually shared: the entry holds paths of this machine and the backup sits "
@@ -561,14 +636,28 @@ def backup_path(file: Path) -> Path:
     return path
 
 
+def _bytes(path: Path) -> bytes | None:
+    try:
+        return path.read_bytes()
+    except FileNotFoundError:
+        return None
+
+
 def apply(p: Plan, force: bool) -> Path | None:
     """Write the plan. Returns the backup of the host's file, if the host was rewritten."""
     if p.refuse and not force:
         raise SystemExit("tracetrim init: " + p.refuse)
+    # The plan was made from the files as they were read: one saved since (by the host, by
+    # the user) would be overwritten with content made from the old one. Checked before
+    # anything is written, so that either everything is written or nothing is.
+    for path, before in ((p.file, p.raw), (p.servers_path, p.servers_raw)):
+        if _bytes(path) != before:
+            raise SystemExit(f"tracetrim init: {path} changed while init was running. Nothing was written: "
+                             "run init again")
     p.workdir.mkdir(parents=True, exist_ok=True, mode=0o700)
     p.servers_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     _write(p.servers_path, _dump({"mcpServers": p.servers_file}), 0o600)
-    if p.http:
+    if p.http is not None:
         return None
     mode = (p.file.stat().st_mode & 0o777) or 0o600
     new = rewritten(p)
@@ -593,7 +682,12 @@ def undo(backup: str, force: bool) -> str:
     target, note = b.with_name(b.name.split(BACKUP_MARK)[0]), None      # the backup sits next to the original
     side = b.with_name(b.name + ".json")
     if side.exists():
-        _, note = _read_json(side, "the note of the backup")
+        try:
+            _, note = _read_json(side, "the note of the backup")
+        except SystemExit:
+            if not force:
+                raise
+            note = None                     # with --force an unreadable note counts as a missing one
     current = target.read_bytes() if target.exists() else None
     if current == saved:
         return f"{target} is already as in the backup: nothing to do.\n"
@@ -628,31 +722,54 @@ def claude_code_user(workdir: str | None) -> str:
         ""])
 
 
+def _say(text: str) -> None:
+    """Print, whatever the terminal's encoding: what it cannot show is escaped, not a crash."""
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        text.encode(enc)
+    except UnicodeEncodeError:
+        text = text.encode(enc, "backslashreplace").decode(enc)
+    except LookupError:
+        text = text.encode("ascii", "backslashreplace").decode("ascii")
+    sys.stdout.write(text)
+    sys.stdout.flush()
+
+
 def run(a) -> None:
     try:
         if a.undo:
-            sys.stdout.write(undo(a.undo, a.force))
+            _say(undo(a.undo, a.force))
             return
         if not a.host:
             raise SystemExit("tracetrim init: give --host " + "|".join(HOSTS) + " (or --undo BACKUP)")
         host = HOSTS[a.host]
         if host.name == "claude-code" and a.scope == "user" and not a.file:
-            sys.stdout.write(claude_code_user(a.workdir))
+            _say(claude_code_user(a.workdir))
             return
         file, scope, root = locate(host, a.file, a.scope)
+        # Claude Code's own state (~/.claude.json, or under CLAUDE_CONFIG_DIR): never read, never written.
+        if ".claude.json" in (file.name.lower(), file.resolve().name.lower()):
+            raise SystemExit(f"tracetrim init: {file} is Claude Code's own state file, which init neither reads nor "
+                             "writes. For the servers kept there, `tracetrim init --host claude-code --scope user` "
+                             "prints the steps with `claude mcp`")
         if not file.exists():
             raise SystemExit(f"tracetrim init: {host.title} file not found: {file}. Give it with --file")
         if file.is_symlink():
             file = file.resolve()
         p = plan(host, file, scope, root, a.workdir, a.name, a.exclude, a.http)
         write = a.write and bool(p.leaving)
+        text = render(p, a.write)       # made before anything is written
         if write and p.refuse and not a.force:
-            sys.stdout.write(render(p, True))
+            _say(text)
             raise SystemExit("tracetrim init: nothing was written.")
         backup = apply(p, a.force) if write else None
-        sys.stdout.write(render(p, a.write))
-        if p.leaving:
-            sys.stdout.write(closing(p, write, backup))
+        try:
+            _say(text + (closing(p, write, backup) if p.leaving else ""))
+        except Exception:
+            if backup is None:
+                raise
+            raise SystemExit(f"tracetrim init: the files were written, but the summary could not be shown. "
+                             f"Backup {backup}; undo with: tracetrim init --undo {backup}") from None
     except SystemExit:
         raise
     except Exception as e:                # never a traceback or a message that could carry a value of the file

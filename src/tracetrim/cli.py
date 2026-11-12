@@ -251,6 +251,17 @@ def cmd_skill(a):
         sys.stdout.write(skill.text(**kw))
 
 
+def _port(text: str) -> int:
+    """A TCP port for `init --http`: 0 would be taken for "no port" and rewrite the host."""
+    try:
+        port = int(text)
+    except ValueError:
+        port = 0
+    if not 1 <= port <= 65535:
+        raise argparse.ArgumentTypeError(f"not a port between 1 and 65535: {text!r}")
+    return port
+
+
 def cmd_init(a):
     """Put tracetrim in front of the servers of a host's MCP configuration (tracetrim.init)."""
     from . import init
@@ -433,7 +444,7 @@ def main(argv=None):
     s.add_argument("--name", default="tracetrim", help="the name of the entry in the host (default: tracetrim)")
     s.add_argument("--exclude", action="append", default=[], metavar="NAME",
                    help="leave this server in the host (repeatable)")
-    s.add_argument("--http", type=int, metavar="PORT",
+    s.add_argument("--http", type=_port, metavar="PORT",
                    help="for a host that reaches tracetrim over HTTP: the host's file is not rewritten, the steps are printed")
     s.add_argument("--write", action="store_true",
                    help="do it: backup of the host's file next to it, servers moved to WORKDIR/servers.json (mode 0600), "

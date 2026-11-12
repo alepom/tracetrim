@@ -85,7 +85,7 @@ def test_with_the_79_tools_and_a_use_like_c1_the_suggestion_appears(tmp_path):
     assert s["never_called_share"] >= 0.5 and s["never_called_tokens"] >= 5_000 and s["suggest"]
     [sugg] = [x for x in d["suggestions"] if x["rule"] == "definitions"]
     assert sugg["level"] == "review" and sugg["action"]["kind"] == "manual"
-    listed = [x.split(" · ")[0] for x in sugg["action"]["tools"]]
+    listed = [x["name"] for x in sugg["action"]["tools"]]
     heaviest = [x["name"] for x in s["never_called"]][:20]
     assert listed == heaviest and len(listed) == 20          # heaviest first, truncated at 20
     for words in ("does not mean never needed", "Claude Code", "tool_search", "defer_loading",

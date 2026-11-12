@@ -30,7 +30,19 @@ as it is.
 Running `init` again is safe: a host that already goes through tracetrim is not wrapped a second time,
 servers you added since join the same `servers.json`, and a server that is already there is not
 duplicated. A server with the same name and a different definition stops `init` before anything is
-written.
+written. An entry that already runs `tracetrim proxy` counts as tracetrim in any form
+(`--servers PATH`, `--servers=PATH`, `python -m tracetrim.cli`); one without `--servers`
+(`--upstream-url`, `--upstream-cmd`) stays as it is and is not moved.
+
+`init` also stops before writing anything when:
+
+- the servers file holds more than an `mcpServers` object (a whole client's file): point the entry's
+  `--servers` to a file of its own;
+- there is no tracetrim entry in the host but `servers.json` already holds servers that are not
+  moved now (left by an earlier `init`, then undone): they are listed, and `--force` keeps them;
+- the host's file or `servers.json` changed between the moment `init` read them and the moment it
+  would write: run it again;
+- `--file` is a `.claude.json`, Claude Code's own state file (see below).
 
 | Option | |
 |---|---|
@@ -40,9 +52,9 @@ written.
 | `--workdir DIR` | where `servers.json`, the traces and the report go |
 | `--exclude NAME` | leave this server in the host (repeatable) |
 | `--name NAME` | the name of the entry, if the host already has a server called `tracetrim` |
-| `--http PORT` | for a host that reaches tracetrim over HTTP: the host's file is not rewritten, `servers.json` is written and the steps are printed |
+| `--http PORT` | (1-65535) for a host that reaches tracetrim over HTTP: the host's file is not rewritten, `servers.json` is written and the steps are printed |
 | `--write` | do it |
-| `--force` | write `servers.json` inside a git repository that does not ignore it; with `--undo`, restore a file that changed |
+| `--force` | write `servers.json` inside a git repository that does not ignore it, or keep servers already in it that are not moved now; with `--undo`, restore a file that changed, or one whose note is missing or unreadable |
 
 ### The work directory
 
@@ -53,14 +65,18 @@ tracetrim learns per work directory, so `init` uses one per project:
   SHA-256 of the project's absolute path. Two projects never share what was learned.
 
 Both are outside any repository. `servers.json` holds your servers' keys: `init` refuses to write it
-inside a git repository that does not ignore it (unless `--force`), and warns when the directory is
+inside a git repository that does not ignore it (unless `--force`) — the file actually written, also
+when an existing entry's `--servers` points outside the work directory — and warns when the directory is
 inside a project whose `.mcp.json` is under version control.
 
 ### Keys are never shown
 
 No value of the host's file is printed, in a dry run or in an error: not of `env` or `headers`, not an
 argument (the official examples put keys there too), not the path or the query of a URL. What is shown
-is names, the number of arguments, and the scheme and host of a URL. A file that is not valid JSON is
+is names, the number of arguments, and the scheme and host of a URL; a hidden value is shown as `****`.
+Of an existing tracetrim entry only what `init` writes is shown (its options, the servers file and
+the work directory, references in `env`); any other field (`cwd`, `auth`, `envFile`, …) appears by its
+name alone. A file that is not valid JSON is
 reported by line and column, and is not rewritten (a file with comments has to be edited by hand).
 
 ### What each host's file looks like
@@ -77,7 +93,8 @@ Read in the official documentation on 12 November 2026.
 - **Claude Code, user and local scope.** Those servers are kept in `~/.claude.json`, together with the
   application's state. `init` neither writes nor reads that file:
   `tracetrim init --host claude-code --scope user` prints the steps (`claude mcp remove NAME --scope user`,
-  `claude mcp add --transport stdio --scope user tracetrim -- …`).
+  `claude mcp add --transport stdio --scope user tracetrim -- …`). A `.claude.json` given with
+  `--file` is refused for the same reason.
 - **A project's file is usually shared.** The entry `init` writes holds paths of your machine (the
   executable, the work directory), and the backup sits next to the file: keep both out of what you
   commit, or use the user's file.
@@ -97,7 +114,7 @@ host, untouched, and the output says why, when:
 - it uses a variable only the host can resolve: `${input:…}`, `${workspaceFolder}`, `${userHome}`, …;
 - a value has a `$` that the host leaves as it is and tracetrim would expand (in Claude Desktop, any
   `$NAME` or `${NAME}`);
-- a value of `env` is not text;
+- a value of `env` is not text, or a field is `null`;
 - you excluded it with `--exclude`.
 
 **References to environment variables are kept as references.** The host goes on resolving them and
@@ -118,7 +135,8 @@ passes them to tracetrim; `servers.json` uses `${NAME}`. The output lists every 
 - **Claude Desktop extensions** (`.mcpb`) and connectors added from *Settings → Connectors* are not in
   `claude_desktop_config.json`: `init` does not see them.
 - **Windows.** The mode `0600` is a POSIX permission: on Windows `servers.json` has the permissions of
-  its folder.
+  its folder. tracetrim expands `%NAME%`, `$$` and `%%` there as well, so a value holding one of them
+  (two `%20` in one URL count as `%NAME%`), or a reference between single quotes, stays in the host.
 
 ## What to expect from an interactive host
 
