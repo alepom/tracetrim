@@ -28,6 +28,16 @@ adds an automatic mode: put one proxy in front of your MCP servers and it observ
 trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
 anything that matters.
 
+### What's new in 0.5
+
+- **`tracetrim init`** puts tracetrim in front of the servers your host already uses (Claude Desktop,
+  Claude Code, Cursor, VS Code): a dry run first, a backup, `--undo`, and no key ever printed.
+- **Which hosts were checked, and how**:
+  [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md). Check your own with
+  `--log-client` (since 0.4.1), which logs what a client asks for and never what it sends.
+- Since 0.4.1, the log and the report split the saving into *format* (compact JSON, nothing removed) and
+  *fields* (what learning removes).
+
 ### What's new in 0.4
 
 Version 0.4 makes the automatic mode easier to trust in daily use. Every new function that changes what
