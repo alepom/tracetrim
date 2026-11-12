@@ -36,6 +36,13 @@ from .usage import CallUsage, leaves, parse_output
 IDENTIFYING = re.compile(r"^(id|uuid|guid|doi|url|html_url|uri|href|slug|number|title|name|display_name)$|_id$")
 
 
+def dumps(payload, compact: bool = False) -> str:
+    """JSON as tracetrim writes it: UTF-8, no indentation. `compact` also drops
+    the spaces after `,` and `:`; lossless, and on DataForSEO outputs (o200k_base)
+    worth about as much again as removing the indentation."""
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":") if compact else None)
+
+
 def identifying(path: str) -> bool:
     return bool(IDENTIFYING.search(path.rsplit(".", 1)[-1].removesuffix("[]")))
 
@@ -72,12 +79,14 @@ class Projection:
         seen = {t: keep[t] | set(d.get("dropped", {}).get(t, [])) for t in keep}
         return cls(d["mode"], d["source"], keep, seen, d.get("unseen", "keep"))
 
-    def apply(self, tool: str, output: str, keep_empty: bool = False) -> str:
+    def apply(self, tool: str, output: str, keep_empty: bool = False, compact: bool = False) -> str:
         """The trimmed output.
 
         `keep_empty`: keep lists and objects that were already empty in the
         output, so that "no results" does not look like "hidden". Used at run
         time (proxy, AutoTrim) since 0.3.4; the studies measured without it.
+        `compact`: no spaces after separators (see `dumps`); the studies
+        measured without it.
 
         Anything that parses as JSON is at least re-serialised without ASCII
         escapes (`\\u00e0` -> `à`): lossless, and it saves tokens on its own.
@@ -87,11 +96,11 @@ class Projection:
         if payload is None:
             return output                    # error message, prose, empty
         if not isinstance(payload, (dict, list)) or tool not in self.keep:
-            return json.dumps(payload, ensure_ascii=False)
+            return dumps(payload, compact)
         drop = (self.seen.get(tool, set()) - self.keep[tool]) if self.unseen == "keep" else None
         p = project(payload, self.keep[tool], drop=drop, keep_empty=keep_empty)
         # Everything removed: an empty container of the same kind (a list stays a list).
-        return json.dumps(([] if isinstance(payload, list) else {}) if p is _EMPTY else p, ensure_ascii=False)
+        return dumps(([] if isinstance(payload, list) else {}) if p is _EMPTY else p, compact)
 
 
 def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_empty: bool = False):

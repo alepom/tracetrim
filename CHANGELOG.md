@@ -78,7 +78,20 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   per mode of use show no benefit on 18 candidate arguments and are not implemented; a design note on rows
   ([docs/rows.md](https://github.com/alepom/tracetrim/blob/master/docs/rows.md)), which tracetrim still never cuts.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
+- **Compact JSON from the first call.** In automatic mode every JSON output reaches the model without
+  indentation and without the spaces after `,` and `:`, from the first call of the first run: lossless,
+  so it does not wait for learning. Generated configs carry `"compact": true`; `--no-compact`,
+  `AutoTrim(compact=False)` and `Engine(compact=False)` turn it off. Found in a test in the OpenAI
+  Playground with DataForSEO's MCP server (six runs, three to learn): of the tokens removed after
+  learning, about half came from re-serialisation and half from hidden fields; compact separators would
+  have taken off about 24–27% in the three learning runs and about ten more points in the next ones
+  (an estimate from the recorded outputs, not a measurement). The experiments of `protocol-v04.md` and the
+  offline demo keep the serialisation they were run with.
 - **Changed behaviour:**
+  - In automatic mode JSON outputs are compacted from the first call: until 0.3.5 the learning runs
+    received them exactly as the tool sent them, and later runs as JSON with spaces after separators.
+    Text that is not JSON is untouched; traces still record what the tool sent. A config written before
+    0.4 (no `compact` key) keeps the spaces when applied with `--config`.
   - The reply of `expand` to an unknown `call_id` now says that only a result with a `[trimmed]` line can be
     expanded and, with one agent (stdio, function calling), names the most recent valid ids with their
     tools. The HTTP proxy, which several clients can reach, never names them. Until 0.3.5 it was
@@ -132,6 +145,9 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   run of `protocol-v04.md`, before any paid run.
 - **Fixed:** `expand` requests made after the last closing were not saved when the proxy stopped; a
   trace written just before a crash could be overwritten by the next run.
+- **No spend in versioned files.** The end-to-end checks (`results/checks/auto_check_*.json`) no longer
+  carry the cost of their runs, and `experiments.auto_check`, which calls the model, runs only with
+  `--paid`.
 - Files written by earlier versions (work directories, configs, projections, traces, state) load as
   before: `tests/test_regression_035.py`, written on the untouched 0.3.5 code.
 

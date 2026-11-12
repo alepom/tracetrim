@@ -178,7 +178,7 @@ Checked with a real agent on the billing case, function calling, 5 runs with 3 t
 tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a
 hidden field once, and all five tickets passed the keyword test in every run (a check, not a measurement:
 `results/checks/auto_check_function.json`, from
-`python -m experiments.auto_check --runs 5 --min-runs 3 --mode function`).
+`python -m experiments.auto_check --paid --runs 5 --min-runs 3 --mode function`).
 
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
@@ -260,7 +260,10 @@ input schemas as its own (plus `expand`); each call is forwarded unchanged, and 
 rewritten on its way back. One proxy can stand in front of several servers (`--servers`).
 
 While it runs, the proxy prints one line per call on stderr — tokens from the tool, tokens to the
-agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). Add
+agent, hidden fields, `expand` requests and the session total (`--quiet` to silence it). In
+automatic mode JSON outputs are written compactly (no indentation, no spaces after `,` and `:`) from
+the first call, before anything is learned: nothing is removed, and on indented outputs it is often a
+large part of the saving (`--no-compact` to keep the spaces). Add
 `--structural toon` or `--structural headroom` to re-encode outputs after the projection
 (experimental; Headroom needs `tracetrim[headroom]`).
 

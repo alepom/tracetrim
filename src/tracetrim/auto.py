@@ -489,8 +489,9 @@ class AutoTrim:
     """
 
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
-                 strategy: bool = False, adaptive: Adaptive | None = None):
-        self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive), structural=structural)
+                 strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True):
+        self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive), structural=structural,
+                             compact=compact)
         self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
                             "parameters": EXPAND["inputSchema"]}

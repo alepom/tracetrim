@@ -58,7 +58,7 @@ class FunctionCalling:
     name = "function"
 
     def __init__(self, work, adaptive):
-        self.tt = AutoTrim(work, min_runs=MIN_RUNS, adaptive=adaptive)
+        self.tt = AutoTrim(work, min_runs=MIN_RUNS, adaptive=adaptive, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
 
     async def __aenter__(self):
         return self
@@ -90,7 +90,7 @@ class Mcp:
                       "--sample-max-share", str(adaptive.sample_max_share)]
         self.params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
             "-m", "tracetrim.cli", "proxy", "--upstream-cmd", upstream,
-            "--auto", str(work), "--min-runs", str(MIN_RUNS), "--quiet", *flags])
+            "--auto", str(work), "--min-runs", str(MIN_RUNS), "--quiet", "--no-compact", *flags])
 
     async def __aenter__(self):
         from contextlib import AsyncExitStack
@@ -200,7 +200,7 @@ def overhead(count) -> list[dict]:
     """What the new functions add to a filtered result, on a small and a large output."""
     rows = []
     with tempfile.TemporaryDirectory() as work:
-        tt = AutoTrim(work, min_runs=MIN_RUNS)
+        tt = AutoTrim(work, min_runs=MIN_RUNS, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
         for k in range(1, MIN_RUNS + 1):
             raw = orders.output(f"cus_{k:03d}", LIMIT)
             tt.output(TOOL, {"customer": f"cus_{k:03d}", "limit": LIMIT}, raw)

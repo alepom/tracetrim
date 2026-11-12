@@ -382,7 +382,7 @@ def seed(case: str, workdir: Path, adaptive: Adaptive):
         missing = [f for f in fields if f not in dropped.get(tool, [])]
         if missing:           # the precondition of the experiment: the variant must need fields that are removed
             raise SystemExit(f"{case}: the projection does not remove {missing} of {tool}")
-    return AutoTrim(workdir, MIN_RUNS, adaptive=adaptive)
+    return AutoTrim(workdir, MIN_RUNS, adaptive=adaptive, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
 
 
 def projection_keeps(workdir: Path, case: str) -> dict:
@@ -454,7 +454,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
             from tracetrim.auto import AutoTrim
             if not (workdir / "state.json").exists():
                 raise SystemExit(f"{workdir}: run {run.n} of a sequence needs the work directory of the runs before it")
-            tt = AutoTrim(workdir, MIN_RUNS, adaptive=adaptive)
+            tt = AutoTrim(workdir, MIN_RUNS, adaptive=adaptive, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
         engine, kept_before = tt.engine, projection_keeps(workdir, run.case)
     elif E1_ARMS[run.arm][1]:
         engine = Engine(policy=fixed_policy(run.case))

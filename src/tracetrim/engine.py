@@ -19,6 +19,7 @@ from pathlib import Path
 
 from .contract import FILTERED, FULL_CHEAPER, SAMPLED, Observation, ToolCall, ToolResult
 from .evidence import is_broad
+from .projection import dumps
 from .runtime import Policy
 from .usage import leaves, parse_output
 
@@ -201,7 +202,8 @@ class Trimmer:
             groups = sorted({".".join(h.split(".")[:2]) for h in hidden})
             return ("Error: no field matches " + ", ".join(wanted)[:200] + ". Hidden groups: "
                     + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else ".")), ()
-        return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False), tuple(sorted(fields))
+        compact = self.policy is not None and self.policy.compact
+        return dumps(got if isinstance(got, (dict, list)) else {}, compact), tuple(sorted(fields))
 
     def _unknown(self, call_id: str) -> str:
         """The model made up or cut short an id, or asked about a result that was
@@ -221,25 +223,34 @@ class Trimmer:
 class Engine:
     """`learner`: automatic mode (tracetrim.auto.Learner), or None to apply a
     fixed `policy` (or nothing). `structural`: re-encode every output after
-    the projection ("toon", "headroom"), whatever the config says. `shared`:
+    the projection ("toon", "headroom"), whatever the config says. `compact`:
+    JSON without spaces after separators, whatever the config says; None (the
+    default) turns it on in automatic mode, from the first call, and otherwise
+    leaves it to the config. `shared`:
     several clients reach this engine (the HTTP proxy), so an error never names
     the call_ids of results it holds."""
 
     def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
-                 shared: bool = False):
+                 shared: bool = False, compact: bool | None = None):
         self.learner = learner
         self.structural = structural
+        # Lossless, so in automatic mode it does not wait for anything to be learned.
+        self.compact = (True if learner is not None else None) if compact is None else compact
         if policy is None and learner is not None:
             policy = learner.initial_policy()
-        if policy is None and structural:
+        if policy is None and (structural or self.compact):
+            # Nothing learned or configured yet: no tool is trimmed, outputs are only re-encoded.
             policy = Policy({"format": "tracetrim/config@1", "tools": {}}, None)
-        self.trimmer = Trimmer(self._with_structural(policy))
+        self.trimmer = Trimmer(self._adjusted(policy))
         self.trimmer.shared = shared
         self._expanded: set[str] = set()         # results already expanded once: a second request is a repeat
 
-    def _with_structural(self, policy: Policy | None) -> Policy | None:
+    def _adjusted(self, policy: Policy | None) -> Policy | None:
+        """The engine's own settings over the config's."""
         if policy is not None and self.structural:
             policy.structural = self.structural
+        if policy is not None and self.compact is not None:
+            policy.compact = self.compact
         return policy
 
     @property
@@ -322,7 +333,7 @@ class Engine:
         runs it in a thread."""
         new = self.learner.relearn() if self.learner is not None else None
         if new is not None:
-            self.trimmer.policy = self._with_structural(new)
+            self.trimmer.policy = self._adjusted(new)
         return new is not None
 
     def close(self, answer: str | None) -> Path | None:

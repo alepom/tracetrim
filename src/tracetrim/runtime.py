@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .projection import Projection
+from .projection import Projection, dumps
 from .usage import parse_output
 
 
@@ -23,6 +23,9 @@ class Policy:
         self.projection = projection
         self.tools = config.get("tools", {})
         self.unescape = bool(config.get("unescape", True))
+        # Compact JSON, no spaces after separators: lossless. Off when the key is
+        # missing, so that a config written before 0.4 serves what it served.
+        self.compact = bool(config.get("compact", False))
         # Optional, after the projection: "toon" (lossless re-encoding) or
         # "headroom" (experimental). The study found that a denser format can
         # change how the model reads a payload: validate before relying on it.
@@ -51,11 +54,11 @@ class Policy:
     def _project(self, tool: str, output: str, project: bool = True) -> str:
         spec = self.tools.get(tool, {})
         if project and self.projection and spec.get("trim", "off") != "off":
-            return self.projection.apply(tool, output, keep_empty=True)
-        if self.unescape:
+            return self.projection.apply(tool, output, keep_empty=True, compact=self.compact)
+        if self.unescape or self.compact:
             payload = parse_output(output)
             if payload is not None:
-                return json.dumps(payload, ensure_ascii=False)
+                return dumps(payload, self.compact)
         return output
 
     def _structural(self, tool: str, output: str) -> str:

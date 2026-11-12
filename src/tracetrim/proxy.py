@@ -131,6 +131,7 @@ class Options:
     sample_seed: int = 0
     skill: bool = True               # publish the tracetrim skill (MCP Skills), whenever expand is offered
     skill_strategy: bool = False     # ... with the optional notes on organising tool calls
+    compact: bool | None = None      # compact JSON; None: from the first call with --auto, else as the config says
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -300,7 +301,8 @@ def _server(o: Options):
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
-    engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared)
+    engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
+                    compact=o.compact)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)

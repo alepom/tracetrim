@@ -306,6 +306,8 @@ def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
         # Lossless, so on by default even when the saving is below the
         # report's threshold.
         "unescape": True,
+        # Also lossless: no spaces after separators (since 0.4).
+        "compact": True,
         # expand on for every trimmed tool (safeguard of 0.2): a wrong cut costs
         # one round trip instead of a wrong answer.
         "tools": {t: {"trim": "prudent", "expand": True} for t in sorted(trim)},

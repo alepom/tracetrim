@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 
 from tracetrim.auto import AutoTrim
+from tracetrim.projection import dumps
+from tracetrim.usage import parse_output
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -30,8 +32,9 @@ def test_learns_then_trims_and_expand_gives_back_the_hidden_fields(tmp_path, tra
     assert tt.expand_tool["name"] == "expand" and "call_id" in tt.expand_tool["parameters"]["properties"]
     for i in (1, 2, 3):
         results = _loop(tt, i, traces)
-        # Before the third run closes nothing is trimmed: results reach the model as they are.
-        assert all(sent == raw for _, raw, sent in results)
+        # Before the third run closes nothing is trimmed: results reach the model whole, JSON compacted.
+        assert all(sent == (raw if parse_output(raw) is None else dumps(parse_output(raw), compact=True))
+                   for _, raw, sent in results)
     assert tt.trimming and tt.report.exists()
 
     results = _loop(tt, 4, traces)

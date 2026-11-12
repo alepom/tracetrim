@@ -63,7 +63,8 @@ def test_config_from_auto_actions_applies_through_policy(tmp_path):
     pol = Policy.load(tmp_path / "c.json")
     out = json.loads(pol.apply("search_volume", json.dumps(VOLUMES)))
     assert "location_code" not in out["items"][0] and out["items"][0]["keyword"] == "spa weekend"
-    assert pol.apply("other", '{"a": "\\u00e0"}') == '{"a": "à"}'
+    assert config["compact"] is True                      # generated configs write compact JSON (0.4)
+    assert pol.apply("other", '{"a": "\\u00e0"}') == '{"a":"à"}'
 
 
 def test_report_names_project_and_author_and_no_missing_identifier():

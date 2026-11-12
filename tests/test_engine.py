@@ -7,6 +7,7 @@ from pathlib import Path
 from tracetrim.auto import AutoTrim, Learner
 from tracetrim.contract import FILTERED, FULL, RECOVERED, Evidence, ToolCall, ToolResult  # noqa: F401
 from tracetrim.engine import Engine
+from tracetrim.runtime import Policy
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 sys.path.insert(0, str(FIXTURES))
@@ -37,10 +38,50 @@ def test_what_is_received_and_what_is_exposed_are_kept_apart(tmp_path):
     assert engine.trimmer.originals[obs.call_id] == billing.payload(3)
 
 
-def test_before_learning_the_result_is_exposed_as_received(tmp_path):
+def test_before_learning_the_result_is_exposed_whole_as_compact_json(tmp_path):
     engine = Engine(Learner(tmp_path, min_runs=3))
     obs = engine.observe(call(0), ToolResult(billing.output(0)))
+    # Nothing removed, from the first call: the same JSON, without spaces.
+    assert (obs.text, obs.exposure, obs.call_id, obs.hidden) == (
+        json.dumps(billing.payload(0), ensure_ascii=False, separators=(",", ":")), FULL, None, ())
+    assert json.loads(obs.text) == json.loads(billing.output(0)) and not engine.trimming
+    # Recorded as received: learning and the traces see the tool's own text.
+    assert engine.learner.events[-1]["output"] == billing.output(0)
+
+
+def test_without_compaction_the_result_before_learning_is_exposed_as_received(tmp_path):
+    engine = Engine(Learner(tmp_path, min_runs=3), compact=False)
+    obs = engine.observe(call(0), ToolResult(billing.output(0)))
     assert (obs.text, obs.exposure, obs.call_id, obs.hidden) == (billing.output(0), FULL, None, ())
+
+
+def test_compaction_leaves_text_that_is_not_json_alone(tmp_path):
+    engine = Engine(Learner(tmp_path, min_runs=3))
+    for text in ("Found 3 invoices, all paid.", "", "Error: rate limited"):
+        assert engine.observe(call(0), ToolResult(text)).text == text
+
+
+def test_trimmed_results_and_expand_replies_are_compact(tmp_path):
+    engine = learned(tmp_path)
+    assert engine.policy.compact
+    obs = engine.observe(call(3), ToolResult(billing.output(3)))
+    body = obs.text.split("\n[trimmed] ")[0]
+    assert body == json.dumps(json.loads(body), ensure_ascii=False, separators=(",", ":"))
+    reply = engine.expand(obs.call_id, ["data[].footer"])
+    assert reply == json.dumps(json.loads(reply), ensure_ascii=False, separators=(",", ":"))
+    assert json.loads(reply)["data"][0]["footer"] == billing.payload(3)["data"][0]["footer"]
+
+
+def test_a_fixed_config_decides_compaction_and_one_written_before_04_keeps_the_spaces(tmp_path):
+    old = Policy({"format": "tracetrim/config@1", "tools": {}}, None)
+    new = Policy({"format": "tracetrim/config@1", "tools": {}, "compact": True}, None)
+    assert Engine(None, old).observe(call(0), ToolResult('{"a": 1, "b": [1, 2]}')).text == '{"a": 1, "b": [1, 2]}'
+    assert Engine(None, new).observe(call(0), ToolResult('{"a": 1, "b": [1, 2]}')).text == '{"a":1,"b":[1,2]}'
+    # The engine's setting wins over the config's, as --no-compact does on the proxy.
+    forced = Policy({"format": "tracetrim/config@1", "tools": {}, "compact": True}, None)
+    assert Engine(None, forced, compact=False).observe(call(0), ToolResult('{"a": 1}')).text == '{"a": 1}'
+    # Nothing configured and nothing to learn: the output passes untouched.
+    assert Engine(None, None).observe(call(0), ToolResult('{"a": 1}')).text == '{"a": 1}'
 
 
 def test_a_verbatim_result_is_recorded_and_never_rewritten(tmp_path):
@@ -304,3 +345,18 @@ def test_two_threads_can_write_the_same_file_atomically(tmp_path):
         t.join()
     assert not errors and json.loads((tmp_path / "state.json").read_text())
     assert not list(tmp_path.glob(".*.tmp"))
+
+
+def test_the_proxy_cli_leaves_compaction_to_the_mode_unless_told_no(tmp_path, monkeypatch):
+    from tracetrim import cli, proxy
+    seen = []
+
+    async def fake_serve(o):
+        seen.append(o)
+    monkeypatch.setattr(proxy, "serve", fake_serve)
+    base = ["proxy", "--upstream-cmd", "python -m server", "--auto", str(tmp_path)]
+    cli.main(base)
+    cli.main(base + ["--no-compact"])
+    assert [o.compact for o in seen] == [None, False]
+    # None in automatic mode means on, from the first call.
+    assert Engine(Learner(tmp_path / "w", min_runs=3)).policy.compact
