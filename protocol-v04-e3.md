@@ -170,4 +170,14 @@ As in `protocol-v04.md`.
 
 ## Deviations
 
-None yet.
+Dated, with the reason.
+
+**1 — 2026-11-12, after freezing and before the measured runs: a technical change to the access to the model
+(commits `b317c32`, `296d27e`, `746526d`, `d4467e7`).** The first request of the pilot was refused by Vertex AI:
+the project named in the configuration was not the service account's own. Nothing was generated or billed. The
+client is now built as in the author's other projects, with no project named, so that the SDK takes the service
+account's; a check that is not billed (a token count) runs before every run; a request that fails with a
+transient error is made again, by the adapter, and every repeated attempt is written in the trace, in the meta
+file and in the ledger (a failed request returns no usage: there are no tokens to count for it). The four runs
+of the pilot were made with the first three commits, before the repeats were moved into the adapter; none of
+them had a repeat. No measure changes.
