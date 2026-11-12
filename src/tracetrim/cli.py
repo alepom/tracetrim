@@ -135,7 +135,9 @@ def cmd_report(a):
         if published is None:
             raise SystemExit(f"{a.tools}: not a tool list (a JSON list of tools, or a tools/list result)")
         print(f"tool list: {len(published)} tools read from {a.tools}")
-        d["definitions"] = definitions.summarise(published, [{c.tool for c in t.calls} for t in traces],
+        # As in automatic mode, only complete runs count: those that end with the agent's answer.
+        complete = [t for t in traces if t.events and t.events[-1].kind == "message"]
+        d["definitions"] = definitions.summarise(published, [{c.tool for c in t.calls} for t in complete],
                                                  measure.tokenizer(), rp.MIN_TRACES)
     sugg = rp.suggestions(d)
     out = Path(a.output)

@@ -10,8 +10,9 @@ What a line holds is an allow-list, per method; whatever is not listed below
 is never written:
 
   every request     time, an anonymous id of the session, the method
-  initialize        clientInfo (name, version, title), protocolVersion, capabilities
-                    (with the extensions the client declares)
+  initialize        clientInfo (name, version, title), protocolVersion, and the names
+                    of the capabilities (each with the names under it: the extensions
+                    the client declares, for one); never their values
   server/discover   what the client declares in the request's `_meta`, as above
   resources/read, skills/get        the uri asked for
   resources/list, skills/list       nothing more
@@ -34,7 +35,7 @@ import weakref
 from datetime import datetime, timezone
 
 MAX_TEXT = 200               # a name or a uri: longer ones are cut
-MAX_CAPABILITIES = 4000      # characters of JSON; beyond this only the names of the capabilities are kept
+MAX_NAMES = 50               # names kept per level of the declared capabilities
 URI_METHODS = {"resources/read", "skills/get"}
 META_PREFIX = "io.modelcontextprotocol/"
 _DECLARED = {"clientInfo": "clientInfo", "protocolVersion": "protocolVersion", "capabilities": "capabilities",
@@ -60,11 +61,10 @@ def _declared(source) -> dict:
         elif name == "protocolVersion" and isinstance(value, str):
             out[name] = value[:40]
         elif name == "capabilities" and isinstance(value, dict):
-            try:
-                size = len(json.dumps(value, ensure_ascii=False))
-            except (TypeError, ValueError):
-                continue
-            out[name] = value if size <= MAX_CAPABILITIES else {"truncated": sorted(map(str, value))[:50]}
+            # Names only, never values: `experimental` and the extensions are free-form,
+            # and a client could put anything there, keys included.
+            out[name] = {_text(str(k), 120): sorted(_text(str(n), 120) for n in v)[:MAX_NAMES] if isinstance(v, dict) else True
+                         for k, v in list(value.items())[:MAX_NAMES]}
     return out
 
 

@@ -178,7 +178,9 @@ class Learner:
     def expand_measured(self, size: int) -> None:
         """What a reply of `expand` weighs: kept apart from the results' counts.
         A reply that arrives after a closing, before the next call, is about the
-        run just closed: it is added to that run at once, as its evidence is."""
+        run just closed: its tokens are added to that run at once. (Its evidence
+        note is filed with the next closing, with no index: evidence counts runs
+        and fields, not tokens.)"""
         with self.lock:
             self._expand_sizes[0] += 1
             self._expand_sizes[1] += size
@@ -190,12 +192,28 @@ class Learner:
         and start again."""
         if not self._sizes and not self._expand_sizes[0]:
             return
+        if run == "run-0000":                    # counts with no run to belong to (an expand before any call)
+            self._sizes, self._expand_sizes = {}, [0, 0]
+            return
         data = {"format": "tracetrim/savings@1", "unit": self._unit(), "runs": {}}
         if self.savings_path.exists():
             try:
-                data.update(json.loads(self.savings_path.read_text(encoding="utf-8")))
-            except json.JSONDecodeError:
-                pass                             # a measure: start again rather than stop a closing
+                old = json.loads(self.savings_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                old = None
+            # A measure: a file of another shape starts again rather than stopping a closing.
+            if (isinstance(old, dict) and old.get("format") == data["format"] and isinstance(old.get("runs"), dict)
+                    and all(isinstance(v, dict) for v in old["runs"].values())):
+                data.update(old)
+        try:
+            self._add_sizes(data, run)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            data["runs"] = {}                    # an entry of another shape: start again
+            self._add_sizes(data, run)
+        store.write_json(self.savings_path, data)
+        self._sizes, self._expand_sizes = {}, [0, 0]
+
+    def _add_sizes(self, data: dict, run: str) -> None:
         entry = data["runs"].setdefault(run, {"tools": {}, "expand": {"calls": 0, "tokens": 0}})
         for tool, (n, raw, whole, sent) in sorted(self._sizes.items()):
             t = entry["tools"].setdefault(tool, {"calls": 0, "raw": 0, "whole": 0, "sent": 0})
@@ -203,8 +221,6 @@ class Learner:
                 t[k] += v
         entry["expand"]["calls"] += self._expand_sizes[0]
         entry["expand"]["tokens"] += self._expand_sizes[1]
-        store.write_json(self.savings_path, data)
-        self._sizes, self._expand_sizes = {}, [0, 0]
 
     def record_tools(self, tools: list[dict]) -> bool:
         """The tool list as published to the model, for the report's section on
@@ -394,8 +410,8 @@ class Learner:
             if self.savings_path.exists():
                 try:
                     d["savings"] = rp.savings(json.loads(self.savings_path.read_text(encoding="utf-8")))
-                except (json.JSONDecodeError, KeyError, TypeError):
-                    pass                         # unreadable: the report goes without the section
+                except Exception:            # noqa: BLE001 - a measure: the report goes without the section
+                    pass
             a = self.adaptive
             data = evidence.load(self.evidence_path)
             # The targeted correction comes first: fields are promoted before a
@@ -619,6 +635,8 @@ class AutoTrim:
                 arguments = json.loads(arguments or "{}")
             except json.JSONDecodeError:
                 arguments = {"_raw": arguments}
+        if isinstance(raw, (bytes, bytearray)):
+            raw = bytes(raw).decode("utf-8", errors="replace")   # traces and counts are text
         return self.engine.observe(ToolCall(tool, arguments or {}, turn), ToolResult(raw)).text
 
     def expand(self, arguments: dict | str | None) -> str:

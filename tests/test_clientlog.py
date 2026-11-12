@@ -70,20 +70,25 @@ def test_only_what_is_on_the_allow_list_is_written():
                                 "clientInfo": {"name": "host", "version": "1", "title": "Host", "apiKey": SECRET_TOKEN},
                                 **noise})
     assert init == {"method": "initialize", "protocolVersion": "2025-11-25", "clientInfo": {"name": "host", "version": "1", "title": "Host"},
-                    "capabilities": {"extensions": {skill.EXTENSION: {}}}}
+                    "capabilities": {"extensions": [skill.EXTENSION]}}
     # The protocol without a handshake declares the same in the `_meta` of server/discover.
     meta = {"io.modelcontextprotocol/clientInfo": {"name": "host", "version": "2"},
             "io.modelcontextprotocol/clientCapabilities": {"extensions": {skill.EXTENSION: {}}},
             "io.modelcontextprotocol/protocolVersion": "2026-07-28", "authorization": SECRET_TOKEN}
     assert entry("server/discover", {"_meta": meta, "token": SECRET_TOKEN}) == {
         "method": "server/discover", "clientInfo": {"name": "host", "version": "2"}, "protocolVersion": "2026-07-28",
-        "capabilities": {"extensions": {skill.EXTENSION: {}}}}
+        "capabilities": {"extensions": [skill.EXTENSION]}}
     # Malformed or oversized: cut, never an error and never the whole thing.
     assert entry("tools/call", {"name": {"not": "a string"}}) == {"method": "tools/call"}
     assert entry("resources/read", {"uri": "skill://" + "x" * 5000})["uri"] == "skill://" + "x" * 192
     assert entry("initialize", None) == {"method": "initialize"}
-    big = entry("initialize", {"capabilities": {"experimental": {"blob": "y" * 10_000}, "roots": {}}})
-    assert big["capabilities"] == {"truncated": ["experimental", "roots"]}
+    big = entry("initialize", {"capabilities": {"experimental": {"blob": "y" * 10_000}, "roots": {}, "sampling": True}})
+    assert big["capabilities"] == {"experimental": ["blob"], "roots": [], "sampling": True}
+    # Capabilities are free-form: their values never reach the log, only their names.
+    free = entry("initialize", {"capabilities": {"experimental": {"acme/telemetry": {"apiKey": SECRET_TOKEN}},
+                                                  "extensions": {"x/y": {"user": SECRET_TOKEN}}}})
+    assert SECRET_TOKEN not in json.dumps(free) and free["capabilities"] == {
+        "experimental": ["acme/telemetry"], "extensions": ["x/y"]}
 
 
 def test_the_session_id_is_a_salted_hash_and_never_the_real_one(tmp_path):

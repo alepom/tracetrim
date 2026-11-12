@@ -32,7 +32,9 @@ New functions that change what the model receives arrive **off by default**.
 `init`, with the options their `--help` lists, and their meaning. New options may be added.
 
 **Not stable**: the log lines on standard error, the layout of `report.html`, and the wording of the
-report's suggestions. They are written for people, and they improve.
+report's suggestions. They are written for people, and they improve. The lines of `--log-client` are
+diagnostics: fields may be added to them, but one promise holds, since it is about privacy: they never
+hold arguments, results, headers, tokens or the values of what a client declares.
 
 ## Python
 

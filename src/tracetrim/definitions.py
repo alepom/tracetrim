@@ -43,6 +43,31 @@ def name_of(tool: dict) -> str:
     return str(tool.get("name") or (tool.get("function") or {}).get("name") or "")
 
 
+SCHEMA_KEYS = ("inputSchema", "input_schema", "parameters")
+
+
+def entries(tools: list[dict]) -> list[dict]:
+    """The definitions one by one: a group of Gemini's form
+    (`{"function_declarations": [...]}`) counts as the functions it holds."""
+    out = []
+    for t in tools:
+        group = t.get("function_declarations") if isinstance(t, dict) else None
+        out += [f for f in group if isinstance(f, dict)] if isinstance(group, list) else [t]
+    return out
+
+
+def callable_name(tool: dict) -> str | None:
+    """The name under which the agent's calls of this tool appear in the traces,
+    or None for an entry that never appears there: a provider's built-in tool
+    (`{"type": "web_search"}`, Anthropic's server tools) or an entry without a name."""
+    if isinstance(tool.get("function"), dict):
+        return name_of(tool) or None
+    kind = tool.get("type")
+    if kind not in (None, "function", "custom") and not any(k in tool for k in SCHEMA_KEYS):
+        return None
+    return name_of(tool) or None
+
+
 def record(workdir: str | Path, tools: list[dict]) -> bool:
     """Write the tool list as published, if it changed. True when written."""
     path = Path(workdir) / FILE
@@ -79,9 +104,13 @@ def read(path: str | Path) -> list[dict] | None:
 
 def summarise(tools: list[dict], called: list[set[str]], count, min_runs: int) -> dict:
     """The report's section. `called`: per complete run, the names of the tools it called."""
-    weight = {}
-    for t in tools:
-        weight[name_of(t)] = weight.get(name_of(t), 0) + count(json.dumps(t, ensure_ascii=False))
+    weight, other = {}, 0
+    for t in entries(tools):
+        n, w = callable_name(t), count(json.dumps(t, ensure_ascii=False))
+        if n is None:
+            other += w                  # in the weight, but not a tool the traces can show being called
+        else:
+            weight[n] = weight.get(n, 0) + w
     total = count(json.dumps(tools, ensure_ascii=False))
     offered = [n for n in weight if n not in OWN]
     used = set().union(*called) if called else set()
@@ -93,6 +122,8 @@ def summarise(tools: list[dict], called: list[set[str]], count, min_runs: int) -
         "tokens_per_turn": total,
         "own_tokens": sum(weight[n] for n in weight if n in OWN),
         "own_tools": sorted(n for n in weight if n in OWN),
+        # Provider built-ins and entries without a name: they weigh, but no trace shows them called.
+        "other_tokens": other,
         "offered": len(offered),
         "called": sorted(n for n in offered if n in used),
         "never_called": never,

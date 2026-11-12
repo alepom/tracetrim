@@ -326,7 +326,7 @@ def _action(s: dict, d: dict) -> dict:
         # Manual, always: only a person knows whether a tool never called is a tool never needed.
         never = d["definitions"]["never_called"][:DEFINITIONS_LIST_MAX]
         return {"kind": "manual", "type": "unused_tools",
-                "tools": [f"{x['name']} · {x['tokens']}" for x in never]}
+                "tools": [{"name": x["name"], "tokens": x["tokens"]} for x in never]}
     if s["rule"] == "strategy":
         # Manual, always: the strategy is instructions for the model, and whether
         # to give them is the choice of who writes the agent's prompts.
@@ -836,10 +836,13 @@ def render_html(d: dict, sugg: list[dict]) -> str:
         hero = (f'<div class="hero"><div class="hv">−{saving:.0%}</div><div class="hk">{_t("hero")}</div>'
                 f'<div class="hs">{_t("hero_sub")}: −{agg:.0%}, {_t("misses")}: {T["loo_misses"]}/{T["loo_trimmed_calls"]}</div></div>')
 
+    def _item(x):
+        return f"{x['name']} · {x['tokens']}" if isinstance(x, dict) else str(x)
+
     def act(a):
         en, it = ACTION_TEXT[a["type"]]
         extra = a.get("examples") or a.get("fields") or a.get("tools") or []
-        items = "".join(f"<li><code>{html.escape(x)}</code></li>" for x in extra)
+        items = "".join(f"<li><code>{html.escape(_item(x))}</code></li>" for x in extra)
         badge = _t("auto") if a["kind"] == "auto" else _t("manual")
         return (f'<div class="act {a["kind"]}"><span class="badge">{badge}</span>'
                 f'<span lang="en">{_md(en)}</span><span lang="it">{_md(it)}</span>'
