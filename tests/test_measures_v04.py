@@ -233,3 +233,25 @@ def test_the_hint_figures_in_the_docs_are_those_of_e3():
     from tracetrim import turns
     assert (turns.MAX_SEVERAL, turns.MIN_EARLIER, turns.MIN_RUNS) == (0.2, 0.25, 2)
     assert "at most 20% of the turns with calls make several calls, and at least 25% of the calls could have been made earlier, over at least 2 runs" in ADAPTIVE
+
+
+def test_no_versioned_result_carries_the_spend_of_a_run():
+    # Rule of the project: what the tests cost is never published, in any file.
+    root = Path(__file__).resolve().parent.parent
+    found = []
+
+    def walk(node, where):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if "usd" in str(k).lower():
+                    found.append(f"{where}:{k}")
+                walk(v, where)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, where)
+
+    files = sorted((root / "results").rglob("*.json"))
+    assert files                                      # the check reads something
+    for f in files:
+        walk(json.loads(f.read_text(encoding="utf-8")), f.relative_to(root))
+    assert not found, found

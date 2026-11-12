@@ -15,8 +15,7 @@
       "trimming_after": false,
       "tool_tokens_raw": 16931,
       "tool_tokens_sent": 16931,
-      "expand_calls": 0,
-      "usd_estimate": 0.0642
+      "expand_calls": 0
     },
     {
       "run": 2,
@@ -29,8 +28,7 @@
       "trimming_after": false,
       "tool_tokens_raw": 16561,
       "tool_tokens_sent": 16561,
-      "expand_calls": 0,
-      "usd_estimate": 0.0575
+      "expand_calls": 0
     },
     {
       "run": 3,
@@ -43,8 +41,7 @@
       "trimming_after": true,
       "tool_tokens_raw": 16561,
       "tool_tokens_sent": 16561,
-      "expand_calls": 0,
-      "usd_estimate": 0.0574
+      "expand_calls": 0
     },
     {
       "run": 4,
@@ -57,8 +54,7 @@
       "trimming_after": true,
       "tool_tokens_raw": 16931,
       "tool_tokens_sent": 9470,
-      "expand_calls": 0,
-      "usd_estimate": 0.0505
+      "expand_calls": 0
     },
     {
       "run": 5,
@@ -71,8 +67,7 @@
       "trimming_after": true,
       "tool_tokens_raw": 16931,
       "tool_tokens_sent": 9477,
-      "expand_calls": 1,
-      "usd_estimate": 0.05
+      "expand_calls": 1
     }
   ]
 }

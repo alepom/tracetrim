@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """End-to-end check of the automatic mode with a real agent (not part of the study).
 
-  .venv/bin/python -m experiments.auto_check --runs 4 --min-runs 3                    # MCP: through the proxy
-  .venv/bin/python -m experiments.auto_check --runs 4 --min-runs 3 --mode function    # function calling: AutoTrim
+  .venv/bin/python -m experiments.auto_check --paid --runs 4 --min-runs 3                    # MCP: through the proxy
+  .venv/bin/python -m experiments.auto_check --paid --runs 4 --min-runs 3 --mode function    # function calling: AutoTrim
 
 An agent (Responses API, the demo prompt for billing support) talks MCP to the
 tracetrim proxy in automatic mode, which sits in front of the simulated
@@ -12,7 +12,8 @@ the next ones are trimmed; the agent calls tracetrim_done; answers stay right.
 With --mode function there is no proxy: the loop runs the billing tools
 itself (as an agent with function calling does) and passes every result
 through tracetrim.auto.AutoTrim, and the final answer to AutoTrim.done.
-Spend is printed, and is not counted in the study's ledger. The table is also
+It calls the model, so it is paid: it runs only with --paid. Spend is printed,
+never written, and is not counted in the study's ledger. The table is also
 written to results/checks/auto_check_<mode>.json: the README quotes it. Tool
 tokens are counted with tiktoken: "raw" from the run's trace in the work
 directory (what the tools returned), "sent" from what the model received,
@@ -93,8 +94,11 @@ async def main():
     a.add_argument("--runs", type=int, default=4)
     a.add_argument("--min-runs", type=int, default=3)
     a.add_argument("--model", default=PRICES["model"])
+    a.add_argument("--paid", action="store_true", help="confirm that the check calls the model, and is paid")
     a.add_argument("--mode", choices=["mcp", "function"], default="mcp")
     o = a.parse_args()
+    if not o.paid:
+        raise SystemExit("auto_check calls the model and is paid: run it again with --paid")
     work = ROOT / "out" / ("auto_check" if o.mode == "mcp" else "auto_check_function")
     shutil.rmtree(work, ignore_errors=True)
     tt = None
@@ -106,7 +110,7 @@ async def main():
         from tracetrim.auto import AutoTrim
         params = StdioServerParameters(command=sys.executable, cwd=str(ROOT),
                                        args=["-m", "experiments.simulated.server_c4"])
-        tt = AutoTrim(work, min_runs=o.min_runs)
+        tt = AutoTrim(work, min_runs=o.min_runs, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
     client = AsyncOpenAI(timeout=600.0, max_retries=1)
     from tracetrim.measure import tokenizer
     from tracetrim.traces import load
@@ -137,8 +141,8 @@ async def main():
             rows.append({"run": i, "input": usage["input"], "uncached": usage["input"] - usage["cached"],
                          "output": usage["output"], "calls": calls, "done": done, "right": tickets_right(answer),
                          "trimming_after": trimming, "tool_tokens_raw": raw_tools,
-                         "tool_tokens_sent": usage["tool_sent"], "expand_calls": usage["expand_calls"],
-                         "usd_estimate": round(c, 4)})
+                         "tool_tokens_sent": usage["tool_sent"], "expand_calls": usage["expand_calls"]})
+            # The cost of a run is printed, never written: no spend in versioned files.
     out = ROOT / "results" / "checks" / f"auto_check_{o.mode}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"mode": o.mode, "model": o.model, "min_runs": o.min_runs,
