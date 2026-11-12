@@ -1,8 +1,8 @@
 # Protocol of E3: the skill's strategy on a model that issues fewer calls together
 
-Status: **draft of 2026-11-11, not frozen**. It is frozen when the author approves it: the approval, its date
-and the commit are recorded here, before the first paid run. Changes after freezing go in "Deviations" at the
-bottom, dated, with the reason.
+Status: **frozen on 2026-11-12**, approved by the author, before any paid run. The commit that froze it is
+recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
+at the bottom, dated, with the reason.
 
 This protocol follows `protocol-v04.md`, which stays as it is with its results. There, experiment E1 found that the
 *strategy* level of the tracetrim skill changed nothing measurable on `gpt-5.6-terra`. That model already issued
@@ -19,8 +19,9 @@ several calls in 77%, 68% and 77% of the turns that made a call: there was littl
 ## The model
 
 `gemini-3.8-flash` (Google, generally available since 2026-09-02), on Vertex AI, global endpoint, through the
-`google-genai` SDK (3.2.0) and the adapter `experiments/gemini.py`. Thinking at the model's default level;
-temperature and the like are ignored by this model. Model id and date are stored with every run.
+`google-genai` SDK (3.2.0) and the adapter `experiments/gemini.py`. Thinking is left at the model's default
+level, medium: it is how the model is ordinarily used, and a lower level would change how much it plans, which is
+what E3 measures. Temperature and the like are ignored by this model. Model id and date are stored with every run.
 
 How this model issues and receives tool calls, checked on Google's documentation and on the SDK on 2026-11-11,
 because it is what E3 measures:
@@ -66,10 +67,14 @@ share of exact matches is 48% on C1 and 78% on C2; with another model it may be 
 - **Arms**: R (no text) and S (the strategy), same prompt, tools and model.
 - **Runs per arm**: 8 on C4, 6 on C5, 3 on C2, 2 on C1: 38 runs. More where a run is cheap; on C1 and C2 the long
   tool outputs are re-read at every turn, and a model that makes one call per turn re-reads them many times.
-- **Pilot first**: 2 runs of R on C4 and 2 on C5, used in no result. **If more than half of the pilot's turns that
-  make a call make several, the runs stop** for the author's decision: the margin would be missing here too.
-- **Order**: after the pilot, in rounds: one run of each arm of C4, C5, C2, C1, and again, so that a drift of the
-  service hits the two arms alike.
+- **Pilot first**: 2 runs of R on C4 and 2 on C5, used in no result. **After the pilot the runs stop, always**, for
+  the author's decision, recorded before any measured run. The pilot gives three things to decide on: the real
+  cost of a run, which corrects the estimate of the rest; the share of the turns that make a call that make
+  several (above one half, the margin for the strategy would be missing here too); any limit of the project's quota.
+- **Order**: after the pilot, the simulated cases in rounds (one run of each arm of C4 and of C5, and again, so
+  that a drift of the service hits the two arms alike) to their end; then C2 and C1, in rounds too. If the cap
+  stops the runs it takes them from the cases with recorded outputs, which say less: they measure only how calls
+  are organised, while C4 and C5 also measure completeness.
 
 ## Measures
 
@@ -133,14 +138,14 @@ thinking tokens.
 | **Total** | **42** | **6.58** | **17.81** |
 
 **The upper figure is above the cap.** It assumes that every call takes a turn of its own and that nothing is
-cached; if it came true the last runs would not start. In the order of the rounds those are runs of C4 and C5,
-the cases with the most runs: every case would still have both arms. The cost of a run is known after the pilot, and
+cached; if it came true the last runs would not start. Those are runs of C2 and C1, the cases with recorded
+outputs: the simulated cases would be complete. The cost of a run is known after the pilot, and
 is reported before the measured runs go on.
 
 - Prices: `experiments/prices-e3.json`, read on 2026-11-11 from Google Cloud's Agent Platform (Vertex AI) pricing
   page, Gemini 3.8 Flash, standard pay-as-you-go, global endpoint: 0.75 USD per 1M input tokens, 0.075 cached,
-  3.75 output, thinking tokens included. Introductory prices, valid through 2026-12-31. `experiments/prices.json`
-  of the original study is not touched.
+  3.75 output, thinking tokens included. Introductory prices, valid through 2026-12-31; confirmed by the author
+  on the pricing page on 2026-11-12. `experiments/prices.json` of the original study is not touched.
 - **Cap 15 USD, warning at 10**, on a ledger of its own (`out/ledger-e3.jsonl`). The total is computed from the
   API's usage after every run, aborted ones included; at the cap no run starts, and a run that crosses it stops.
 - **The provider of C1 and C2 is not called**: zero calls, zero spend.
@@ -153,9 +158,9 @@ opened, printed or copied by the study's code: the SDK finds it through a variab
 
 ## Before the first paid run (no spend)
 
-Done at this draft: the adapter, the stand-in with recorded outputs, the schedule, the stop rules, the pilot's rule,
-the analysis with H8 to H11, and a dry run of the pilot and of every arm and case with a stub that issues several
-calls in a turn. At freezing: the dry run again, at the commit to be measured.
+Done: the adapter, the stand-in with recorded outputs, the schedule, the stop rules, the stop after the pilot, the
+analysis with H8 to H11, and a dry run of the pilot and of every arm and case with a stub that issues several
+calls in a turn, repeated at the commit that freezes this protocol.
 
 ## AI assistance
 

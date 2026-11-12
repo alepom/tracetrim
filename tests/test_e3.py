@@ -197,7 +197,11 @@ def test_the_schedule_is_the_pilot_then_rounds_of_both_arms():
     measured = [r for r in runs if not r.pilot]
     assert Counter((r.case, r.arm) for r in measured) == {(c, a): n for c, n in e3.RUNS.items() for a in ("R", "S")}
     assert e3.RUNS == {"C4": 8, "C5": 6, "C2": 3, "C1": 2} and len(runs) == 42
-    assert [(r.case, r.arm, r.n) for r in measured[:8]] == [(c, a, 1) for c in ("C4", "C5", "C2", "C1") for a in ("R", "S")]
+    # The simulated cases to their end, then the cases with recorded outputs: a cap that
+    # stops the runs takes them from the cases that say less.
+    assert [(r.case, r.arm, r.n) for r in measured[:8]] == [(c, a, n) for n in (1, 2) for c in ("C4", "C5") for a in ("R", "S")]
+    assert [r.case for r in measured] == (["C4", "C4", "C5", "C5"] * 6 + ["C4"] * 4 + ["C2", "C2", "C1", "C1"] * 2 + ["C2"] * 2)
+    assert [(r.case, r.arm, r.n) for r in measured[-2:]] == [("C2", "R", 3), ("C2", "S", 3)]
     assert all(r.experiment == "E3" and not r.dataforseo for r in runs) and len({(r.case, r.id) for r in runs}) == 42
 
 
@@ -238,27 +242,28 @@ def test_the_cap_and_the_warning_are_those_of_e3(tmp_path):
     assert e3.may_start(where, run) is None
 
 
-def test_the_measured_runs_wait_for_the_pilot_and_stop_if_it_shows_no_margin(tmp_path):
+def test_the_measured_runs_wait_for_the_pilot_and_then_for_the_authors_decision_whatever_it_showed(tmp_path):
     where, first = Where(tmp_path), Run("E3", "C4", "R", 1)
     with pytest.raises(SystemExit, match="the pilot comes first"):
         e3.may_start(where, first)
-    # A model that makes its calls one at a time: the runs go on.
+    # A model that makes its calls one at a time: there is margin, and the runs stop all the same.
     pilot_metas(where, [1, 1, 1, 2, 1, 0])
     p = e3.pilot(where)
-    assert (p["complete"], p["stops"], p["share_of_turns_with_several_calls"]) == (True, False, 0.2)
-    assert e3.may_start(where, first) is None
-    # A model that already issues calls together in most turns: stop, until the decision is recorded.
-    pilot_metas(where, [5, 5, 1, 0])
-    assert e3.pilot(where)["stops"] is True
-    with pytest.raises(SystemExit, match="E3 pilot: the model already issues several calls in 67% of the turns"):
+    assert (p["complete"], p["little_margin"], p["share_of_turns_with_several_calls"]) == (True, False, 0.2)
+    with pytest.raises(SystemExit, match=r"E3 pilot: done. Several calls in 20% of the turns that make a call. Report the pilot"):
         e3.may_start(where, first)
-    assert e3.may_start(where, Run("E3", "C5", "R", 2, pilot=True)) is None
+    # A model that already issues calls together in most turns: the stop says so.
+    pilot_metas(where, [5, 5, 1, 0])
+    assert e3.pilot(where)["little_margin"] is True
+    with pytest.raises(SystemExit, match="Several calls in 67% of the turns that make a call .above 50%: little for the strategy"):
+        e3.may_start(where, first)
+    assert e3.may_start(where, Run("E3", "C5", "R", 2, pilot=True)) is None      # the pilot itself is never held
     e3.pilot_decision(where).parent.mkdir(parents=True)
     e3.pilot_decision(where).write_text('{"go_on": true}\n')
     assert e3.may_start(where, first) is None
     # Exactly half is not "most".
     pilot_metas(where, [2, 1, 0])
-    assert e3.pilot(where)["stops"] is False
+    assert e3.pilot(where)["little_margin"] is False
 
 
 def test_the_estimate_in_the_protocol_is_the_one_the_script_computes():
@@ -342,9 +347,9 @@ def test_the_strategy_text_is_in_the_s_arm_only_and_several_calls_share_a_turn(d
     assert all(not of(dry, c, "R", pilot=True)["skill"]["strategy"] for c in ("C4", "C5"))
 
 
-def test_the_pilots_stop_fired_in_the_dry_run(dry):
+def test_the_stop_after_the_pilot_fired_in_the_dry_run(dry):
     decision = json.loads(e3.pilot_decision(dry["where"]).read_text())
-    assert decision["dry_run"] is True and decision["pilot"]["stops"] is True
+    assert decision["dry_run"] is True and decision["pilot"]["complete"] is True and decision["pilot"]["little_margin"] is True
     assert decision["pilot"]["share_of_turns_with_several_calls"] > 0.5 and decision["pilot"]["runs_done"] == 4
 
 

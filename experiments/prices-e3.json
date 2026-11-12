@@ -1,5 +1,5 @@
 {
-  "_status": "Read on 2026-11-11 from Google Cloud's Agent Platform (Vertex AI) pricing page, cloud.google.com/vertex-ai/generative-ai/pricing, section Gemini 3.8 Flash, Standard pay-as-you-go, global endpoint. Introductory prices, valid through 2026-12-31; from 2027-01-01 the page gives 1.50 / 0.15 / 7.50. Non-global endpoints cost 10% more. The page is too long for the fetch tool to read whole: the figures come from two searches of that page that agree, and should be confirmed by eye before a paper cites them.",
+  "_status": "Read on 2026-11-11 from Google Cloud's Agent Platform (Vertex AI) pricing page, cloud.google.com/vertex-ai/generative-ai/pricing, section Gemini 3.8 Flash, Standard pay-as-you-go, global endpoint. Introductory prices, valid through 2026-12-31; from 2027-01-01 the page gives 1.50 / 0.15 / 7.50. Non-global endpoints cost 10% more. Confirmed by the author on 2026-11-12, on the Vertex AI pricing page.",
   "_source": "Google Cloud, Agent Platform pricing, Gemini 3.8 Flash, Standard PayGo, global",
   "model": "gemini-3.8-flash",
   "location": "global",

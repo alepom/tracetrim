@@ -14,8 +14,9 @@ The loop, the traces and the meta files are those of experiments/v04.py. What E3
             in earlier runs (experiments/recorded.py): the provider is never called
   arms      R (no text) and S (the strategy alone). Nothing is trimmed
   budget    its own ledger (out/ledger-e3.jsonl), prices (experiments/prices-e3.json), cap and warning
-  pilot     two runs of R on each simulated case, first. If the model already issues
-            several calls in most of its turns, the runs stop for a decision
+  pilot     two runs of R on each simulated case, first. The runs then stop, always,
+            for a decision: the pilot gives the real cost of a run, the share of
+            turns with several calls, and any limit of the project's quota
 """
 from __future__ import annotations
 
@@ -34,17 +35,21 @@ ARMS = ("R", "S")
 # Runs per arm. More on the simulated cases, whose runs are cheap; fewer on the two cases
 # with recorded outputs, whose long tool outputs are re-read at every turn.
 RUNS = {"C4": 8, "C5": 6, "C2": 3, "C1": 2}
+# The simulated cases first, to their end, then the cases with recorded outputs: if the cap
+# stops the runs, it takes them from the cases that say less (only how calls are organised).
 ORDER = ("C4", "C5", "C2", "C1")
+BLOCKS = (("C4", "C5"), ("C2", "C1"))
 PILOT_CASES, PILOT_RUNS = ("C4", "C5"), 2
-# The pilot's question: does the model already issue several calls in most of the turns that make a call?
-PILOT_STOP_SHARE = 0.5
+# The pilot's question: does the model already issue several calls in most of the turns that make a
+# call? Reported with the pilot; the runs stop after it whatever the answer.
+PILOT_MARGIN_SHARE = 0.5
 
 
 def ledger_path(where: Where) -> Path:
     return where.root / "out" / "ledger-e3.jsonl"
 
 
-def pilot_decision(where: Where) -> Path:           # written by hand when the pilot stops the runs
+def pilot_decision(where: Where) -> Path:           # written by hand after the pilot: the author's decision
     return where.root / "out" / "e3" / "pilot_decision.json"
 
 
@@ -60,11 +65,13 @@ def book(where: Where) -> dict:
 
 
 def schedule() -> list[Run]:
-    """The pilot, then rounds: one run of each arm of each case, and again, so that a
-    drift of the service hits the two arms alike."""
+    """The pilot; then the simulated cases in rounds (one run of each arm of each, and
+    again, so that a drift of the service hits the two arms alike) to their end; then
+    the cases with recorded outputs, in rounds too."""
     runs = [Run("E3", c, "R", n, pilot=True) for c in PILOT_CASES for n in range(1, PILOT_RUNS + 1)]
-    for n in range(1, max(RUNS.values()) + 1):
-        runs += [Run("E3", c, arm, n) for c in ORDER if n <= RUNS[c] for arm in ARMS]
+    for block in BLOCKS:
+        for n in range(1, max(RUNS[c] for c in block) + 1):
+            runs += [Run("E3", c, arm, n) for c in block if n <= RUNS[c] for arm in ARMS]
     return runs
 
 
@@ -81,8 +88,10 @@ def pilot(where: Where) -> dict:
     return {"runs_done": len(metas), "runs": len(runs), "turns_with_calls": len(per_turn),
             "share_of_turns_with_several_calls": round(share, 4) if share is not None else None,
             "calls_per_turn_median": median(per_turn) if per_turn else None,
+            "cost_usd": round(sum(m.get("cost_usd", 0) for m in metas), 4),
             "complete": len(metas) == len(runs),
-            "stops": bool(len(metas) == len(runs) and share is not None and share > PILOT_STOP_SHARE)}
+            # Little for the strategy to organise: the model already issues several calls in most turns.
+            "little_margin": bool(share is not None and share > PILOT_MARGIN_SHARE)}
 
 
 def may_start(where: Where, run: Run) -> str | None:
@@ -94,11 +103,13 @@ def may_start(where: Where, run: Run) -> str | None:
         p = pilot(where)
         if not p["complete"]:
             raise SystemExit("E3: the pilot comes first (python -m experiments.run --e3 next)")
-        if p["stops"] and not pilot_decision(where).exists():
-            raise SystemExit(f"E3 pilot: the model already issues several calls in "
-                             f"{p['share_of_turns_with_several_calls']:.0%} of the turns that make a call (stop above "
-                             f"{PILOT_STOP_SHARE:.0%}): there is little for the strategy to organise. Report it, and have "
-                             f"the decision recorded in {pilot_decision(where)} before going on.")
+        if not pilot_decision(where).exists():
+            share = p["share_of_turns_with_several_calls"]
+            raise SystemExit(f"E3 pilot: done. Several calls in {share:.0%} of the turns that make a call"
+                             + (f" (above {PILOT_MARGIN_SHARE:.0%}: little for the strategy to organise)"
+                                if p["little_margin"] else "")
+                             + f". Report the pilot, and have the author's decision recorded in "
+                               f"{pilot_decision(where)} before going on.")
     return f"WARNING: {total:.2f} USD spent on E3, warning at {WARN:.0f}, cap {CAP:.0f}" if total >= WARN else None
 
 
@@ -178,8 +189,7 @@ async def dry_run(directory: str | Path) -> list[dict]:
         except SystemExit as stop:
             if "E3 pilot" not in str(stop) or pilot_decision(where).exists():
                 raise
-            # The pilot's stop fired, as it must when the model already issues calls together (the stub
-            # replays runs of a model that does). In a dry run the "decision" is recorded here.
+            # The stop after the pilot fired, as it always must. In a dry run the "decision" is recorded here.
             print(f"  stopped: {str(stop)[:86]}...", flush=True)
             pilot_decision(where).parent.mkdir(parents=True, exist_ok=True)
             pilot_decision(where).write_text(json.dumps({"dry_run": True, "pilot": pilot(where)}) + "\n")
