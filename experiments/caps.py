@@ -4,7 +4,7 @@ The author's decision (2026-11-12): what the tests cost is never published, so
 the caps and the warning thresholds live in a git-ignored file next to this
 one, `experiments/caps.local.json`:
 
-  {"study": {"warn": .., "stop": ..}, "v04": {...}, "e3": {...}}
+  {"study": {"warn": .., "stop": ..}, "v04": {...}, "e3": {...}, "v06": {...}}
 
 in USD, at the providers' list prices. Without the file every cap is 0: a paid
 run is refused before it starts, while dry runs, estimates and analyses work.
@@ -20,7 +20,7 @@ LOCAL = Path(os.environ.get("TRACETRIM_CAPS") or Path(__file__).resolve().parent
 
 
 def caps(name: str, key: str | None = None):
-    """(warning, stop) for one campaign: "study" (the preprint), "v04" or "e3". With
+    """(warning, stop) for one campaign: "study" (the preprint), "v04", "e3" or "v06". With
     `key`, one other local amount of that campaign (e.g. "tuning", an allowance)."""
     c = (json.loads(LOCAL.read_text()).get(name) or {}) if LOCAL.exists() else {}
     if key is not None:
