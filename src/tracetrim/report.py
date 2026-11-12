@@ -227,6 +227,13 @@ def suggestions(d: dict) -> list[dict]:
                 f"{t['errors']} of {_calls(t['calls'], 'en')} to `{tool}` returned an error. Each one costs a full turn: check the arguments the agent sends, and state the constraint in the tool description.",
                 f"{_calls(t['errors'], 'it')} su {t['calls']} a `{tool}` {'ha' if t['errors'] == 1 else 'hanno'} restituito un errore. Ognuna costa un turno intero: controlla gli argomenti che l'agente invia e scrivi il vincolo nella descrizione del tool.")
 
+    turns = d.get("turns") or {}
+    if turns.get("suggest_strategy"):
+        several, earlier = turns["share_of_turns_with_several_calls"], turns["share_of_calls_that_could_have_been_made_earlier"]
+        add("strategy", "review", None,
+            f"In the {turns['runs']} recorded runs the agent nearly always makes one tool call per turn ({_p(several, 'en')} of the turns with calls make several), and about {_p(earlier, 'en')} of its calls had their arguments available before the turn in which they were made (an estimate: identifiers only). The strategy level of the tracetrim skill might reduce the turns: on one model that works this way it took a task from a median of 17 turns to 6 (`docs/measures-v04.md`, E3); on a model that already groups its calls it changed nothing.",
+            f"Nelle {turns['runs']} esecuzioni registrate l'agente fa quasi sempre una chiamata per turno ({_il(several)} dei turni con chiamate ne fa più di una), e circa {_il(earlier)} delle chiamate aveva gli argomenti disponibili prima del turno in cui è partita (una stima: solo identificativi). La strategia della skill di tracetrim potrebbe ridurre i turni: su un modello che lavora così ha portato un compito da una mediana di 17 turni a 6 (`docs/measures-v04.md`, E3); su un modello che raggruppa già le chiamate non ha cambiato nulla.")
+
     for x in out:
         x["action"] = _action(x, d)
     order = {"warning": 0, "risk": 1, "saving": 2, "quick-win": 3, "review": 4, "limit": 5}
@@ -256,6 +263,10 @@ def _action(s: dict, d: dict) -> dict:
         return {"kind": "manual", "type": "review_fields", "tool": tool, "fields": unj[:10]}
     if s["rule"] == "prose":
         return {"kind": "manual", "type": "limit_text_output", "tool": tool}
+    if s["rule"] == "strategy":
+        # Manual, always: the strategy is instructions for the model, and whether
+        # to give them is the choice of who writes the agent's prompts.
+        return {"kind": "manual", "type": "skill_strategy"}
     return {"kind": "manual", "type": "collect_traces", "min": MIN_TRACES}
 
 
@@ -274,6 +285,8 @@ ACTION_TEXT = {
                       "Rivedi questi campi e aggiungi alla lista dei campi tagliati quelli che al compito non servono:"),
     "limit_text_output": ("Reduce how often this tool is called, or how much text it returns.",
                           "Riduci quante volte viene chiamato questo tool, o quanto testo restituisce."),
+    "skill_strategy": ("Try the strategy level of the skill and compare the turns: `--skill-strategy` on the proxy, `AutoTrim(strategy=True)` for function calling, `tracetrim skill --strategy` to print the text. tracetrim never turns it on by itself.",
+                       "Prova la strategia della skill e confronta i turni: `--skill-strategy` sul proxy, `AutoTrim(strategy=True)` con il function calling, `tracetrim skill --strategy` per stampare il testo. tracetrim non la accende mai da solo."),
     "collect_traces": ("Collect more runs of the same task, then generate the report again.",
                        "Raccogli altre esecuzioni dello stesso compito, poi rigenera il report."),
 }
@@ -400,6 +413,14 @@ L = {
     "from_top": ("calls where the reused ones are the first", "chiamate in cui i riusati sono i primi"),
     "deepest": ("deepest reused (median, max)", "riusato più in basso (mediana, massimo)"),
     "arguments": ("Arguments: distinct values observed", "Argomenti: valori distinti osservati"),
+    "turns": ("Tool calls per turn (a measure)", "Chiamate per turno (una misura)"),
+    "turns_sub": ("Per run. The calls that could have been made earlier are an estimate: a call is taken to depend on "
+                  "an earlier result only when one of its arguments is an identifier that result returned.",
+                  "Per esecuzione. Le chiamate che potevano partire prima sono una stima: una chiamata si considera "
+                  "dipendente da un risultato precedente solo se uno dei suoi argomenti è un identificativo restituito da quel risultato."),
+    "run": ("run", "esecuzione"), "turns_n": ("turns", "turni"), "fewest": ("fewest turns needed", "minimo di turni necessari"),
+    "several": ("turns with several calls", "turni con più chiamate"),
+    "could_earlier": ("calls that could have been made earlier", "chiamate che potevano partire prima"),
     "argument": ("argument", "argomento"), "distinct": ("distinct values", "valori distinti"),
     "method": ("How to read this report", "Come leggere questo report"),
     "method_text": (
@@ -572,6 +593,15 @@ def _adaptive_html(d: dict) -> str:
         out.append(f'<h2>{_t("lists")}</h2>' + _table(
             [_t("tool"), _t("list"), _t("size_args"), _t("calls"), _t("received"), _t("reused_n"), _t("from_top"),
              _t("deepest")], rows))
+    turns = d.get("turns") or {}
+    if turns.get("per_run"):
+        rows = [[code(r["run"]), str(r["turns"]), str(r["fewest_turns"]), str(r["calls"]),
+                 f'{r["turns_with_several_calls"]}/{r["turns_with_calls"]} ({r["turns_with_several_calls"] / r["turns_with_calls"]:.0%})',
+                 f'{r["calls_that_could_have_been_made_earlier"]}/{r["calls"]} ({r["calls_that_could_have_been_made_earlier"] / r["calls"]:.0%})']
+                for r in turns["per_run"]]
+        out.append(f'<details><summary>{_t("turns")} · {len(rows)}</summary><p class="sub">{_t("turns_sub")}</p>'
+                   + _table([_t("run"), _t("turns_n"), _t("fewest"), _t("calls"), _t("several"), _t("could_earlier")], rows)
+                   + "</details>")
     args = [[code(t), code(p), str(m["calls"]), str(m["distinct"])]
             for t, v in (d.get("arguments") or {}).items() for p, m in v["arguments"].items()]
     if args:

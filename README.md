@@ -172,7 +172,7 @@ a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a desc
 schema, to adapt to your provider's tool format (`{"type": "function", ...}` for OpenAI, `name` /
 `description` / `input_schema` for Anthropic). `tt.instructions` is the text that explains `expand`
 to the model, for your system prompt; `AutoTrim(..., strategy=True)` adds optional notes on how to
-organise tool calls (off by default, not measured yet: [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
+organise tool calls (off by default; what was measured on it: [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
 
 Checked with a real agent on the billing case, function calling, 5 runs with 3 to learn: after learning,
 tool outputs went from 33,862 to 18,947 tokens (−44%, fields asked back included), the agent asked for a

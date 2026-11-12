@@ -50,12 +50,19 @@ API fed with recorded outputs, and a CI-failure report on a simulated API).
   simulated agents, and the values the prompts prescribe respected in every strategy run.
 - **The two hypotheses on turns failed as stated.** They asked the median with the strategy to beat the best
   run without it, and on each simulated case one run without the strategy did as well. Few runs (2 to 8 per
-  arm), one task per agent.
+  arm), one task per agent. With six runs per arm that rule lets one run out of the ordinary decide: a
+  lesson for later protocols, not a second reading of this one.
 
 So the strategy stays off by default: it did nothing measurable on a model that already groups its calls, and
 on one that often does not it shortened the runs of one agent, in an experiment too small to say more. Turn it
 on when your traces show one call per turn where the calls do not depend on each other; the numbers are in
 [measures-v04.md](measures-v04.md).
+
+**The report tells you when.** When the recorded runs say which turn made each call, the telemetry report
+measures the turns with several calls and estimates the calls that could have been made earlier; when the
+agent makes nearly always one call per turn and a fair share of its calls did not have to wait, it adds a
+suggestion to try the strategy. It is marked MANUAL and nothing is switched on: thresholds and rule are in
+[adaptive.md](adaptive.md#calls-per-turn-and-a-hint-on-the-skills-strategy).
 
 ## Three ways to deliver it
 

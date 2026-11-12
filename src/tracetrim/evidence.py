@@ -60,12 +60,17 @@ class Adaptive:
     # tokens filtering has removed so far, per tool.
     sample_max_share: float = 0.2
     sample_seed: int = 0               # the sampling sequence is a function of (seed, tool, call number)
+    # A tool stops being trimmed only when the results expanded come from at least this many
+    # runs. 1: as until now, one run with enough requests is enough, the first one included.
+    switch_off_runs: int = 1
 
     def __post_init__(self):
         if not 0 <= self.sample_rate <= 1 or self.sample_max_share < 0:
             raise ValueError("sample_rate is between 0 and 1, sample_max_share is not negative")
         if self.promote_requested_runs < 1 or self.promote_reused_runs < 1:
             raise ValueError("promotion thresholds are at least 1 run")
+        if self.switch_off_runs < 1:
+            raise ValueError("switch_off_runs is at least 1 run")
 
 
 def empty() -> dict:

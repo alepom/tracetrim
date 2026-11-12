@@ -1,0 +1,136 @@
+{
+  "what": "offline recalculation of the switch-off of a tool on the E2 sequences, by the number of distinct runs asked",
+  "limit": "exact up to the first run in which two rules decide differently; not after it",
+  "sequences": 10,
+  "switch_offs": {
+    "as_run": 1,
+    "2": 0,
+    "3": 0
+  },
+  "per_sequence": [
+    {
+      "case": "C1",
+      "sequence": "base-s1",
+      "switched_off": {
+        "as_run": {
+          "kw_data_google_trends_explore": "run-0009"
+        },
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": [
+        {
+          "run": "run-0009",
+          "tool": "kw_data_google_trends_explore",
+          "filtered": 4,
+          "expanded": 2,
+          "runs_with_expand": 1
+        },
+        {
+          "run": "run-0010",
+          "tool": "kw_data_google_trends_explore",
+          "filtered": 4,
+          "expanded": 2,
+          "runs_with_expand": 1
+        },
+        {
+          "run": "run-0011",
+          "tool": "kw_data_google_trends_explore",
+          "filtered": 4,
+          "expanded": 2,
+          "runs_with_expand": 1
+        }
+      ]
+    },
+    {
+      "case": "C1",
+      "sequence": "sampling-s1",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "base-s1",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "base-s2",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "promotion+sampling-s1",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "promotion+sampling-s2",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "promotion-s1",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "promotion-s2",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "sampling-s1",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    },
+    {
+      "case": "C4",
+      "sequence": "sampling-s2",
+      "switched_off": {
+        "as_run": {},
+        "2": {},
+        "3": {}
+      },
+      "counts_where_a_result_was_expanded": []
+    }
+  ]
+}

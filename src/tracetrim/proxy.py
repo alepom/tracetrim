@@ -123,6 +123,7 @@ class Options:
     # Adaptive learning, with --auto; all off by default (see tracetrim.evidence.Adaptive).
     promote: bool = False
     promote_runs: int = 2
+    switch_off_runs: int = 1
     sample_rate: float = 0.0
     sample_max_share: float = 0.2
     sample_seed: int = 0
@@ -291,6 +292,7 @@ def _server(o: Options):
     from .evidence import Adaptive
 
     adaptive = Adaptive(promote=o.promote, promote_requested_runs=o.promote_runs, sample_rate=o.sample_rate,
+                        switch_off_runs=o.switch_off_runs,
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
     learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive)
                if o.auto_dir else None)

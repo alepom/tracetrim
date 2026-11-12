@@ -162,7 +162,8 @@ def test_expand_returns_hidden_fields_from_the_original_without_a_new_call(tmp_p
     assert back == {"data": [{"footer": "Thank you for your business with us"}]}
     everything = json.loads(tt.expand(json.dumps({"call_id": call_id(sent), "fields": ["*"]})))
     assert set(everything["data"][0]) == {"footer", *billing.REMARKS}
-    assert tt.expand({"call_id": "c0000", "fields": ["*"]}) == "Error: unknown call_id."
+    # (0.3.5 answered "Error: unknown call_id." and nothing else: changed on purpose, the reply now says what to do.)
+    assert tt.expand({"call_id": "c0000", "fields": ["*"]}).startswith("Error: unknown call_id 'c0000'.")
     assert tt.expand("not json").startswith("Error")
     # Two requests on one trimmed output count once. (0.3.5 counted both: changed on purpose,
     # so that the switch-off of a tool counts results expanded, not requests.)

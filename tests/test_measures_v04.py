@@ -138,3 +138,84 @@ def test_e1_beside_e3_is_what_the_two_files_say():
     r1, r3, s1, s3 = med(E1, "e1", "R"), med(E3, "e3", "R"), med(E1, "e1", "S"), med(E3, "e3", "S")
     assert f"a median of {r1[0]} turns on C4, {r1[1]} on C2 and {r1[2]} on C1; `gemini-3.8-flash` {r3[0]}, {r3[1]} and {r3[2]}" in DOC
     assert f"With it, {s1[0]}, {s1[1]} and {s1[2]} against {s3[0]}, {s3[1]} and {s3[2]}" in DOC
+
+
+# -- the offline recalculations made after E3 -------------------------------------
+
+MODES = json.loads((ROOT / "results" / "v04" / "modes.json").read_text())
+OFF = json.loads((ROOT / "results" / "v04" / "switch_off.json").read_text())
+ROWS = json.loads((ROOT / "results" / "v04" / "rows.json").read_text())
+ROWS_DOC = " ".join((ROOT / "docs" / "rows.md").read_text().split())
+ADAPTIVE = " ".join((ROOT / "docs" / "adaptive.md").read_text().split())
+
+
+def test_what_is_said_of_projections_per_mode_is_what_the_file_says():
+    cands = [(t, a) for c in MODES["cases"].values() for t in c["tools"].values() for a in t["arguments"].values()]
+    tools = sum(len(c["tools"]) for c in MODES["cases"].values())
+    assert (len(cands), tools, MODES["candidates"], MODES["with_a_benefit"]) == (18, 11, 18, 0)
+    assert f"{len(cands)} candidate arguments on {tools} tools" in DOC and "**None shows a benefit.**" in DOC
+    assert sum(c["runs_evaluated"] for c in MODES["cases"].values()) == 102 and "On the 102 runs" in DOC
+    points = [a["points_removed_more_than_general"] for _, a in cands]
+    assert max(points) == 3.2 and sum(p < 1 for p in points) == 16 and "is 3.2 points; 16 of 18 add less than one" in DOC
+    assert MODES["settings"]["benefit_points"] == 5 and "at least 5 more points" in DOC
+    assert sum(a["calls_losing_a_used_field"] > t["general"]["calls_losing_a_used_field"] for t, a in cands) == 5
+    assert sum(a["calls_per_profile_min"] < MODES["settings"]["min_profile_calls"] for _, a in cands) == 8
+    assert sum(a["new_cases_covered_by_the_general_projection"] for _, a in cands) == 35
+    assert "8 candidates have a profile with fewer than three calls, and 35 held-out calls" in DOC
+    trends = MODES["cases"]["C1"]["tools"]["kw_data_google_trends_explore"]["arguments"]
+    assert sorted(trends) == ["time_range", "type"]
+    for a in trends.values():                              # no profile reuses a field the others do not
+        assert not any(p["fields_used_here_only"] for p in a["profiles"].values()) and abs(a["points_removed_more_than_general"]) <= 0.1
+
+
+def test_what_is_said_of_the_switch_off_is_what_the_file_says():
+    assert (OFF["sequences"], OFF["switch_offs"]) == (10, {"as_run": 1, "2": 0, "3": 0})
+    off = [(s["case"], s["sequence"], s["switched_off"]["as_run"]) for s in OFF["per_sequence"] if s["switched_off"]["as_run"]]
+    assert off == [("C1", "base-s1", {"kw_data_google_trends_explore": "run-0009"})]                # the first run of the sequence
+    first = next(s for s in OFF["per_sequence"] if s["sequence"] == "base-s1" and s["case"] == "C1")["counts_where_a_result_was_expanded"][0]
+    assert (first["filtered"], first["expanded"], first["runs_with_expand"]) == (4, 2, 1)
+    for doc in (DOC, ADAPTIVE):
+        assert "ten sequences of E2" in doc
+    assert "four filtered results of a tool, two of them expanded" in ADAPTIVE and "with 2 or 3 runs asked for, none would have been at that point" in ADAPTIVE
+
+
+def test_what_is_said_of_rows_is_what_the_file_says():
+    r = ROWS["requests"]
+    assert (r["expand_requests"], r["gave_nothing_back"], r["by_reply"]) == (38, 10, {"unknown call_id": 8, "no field matches": 2})
+    assert (r["unknown_call_id_asking_for_rows"], r["with_an_index_on_a_valid_call_id"], r["of_which_answered_now"]) == (7, 2, 2)
+    assert "**The two requests with an index are now answered**" in ROWS_DOC
+    assert "the agents called `expand` 38 times. Ten requests gave nothing back" in ROWS_DOC
+    assert "| unknown `call_id` | 8 | 7 asked for rows" in ROWS_DOC and "| no field matches | 2 |" in ROWS_DOC
+    assert sum(c["runs"] for c in ROWS["elements"].values()) == 112 and "in the 112 runs" in ROWS_DOC
+    a, b = ROWS["search_data_api"], ROWS["other_apis"]
+    pct = lambda d, k: f"{d[k]} ({round(d[k] / d['calls_with_reuse'] * 100)}%)"                      # noqa: E731
+    for label, key in (("Lists with a reused element", None), ("Calls with a reused element", "calls_with_reuse")):
+        assert f"| {label} | {a[key or 'lists']} | {b[key or 'lists']} |" in ROWS_DOC
+    for label, key in (("… where the reused elements are exactly the first ones", "calls_reused_from_the_top"),
+                       ("… where the last element received is reused", "calls_reusing_the_last_element"),
+                       ("… that lose a reused element if the list is cut to 5", "calls_losing_a_reused_element_if_cut_to_5"),
+                       ("… that lose a reused element if the list is cut to 3", "calls_losing_a_reused_element_if_cut_to_3")):
+        assert f"| {label} | {pct(a, key)} | {pct(b, key)} |" in ROWS_DOC
+    assert "first ones in 25% of the calls, and a cut to five rows would have removed a reused one in 92%" in DOC
+    c1 = ROWS["elements"]["C1"]["lists"]
+    share = lambda tool: round(c1[f"{tool} items[]"]["share_of_elements_reused"] * 100)               # noqa: E731
+    keyword = [share(t) for t in ("dataforseo_labs_google_keyword_ideas", "dataforseo_labs_google_keyword_suggestions",
+                                  "dataforseo_labs_google_ranked_keywords", "kw_data_google_ads_search_volume")]
+    assert (min(keyword), max(keyword)) == (58, 89)
+    assert (round(ROWS["elements"]["C2"]["lists"]["serp_organic_live_advanced items[]"]["share_of_elements_reused"] * 100),
+            share("serp_organic_live_advanced")) == (65, 72)
+    video = c1["serp_youtube_organic_live_advanced items[]"]
+    assert (video["received_median"], round(video["share_of_elements_reused"] * 100)) == (20, 16)
+    thin = [c1[f"{t} items[]"] for t in ("dataforseo_labs_bulk_keyword_difficulty", "dataforseo_labs_search_intent")]
+    assert [(m["received_median"], m["calls_with_reuse"], m["calls"]) for m in thin] == [(20, 2, 22), (20, 2, 20)]
+
+
+def test_the_hint_figures_in_the_docs_are_those_of_e3():
+    t = E3["e3"]
+    several = {c: round(t[c]["R"]["share_of_turns_with_several_calls"] * 100) for c in ("C5", "C4")}
+    earlier = {c: round(IND["cases"][c]["R"]["share_that_could_have_been_made_earlier"] * 100) for c in ("C5", "C4")}
+    assert f"({several['C5']}% of the turns with several calls, {earlier['C5']}% of the calls could have been earlier)" in ADAPTIVE
+    assert f"already grouped them ({several['C4']}%, {earlier['C4']}%)" in ADAPTIVE
+    from tracetrim import turns
+    assert (turns.MAX_SEVERAL, turns.MIN_EARLIER, turns.MIN_RUNS) == (0.2, 0.25, 2)
+    assert "at most 20% of the turns with calls make several calls, and at least 25% of the calls could have been made earlier, over at least 2 runs" in ADAPTIVE

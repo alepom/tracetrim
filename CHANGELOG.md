@@ -62,8 +62,24 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
   turn, the median went from 17 turns to 6 with the strategy, at the same completeness; where it already
   groups its calls, little changed. The strategy stays off by default.
   `python -m experiments.run --e3 ...`, `python -m experiments.analyze_v04 --e3`.
+- **`expand` takes the position of an element**: `data[0].url` is `data[].url` for the first element only;
+  the reply holds the elements asked for, in their order. As evidence an index counts as `[]`.
+- **A hint on the skill's strategy, in the report.** When the runs record their turns, the report measures
+  the turns with several calls and estimates, with a declared heuristic, the calls that could have been made
+  in an earlier turn. If the agent makes nearly always one call per turn and many calls did not have to
+  wait, it suggests trying the strategy: a MANUAL suggestion, with documented thresholds
+  (`tracetrim report --strategy-max-several / --strategy-min-earlier / --strategy-min-runs`). Nothing is
+  switched on.
+- **Switch-off on evidence from more runs** (`--switch-off-runs N`, `Adaptive(switch_off_runs=N)`; default 1,
+  as before): a tool stops being trimmed only when its expanded results come from N distinct runs.
+- **Offline analyses of the recorded runs**, none of them in a protocol
+  ([docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md)): projections
+  per mode of use show no benefit on 18 candidate arguments and are not implemented; a design note on rows
+  ([docs/rows.md](https://github.com/alepom/tracetrim/blob/master/docs/rows.md)), which tracetrim still never cuts.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
 - **Changed behaviour:**
+  - The reply of `expand` to an unknown `call_id` now names the most recent valid ids, with their tools, and
+    says that only a result with a `[trimmed]` line can be expanded. Until 0.3.5 it was `Error: unknown call_id.`
   - *The simple way for small outputs*, always on: when a filtered result, with the line that lists
     what was removed, would count at least as many tokens as the whole result re-serialised, the whole
     result is passed without the line. Small or compact results that 0.3.5 trimmed and annotated now

@@ -1,0 +1,469 @@
+{
+  "what": "what agents asked of rows with expand, and the list elements they reuse; nothing is cut",
+  "requests": {
+    "expand_requests": 38,
+    "gave_nothing_back": 10,
+    "by_reply": {
+      "unknown call_id": 8,
+      "no field matches": 2
+    },
+    "unknown_call_id_asking_for_rows": 7,
+    "with_an_index_on_a_valid_call_id": 2,
+    "of_which_answered_now": 2,
+    "per_request": [
+      {
+        "run": "C1/E1-ST-1",
+        "call_id_was_valid": false,
+        "fields": [
+          "items"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E1-ST-4",
+        "call_id_was_valid": false,
+        "fields": [
+          "items[10:]"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E1-T-1",
+        "call_id_was_valid": false,
+        "fields": [
+          "items"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E1-T-2",
+        "call_id_was_valid": false,
+        "fields": [
+          "items[].data[]"
+        ],
+        "asks_for_rows": false,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E1-T-2",
+        "call_id_was_valid": false,
+        "fields": [
+          "items"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E1-T-4",
+        "call_id_was_valid": false,
+        "fields": [
+          "items"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E2-base-s1-r1",
+        "call_id_was_valid": false,
+        "fields": [
+          "items"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C1/E2-sampling-s1-r1",
+        "call_id_was_valid": false,
+        "fields": [
+          "items[10:].keyword",
+          "items[10:].search_volume"
+        ],
+        "asks_for_rows": true,
+        "uses_an_index": false
+      },
+      {
+        "run": "C4/E2-promotion+sampling-s1-r1",
+        "call_id_was_valid": true,
+        "fields": [
+          "data[0].collection_method",
+          "data[0].hosted_invoice_url"
+        ],
+        "asks_for_rows": false,
+        "uses_an_index": true,
+        "answered_now": true
+      },
+      {
+        "run": "C4/E2-promotion+sampling-s1-r1",
+        "call_id_was_valid": true,
+        "fields": [
+          "data[0].collection_method",
+          "data[0].hosted_invoice_url"
+        ],
+        "asks_for_rows": false,
+        "uses_an_index": true,
+        "answered_now": true
+      }
+    ]
+  },
+  "search_data_api": {
+    "cases": [
+      "C1",
+      "C2"
+    ],
+    "lists": 12,
+    "calls_with_reuse": 592,
+    "calls_reused_from_the_top": 150,
+    "calls_reusing_the_last_element": 325,
+    "calls_losing_a_reused_element_if_cut_to_3": 553,
+    "calls_losing_a_reused_element_if_cut_to_5": 542
+  },
+  "other_apis": {
+    "cases": [
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "lists": 11,
+    "calls_with_reuse": 641,
+    "calls_reused_from_the_top": 626,
+    "calls_reusing_the_last_element": 518,
+    "calls_losing_a_reused_element_if_cut_to_3": 182,
+    "calls_losing_a_reused_element_if_cut_to_5": 12
+  },
+  "elements_summary": {
+    "lists_with_reuse": 23,
+    "calls_with_reuse": 1233,
+    "calls_reused_from_the_top": 776,
+    "calls_losing_a_reused_element_if_cut_to_3": 735,
+    "calls_losing_a_reused_element_if_cut_to_5": 554
+  },
+  "elements": {
+    "C1": {
+      "runs": 22,
+      "lists": {
+        "dataforseo_labs_bulk_keyword_difficulty items[]": {
+          "calls": 22,
+          "received_median": 20.0,
+          "received_max": 43,
+          "calls_with_reuse": 2,
+          "reused_median": 1.5,
+          "share_of_elements_reused": 0.0882,
+          "calls_reused_from_the_top": 0,
+          "deepest_reused_median": 15.5,
+          "calls_reusing_the_last_element": 0,
+          "calls_losing_a_reused_element_if_cut_to_3": 2,
+          "calls_losing_a_reused_element_if_cut_to_5": 2
+        },
+        "dataforseo_labs_google_keyword_ideas items[]": {
+          "calls": 22,
+          "received_median": 10.0,
+          "received_max": 10,
+          "calls_with_reuse": 20,
+          "reused_median": 7.0,
+          "share_of_elements_reused": 0.62,
+          "calls_reused_from_the_top": 4,
+          "deepest_reused_median": 9.5,
+          "calls_reusing_the_last_element": 10,
+          "calls_losing_a_reused_element_if_cut_to_3": 19,
+          "calls_losing_a_reused_element_if_cut_to_5": 19
+        },
+        "dataforseo_labs_google_keyword_suggestions items[]": {
+          "calls": 90,
+          "received_median": 10.0,
+          "received_max": 10,
+          "calls_with_reuse": 88,
+          "reused_median": 8.0,
+          "share_of_elements_reused": 0.7342,
+          "calls_reused_from_the_top": 49,
+          "deepest_reused_median": 10.0,
+          "calls_reusing_the_last_element": 56,
+          "calls_losing_a_reused_element_if_cut_to_3": 75,
+          "calls_losing_a_reused_element_if_cut_to_5": 73
+        },
+        "dataforseo_labs_google_ranked_keywords items[]": {
+          "calls": 23,
+          "received_median": 10,
+          "received_max": 10,
+          "calls_with_reuse": 23,
+          "reused_median": 9,
+          "share_of_elements_reused": 0.8913,
+          "calls_reused_from_the_top": 8,
+          "deepest_reused_median": 10,
+          "calls_reusing_the_last_element": 20,
+          "calls_losing_a_reused_element_if_cut_to_3": 23,
+          "calls_losing_a_reused_element_if_cut_to_5": 23
+        },
+        "dataforseo_labs_google_related_keywords items[]": {
+          "calls": 2,
+          "received_median": 9.0,
+          "received_max": 9,
+          "calls_with_reuse": 2,
+          "reused_median": 4.0,
+          "share_of_elements_reused": 0.4444,
+          "calls_reused_from_the_top": 1,
+          "deepest_reused_median": 4.5,
+          "calls_reusing_the_last_element": 0,
+          "calls_losing_a_reused_element_if_cut_to_3": 1,
+          "calls_losing_a_reused_element_if_cut_to_5": 1
+        },
+        "dataforseo_labs_google_relevant_pages items[]": {
+          "calls": 23,
+          "received_median": 10,
+          "received_max": 10,
+          "calls_with_reuse": 23,
+          "reused_median": 4,
+          "share_of_elements_reused": 0.4304,
+          "calls_reused_from_the_top": 0,
+          "deepest_reused_median": 9,
+          "calls_reusing_the_last_element": 6,
+          "calls_losing_a_reused_element_if_cut_to_3": 23,
+          "calls_losing_a_reused_element_if_cut_to_5": 23
+        },
+        "dataforseo_labs_search_intent items[]": {
+          "calls": 20,
+          "received_median": 20.0,
+          "received_max": 43,
+          "calls_with_reuse": 2,
+          "reused_median": 1.5,
+          "share_of_elements_reused": 0.0882,
+          "calls_reused_from_the_top": 0,
+          "deepest_reused_median": 8.0,
+          "calls_reusing_the_last_element": 1,
+          "calls_losing_a_reused_element_if_cut_to_3": 2,
+          "calls_losing_a_reused_element_if_cut_to_5": 2
+        },
+        "kw_data_google_ads_search_volume items[]": {
+          "calls": 52,
+          "received_median": 10.0,
+          "received_max": 10,
+          "calls_with_reuse": 52,
+          "reused_median": 6.0,
+          "share_of_elements_reused": 0.5756,
+          "calls_reused_from_the_top": 13,
+          "deepest_reused_median": 10.0,
+          "calls_reusing_the_last_element": 28,
+          "calls_losing_a_reused_element_if_cut_to_3": 48,
+          "calls_losing_a_reused_element_if_cut_to_5": 46
+        },
+        "kw_data_google_trends_explore items[]": {
+          "calls": 90,
+          "received_median": 1.0,
+          "received_max": 1,
+          "calls_with_reuse": 10,
+          "reused_median": 1.0,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 10,
+          "deepest_reused_median": 1.0,
+          "calls_reusing_the_last_element": 10,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "serp_organic_live_advanced items[]": {
+          "calls": 69,
+          "received_median": 11,
+          "received_max": 14,
+          "calls_with_reuse": 68,
+          "reused_median": 9.0,
+          "share_of_elements_reused": 0.7159,
+          "calls_reused_from_the_top": 7,
+          "deepest_reused_median": 11.0,
+          "calls_reusing_the_last_element": 39,
+          "calls_losing_a_reused_element_if_cut_to_3": 66,
+          "calls_losing_a_reused_element_if_cut_to_5": 65
+        },
+        "serp_youtube_organic_live_advanced items[]": {
+          "calls": 42,
+          "received_median": 20.0,
+          "received_max": 20,
+          "calls_with_reuse": 29,
+          "reused_median": 3,
+          "share_of_elements_reused": 0.1608,
+          "calls_reused_from_the_top": 1,
+          "deepest_reused_median": 16,
+          "calls_reusing_the_last_element": 8,
+          "calls_losing_a_reused_element_if_cut_to_3": 28,
+          "calls_losing_a_reused_element_if_cut_to_5": 28
+        }
+      }
+    },
+    "C2": {
+      "runs": 24,
+      "lists": {
+        "serp_organic_live_advanced items[]": {
+          "calls": 279,
+          "received_median": 10,
+          "received_max": 13,
+          "calls_with_reuse": 273,
+          "reused_median": 7,
+          "share_of_elements_reused": 0.6467,
+          "calls_reused_from_the_top": 57,
+          "deepest_reused_median": 10,
+          "calls_reusing_the_last_element": 147,
+          "calls_losing_a_reused_element_if_cut_to_3": 266,
+          "calls_losing_a_reused_element_if_cut_to_5": 260
+        }
+      }
+    },
+    "C3": {
+      "runs": 8,
+      "lists": {
+        "openalex_search_works results[]": {
+          "calls": 61,
+          "received_median": 5,
+          "received_max": 5,
+          "calls_with_reuse": 61,
+          "reused_median": 5,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 61,
+          "deepest_reused_median": 5,
+          "calls_reusing_the_last_element": 61,
+          "calls_losing_a_reused_element_if_cut_to_3": 61,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        }
+      }
+    },
+    "C4": {
+      "runs": 36,
+      "lists": {
+        "stripe_list_charges data[]": {
+          "calls": 98,
+          "received_median": 4.0,
+          "received_max": 4,
+          "calls_with_reuse": 98,
+          "reused_median": 4.0,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 98,
+          "deepest_reused_median": 4.0,
+          "calls_reusing_the_last_element": 98,
+          "calls_losing_a_reused_element_if_cut_to_3": 98,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "stripe_list_invoices data[]": {
+          "calls": 73,
+          "received_median": 3,
+          "received_max": 3,
+          "calls_with_reuse": 73,
+          "reused_median": 3,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 73,
+          "deepest_reused_median": 3,
+          "calls_reusing_the_last_element": 73,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "stripe_list_refunds data[]": {
+          "calls": 9,
+          "received_median": 1,
+          "received_max": 1,
+          "calls_with_reuse": 9,
+          "reused_median": 1,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 9,
+          "deepest_reused_median": 1,
+          "calls_reusing_the_last_element": 9,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "stripe_list_subscriptions data[]": {
+          "calls": 40,
+          "received_median": 1.0,
+          "received_max": 1,
+          "calls_with_reuse": 40,
+          "reused_median": 1.0,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 40,
+          "deepest_reused_median": 1.0,
+          "calls_reusing_the_last_element": 40,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "stripe_search_customers data[]": {
+          "calls": 180,
+          "received_median": 1.0,
+          "received_max": 1,
+          "calls_with_reuse": 180,
+          "reused_median": 1.0,
+          "share_of_elements_reused": 1.0,
+          "calls_reused_from_the_top": 180,
+          "deepest_reused_median": 1.0,
+          "calls_reusing_the_last_element": 180,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        }
+      }
+    },
+    "C5": {
+      "runs": 22,
+      "lists": {
+        "gh_get_issue labels[]": {
+          "calls": 17,
+          "received_median": 2,
+          "received_max": 2,
+          "calls_with_reuse": 3,
+          "reused_median": 1,
+          "share_of_elements_reused": 0.5,
+          "calls_reused_from_the_top": 0,
+          "deepest_reused_median": 2,
+          "calls_reusing_the_last_element": 3,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "gh_list_issues []": {
+          "calls": 22,
+          "received_median": 10.0,
+          "received_max": 10,
+          "calls_with_reuse": 22,
+          "reused_median": 3.0,
+          "share_of_elements_reused": 0.3045,
+          "calls_reused_from_the_top": 22,
+          "deepest_reused_median": 3.0,
+          "calls_reusing_the_last_element": 0,
+          "calls_losing_a_reused_element_if_cut_to_3": 1,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "gh_list_jobs_for_workflow_run jobs[]": {
+          "calls": 111,
+          "received_median": 3,
+          "received_max": 3,
+          "calls_with_reuse": 111,
+          "reused_median": 2,
+          "share_of_elements_reused": 0.7265,
+          "calls_reused_from_the_top": 111,
+          "deepest_reused_median": 2,
+          "calls_reusing_the_last_element": 44,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "gh_list_pull_requests []": {
+          "calls": 22,
+          "received_median": 4.0,
+          "received_max": 4,
+          "calls_with_reuse": 22,
+          "reused_median": 3.0,
+          "share_of_elements_reused": 0.75,
+          "calls_reused_from_the_top": 22,
+          "deepest_reused_median": 3.0,
+          "calls_reusing_the_last_element": 0,
+          "calls_losing_a_reused_element_if_cut_to_3": 0,
+          "calls_losing_a_reused_element_if_cut_to_5": 0
+        },
+        "gh_list_workflow_runs workflow_runs[]": {
+          "calls": 22,
+          "received_median": 10.0,
+          "received_max": 10,
+          "calls_with_reuse": 22,
+          "reused_median": 7.0,
+          "share_of_elements_reused": 0.7941,
+          "calls_reused_from_the_top": 10,
+          "deepest_reused_median": 9.0,
+          "calls_reusing_the_last_element": 10,
+          "calls_losing_a_reused_element_if_cut_to_3": 22,
+          "calls_losing_a_reused_element_if_cut_to_5": 12
+        }
+      }
+    }
+  }
+}

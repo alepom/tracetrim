@@ -26,57 +26,24 @@ turns, not what a careful agent should have done.
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from statistics import median
 
+from tracetrim.traces import load
+from tracetrim.turns import organisation, references  # noqa: F401
+
 from .paths import ROOT
-from .v04 import calls as read_calls
 
 OUT = ROOT / "results" / "v04" / "e3_independence.json"
 CASES = ("C4", "C5")
-# An argument whose value is something a tool returned: by name, or by shape (a long number, a prefixed id).
-ID_NAME = re.compile(r"(^|_)(id|ids|number|run|job|issue|pull|invoice|charge|customer|subscription)$", re.I)
-ID_SHAPE = re.compile(r"^(\d{5,}|[a-z]{2,4}_[A-Za-z0-9]{8,})$")
-
-
-def references(arguments: dict) -> list[str]:
-    """The values of a call's arguments that name something returned by a tool."""
-    out = []
-    for name, value in (arguments or {}).items():
-        for v in value if isinstance(value, list) else [value]:
-            if isinstance(v, bool) or v is None or isinstance(v, (dict, list)):
-                continue
-            s = str(v)
-            if ID_NAME.search(str(name)) or ID_SHAPE.match(s):
-                out.append(s)
-    return out
-
-
 def run(trace: Path) -> dict:
-    cs = [c for c in read_calls(trace) if c["tool"] != "expand"]
-    prompts = " ".join(json.loads(line)["text"] for line in trace.read_text(encoding="utf-8").splitlines()
-                       if '"kind": "prompt"' in line)
-    available: dict[str, int] = {}                  # value -> the first turn in which a call could use it
-    earliest, earlier, dependent = [], 0, 0
-    for c in cs:
-        need = 0
-        for ref in references(c["arguments"]):
-            pattern = re.compile(rf"(?<![\w]){re.escape(ref)}(?![\w])")
-            if pattern.search(prompts):
-                continue                            # given in the prompt: known from the start
-            if ref not in available:
-                # The first call that returned it, and the earliest turn in which that call itself could be made.
-                first = next((i for i, x in enumerate(cs[:len(earliest)])
-                              if x["turn"] < c["turn"] and pattern.search(x["original"])), None)
-                available[ref] = earliest[first] + 1 if first is not None else 0   # never returned: the model's own choice
-            need = max(need, available[ref])
-        earliest.append(need)
-        dependent += need > 0
-        earlier += need < c["turn"]
-    turns = (max(c["turn"] for c in cs) + 2) if cs else 1
-    return {"calls": len(cs), "turns": turns, "fewest_turns": (max(earliest) + 2) if cs else 1,
-            "calls_that_depend_on_an_earlier_result": dependent, "calls_that_could_have_been_made_earlier": earlier}
+    """The rule is the library's (`tracetrim.turns`), which the telemetry report uses too."""
+    o = organisation(load(trace))
+    if o is None:
+        return {"calls": 0, "turns": 1, "fewest_turns": 1, "calls_that_depend_on_an_earlier_result": 0,
+                "calls_that_could_have_been_made_earlier": 0}
+    return {k: o[k] for k in ("calls", "turns", "fewest_turns", "calls_that_depend_on_an_earlier_result",
+                              "calls_that_could_have_been_made_earlier")}
 
 
 def analyse(traces: Path) -> dict:

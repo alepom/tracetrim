@@ -57,12 +57,62 @@ def test_expand_is_evidence_about_the_tool_of_that_result(tmp_path):
     obs = engine.observe(call(3), ToolResult(billing.output(3)))
     back = engine.expand(obs.call_id, ["data[].footer"])
     assert json.loads(back) == {"data": [{"footer": "Thank you for your business with us"}]}
-    assert engine.expand("c0000", ["*"]) == "Error: unknown call_id."
+    assert engine.expand("c0000", ["*"]).startswith("Error: unknown call_id 'c0000'.")
     [note] = [n for n in engine.learner.notes if n["kind"] == "expand"]
     assert (note["tool"], note["call_id"], note["recovered"]) == (billing.TOOL, obs.call_id, ["data[].footer"])
     from tracetrim.evidence import derive
     found, broad = derive(engine.learner.events, engine.learner.notes, None)
     assert Evidence(RECOVERED, billing.TOOL, obs.call_id, ("data[].footer",)) in found and not broad
+
+
+def test_expand_takes_the_index_of_an_element_and_gives_that_element_only():
+    from tracetrim.engine import Trimmer, generic
+    t = Trimmer(None)
+    payload = {"data": [{"id": "a", "footer": "one", "lines": [{"sku": "x"}, {"sku": "y"}]},
+                        {"id": "b", "footer": "two", "lines": [{"sku": "z"}]},
+                        {"id": "c", "footer": "three", "lines": []}], "has_more": False}
+    t.originals["c1"], t.hidden["c1"], t.tool_of["c1"] = payload, {"data[].footer", "data[].lines[].sku"}, "invoices"
+    # `data[1].footer` is `data[].footer` for the second element: the same field, of one element.
+    text, paths = t.recover("c1", ["data[1].footer"])
+    assert json.loads(text) == {"data": [{"footer": "two"}]} and paths == ("data[].footer",)
+    # Without an index, as before: every element.
+    assert json.loads(t.expand("c1", ["data[].footer"])) == {"data": [{"footer": "one"}, {"footer": "two"}, {"footer": "three"}]}
+    # A whole element, a nested index, two elements: in the original order, the others left out.
+    assert json.loads(t.expand("c1", ["data[2]"])) == {"data": [{"id": "c", "footer": "three"}]}
+    assert json.loads(t.expand("c1", ["data[0].lines[1].sku"])) == {"data": [{"lines": [{"sku": "y"}]}]}
+    assert json.loads(t.expand("c1", ["data[2].footer", "data[0].footer"])) == {"data": [{"footer": "one"}, {"footer": "three"}]}
+    # An index and a plain path together: the plain one still means every element.
+    assert json.loads(t.expand("c1", ["data[0].id", "data[].footer"]))["data"] == [
+        {"id": "a", "footer": "one"}, {"footer": "two"}, {"footer": "three"}]
+    # An element that is not there matches nothing, and the reply says what there is.
+    text, paths = t.recover("c1", ["data[7].footer"])
+    assert text.startswith("Error: no field matches data[7].footer. Hidden groups: data[].footer") and paths == ()
+    assert generic("tasks[0].result[12].items[3].title") == "tasks[].result[].items[].title"
+
+
+def test_an_index_in_a_request_is_evidence_about_the_field(tmp_path):
+    engine = learned(tmp_path)
+    obs = engine.observe(call(3), ToolResult(billing.output(3)))
+    assert json.loads(engine.expand(obs.call_id, ["data[0].footer"])) == {"data": [{"footer": "Thank you for your business with us"}]}
+    note = engine.learner.notes[-1]
+    assert note["requested"] == ["data[].footer"] and note["recovered"] == ["data[].footer"]
+    assert engine.learner.state["expanded"] == {billing.TOOL: 1}
+
+
+def test_an_unknown_call_id_is_told_which_ids_exist_and_what_expand_is_for(tmp_path):
+    engine = learned(tmp_path)
+    # Before any result was trimmed in this session.
+    first = engine.expand("c12", ["items"])
+    assert first.startswith("Error: unknown call_id 'c12'.") and first.endswith("No result has been trimmed so far.")
+    ids = [engine.observe(call(3), ToolResult(billing.output(3))).call_id for _ in range(4)]
+    reply = engine.expand(ids[0][:5], ["items[10:]"])                    # an id cut short, asking for more rows
+    assert "expand only works on a result that ends with a line '[trimmed] call_id=...'" in reply
+    assert "expand cannot give more rows of it" in reply
+    # The three most recent, the last first, each with its tool; the oldest is not named.
+    assert reply.endswith("Most recent valid call_ids: " + ", ".join(f"{c} ({billing.TOOL})" for c in ids[:0:-1]) + ".")
+    assert ids[0] not in reply.split("Most recent")[1]
+    # Nothing is learned from it, and it counts against no tool.
+    assert engine.learner.state["expanded"] == {} and not [n for n in engine.learner.notes if n["kind"] == "expand"]
 
 
 def test_closing_twice_or_with_nothing_pending_changes_nothing(tmp_path):

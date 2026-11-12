@@ -264,6 +264,41 @@ def test_a_tool_that_goes_on_asking_for_other_fields_is_still_switched_off(tmp_p
     assert [r["field"] for r in ev(tmp_path)["resumed"]] == [CARRIER]               # recorded once
 
 
+def four_calls(tt, k, expand=2):
+    """A run with four calls of the tool, the first `expand` of them asked back whole, nothing of it written."""
+    for i in range(4):
+        sent = tt.output(TOOL, args(k + 100 * i), orders.output(**args(k + 100 * i)))
+        if i < expand and MARK in sent:
+            tt.expand({"call_id": sent.rsplit("call_id=", 1)[1].split()[0], "fields": [NOTE]})
+    tt.done(answer(k))
+
+
+def test_one_run_is_enough_to_switch_a_tool_off_unless_more_runs_are_asked_for(tmp_path):
+    # What happened in E2 on the real case: four filtered results in the first run, two of them
+    # expanded, and the tool stopped being trimmed on the evidence of that run alone.
+    as_before, careful = learned(tmp_path / "a"), learned(tmp_path / "b", switch_off_runs=2)
+    four_calls(as_before, 4)
+    four_calls(careful, 4)
+    assert state(tmp_path / "a")["off"] == [TOOL] and not as_before.trimming
+    assert state(tmp_path / "b")["off"] == [] and careful.trimming
+    assert state(tmp_path / "b")["expanded"] == {TOOL: 2} and state(tmp_path / "b")["expand_runs"] == {TOOL: ["run-0004"]}
+    # A run without requests changes nothing; a second run with requests is the second piece of evidence.
+    four_calls(careful, 5, expand=0)
+    assert state(tmp_path / "b")["off"] == []
+    four_calls(careful, 6, expand=4)
+    assert state(tmp_path / "b")["off"] == [TOOL] and not careful.trimming
+    with pytest.raises(ValueError):
+        Adaptive(switch_off_runs=0)
+
+
+def test_the_runs_asked_for_are_the_most_any_setting_asks():
+    from tracetrim.auto import over_expanded, runs_needed
+    assert runs_needed(Adaptive()) == 0 and runs_needed(Adaptive(promote=True)) == 2
+    assert runs_needed(Adaptive(switch_off_runs=3)) == 3 and runs_needed(Adaptive(promote=True, switch_off_runs=3)) == 3
+    assert runs_needed(Adaptive(promote=True, promote_requested_runs=4, switch_off_runs=2)) == 4
+    assert over_expanded(4, 2, 1) and not over_expanded(3, 3, 1) and not over_expanded(4, 1, 1) and not over_expanded(4, 2, 1, 2)
+
+
 def test_an_evidence_file_without_the_newer_key_loads(tmp_path):
     (tmp_path / "evidence.json").write_text(json.dumps({"format": evidence.FORMAT, "tools": {}, "promotions": []}))
     assert evidence.load(tmp_path / "evidence.json")["resumed"] == []

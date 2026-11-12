@@ -9,6 +9,7 @@
                     [--config report.config.json | --auto workdir/] [--record traces/session.jsonl]
                     [--skill-strategy] [--no-skill]
                     [--promote [--promote-runs 2]] [--sample-rate 0.1 [--sample-max-share 0.2] [--sample-seed 0]]
+                    [--switch-off-runs 2]
   tracetrim promotions WORKDIR [--revert [TOOL [FIELD]] | --restore TOOL FIELD]
   tracetrim skill   [--strategy] [--no-done] [--write DIR]   (the instructions the proxy publishes as a skill)
 
@@ -120,6 +121,8 @@ def cmd_report(a):
     from . import report as rp
     traces, usages = _read(a.traces, a.v01)
     d = rp.compute([t.name for t in traces], usages, a.unseen, protect_ids=not a.v01)
+    from . import turns
+    d["turns"] = turns.summarise(traces, a.strategy_max_several, a.strategy_min_earlier, a.strategy_min_runs)
     sugg = rp.suggestions(d)
     out = Path(a.output)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -147,13 +150,14 @@ def cmd_proxy(a):
         raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
     if a.auto and a.config:
         raise SystemExit("--auto manages its own config: do not pass --config")
-    if (a.promote or a.sample_rate) and not a.auto:
-        raise SystemExit("--promote and --sample-rate work in automatic mode: add --auto WORKDIR")
+    if (a.promote or a.sample_rate or a.switch_off_runs != 1) and not a.auto:
+        raise SystemExit("--promote, --sample-rate and --switch-off-runs work in automatic mode: add --auto WORKDIR")
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
                 quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
                 skill=not a.no_skill, skill_strategy=a.skill_strategy,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
+                switch_off_runs=a.switch_off_runs,
                 sample_max_share=a.sample_max_share, sample_seed=a.sample_seed,
                 servers=load_servers(a.servers) if a.servers else {})
     if a.http:
@@ -286,6 +290,14 @@ def main(argv=None):
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
     s.add_argument("--v01", action="store_true",
                    help="tracetrim 0.1 behaviour (for comparisons): no identifier protection, no transformed values")
+    from .turns import MAX_SEVERAL, MIN_EARLIER, MIN_RUNS
+    s.add_argument("--strategy-max-several", type=float, default=MAX_SEVERAL, metavar="F",
+                   help="the hint on the skill's strategy is given when at most this share of the turns with calls "
+                        f"make several calls (default {MAX_SEVERAL}) ...")
+    s.add_argument("--strategy-min-earlier", type=float, default=MIN_EARLIER, metavar="F",
+                   help=f"... and at least this share of the calls could have been made in an earlier turn (default {MIN_EARLIER}) ...")
+    s.add_argument("--strategy-min-runs", type=int, default=MIN_RUNS, metavar="N",
+                   help=f"... in at least this many runs that record their turns (default {MIN_RUNS})")
     s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand")
@@ -325,6 +337,9 @@ def main(argv=None):
     s.add_argument("--sample-max-share", type=float, default=0.2, metavar="F",
                    help="cost limit of sampling: tokens it may add, as a share of the tokens trimming removed (default 0.2)")
     s.add_argument("--sample-seed", type=int, default=0, help="seed of the sampling sequence")
+    s.add_argument("--switch-off-runs", type=int, default=1, metavar="N",
+                   help="--auto: stop trimming a tool only when its results were expanded in at least N distinct "
+                        "runs (default 1: one run with enough requests is enough)")
     s.set_defaults(func=cmd_proxy)
 
     s = sub.add_parser("promotions", help="list the fields promoted on evidence (--auto), or take them back")

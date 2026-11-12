@@ -1,0 +1,1037 @@
+{
+  "what": "offline: one projection per value of a low-cardinality argument against one projection per tool, leave-one-run-out",
+  "tokens": "tiktoken o200k_base",
+  "projection": "prudent",
+  "settings": {
+    "min_calls": 10,
+    "max_values": 5,
+    "min_profile_calls": 3,
+    "benefit_points": 5
+  },
+  "candidates": 18,
+  "arguments_with_one_profile_in_the_runs_evaluated": 1,
+  "with_a_benefit": 0,
+  "removing_more_and_losing_more": 0,
+  "cases": {
+    "C1": {
+      "runs_evaluated": 18,
+      "arguments_with_one_profile_in_the_runs_evaluated": 1,
+      "tools": {
+        "dataforseo_labs_google_keyword_ideas": {
+          "calls": 18,
+          "tokens": 87226,
+          "general": {
+            "tokens_after": 33646,
+            "calls_losing_a_used_field": 1,
+            "fields_lost": [
+              "items[].keyword_info.search_volume_trend.yearly"
+            ],
+            "removed": 0.6143
+          },
+          "arguments": {
+            "order_by": {
+              "values_over_every_run": {
+                "[\"relevance,desc\", \"keyword_info.search_volume,desc\"]": 32,
+                "[\"keyword_info.search_volume,desc\"]": 9,
+                "[\"relevance,desc\"]": 1
+              },
+              "profiles": {
+                "[\"relevance,desc\", \"keyword_info.search_volume,desc\"]": {
+                  "calls": 14,
+                  "runs": 14,
+                  "fields_used": 17,
+                  "fields_used_here_only": [
+                    "items[].keyword_info.monthly_searches.2025-09",
+                    "items[].keyword_info.search_volume_trend.yearly",
+                    "items[].keyword_properties.core_keyword"
+                  ]
+                },
+                "[\"keyword_info.search_volume,desc\"]": {
+                  "calls": 3,
+                  "runs": 3,
+                  "fields_used": 13,
+                  "fields_used_here_only": []
+                },
+                "[\"relevance,desc\"]": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 8,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 3,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 4,
+              "tokens_after": 33686,
+              "removed": 0.6138,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "items[].keyword_info.search_volume_trend.yearly"
+              ],
+              "points_removed_more_than_general": -0.0,
+              "benefit": false
+            }
+          }
+        },
+        "dataforseo_labs_google_ranked_keywords": {
+          "calls": 18,
+          "tokens": 204686,
+          "general": {
+            "tokens_after": 78966,
+            "calls_losing_a_used_field": 1,
+            "fields_lost": [
+              "items[].keyword_data.serp_info.se_results_count",
+              "items[].ranked_serp_element.se_results_count"
+            ],
+            "removed": 0.6142
+          },
+          "arguments": {
+            "order_by": {
+              "values_over_every_run": {
+                "[\"ranked_serp_element.serp_item.etv,desc\"]": 22,
+                "[\"keyword_data.keyword_info.search_volume,desc\"]": 21
+              },
+              "profiles": {
+                "[\"ranked_serp_element.serp_item.etv,desc\"]": {
+                  "calls": 9,
+                  "runs": 9,
+                  "fields_used": 19,
+                  "fields_used_here_only": []
+                },
+                "[\"keyword_data.keyword_info.search_volume,desc\"]": {
+                  "calls": 9,
+                  "runs": 9,
+                  "fields_used": 21,
+                  "fields_used_here_only": [
+                    "items[].keyword_data.serp_info.se_results_count",
+                    "items[].ranked_serp_element.se_results_count"
+                  ]
+                }
+              },
+              "profiles_evaluated": 2,
+              "calls_per_profile_median": 9.0,
+              "calls_per_profile_min": 9,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 77652,
+              "removed": 0.6206,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "items[].keyword_data.serp_info.se_results_count",
+                "items[].ranked_serp_element.se_results_count"
+              ],
+              "points_removed_more_than_general": 0.6,
+              "benefit": false
+            }
+          }
+        },
+        "dataforseo_labs_google_relevant_pages": {
+          "calls": 18,
+          "tokens": 19583,
+          "general": {
+            "tokens_after": 12643,
+            "calls_losing_a_used_field": 0,
+            "fields_lost": [],
+            "removed": 0.3544
+          },
+          "arguments": {
+            "filters": {
+              "values_over_every_run": {
+                "[[\"metrics.organic.count\", \">\", 0]]": 30,
+                "(absent)": 7,
+                "[[\"metrics.organic.etv\", \">\", 0]]": 5
+              },
+              "profiles": {
+                "[[\"metrics.organic.count\", \">\", 0]]": {
+                  "calls": 13,
+                  "runs": 13,
+                  "fields_used": 1,
+                  "fields_used_here_only": []
+                },
+                "[[\"metrics.organic.etv\", \">\", 0]]": {
+                  "calls": 4,
+                  "runs": 4,
+                  "fields_used": 1,
+                  "fields_used_here_only": []
+                },
+                "(absent)": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 1,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 4,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 1,
+              "tokens_after": 12643,
+              "removed": 0.3544,
+              "calls_losing_a_used_field": 0,
+              "fields_lost": [],
+              "points_removed_more_than_general": 0.0,
+              "benefit": false
+            }
+          }
+        },
+        "kw_data_google_trends_explore": {
+          "calls": 79,
+          "tokens": 421378,
+          "general": {
+            "tokens_after": 279931,
+            "calls_losing_a_used_field": 5,
+            "fields_lost": [
+              "items[].data[].date_from",
+              "items[].data[].date_to",
+              "items[].data[].timestamp"
+            ],
+            "removed": 0.3357
+          },
+          "arguments": {
+            "time_range": {
+              "values_over_every_run": {
+                "\"past_7_days\"": 107,
+                "\"past_30_days\"": 56,
+                "\"past_12_months\"": 10
+              },
+              "profiles": {
+                "\"past_7_days\"": {
+                  "calls": 48,
+                  "runs": 18,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                },
+                "\"past_30_days\"": {
+                  "calls": 28,
+                  "runs": 18,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                },
+                "\"past_12_months\"": {
+                  "calls": 3,
+                  "runs": 3,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 28,
+              "calls_per_profile_min": 3,
+              "new_cases_covered_by_the_general_projection": 3,
+              "tokens_after": 280112,
+              "removed": 0.3352,
+              "calls_losing_a_used_field": 5,
+              "fields_lost": [
+                "items[].data[].date_from",
+                "items[].data[].date_to",
+                "items[].data[].timestamp"
+              ],
+              "points_removed_more_than_general": -0.1,
+              "benefit": false
+            },
+            "type": {
+              "values_over_every_run": {
+                "\"web\"": 148,
+                "\"news\"": 19,
+                "\"youtube\"": 6
+              },
+              "profiles": {
+                "\"web\"": {
+                  "calls": 67,
+                  "runs": 18,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                },
+                "\"news\"": {
+                  "calls": 10,
+                  "runs": 10,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                },
+                "\"youtube\"": {
+                  "calls": 2,
+                  "runs": 2,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 10,
+              "calls_per_profile_min": 2,
+              "new_cases_covered_by_the_general_projection": 2,
+              "tokens_after": 279940,
+              "removed": 0.3357,
+              "calls_losing_a_used_field": 5,
+              "fields_lost": [
+                "items[].data[].date_from",
+                "items[].data[].date_to",
+                "items[].data[].timestamp"
+              ],
+              "points_removed_more_than_general": 0.0,
+              "benefit": false
+            }
+          }
+        }
+      },
+      "runs_counted_for_arguments_only": 24
+    },
+    "C2": {
+      "runs_evaluated": 18,
+      "arguments_with_one_profile_in_the_runs_evaluated": 0,
+      "tools": {
+        "serp_organic_live_advanced": {
+          "calls": 202,
+          "tokens": 903751,
+          "general": {
+            "tokens_after": 782355,
+            "calls_losing_a_used_field": 7,
+            "fields_lost": [
+              "items[].type"
+            ],
+            "removed": 0.1343
+          },
+          "arguments": {
+            "people_also_ask_click_depth": {
+              "values_over_every_run": {
+                "(absent)": 289,
+                "2": 13,
+                "1": 7
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 185,
+                  "runs": 18,
+                  "fields_used": 36,
+                  "fields_used_here_only": [
+                    "items[].images[].url",
+                    "items[].items[].alt",
+                    "items[].items[].images[].alt",
+                    "items[].items[].items[].alt",
+                    "items[].type"
+                  ]
+                },
+                "2": {
+                  "calls": 11,
+                  "runs": 2,
+                  "fields_used": 15,
+                  "fields_used_here_only": []
+                },
+                "1": {
+                  "calls": 6,
+                  "runs": 1,
+                  "fields_used": 27,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 11,
+              "calls_per_profile_min": 6,
+              "new_cases_covered_by_the_general_projection": 6,
+              "tokens_after": 782239,
+              "removed": 0.1345,
+              "calls_losing_a_used_field": 8,
+              "fields_lost": [
+                "items[].timestamp",
+                "items[].type"
+              ],
+              "points_removed_more_than_general": 0.0,
+              "benefit": false
+            }
+          }
+        }
+      },
+      "runs_counted_for_arguments_only": 6
+    },
+    "C3": {
+      "runs_evaluated": 8,
+      "arguments_with_one_profile_in_the_runs_evaluated": 0,
+      "tools": {
+        "openalex_search_works": {
+          "calls": 61,
+          "tokens": 2262885,
+          "general": {
+            "tokens_after": 1231195,
+            "calls_losing_a_used_field": 2,
+            "fields_lost": [
+              "results[].authorships[].raw_author_name",
+              "results[].best_oa_location.raw_type",
+              "results[].locations[].raw_type",
+              "results[].primary_location.raw_type",
+              "results[].type"
+            ],
+            "removed": 0.4559
+          },
+          "arguments": {
+            "filter": {
+              "values_over_every_run": {
+                "\"publication_year:2023-2026\"": 56,
+                "\"publication_year:2023-2025\"": 5
+              },
+              "profiles": {
+                "\"publication_year:2023-2026\"": {
+                  "calls": 56,
+                  "runs": 8,
+                  "fields_used": 50,
+                  "fields_used_here_only": [
+                    "results[].authorships[].author.display_name",
+                    "results[].authorships[].raw_author_name",
+                    "results[].best_oa_location.raw_type",
+                    "results[].best_oa_location.source.host_organization_lineage_names[]",
+                    "results[].locations[].raw_type",
+                    "results[].locations[].source.host_organization_lineage_names[]",
+                    "results[].open_access.oa_url",
+                    "results[].primary_location.raw_type",
+                    "results[].primary_location.source.host_organization_lineage_names[]",
+                    "results[].primary_topic.subfield.display_name",
+                    "results[].referenced_works[]",
+                    "results[].topics[].subfield.display_name"
+                  ]
+                },
+                "\"publication_year:2023-2025\"": {
+                  "calls": 5,
+                  "runs": 2,
+                  "fields_used": 38,
+                  "fields_used_here_only": [
+                    "results[].authorships[].institutions[].display_name"
+                  ]
+                }
+              },
+              "profiles_evaluated": 2,
+              "calls_per_profile_median": 30.5,
+              "calls_per_profile_min": 5,
+              "new_cases_covered_by_the_general_projection": 3,
+              "tokens_after": 1216543,
+              "removed": 0.4624,
+              "calls_losing_a_used_field": 2,
+              "fields_lost": [
+                "results[].authorships[].raw_author_name",
+                "results[].best_oa_location.raw_type",
+                "results[].locations[].raw_type",
+                "results[].primary_location.raw_type",
+                "results[].type"
+              ],
+              "points_removed_more_than_general": 0.6,
+              "benefit": false
+            },
+            "sort": {
+              "values_over_every_run": {
+                "\"relevance_score:desc\"": 49,
+                "\"cited_by_count:desc\"": 12
+              },
+              "profiles": {
+                "\"relevance_score:desc\"": {
+                  "calls": 49,
+                  "runs": 8,
+                  "fields_used": 50,
+                  "fields_used_here_only": [
+                    "results[].authorships[].author.display_name",
+                    "results[].authorships[].raw_author_name",
+                    "results[].best_oa_location.raw_type",
+                    "results[].best_oa_location.source.host_organization_lineage_names[]",
+                    "results[].locations[].raw_type",
+                    "results[].locations[].source.host_organization_lineage_names[]",
+                    "results[].open_access.oa_url",
+                    "results[].primary_location.raw_type",
+                    "results[].primary_location.source.host_organization_lineage_names[]",
+                    "results[].related_works[]",
+                    "results[].type"
+                  ]
+                },
+                "\"cited_by_count:desc\"": {
+                  "calls": 12,
+                  "runs": 8,
+                  "fields_used": 40,
+                  "fields_used_here_only": [
+                    "results[].authorships[].institutions[].display_name"
+                  ]
+                }
+              },
+              "profiles_evaluated": 2,
+              "calls_per_profile_median": 30.5,
+              "calls_per_profile_min": 12,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 1221599,
+              "removed": 0.4602,
+              "calls_losing_a_used_field": 2,
+              "fields_lost": [
+                "results[].authorships[].raw_author_name",
+                "results[].best_oa_location.raw_type",
+                "results[].locations[].raw_type",
+                "results[].primary_location.raw_type",
+                "results[].type"
+              ],
+              "points_removed_more_than_general": 0.4,
+              "benefit": false
+            }
+          }
+        }
+      },
+      "runs_counted_for_arguments_only": 0
+    },
+    "C4": {
+      "runs_evaluated": 36,
+      "arguments_with_one_profile_in_the_runs_evaluated": 0,
+      "tools": {
+        "stripe_list_charges": {
+          "calls": 98,
+          "tokens": 218880,
+          "general": {
+            "tokens_after": 111286,
+            "calls_losing_a_used_field": 0,
+            "fields_lost": [],
+            "removed": 0.4916
+          },
+          "arguments": {
+            "limit": {
+              "values_over_every_run": {
+                "10": 173,
+                "(absent)": 42,
+                "5": 1
+              },
+              "profiles": {
+                "10": {
+                  "calls": 55,
+                  "runs": 22,
+                  "fields_used": 26,
+                  "fields_used_here_only": []
+                },
+                "(absent)": {
+                  "calls": 42,
+                  "runs": 14,
+                  "fields_used": 28,
+                  "fields_used_here_only": [
+                    "data[].presentment_details.presentment_currency",
+                    "data[].refunds.data[].payment_intent"
+                  ]
+                },
+                "5": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 15,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 42,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 1,
+              "tokens_after": 107903,
+              "removed": 0.507,
+              "calls_losing_a_used_field": 3,
+              "fields_lost": [
+                "data[].object"
+              ],
+              "points_removed_more_than_general": 1.5,
+              "benefit": false
+            }
+          }
+        },
+        "stripe_list_invoices": {
+          "calls": 73,
+          "tokens": 341781,
+          "general": {
+            "tokens_after": 159354,
+            "calls_losing_a_used_field": 0,
+            "fields_lost": [],
+            "removed": 0.5338
+          },
+          "arguments": {
+            "limit": {
+              "values_over_every_run": {
+                "10": 131,
+                "(absent)": 30,
+                "5": 5,
+                "1": 1
+              },
+              "profiles": {
+                "10": {
+                  "calls": 37,
+                  "runs": 19,
+                  "fields_used": 32,
+                  "fields_used_here_only": []
+                },
+                "(absent)": {
+                  "calls": 30,
+                  "runs": 14,
+                  "fields_used": 43,
+                  "fields_used_here_only": [
+                    "data[].account_name",
+                    "data[].custom_fields[].value",
+                    "data[].customer_name",
+                    "data[].customer_phone",
+                    "data[].description",
+                    "data[].footer",
+                    "data[].latest_revision",
+                    "data[].lines.data[].discounts[]",
+                    "data[].lines.data[].pricing.price_details.product",
+                    "data[].lines.data[].quantity_decimal",
+                    "data[].number"
+                  ]
+                },
+                "5": {
+                  "calls": 5,
+                  "runs": 3,
+                  "fields_used": 31,
+                  "fields_used_here_only": []
+                },
+                "1": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 14,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 4,
+              "calls_per_profile_median": 17.5,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 4,
+              "tokens_after": 148226,
+              "removed": 0.5663,
+              "calls_losing_a_used_field": 3,
+              "fields_lost": [
+                "data[].status",
+                "data[].webhooks_delivered_at"
+              ],
+              "points_removed_more_than_general": 3.2,
+              "benefit": false
+            }
+          }
+        }
+      },
+      "runs_counted_for_arguments_only": 50
+    },
+    "C5": {
+      "runs_evaluated": 22,
+      "arguments_with_one_profile_in_the_runs_evaluated": 0,
+      "tools": {
+        "gh_list_issues": {
+          "calls": 30,
+          "tokens": 389210,
+          "general": {
+            "tokens_after": 146822,
+            "calls_losing_a_used_field": 1,
+            "fields_lost": [
+              "[].author_association"
+            ],
+            "removed": 0.6228
+          },
+          "arguments": {
+            "page_n": {
+              "values_over_every_run": {
+                "(absent)": 15,
+                "2": 8,
+                "1": 7
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 15,
+                  "runs": 15,
+                  "fields_used": 6,
+                  "fields_used_here_only": [
+                    "[].assignees[].login",
+                    "[].body",
+                    "[].labels[].name",
+                    "[].title"
+                  ]
+                },
+                "2": {
+                  "calls": 8,
+                  "runs": 8,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                },
+                "1": {
+                  "calls": 7,
+                  "runs": 7,
+                  "fields_used": 3,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 8,
+              "calls_per_profile_min": 7,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 143696,
+              "removed": 0.6308,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "[].author_association"
+              ],
+              "points_removed_more_than_general": 0.8,
+              "benefit": false
+            },
+            "per_page": {
+              "values_over_every_run": {
+                "(absent)": 18,
+                "100": 10,
+                "10": 1,
+                "50": 1
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 18,
+                  "runs": 12,
+                  "fields_used": 6,
+                  "fields_used_here_only": [
+                    "[].assignees[].login",
+                    "[].body",
+                    "[].title"
+                  ]
+                },
+                "100": {
+                  "calls": 10,
+                  "runs": 9,
+                  "fields_used": 3,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                },
+                "10": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                },
+                "50": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 3,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 4,
+              "calls_per_profile_median": 5.5,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 2,
+              "tokens_after": 143546,
+              "removed": 0.6312,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "[].author_association"
+              ],
+              "points_removed_more_than_general": 0.8,
+              "benefit": false
+            },
+            "state": {
+              "values_over_every_run": {
+                "\"all\"": 13,
+                "\"open\"": 12,
+                "(absent)": 5
+              },
+              "profiles": {
+                "\"all\"": {
+                  "calls": 13,
+                  "runs": 8,
+                  "fields_used": 6,
+                  "fields_used_here_only": []
+                },
+                "\"open\"": {
+                  "calls": 12,
+                  "runs": 12,
+                  "fields_used": 5,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                },
+                "(absent)": {
+                  "calls": 5,
+                  "runs": 3,
+                  "fields_used": 4,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 12,
+              "calls_per_profile_min": 5,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 143126,
+              "removed": 0.6323,
+              "calls_losing_a_used_field": 4,
+              "fields_lost": [
+                "[].assignees[].login",
+                "[].author_association",
+                "[].body"
+              ],
+              "points_removed_more_than_general": 0.9,
+              "benefit": false
+            }
+          }
+        },
+        "gh_list_pull_requests": {
+          "calls": 31,
+          "tokens": 489597,
+          "general": {
+            "tokens_after": 131577,
+            "calls_losing_a_used_field": 1,
+            "fields_lost": [
+              "[].author_association"
+            ],
+            "removed": 0.7313
+          },
+          "arguments": {
+            "page_n": {
+              "values_over_every_run": {
+                "(absent)": 15,
+                "2": 9,
+                "1": 7
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 15,
+                  "runs": 15,
+                  "fields_used": 7,
+                  "fields_used_here_only": [
+                    "[].head.repo.description",
+                    "[].head.repo.owner.type",
+                    "[].title"
+                  ]
+                },
+                "2": {
+                  "calls": 9,
+                  "runs": 9,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                },
+                "1": {
+                  "calls": 7,
+                  "runs": 7,
+                  "fields_used": 5,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 9,
+              "calls_per_profile_min": 7,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 130652,
+              "removed": 0.7331,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "[].author_association"
+              ],
+              "points_removed_more_than_general": 0.2,
+              "benefit": false
+            },
+            "per_page": {
+              "values_over_every_run": {
+                "(absent)": 19,
+                "100": 10,
+                "10": 1,
+                "50": 1
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 19,
+                  "runs": 12,
+                  "fields_used": 7,
+                  "fields_used_here_only": [
+                    "[].head.repo.description",
+                    "[].head.repo.owner.type"
+                  ]
+                },
+                "100": {
+                  "calls": 10,
+                  "runs": 9,
+                  "fields_used": 5,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                },
+                "10": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                },
+                "50": {
+                  "calls": 1,
+                  "runs": 1,
+                  "fields_used": 4,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 4,
+              "calls_per_profile_median": 5.5,
+              "calls_per_profile_min": 1,
+              "new_cases_covered_by_the_general_projection": 2,
+              "tokens_after": 130650,
+              "removed": 0.7331,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "[].author_association"
+              ],
+              "points_removed_more_than_general": 0.2,
+              "benefit": false
+            },
+            "state": {
+              "values_over_every_run": {
+                "\"all\"": 14,
+                "\"open\"": 12,
+                "(absent)": 5
+              },
+              "profiles": {
+                "\"all\"": {
+                  "calls": 14,
+                  "runs": 8,
+                  "fields_used": 7,
+                  "fields_used_here_only": []
+                },
+                "\"open\"": {
+                  "calls": 12,
+                  "runs": 12,
+                  "fields_used": 6,
+                  "fields_used_here_only": [
+                    "[].author_association"
+                  ]
+                },
+                "(absent)": {
+                  "calls": 5,
+                  "runs": 3,
+                  "fields_used": 6,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 12,
+              "calls_per_profile_min": 5,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 130087,
+              "removed": 0.7343,
+              "calls_losing_a_used_field": 3,
+              "fields_lost": [
+                "[].author_association",
+                "[].body",
+                "[].head.repo.description",
+                "[].head.repo.owner.type"
+              ],
+              "points_removed_more_than_general": 0.3,
+              "benefit": false
+            }
+          }
+        },
+        "gh_list_workflow_runs": {
+          "calls": 29,
+          "tokens": 491950,
+          "general": {
+            "tokens_after": 96437,
+            "calls_losing_a_used_field": 1,
+            "fields_lost": [
+              "workflow_runs[].display_title"
+            ],
+            "removed": 0.804
+          },
+          "arguments": {
+            "page_n": {
+              "values_over_every_run": {
+                "(absent)": 15,
+                "1": 7,
+                "2": 7
+              },
+              "profiles": {
+                "(absent)": {
+                  "calls": 15,
+                  "runs": 15,
+                  "fields_used": 5,
+                  "fields_used_here_only": []
+                },
+                "1": {
+                  "calls": 7,
+                  "runs": 7,
+                  "fields_used": 6,
+                  "fields_used_here_only": [
+                    "workflow_runs[].display_title"
+                  ]
+                },
+                "2": {
+                  "calls": 7,
+                  "runs": 7,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 3,
+              "calls_per_profile_median": 7,
+              "calls_per_profile_min": 7,
+              "new_cases_covered_by_the_general_projection": 0,
+              "tokens_after": 95195,
+              "removed": 0.8065,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "workflow_runs[].display_title"
+              ],
+              "points_removed_more_than_general": 0.2,
+              "benefit": false
+            },
+            "per_page": {
+              "values_over_every_run": {
+                "100": 9,
+                "50": 8,
+                "30": 5,
+                "10": 3,
+                "20": 2,
+                "(absent)": 2
+              },
+              "profiles": {
+                "100": {
+                  "calls": 9,
+                  "runs": 9,
+                  "fields_used": 6,
+                  "fields_used_here_only": [
+                    "workflow_runs[].display_title"
+                  ]
+                },
+                "50": {
+                  "calls": 8,
+                  "runs": 6,
+                  "fields_used": 5,
+                  "fields_used_here_only": []
+                },
+                "30": {
+                  "calls": 5,
+                  "runs": 4,
+                  "fields_used": 5,
+                  "fields_used_here_only": []
+                },
+                "10": {
+                  "calls": 3,
+                  "runs": 3,
+                  "fields_used": 0,
+                  "fields_used_here_only": []
+                },
+                "20": {
+                  "calls": 2,
+                  "runs": 2,
+                  "fields_used": 5,
+                  "fields_used_here_only": []
+                },
+                "(absent)": {
+                  "calls": 2,
+                  "runs": 1,
+                  "fields_used": 5,
+                  "fields_used_here_only": []
+                }
+              },
+              "profiles_evaluated": 6,
+              "calls_per_profile_median": 4.0,
+              "calls_per_profile_min": 2,
+              "new_cases_covered_by_the_general_projection": 7,
+              "tokens_after": 95419,
+              "removed": 0.806,
+              "calls_losing_a_used_field": 1,
+              "fields_lost": [
+                "workflow_runs[].display_title"
+              ],
+              "points_removed_more_than_general": 0.2,
+              "benefit": false
+            }
+          }
+        }
+      },
+      "runs_counted_for_arguments_only": 0
+    }
+  }
+}

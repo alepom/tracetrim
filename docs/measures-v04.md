@@ -94,6 +94,11 @@ Results: `results/v04/e3.json`. Median and range per arm:
 The two hypotheses on the organisation of calls compare the median of one arm with the best run of the other,
 and **both failed as stated**. What the runs show is different on the two simulated cases, and they are read apart.
 
+Why they failed says something about the rule, not about these results, which stay as they are. "The median of
+one arm against the extreme of the other" lets a single run decide: with six runs per arm, one run out of the
+ordinary in the arm without the strategy is enough to fail the hypothesis, and that is what happened on C5. A
+protocol that wants to know whether an arm is usually shorter should compare what is usual in both.
+
 - **C5, where this model issues one call per turn.** Without the strategy, five runs of six made every call in
   a turn of its own (14 to 19 turns); the sixth grouped them and took 5. With the strategy all six runs took
   5 to 8 turns, with the same number of calls. The median went from 17 turns to 6 and the billed input was
@@ -133,6 +138,43 @@ ones here. Without the strategy `gpt-5.6-terra` took a median of 4 turns on C4, 
 `gemini-3.8-flash` 3.5, 6 and 14. With it, 4, 4 and 10 against 3, 5 and 10.5. E1 had no C5: in the eight
 runs of the original study that model took a median of 4 turns there.
 
+## Offline, on the runs already recorded
+
+Three recalculations made after E3, with no new run. None of them was in a protocol.
+
+**Projections per mode of use** (`python -m experiments.modes`, `results/v04/modes.json`). Would one
+projection per value of a low-cardinality argument (a result type, a time range, a sort order) do better than
+the projection per tool? On the 102 runs in which the model saw whole results and the outputs are those of the
+calls (the original study's first phase, E1 without trimming, E3 on the simulated cases), each run held out in
+turn:
+
+- 18 candidate arguments on 11 tools, identifiers left out.
+- **None shows a benefit.** The rule, written before the numbers: at least 5 more points of the tool's tokens
+  removed, without more calls losing a field the run used. The most any candidate adds is 3.2 points; 16 of 18
+  add less than one.
+- **Five of them lose more**: a field the run used is removed in more calls than with the general
+  projection, because a profile learns from fewer calls.
+- **Fragmentation**: 8 candidates have a profile with fewer than three calls, and 35 held-out calls fell on a
+  profile too thin to have its own projection and were treated with the general one.
+- **The trends tool**, removed almost whole in E2 and then asked back: neither of its two candidate arguments
+  explains it. The fields the runs reuse are the same for every result type and every time range. In the run
+  that got the tool switched off, the agent asked for the series (`items[].data`) on its first two calls and
+  not on the next two: a need for the data read while reasoning, which leaves no trace in the answer.
+
+So the specialisation is not implemented. The script detects a benefit when there is one (a test builds such
+a case).
+
+**The switch-off with evidence from more runs** (`python -m experiments.switch_off_recalc`,
+`results/v04/switch_off.json`): on the ten sequences of E2, one tool was switched off, on the evidence of the
+first run alone. Asking for results expanded in 2 distinct runs, or 3, it would not have been at that point;
+the replay of the rule as run gives back what the ten work directories recorded. The setting exists and is off
+by default ([adaptive.md](adaptive.md)).
+
+**Rows** (`python -m experiments.rows`, `results/v04/rows.json`): of the 10 `expand` requests of E1 and E2 that
+gave nothing back, 7 asked for more rows with an id that did not exist, and 2 named an element by its index,
+which `expand` now accepts. On the search-data API the rows a run reuses are the first ones in 25% of the calls,
+and a cut to five rows would have removed a reused one in 92%: [rows.md](rows.md).
+
 ## Spend
 
 | | Runs | Model, USD |
@@ -168,6 +210,9 @@ provider. One attempt was refused before anything was generated, at no cost; no 
 python -m experiments.analyze_v04                 # the tables, from the runs (they are not in git: see docs/traces-v04.md)
 python -m experiments.analyze_v04 --e3            # the tables of E3
 python -m experiments.e3_independence             # E3, post hoc: the calls that could have been made earlier
+python -m experiments.modes                       # offline: projections per mode of use
+python -m experiments.switch_off_recalc           # offline: the switch-off of a tool, by the runs of evidence asked
+python -m experiments.rows                        # offline: requests for rows, and list elements reused
 python -m experiments.run --e3 schedule           # the runs of protocol-v04-e3.md, in order
 python -m experiments.run --v04 schedule          # the runs of the protocol, in order
 python -m experiments.run --v04 dry-run /tmp/dry  # every arm with a stub in place of the model: no spend

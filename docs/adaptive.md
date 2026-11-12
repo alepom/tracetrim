@@ -55,6 +55,20 @@ When the run closes this becomes evidence, per field and per kind, as the set of
   again. Reasoning is not visible, so nothing is ever removed on that ground.
 - With an MCP proxy the evidence also records the server and the upstream tool a call went to.
 
+### What `expand` accepts
+
+- **A path, a group, or everything**: `items[].title`, `items[]`, `"*"`. A path stands for everything under it.
+- **The position of an element**, from zero: `data[0].url` is `data[].url` for the first element of `data`
+  only, and `data[2]` is the third element whole. The reply holds the elements asked for and no others, in
+  their original order; positions can be nested (`data[0].lines[1].sku`) and mixed with plain paths, which
+  still mean every element. As evidence an index counts as `[]`: asking for a field of one element is
+  asking for that field. Slices (`items[10:]`) are not paths: `expand` gives back what was removed from a
+  result, never more rows than the tool returned ([rows.md](rows.md)).
+- **An unknown `call_id`** gets a reply that says so, names the three most recent valid ids with their
+  tools, and recalls that only a result ending with a `[trimmed]` line can be expanded. It counts against no
+  tool. Until now the reply was `Error: unknown call_id.` and nothing else; in the measures, agents that
+  got it had made up or cut short the id, mostly to ask for more rows of a result that was whole.
+
 ## Promotion (`--promote`)
 
 A field the projection removes is kept from then on when:
@@ -72,6 +86,14 @@ to come back in a second, independent run. Promotion starts once trimming has st
   requests also came from as many runs as a promotion needs. Switching the whole tool off stays as the
   last resort: it still happens when requests remain frequent, for example an agent that always asks
   for everything.
+- **Evidence from more than one run** (`--switch-off-runs N`, `Adaptive(switch_off_runs=N)`; default 1, as
+  until now). With the default, one run is enough: four filtered results of a tool, two of them expanded,
+  and the tool stops being trimmed when that run closes, the first run included. With N, the expanded
+  results must come from at least N distinct runs. The larger of this and the runs a promotion needs
+  applies. Recalculated offline on the ten sequences of E2 (`python -m experiments.switch_off_recalc`,
+  `results/v04/switch_off.json`): one tool was switched off as run, in the first run of a sequence; with 2
+  or 3 runs asked for, none would have been at that point. What the agent would have asked of that tool in
+  the later runs, had it stayed trimmed, is not in the traces.
 - **A field that came back by itself counts as a correction too.** When a recovered field is written and
   ordinary learning keeps it, the tool's count starts again as after a promotion: the requests that asked
   for it are settled. The report lists these fields.
@@ -133,6 +155,29 @@ passed, without the line. Fewer tokens, and nothing removed.
 
 Both are in the report page and in `report.json` (`lists`, `arguments`), also from `tracetrim report`.
 
+## Calls per turn, and a hint on the skill's strategy
+
+When the calls of a run say which model turn made them (`AutoTrim.output(..., turn=...)`; an MCP proxy does
+not see turns), the report has one more measure per run: the turns, the turns that made several calls, and
+an estimate of the calls that could have been made in an earlier turn.
+
+- **The estimate is a heuristic** (`tracetrim.turns`). A call depends on an earlier result only when one of
+  its arguments is an identifier that result returned, recognised by the name of the argument or the shape
+  of the value; any other argument is taken as known from the start. The longest chain gives the fewest
+  turns a run needed. It cannot know that a model wanted to read one result before asking for the next:
+  it is a lower bound on the turns.
+- **The hint.** When at most 20% of the turns with calls make several calls, and at least 25% of the calls
+  could have been made earlier, over at least 2 runs, the report adds a suggestion: the strategy level of
+  the skill ([skill.md](skill.md)) might reduce the turns. It points to the measure behind it, E3 in
+  [measures-v04.md](measures-v04.md).
+- **Manual, always.** The suggestion is marked MANUAL and changes no configuration: tracetrim never turns
+  the strategy on. The thresholds are `tracetrim report --strategy-max-several`, `--strategy-min-earlier`
+  and `--strategy-min-runs`, and the arguments of `tracetrim.turns.summarise`; in automatic mode the
+  defaults apply, and the report records the thresholds it used.
+- On the runs of E3 the hint is given for the agent on which the model made one call per turn (5% of the
+  turns with several calls, 77% of the calls could have been earlier) and not for the one on which it
+  already grouped them (66%, 19%), nor for either agent once the strategy was on.
+
 ## Files
 
 | File | Content |
@@ -140,7 +185,7 @@ Both are in the report page and in `report.json` (`lists`, `arguments`), also fr
 | `state.json` | counters: runs, filtered and expanded results, sampling, closings |
 | `evidence.json` | evidence per tool and field (run names), promotions with their reasons |
 | `evidence/run-0007.jsonl` | the notes of one run: exposures and `expand` requests |
-| `report.json`, `report.html` | section `adaptive`: promotions, their effect on tokens, evidence, sampling |
+| `report.json`, `report.html` | section `adaptive`: promotions, their effect on tokens, evidence, sampling; `turns`: calls per turn |
 
 Every file is written aside and renamed: a process killed while writing leaves the previous content.
 One lock protects what tool calls and the learning thread share. Work directories of 0.3.5 load as they are.

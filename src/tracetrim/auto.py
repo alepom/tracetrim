@@ -47,7 +47,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import evidence, store
+from . import evidence, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine
 from .evidence import Adaptive
@@ -67,6 +67,17 @@ DONE_REPLY = "Recorded."     # constant, and terminal: it never asks the model f
 # the agent asked to expand at least EXPAND_MAX_RATE of them.
 EXPAND_MIN_CALLS = 4
 EXPAND_MAX_RATE = 0.5
+
+
+def runs_needed(adaptive: Adaptive) -> int:
+    """The distinct runs the expanded results of a tool must come from, before it is switched off."""
+    return max(adaptive.switch_off_runs if adaptive.switch_off_runs > 1 else 0,
+               adaptive.promote_requested_runs if adaptive.promote else 0)
+
+
+def over_expanded(filtered: int, expanded: int, runs: int, needed: int = 0) -> bool:
+    """The rule of the switch-off: enough filtered results, enough of them expanded, in enough runs."""
+    return filtered >= EXPAND_MIN_CALLS and expanded / filtered >= EXPAND_MAX_RATE and runs >= needed
 
 
 class Learner:
@@ -298,6 +309,7 @@ class Learner:
         traces = [load(p) for p in learn_from]
         usages = [analyse(t) for t in traces]
         d = rp.compute([t.name for t in traces], usages)
+        d["turns"] = turns.summarise(traces)
         sugg = rp.suggestions(d)
         config, projection = rp.build_config(d, sugg, usages, "report.projection.json")
         d["lists"] = lists.summarise([lists.element_usage(t) for t in traces])
@@ -408,12 +420,12 @@ class Learner:
         tool is corrected, by a promotion or by ordinary learning keeping a
         recovered field: only requests the correction did not settle count. With promotion on, the requests must also come
         from as many runs as a promotion by request needs, so that the targeted
-        correction gets its chance first."""
-        runs_needed = self.adaptive.promote_requested_runs if self.adaptive.promote else 0
+        correction gets its chance first. `Adaptive(switch_off_runs=N)` asks the
+        same of every tool, promotion or not: results expanded in N distinct runs."""
+        needed = runs_needed(self.adaptive)
         for tool, n in self.state["trimmed"].items():
-            e = self.state["expanded"].get(tool, 0)
-            if (n >= EXPAND_MIN_CALLS and e / n >= EXPAND_MAX_RATE and tool not in self.state["off"]
-                    and len(self.state["expand_runs"].get(tool, [])) >= runs_needed):
+            if tool not in self.state["off"] and over_expanded(
+                    n, self.state["expanded"].get(tool, 0), len(self.state["expand_runs"].get(tool, [])), needed):
                 self.state["off"].append(tool)
 
     def initial_policy(self) -> Policy | None:

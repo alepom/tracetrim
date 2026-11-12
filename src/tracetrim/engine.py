@@ -13,6 +13,7 @@ agent its own proxy (or its own `AutoTrim`) and work directory.
 from __future__ import annotations
 
 import json
+import re
 import secrets
 from pathlib import Path
 
@@ -34,6 +35,36 @@ EXPAND = {
 MAX_GROUPS = 25
 MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MARK = "\n[trimmed] "        # starts the line that follows a filtered result
+RECENT_IDS = 3               # valid call_ids named in the reply to an unknown one
+_INDEX = re.compile(r"\[(\d+)\]")
+_NOTHING = object()
+
+
+def generic(path: str) -> str:
+    """`data[0].x` -> `data[].x`: the path of a field, whatever the element."""
+    return _INDEX.sub("[]", path)
+
+
+def _matches(wanted: str) -> re.Pattern:
+    """A requested path as a pattern on the positions of a result: `[]` is any
+    element, `[2]` the third one; a path also stands for everything under it."""
+    return re.compile(re.escape(wanted).replace(r"\[\]", r"\[\d+\]") + r"(?:$|\.|\[)")
+
+
+def _pick(node, wanted: list[re.Pattern], found: set, at: str = ""):
+    """What a result holds at the requested positions. Elements come in their
+    original order; those that hold nothing requested are left out."""
+    if isinstance(node, dict):
+        out = {k: r for k, v in node.items()
+               if (r := _pick(v, wanted, found, f"{at}.{k}" if at else k)) is not _NOTHING}
+        return out or _NOTHING
+    if isinstance(node, list):
+        out = [r for i, v in enumerate(node) if (r := _pick(v, wanted, found, f"{at}[{i}]")) is not _NOTHING]
+        return out or _NOTHING
+    if any(w.match(at) for w in wanted):
+        found.add(generic(at))
+        return node
+    return _NOTHING
 
 
 class Trimmer:
@@ -113,13 +144,24 @@ class Trimmer:
             kept.pop(call_id, None)
 
     def recover(self, call_id: str, wanted: list[str]) -> tuple[str, tuple[str, ...]]:
-        """The reply to an `expand` request, and the paths it gave back."""
+        """The reply to an `expand` request, and the paths it gave back.
+
+        A path may name one element of a list by its position, from zero:
+        `data[0].x` is `data[].x` for the first element of `data` only. The
+        reply then holds the requested elements alone, in their original order.
+        For what is learned from the request, an index counts as `[]`: asking
+        for a field of one element is asking for that field."""
         payload = self.originals.get(call_id)
         if payload is None:
-            return "Error: unknown call_id.", ()
+            return self._unknown(call_id), ()
         hidden = self.hidden.get(call_id, set())
         if "*" in wanted:
             fields = set(hidden)
+        elif any(_INDEX.search(w) for w in wanted):
+            fields = set()
+            got = _pick(payload, [_matches(w) for w in wanted], fields)
+            if fields:
+                return json.dumps(got, ensure_ascii=False), tuple(sorted(fields))
         else:
             fields = {p for p, _ in leaves(payload)
                       if any(p == w or p.startswith(w + ".") or p.startswith(w + "[]") for w in wanted)}
@@ -129,6 +171,16 @@ class Trimmer:
                     + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else ".")), ()
         got = project(payload, fields)
         return json.dumps(got if isinstance(got, (dict, list)) else {}, ensure_ascii=False), tuple(sorted(fields))
+
+    def _unknown(self, call_id: str) -> str:
+        """The model made up or cut short an id, or asked about a result that was
+        not trimmed: say which ids exist and what `expand` is for."""
+        recent = list(self.originals)[-RECENT_IDS:][::-1]
+        valid = ("Most recent valid call_ids: " + ", ".join(f"{c} ({self.tool_of.get(c, '?')})" for c in recent) + "."
+                 if recent else "No result has been trimmed so far.")
+        return (f"Error: unknown call_id {str(call_id)[:40]!r}. expand only works on a result that ends with a line "
+                f"'[trimmed] call_id=...', with the call_id written there; a result without that line is complete "
+                f"as it is, and expand cannot give more rows of it. {valid}")
 
 
 class Engine:
@@ -189,6 +241,7 @@ class Engine:
         text, returned = self.trimmer.recover(call_id, fields)
         if tool is not None and self.learner is not None:
             hidden = self.trimmer.hidden.get(call_id, set())
+            fields = [generic(w) for w in fields]          # an index names an element, not another field
             named = [w for w in fields if not is_broad(w, hidden)]
             recovered = sorted(set(returned) & hidden)
             self.learner.expand(
