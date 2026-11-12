@@ -28,6 +28,30 @@ adds an automatic mode: put one proxy in front of your MCP servers and it observ
 trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
 anything that matters.
 
+### What's new in 0.4
+
+Version 0.4 makes the automatic mode easier to trust in daily use. Every new function that changes what
+the model receives is off by default; the [CHANGELOG](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md) lists every behaviour that changed.
+
+- **Compact JSON from the first call.** In automatic mode, JSON outputs reach the model without
+  indentation and without spaces after separators, before anything is learned. Nothing is removed;
+  `--no-compact` turns it off.
+- **A skill instead of long tool descriptions.** The instructions for `expand` and `tracetrim_done` are
+  one versioned text, published through the MCP Skills extension (`--no-skill` to turn it off), with an
+  optional *strategy* level on organising tool calls (`--skill-strategy`).
+- **Learning from `expand`.** Requests are recorded as evidence per field. With `--promote`, a field the
+  agent keeps asking for is kept from then on, before the whole tool is switched off; with
+  `--sample-rate`, a few results go on whole to see whether the agent uses what is removed. A tool is
+  switched off only on evidence from two runs.
+- **Small results are passed whole** when trimming them, with the line that says what was removed,
+  would not save anything.
+- **`expand` takes positions** (`data[0].url`), and its errors say what to do.
+- **More robust runs**: repeated closings change nothing, a closing without an answer is refused, files
+  are written atomically.
+
+The new functions were checked by tests and by live runs after the paper, apart from its studies:
+[docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md).
+
 ## Install
 
 ```bash

@@ -1,13 +1,14 @@
 # Changelog
 
-All versions were developed on 2026-11-04, together with the study described in the
+Versions up to 0.3.5 were developed on 2026-11-04, together with the study described in the
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
-## Unreleased
+## 0.4.0
 
-Work on the branch `feat/adaptive-learning-mcp-skills`, after the studies of the paper: checked by
-tests, not evaluated under a protocol. Nothing here changes the numbers of the paper.
+Developed from 2026-11-11 to 2026-11-12, after the studies of the paper: checked by tests and by the
+measures in `docs/measures-v04.md`, which are not part of the paper. Nothing here changes the numbers
+of the paper. The version archived on Zenodo, and cited in `CITATION.cff`, is still 0.3.4.
 
 - **The tracetrim skill** ([docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)).
   The instructions for `tracetrim_done` and `expand` are one versioned text, on two levels: *base*,
