@@ -110,16 +110,20 @@ class Run:
     experiment: str            # "E1" | "E2"
     case: str
     arm: str
-    n: int                     # E1: the run of the arm; E2: the run within its sequence
+    n: int                     # E1, E3: the run of the arm; E2: the run within its sequence
     sequence: int = 0          # E2 only
+    pilot: bool = False        # E3 only: a pilot run, used in no result
 
     @property
     def id(self) -> str:
-        return f"E1-{self.arm}-{self.n}" if self.experiment == "E1" else f"E2-{self.arm}-s{self.sequence}-r{self.n}"
+        if self.experiment == "E2":
+            return f"E2-{self.arm}-s{self.sequence}-r{self.n}"
+        return f"{self.experiment}-{'pilot-' if self.pilot else ''}{self.arm}-{self.n}"
 
     @property
     def dataforseo(self) -> bool:
-        return self.case in DATAFORSEO
+        # E3 answers the DataForSEO cases from recorded outputs: it never calls the provider.
+        return self.case in DATAFORSEO and self.experiment != "E3"
 
 
 def e2_sequences(where: "Where | None" = None) -> dict[str, int]:
@@ -208,14 +212,25 @@ def calls(trace_path: str | Path) -> list[dict]:
 
 # -- stop rules ----------------------------------------------------------------
 
-def ledger(where: Where) -> list[dict]:
-    if not where.ledger.exists():
+def ledger(where: Where, path: Path | None = None) -> list[dict]:
+    path = path or where.ledger
+    if not path.exists():
         return []
-    return [json.loads(line) for line in where.ledger.read_text().splitlines() if line.strip()]
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def spent(where: Where) -> float:
-    return sum(e["cost_usd"] for e in ledger(where))
+def spent(where: Where, path: Path | None = None) -> float:
+    return sum(e["cost_usd"] for e in ledger(where, path))
+
+
+def book(where: Where, run: "Run") -> dict:
+    """The ledger, the limits and the prices a run is accounted with. E3 has its own:
+    another model, another provider, another budget (experiments/e3.py)."""
+    if run.experiment == "E3":
+        from . import e3
+        return e3.book(where)
+    return {"ledger": where.ledger, "cap": CAP, "cost": cost, "model": PRICES["model"], "prices": "experiments/prices.json",
+            "may_start": may_start}
 
 
 def dataforseo_runs(where: Where) -> int:
@@ -379,7 +394,7 @@ def projection_keeps(workdir: Path, case: str) -> dict:
 def instructions(run: Run) -> tuple[str, str]:
     """(the case's system prompt, the skill text this arm adds to it)."""
     system = (PROMPTS / f"{run.case.lower()}-system.md").read_text(encoding="utf-8")
-    if run.experiment == "E1":
+    if run.experiment in ("E1", "E3"):
         strategy, trimming = E1_ARMS[run.arm]
         added = skill.text(strategy=strategy, done=False, expand=trimming)
     else:
@@ -397,6 +412,9 @@ def text_of(item) -> str:
 
 
 def base_toolset(run: Run, dry: bool):
+    if run.experiment == "E3" and run.case in DATAFORSEO:
+        from .recorded import Recorded          # recorded outputs, in a paid run as in a dry one: never the provider
+        return Recorded(run.case)
     if dry and run.dataforseo:
         return Replay(run.case, recorded(run.case)["calls"])
     if run.experiment == "E2" and run.case == "C4":
@@ -406,11 +424,13 @@ def base_toolset(run: Run, dry: bool):
 
 async def execute(run: Run, where: Where = HERE, client=None, model: str | None = None, dry: bool = False) -> dict:
     """One run: the loop, the trace, the meta file, the ledger line."""
-    warning = may_start(where, run)
+    acct = book(where, run)
+    cost = acct["cost"]                      # noqa: F811  (the prices of this run's experiment)
+    warning = acct["may_start"](where, run)
     if warning:
         print(warning, flush=True)
-    before = spent(where)
-    model = model or PRICES["model"]
+    before = spent(where, acct["ledger"])
+    model = model or acct["model"]
     count = tokenizer()
     system, added = instructions(run)
     system_full = system + ("\n\n" + added if added else "")
@@ -436,7 +456,10 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
     elif E1_ARMS[run.arm][1]:
         engine = Engine(policy=fixed_policy(run.case))
 
-    if client is None:
+    if client is None and run.experiment == "E3":
+        from .gemini import Gemini
+        client = Gemini()
+    elif client is None:
         from openai import AsyncOpenAI
         client = AsyncOpenAI(timeout=900.0, max_retries=0)
     events = [{"kind": "prompt", "text": system_full, "turn": -1}, {"kind": "prompt", "text": user, "turn": -1}]
@@ -492,6 +515,8 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                                         else CLIENT_ERROR if len(getattr(base, "tool_failures", [])) > failed_before
                                         else TOOL_ERROR if getattr(base, "last_is_error", False) else OK)
                         outcomes[e["outcome"]] = outcomes.get(e["outcome"], 0) + 1
+                        if getattr(base, "last_match", None):          # answered from recorded outputs (E3)
+                            e["replay"], e["replay_source"] = base.last_match, base.last_source
                         tokens["outputs_original"] += count(original)
                         tokens["outputs_sent"][how] = tokens["outputs_sent"].get(how, 0) + count(sent)
                         exposure[how] = exposure.get(how, 0) + 1
@@ -515,7 +540,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                       f"· output {turn['output']:>6,} · run {run_cost:.3f} USD", flush=True)
                 if not pending:
                     break
-                if before + run_cost >= CAP:
+                if before + run_cost >= acct["cap"]:
                     flags.append("stopped_by_budget")
                     break
                 if n_calls >= GUARD_CALLS or len(turns) >= GUARD_TURNS:
@@ -524,11 +549,13 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                 kwargs = {"model": model, "instructions": system_full, "tools": tools.schemas,
                           "previous_response_id": r.id, "input": outputs}
             dataforseo_calls = dict(counted.reached) if run.dataforseo else {}
+            replay = dict(base.matches) if hasattr(base, "matches") else None
             rejections, failures, retries = base.rejections, getattr(base, "tool_failures", []), getattr(base, "retries", 0)
     except BaseException:
         # The tokens of an aborted run are spent all the same: the ledger must see them.
-        _ledger(where, {"experiment": run.experiment, "case": run.case, "run": run.id, "arm": run.arm, "model": model,
-                        "aborted": True, "cost_usd": round(cost(total), 4), "usage": total, "dry_run": dry})
+        _ledger(acct["ledger"], {"experiment": run.experiment, "case": run.case, "run": run.id, "arm": run.arm,
+                                 "model": model, "aborted": True, "cost_usd": round(cost(total), 4), "usage": total,
+                                 "dry_run": dry})
         raise
 
     messages = [e["text"] for e in events if e["kind"] == "message"]
@@ -565,12 +592,15 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
         "turns": len(turns), "calls": n_calls, "expand_calls": n_expand, "usage": total, "usage_per_turn": turns,
         "tokens": tokens, "exposure": exposure, "outcomes": outcomes, "dataforseo_calls": dataforseo_calls,
         "tool_schemas": {s["name"]: s["sha256"] for s in schemas},
+        # E3 on the DataForSEO cases: how the calls were answered from recorded outputs.
+        "replay": replay, "pilot": run.pilot,
         "domain_rejections": rejections, "tool_failures": failures, "retries": retries,
         "flags": flags + (["tool_failure"] if failures else []),
-        "adaptive": adaptive_meta, "cost_usd": round(cost(total), 4), "prices": "experiments/prices.json",
+        "adaptive": adaptive_meta, "cost_usd": round(cost(total), 4), "prices": acct["prices"],
     }
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    _ledger(where, {k: meta[k] for k in ("experiment", "case", "run", "arm", "model", "started", "cost_usd", "dry_run")}
+    _ledger(acct["ledger"], {k: meta[k] for k in ("experiment", "case", "run", "arm", "model", "started", "cost_usd",
+                                                    "dry_run")}
             | {"usage": total, "dataforseo_calls": sum(dataforseo_calls.values())})
     return meta
 
@@ -581,9 +611,9 @@ def _carries(text: str, field: str) -> bool:
     return isinstance(payload, (dict, list)) and any(p == field and v is not None for p, v in leaves(payload))
 
 
-def _ledger(where: Where, line: dict) -> None:
-    where.ledger.parent.mkdir(parents=True, exist_ok=True)
-    with where.ledger.open("a", encoding="utf-8") as fh:
+def _ledger(path: Path, line: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(line, ensure_ascii=False) + "\n")
 
 
@@ -612,8 +642,17 @@ class Stub:
     (E2), an `expand` for a needed field that a result does not carry, whose
     values it then writes in the answer."""
 
-    def __init__(self, script: dict, needs: dict | None = None, gate_probe: bool = False):
-        self.turns, self.answer = list(script["turns"]), script["answer"]
+    def __init__(self, script: dict, needs: dict | None = None, gate_probe: bool = False, perturb: bool = False):
+        self.turns, self.answer = [list(t) for t in script["turns"]], script["answer"]
+        if perturb and self.turns and self.turns[0]:
+            # Once, a call whose arguments were never recorded: the stand-in for the
+            # provider must answer it with the nearest recorded output, and say so.
+            c = dict(self.turns[0][0])
+            args = c["arguments"] if isinstance(c["arguments"], dict) else to_args(c["arguments"])
+            key = next((k for k, v in args.items() if isinstance(v, str)), None)
+            c["arguments"] = json.dumps({**args, key: args[key] + " novita"} if key else {**args, "note": "novita"},
+                                        ensure_ascii=False)
+            self.turns[0][0] = c
         self.needs = needs or {}
         self.gate_probe = gate_probe
         self.count = tokenizer()
@@ -680,7 +719,8 @@ class Stub:
 
 
 def stub_for(run: Run) -> Stub:
-    return Stub(recorded(run.case), NEEDS[run.case] if run.experiment == "E2" else None, gate_probe=run.dataforseo)
+    return Stub(recorded(run.case), NEEDS[run.case] if run.experiment == "E2" else None,
+                gate_probe=run.case in DATAFORSEO, perturb=run.experiment == "E3" and run.case in DATAFORSEO)
 
 
 async def dry_run(directory: str | Path, e2_runs: int = 2) -> list[dict]:

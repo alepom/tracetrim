@@ -170,6 +170,10 @@ async def _loop(case, run_id, model, arm, before, system, user, trace_path, meta
 
 
 def main():
+    if "--e3" in sys.argv[1:]:
+        # The runs of protocol-v04-e3.md, on another model: experiments/e3.py.
+        from . import e3
+        return e3.main([a for a in sys.argv[1:] if a != "--e3"])
     if "--v04" in sys.argv[1:]:
         # The runs of protocol-v04.md have their own arms, ledger and stop rules: experiments/v04.py.
         from . import v04

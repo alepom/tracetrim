@@ -23,3 +23,4 @@ publication/packages/
 build/
 dist/
 *:Zone.Identifier
+credentials*.json

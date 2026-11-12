@@ -1,0 +1,116 @@
+"""Gemini on Vertex AI behind the interface the study's loop already uses.
+
+The loop (experiments/v04.py) talks to a model through
+`client.responses.create(...)`: instructions, tool schemas, an input, and on
+later turns the id of the previous response with the tool outputs. This
+adapter gives that interface to the `google-genai` SDK, which is stateless:
+it keeps the conversation and sends it whole at every turn.
+
+What matters for the measure, checked on Google's documentation and on the
+SDK installed (google-genai 3.2.0) on 2026-11-11:
+
+- **Several calls in one turn.** The model may return several `function_call`
+  parts in one response. Nothing here asks for it or prevents it: the calling
+  mode is the default (AUTO), and every call of the response is passed on, in
+  the model's order, as one turn.
+- **Returning the results.** All the `function_response` parts of a turn go
+  back together, in ONE content, in the order of the calls, each with the
+  `id` and the name of its call.
+- **The model's own turn is sent back untouched**, as the response returned
+  it: its parts carry thought signatures that must not be rebuilt or merged.
+- Thinking is left at the model's default level; temperature and the like are
+  ignored by this model.
+- Billed tokens: input is `prompt_token_count` (the cached part is in it),
+  output is the answer plus the thinking tokens, as the price list bills them.
+
+The SDK is a dependency of the study, never of the library: nothing under
+src/ imports it.
+"""
+from __future__ import annotations
+
+import json
+import os
+from types import SimpleNamespace
+
+from .tools import env
+
+LOCATION = "global"
+
+
+def function_response_payload(output: str) -> dict:
+    """A tool's text as the object a function response carries. JSON objects go
+    as they are; anything else (a list, an error text) under one key."""
+    try:
+        data = json.loads(output)
+    except (TypeError, ValueError):
+        return {"output": output}
+    return data if isinstance(data, dict) else {"result": data}
+
+
+class Gemini:
+    """`client.responses.create(**kwargs)` for a Gemini model on Vertex AI."""
+
+    def __init__(self, client=None):
+        if client is None:
+            from google import genai
+            # The service account is found by the SDK through this variable: the file is never opened here.
+            for name in ("GOOGLE_APPLICATION_CREDENTIALS",):
+                if not os.environ.get(name) and env(name):
+                    os.environ[name] = env(name)
+            project = os.environ.get("GCP_PROJECT") or env("GCP_PROJECT")
+            if not project or not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+                raise SystemExit("GOOGLE_APPLICATION_CREDENTIALS and GCP_PROJECT are needed in .env")
+            client = genai.Client(vertexai=True, project=project, location=LOCATION)
+        self.client = client
+        self.history: dict[str, list] = {}           # response id -> the conversation up to and including it
+        self.calls: dict[str, tuple[str, str | None]] = {}     # our call id -> (name, the model's own id)
+        self.n = 0
+        self.responses = self
+
+    async def create(self, *, model: str, instructions: str, tools: list[dict], input: list[dict],
+                     previous_response_id: str | None = None, **_):
+        from google.genai import types
+        if previous_response_id is None:
+            contents = [types.Content(role="user", parts=[types.Part(text=i["content"]) for i in input])]
+        else:
+            parts = []
+            for item in input:                       # the results of one turn, in the order of its calls
+                name, model_id = self.calls[item["call_id"]]
+                part = types.Part.from_function_response(name=name, response=function_response_payload(item["output"]))
+                if model_id:
+                    part.function_response.id = model_id
+                parts.append(part)
+            contents = self.history[previous_response_id] + [types.Content(role="user", parts=parts)]
+        config = types.GenerateContentConfig(
+            system_instruction=instructions,
+            tools=[types.Tool(function_declarations=[
+                types.FunctionDeclaration(name=t["name"], description=t.get("description") or "",
+                                          parameters_json_schema=t.get("parameters") or {"type": "object"})
+                for t in tools])],
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True))
+        r = await self.client.aio.models.generate_content(model=model, contents=contents, config=config)
+        self.n += 1
+        rid = f"gemini-{self.n}"
+        candidate = r.candidates[0] if r.candidates else None
+        content = candidate.content if candidate is not None else None
+        out, text = [], []
+        for part in (content.parts if content is not None and content.parts else []):
+            if part.function_call is not None:
+                cid = f"g{len(self.calls) + 1}"
+                self.calls[cid] = (part.function_call.name, part.function_call.id)
+                out.append(SimpleNamespace(type="function_call", name=part.function_call.name, call_id=cid,
+                                           arguments=json.dumps(dict(part.function_call.args or {}), ensure_ascii=False)))
+            elif part.text and not part.thought:
+                text.append(part.text)
+        if text:
+            out.insert(0, SimpleNamespace(type="message", content=[SimpleNamespace(text="".join(text))]))
+        # The model's turn goes back as it came: its parts carry the thought signatures.
+        self.history[rid] = contents + ([content] if content is not None else [])
+        u = r.usage_metadata
+        return SimpleNamespace(
+            id=rid, output=out,
+            finish_reason=str(getattr(candidate, "finish_reason", None)),
+            usage=SimpleNamespace(
+                input_tokens=(u.prompt_token_count or 0) if u else 0,
+                output_tokens=((u.candidates_token_count or 0) + (u.thoughts_token_count or 0)) if u else 0,
+                input_tokens_details=SimpleNamespace(cached_tokens=(u.cached_content_token_count or 0) if u else 0)))

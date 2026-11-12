@@ -80,7 +80,24 @@ def _c4(ans, calls) -> dict:
                 lambda t: not STRIPE_ID.search(str(t.get("risposta_al_cliente", ""))))}
 
 
-CHECKS = {"C1": _c1, "C2": _c2, "C4": _c4}
+def _c5(ans, calls) -> dict:
+    causes = ans.get("root_causes") if isinstance(ans, dict) else None
+    causes = [c for c in causes if isinstance(c, dict)] if isinstance(causes, list) else []
+    every = lambda rule: bool(causes) and all(rule(c) for c in causes)     # noqa: E731
+    return {"at least one root cause": bool(causes),
+            "runs for every cause": every(lambda c: len(c.get("runs") or []) >= 1),
+            "workflow, job and step for every cause": every(lambda c: all(str(c.get(k) or "").strip() for k in ("workflow", "job", "step"))),
+            "an error line for every cause": every(lambda c: bool(str(c.get("error") or "").strip())),
+            "a next action for every cause": every(lambda c: bool(str(c.get("next_action") or "").strip())),
+            "a summary for the team": bool(str((ans or {}).get("summary") or "").strip()) if isinstance(ans, dict) else False}
+
+
+CHECKS = {"C1": _c1, "C2": _c2, "C4": _c4, "C5": _c5}
+
+# The checks on values the prompts prescribe for the arguments of the calls. They can be
+# read on any run, whatever the tools answered: E3 uses them on the cases with recorded outputs.
+PRESCRIBED = {"C1": ("every limit is 10", "every SERP depth is 10", "at most 5 keywords per Trends call"),
+              "C2": ("every SERP call asks Italy, Italian, depth 10",), "C4": (), "C5": ()}
 
 
 def coverage(path: Path, case: str) -> dict:

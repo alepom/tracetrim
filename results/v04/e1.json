@@ -52,6 +52,11 @@
   "e1": {
     "C1": {
       "R": {
+        "several_calls_share_per_run": {
+          "median": 0.75,
+          "min": 0.6667,
+          "max": 0.875
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 4,
@@ -156,6 +161,11 @@
         }
       },
       "S": {
+        "several_calls_share_per_run": {
+          "median": 0.8,
+          "min": 0.5556,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -260,6 +270,11 @@
         }
       },
       "T": {
+        "several_calls_share_per_run": {
+          "median": 0.875,
+          "min": 0.6,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -364,6 +379,11 @@
         }
       },
       "ST": {
+        "several_calls_share_per_run": {
+          "median": 0.8125,
+          "min": 0.6364,
+          "max": 0.8889
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 4,
@@ -470,6 +490,11 @@
     },
     "C2": {
       "R": {
+        "several_calls_share_per_run": {
+          "median": 0.6667,
+          "min": 0.6,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 3,
@@ -574,6 +599,11 @@
         }
       },
       "S": {
+        "several_calls_share_per_run": {
+          "median": 1.0,
+          "min": 0.5,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 4,
@@ -680,6 +710,11 @@
     },
     "C4": {
       "R": {
+        "several_calls_share_per_run": {
+          "median": 0.6667,
+          "min": 0.6667,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -780,6 +815,11 @@
         }
       },
       "S": {
+        "several_calls_share_per_run": {
+          "median": 0.6667,
+          "min": 0.6667,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -880,6 +920,11 @@
         }
       },
       "T": {
+        "several_calls_share_per_run": {
+          "median": 1.0,
+          "min": 0.6667,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -980,6 +1025,11 @@
         }
       },
       "ST": {
+        "several_calls_share_per_run": {
+          "median": 0.6667,
+          "min": 0.6667,
+          "max": 1.0
+        },
         "runs": 5,
         "flagged": 0,
         "gates_passed": 5,
@@ -1217,6 +1267,10 @@
         1,
         1
       ],
+      "share_of_turns_with_several_calls": 0.75,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 1,
       "calls_per_tool": {
@@ -1389,6 +1443,10 @@
         2,
         2
       ],
+      "share_of_turns_with_several_calls": 0.8571,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -1553,6 +1611,10 @@
         3,
         2
       ],
+      "share_of_turns_with_several_calls": 0.7143,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -1718,6 +1780,10 @@
         2,
         2
       ],
+      "share_of_turns_with_several_calls": 0.875,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -1884,6 +1950,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -2050,6 +2120,10 @@
         1,
         1
       ],
+      "share_of_turns_with_several_calls": 0.5556,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -2216,6 +2290,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.7778,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -2378,6 +2456,10 @@
         3,
         2
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -2542,6 +2624,10 @@
         3,
         2
       ],
+      "share_of_turns_with_several_calls": 0.8571,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -2709,6 +2795,10 @@
         2,
         2
       ],
+      "share_of_turns_with_several_calls": 0.8,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 1,
       "calls_per_tool": {
@@ -2875,6 +2965,10 @@
         2,
         2
       ],
+      "share_of_turns_with_several_calls": 0.8889,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -3038,6 +3132,10 @@
         "max": 0
       },
       "calls_in_turns": [],
+      "share_of_turns_with_several_calls": null,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {},
@@ -3120,6 +3218,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.75,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -3295,6 +3397,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.6364,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -3483,6 +3589,10 @@
         3,
         3
       ],
+      "share_of_turns_with_several_calls": 0.875,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -3667,6 +3777,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.6,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -3838,6 +3952,10 @@
         1,
         2
       ],
+      "share_of_turns_with_several_calls": 0.8571,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -4016,6 +4134,10 @@
         3,
         1
       ],
+      "share_of_turns_with_several_calls": 0.875,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -4204,6 +4326,10 @@
         3,
         2
       ],
+      "share_of_turns_with_several_calls": 0.875,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -4385,6 +4511,10 @@
         3,
         2
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -4558,6 +4688,10 @@
         1,
         4
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -4649,6 +4783,10 @@
         1,
         3
       ],
+      "share_of_turns_with_several_calls": 0.75,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 1,
       "calls_per_tool": {
@@ -4741,6 +4879,10 @@
         1,
         4
       ],
+      "share_of_turns_with_several_calls": 0.6,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 1,
       "calls_per_tool": {
@@ -4833,6 +4975,10 @@
         1,
         3
       ],
+      "share_of_turns_with_several_calls": 0.6,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 4,
       "calls_per_tool": {
@@ -4922,6 +5068,10 @@
         12,
         3
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 1,
       "calls_per_tool": {
@@ -5009,6 +5159,10 @@
         9,
         4
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 2,
       "calls_per_tool": {
@@ -5099,6 +5253,10 @@
         3,
         3
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 2,
       "calls_per_tool": {
@@ -5189,6 +5347,10 @@
         4,
         4
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 4,
       "calls_per_tool": {
@@ -5280,6 +5442,10 @@
         1,
         5
       ],
+      "share_of_turns_with_several_calls": 0.5,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 3,
       "calls_per_tool": {
@@ -5372,6 +5538,10 @@
         1,
         3
       ],
+      "share_of_turns_with_several_calls": 0.6,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 2,
       "calls_per_tool": {
@@ -5462,6 +5632,10 @@
         7,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -5575,6 +5749,10 @@
         5,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -5688,6 +5866,10 @@
         5,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -5800,6 +5982,10 @@
         5,
         6
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -5905,6 +6091,10 @@
         5,
         6
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6011,6 +6201,10 @@
         6,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6123,6 +6317,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6228,6 +6426,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6334,6 +6536,10 @@
         6,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6447,6 +6653,10 @@
         7,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6560,6 +6770,10 @@
         5,
         2
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6680,6 +6894,10 @@
         5,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6800,6 +7018,10 @@
         5,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -6911,6 +7133,10 @@
         6,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7030,6 +7256,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7140,6 +7370,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7250,6 +7484,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7360,6 +7598,10 @@
         5,
         5
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7471,6 +7713,10 @@
         5,
         1
       ],
+      "share_of_turns_with_several_calls": 0.6667,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {
@@ -7590,6 +7836,10 @@
         5,
         6
       ],
+      "share_of_turns_with_several_calls": 1.0,
+      "pilot": false,
+      "replay": null,
+      "model": "gpt-5.6-terra",
       "repeated_calls": 0,
       "error_calls": 0,
       "calls_per_tool": {

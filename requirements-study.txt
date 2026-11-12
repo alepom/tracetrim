@@ -8,5 +8,7 @@ pydantic==2.14.2
 uvicorn==0.54.0
 pytest==9.2.0
 pymupdf==2.1
+# E3 of protocol-v04-e3.md only: Gemini on Vertex AI (experiments/gemini.py).
+google-genai==3.2.0
 # Optional, heavy (torch): the Headroom baseline.
 # headroom-ai==0.39.1

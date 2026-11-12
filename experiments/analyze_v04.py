@@ -3,6 +3,7 @@
 
   python -m experiments.analyze_v04                # this checkout's runs -> results/v04/e1.json, e2.json
   python -m experiments.analyze_v04 --root DIR     # another campaign (a dry run): DIR/results-v04.json
+  python -m experiments.analyze_v04 --e3 [--root DIR]   # E3 of protocol-v04-e3.md -> results/v04/e3.json
 
 Every number is recomputed from the files of the runs; nothing is typed.
 Per arm and case the tables give the median and the range [min-max]: with
@@ -23,7 +24,7 @@ from tracetrim import load
 from tracetrim.lists import element_usage
 
 from .checks import check, final_json
-from .coverage import calls_of, coverage, requirement
+from .coverage import PRESCRIBED, calls_of, coverage, requirement
 from .paths import ROOT
 from .budget import V04
 from .v04 import NEEDS, Where
@@ -87,6 +88,8 @@ def row(meta_path: Path) -> dict:
         "turns": m["turns"], "calls": m["calls"], "expand_calls": m["expand_calls"],
         "calls_per_turn": {"median": median(per_turn) if per_turn else 0, "max": max(per_turn, default=0)},
         "calls_in_turns": per_turn,
+        "share_of_turns_with_several_calls": round(sum(n > 1 for n in per_turn) / len(per_turn), 4) if per_turn else None,
+        "pilot": m.get("pilot", False), "replay": m.get("replay"), "model": m["model"],
         "repeated_calls": repeated, "error_calls": sum(c["output"].startswith("Error") for c in calls),
         "calls_per_tool": dict(sorted(Counter(c["tool"] for c in calls).items())),
         "billed": m["usage"], "cost_usd": m["cost_usd"], "tokens": m["tokens"], "exposure": m["exposure"],
@@ -122,6 +125,7 @@ def e1(rows: list[dict]) -> dict:
             if not rs:
                 continue
             out.setdefault(case, {})[arm] = {
+                "several_calls_share_per_run": spread(r["share_of_turns_with_several_calls"] for r in rs),
                 "runs": len(rs), "flagged": sum(bool(r["flags"]) for r in rs),
                 "gates_passed": sum(r["gates_passed"] for r in rs),
                 "did_not_do_the_task": sum(r["no_tool_call"] or r["answer_is_not_the_json_asked"] for r in rs),
@@ -275,6 +279,100 @@ def hypotheses_e2(rows: list[dict]) -> dict:
     }
 
 
+REPLAYED = ("C1", "C2")        # E3: cases answered from recorded outputs, where content is not evaluated
+
+
+def hypotheses_e3(table: dict, rows: list[dict]) -> dict:
+    """H8 to H11 of protocol-v04-e3.md, per case, as stated there."""
+    h8, h9, h10 = {}, {}, {}
+    for case, arms in table.items():
+        r, s = arms.get("R"), arms.get("S")
+        if not r or not s:
+            continue
+        h8[case] = {"turns_median_S": s["turns"]["median"], "turns_min_R": r["turns"]["min"],
+                    "holds": s["turns"]["median"] < r["turns"]["min"]}
+        h9[case] = {"share_median_S": s["several_calls_share_per_run"]["median"],
+                    "share_max_R": r["several_calls_share_per_run"]["max"],
+                    "holds": s["several_calls_share_per_run"]["median"] > r["several_calls_share_per_run"]["max"]}
+        if case not in REPLAYED:
+            h10[case] = {"gates": [s["gates_passed"], r["gates_passed"]], "coverage_median_S": s["coverage"]["median"],
+                         "coverage_min_R": r["coverage"]["min"],
+                         "holds": s["gates_passed"] >= r["gates_passed"] and s["coverage"]["median"] >= r["coverage"]["min"]}
+    # H11: the argument values the prompts prescribe, in the runs with the strategy.
+    checked = [(r["case"], r["run"], name, r["coverage"]["checks"][name])
+               for r in rows if r["arm"] == "S" for name in PRESCRIBED.get(r["case"], ())]
+    whole = lambda h: all(v["holds"] for v in h.values()) if h else None      # noqa: E731
+    return {"H8": {"per_case": h8, "holds": whole(h8), "cases_where_it_holds": sum(v["holds"] for v in h8.values())},
+            "H9": {"per_case": h9, "holds": whole(h9), "cases_where_it_holds": sum(v["holds"] for v in h9.values())},
+            "H10": {"per_case": h10, "holds": whole(h10)},
+            "H11": {"checks": len(checked), "passed": sum(ok for *_, ok in checked),
+                    "failed": [f"{c} {run}: {name}" for c, run, name, ok in checked if not ok],
+                    "holds": all(ok for *_, ok in checked) if checked else None}}
+
+
+def analyse_e3(where: Where) -> dict:
+    """E3: the strategy on another model. On the cases answered from recorded outputs,
+    gates and coverage of the answer are not evaluated: only how the calls are organised."""
+    rows = [row(p) for p in sorted(where.traces.glob("*/E3-*.meta.json"))]
+    measured = [r for r in rows if not r["pilot"]]
+    table = e1(measured)
+    for case in REPLAYED:
+        for arm in table.get(case, {}).values():
+            arm["gates_passed"] = arm["coverage"] = None          # not evaluated: the outputs are not the provider's
+    replay = {}
+    for r in rows:
+        if r["replay"]:
+            a = replay.setdefault(r["case"], {"exact": 0, "nearest": 0, "none": 0, "per_run_exact_share": []})
+            for k in ("exact", "nearest", "none"):
+                a[k] += r["replay"][k]
+            n = sum(r["replay"].values())
+            a["per_run_exact_share"].append(round(r["replay"]["exact"] / n, 4) if n else None)
+    pilot = [r for r in rows if r["pilot"]]
+    pt = [n for r in pilot for n in r["calls_in_turns"]]
+    return {"protocol": "protocol-v04-e3.md", "tokens": "billed tokens from the model's API usage; other counts tiktoken o200k_base",
+            "dry_run": any(r["dry_run"] for r in rows), "models": sorted({r["model"] for r in rows}),
+            "runs": len(measured), "pilot_runs": len(pilot), "cost_usd": round(sum(r["cost_usd"] for r in rows), 4),
+            "provider_calls": sum(sum(r["dataforseo_calls"].values()) for r in rows),
+            "pilot": {"turns_with_calls": len(pt), "calls_per_turn_median": median(pt) if pt else None,
+                      "share_of_turns_with_several_calls": round(sum(n > 1 for n in pt) / len(pt), 4) if pt else None},
+            "replay": replay, "e3": table, "e3_hypotheses": hypotheses_e3(table, measured),
+            "did_not_do_the_task": [f"{r['case']} {r['run']}" for r in measured
+                                    if r["no_tool_call"] or (r["answer_is_not_the_json_asked"] and r["case"] not in REPLAYED)],
+            "per_run": rows}
+
+
+def tables_e3(res: dict) -> str:
+    lines = [f"E3 · {', '.join(res['models'])} · {res['runs']} runs and {res['pilot_runs']} pilot runs · {res['cost_usd']:.2f} USD · "
+             f"provider calls: {res['provider_calls']}" + (" · DRY RUN (stub in place of the model)" if res["dry_run"] else "")]
+    p = res["pilot"]
+    if p["turns_with_calls"]:
+        lines.append(f"pilot: {p['share_of_turns_with_several_calls']:.0%} of {p['turns_with_calls']} turns with calls made several "
+                     f"(median {p['calls_per_turn_median']:g} calls per turn)")
+    lines.append(f"\n     {'case':<5}{'arm':<4}{'runs':>5}{'gates':>7}{'coverage':>18}{'turns':>12}{'calls':>12}{'several-call turns':>22}"
+                 f"{'billed input':>26}{'USD':>20}")
+    for case, arms in res["e3"].items():
+        for arm, a in arms.items():
+            gates = "—" if a["gates_passed"] is None else f"{a['gates_passed']}/{a['runs']}"
+            lines.append(f"     {case:<5}{arm:<4}{a['runs']:>5}{gates:>7}{_s(a['coverage'], '{:.0%}'):>18}{_s(a['turns']):>12}"
+                         f"{_s(a['calls']):>12}{_s(a['several_calls_share_per_run'], '{:.0%}'):>22}"
+                         f"{_s(a['billed_input'], '{:,.0f}'):>26}{_s(a['cost_usd'], '{:.3f}'):>20}")
+    h = res["e3_hypotheses"]
+    say = lambda v: "no case" if v is None else "holds" if v else "FAILS"      # noqa: E731
+    for name, text in (("H8", "fewer turns with the strategy"), ("H9", "more turns with several calls")):
+        lines.append(f"\n{name} ({text}): {say(h[name]['holds'])} · holds in {h[name]['cases_where_it_holds']} of "
+                     f"{len(h[name]['per_case'])} cases · " + ", ".join(f"{c}: {'yes' if v['holds'] else 'no'}"
+                                                                        for c, v in h[name]["per_case"].items()))
+    lines.append(f"H10 (completeness and gates no worse, simulated cases): {say(h['H10']['holds'])} · "
+                 + ", ".join(f"{c}: {'yes' if v['holds'] else 'no'}" for c, v in h["H10"]["per_case"].items()))
+    lines.append(f"H11 (prescribed argument values respected with the strategy): {say(h['H11']['holds'])} · "
+                 f"{h['H11']['passed']} of {h['H11']['checks']} checks")
+    for case, a in res["replay"].items():
+        shares = [x for x in a["per_run_exact_share"] if x is not None]
+        lines.append(f"replay {case}: exact {a['exact']}, nearest {a['nearest']}, none {a['none']} · exact share per run "
+                     f"median {median(shares):.0%} [{min(shares):.0%}–{max(shares):.0%}]" if shares else f"replay {case}: no call")
+    return "\n".join(lines)
+
+
 def analyse(where: Where) -> dict:
     rows = [row(p) for p in sorted(where.traces.glob("*/E[12]-*.meta.json"))]
     rates = dataforseo_rates(where)
@@ -352,8 +450,16 @@ def tables(res: dict) -> str:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", help="the directory of another campaign, e.g. a dry run")
+    ap.add_argument("--e3", action="store_true", help="E3 of protocol-v04-e3.md")
     a = ap.parse_args()
     where = Where(Path(a.root)) if a.root else Where(ROOT)
+    if a.e3:
+        res = analyse_e3(where)
+        path = where.root / "results-e3.json" if a.root else ROOT / "results" / "v04" / "e3.json"
+        path.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n")
+        print(tables_e3(res))
+        print(f"\n{path}")
+        raise SystemExit(0)
     res = analyse(where)
     if a.root:
         out = [where.root / "results-v04.json"]
