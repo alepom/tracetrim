@@ -26,8 +26,12 @@ import sys
 from pathlib import Path
 
 from . import measure as m
+from .evidence import Adaptive
 from .projection import MODES, SOURCES, UNSEEN, Projection, learn
 from .traces import load
+
+# The default of --switch-off-runs, read from the library so that the two cannot drift apart.
+SWITCH_OFF_RUNS = Adaptive.__dataclass_fields__["switch_off_runs"].default
 from .usage import analyse, leaves
 
 
@@ -150,7 +154,7 @@ def cmd_proxy(a):
         raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
     if a.auto and a.config:
         raise SystemExit("--auto manages its own config: do not pass --config")
-    if (a.promote or a.sample_rate or a.switch_off_runs != 1) and not a.auto:
+    if (a.promote or a.sample_rate or a.switch_off_runs != SWITCH_OFF_RUNS) and not a.auto:
         raise SystemExit("--promote, --sample-rate and --switch-off-runs work in automatic mode: add --auto WORKDIR")
     o = Options(upstream_cmd=a.upstream_cmd, upstream_url=a.upstream_url,
                 headers=dict(h.split("=", 1) for h in a.header), config=a.config, record=a.record,
@@ -337,9 +341,9 @@ def main(argv=None):
     s.add_argument("--sample-max-share", type=float, default=0.2, metavar="F",
                    help="cost limit of sampling: tokens it may add, as a share of the tokens trimming removed (default 0.2)")
     s.add_argument("--sample-seed", type=int, default=0, help="seed of the sampling sequence")
-    s.add_argument("--switch-off-runs", type=int, default=1, metavar="N",
+    s.add_argument("--switch-off-runs", type=int, default=SWITCH_OFF_RUNS, metavar="N",
                    help="--auto: stop trimming a tool only when its results were expanded in at least N distinct "
-                        "runs (default 1: one run with enough requests is enough)")
+                        f"runs (default {SWITCH_OFF_RUNS}; 1 restores the behaviour up to 0.3.5)")
     s.set_defaults(func=cmd_proxy)
 
     s = sub.add_parser("promotions", help="list the fields promoted on evidence (--auto), or take them back")

@@ -444,7 +444,9 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
     tt, engine, kept_before = None, None, None
     if run.experiment == "E2":
         workdir = where.workdir(run)
-        adaptive = Adaptive(sample_seed=run.sequence, **E2_ARMS[run.arm])
+        # E2 ran with the switch-off rule of the time (one run is enough); the library's default
+        # became 2 runs afterwards (02c), so the frozen protocol pins the rule it was run with.
+        adaptive = Adaptive(sample_seed=run.sequence, switch_off_runs=1, **E2_ARMS[run.arm])
         if run.n == 1:
             tt = seed(run.case, workdir, adaptive)
         else:

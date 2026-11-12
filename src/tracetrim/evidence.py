@@ -61,8 +61,10 @@ class Adaptive:
     sample_max_share: float = 0.2
     sample_seed: int = 0               # the sampling sequence is a function of (seed, tool, call number)
     # A tool stops being trimmed only when the results expanded come from at least this many
-    # runs. 1: as until now, one run with enough requests is enough, the first one included.
-    switch_off_runs: int = 1
+    # runs. The switch-off is the last resort: it waits at least as long as a promotion by
+    # request (2 runs). 1 restores the behaviour up to 0.3.5: one run with enough requests,
+    # the first one included.
+    switch_off_runs: int = 2
 
     def __post_init__(self):
         if not 0 <= self.sample_rate <= 1 or self.sample_max_share < 0:

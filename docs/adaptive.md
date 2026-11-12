@@ -64,9 +64,11 @@ When the run closes this becomes evidence, per field and per kind, as the set of
   still mean every element. As evidence an index counts as `[]`: asking for a field of one element is
   asking for that field. Slices (`items[10:]`) are not paths: `expand` gives back what was removed from a
   result, never more rows than the tool returned ([rows.md](rows.md)).
-- **An unknown `call_id`** gets a reply that says so, names the three most recent valid ids with their
-  tools, and recalls that only a result ending with a `[trimmed]` line can be expanded. It counts against no
-  tool. Until now the reply was `Error: unknown call_id.` and nothing else; in the measures, agents that
+- **An unknown `call_id`** gets a reply that says so and recalls that only a result ending with a
+  `[trimmed]` line can be expanded. With one agent (stdio, function calling) it also names the three most
+  recent valid ids with their tools. The HTTP proxy never names them: several clients can reach it, and a
+  valid id would let one of them expand another's results; there the reply says to copy the id from the
+  `[trimmed]` line. It counts against no tool. Until now the reply was `Error: unknown call_id.` and nothing else; in the measures, agents that
   got it had made up or cut short the id, mostly to ask for more rows of a result that was whole.
 
 ## Promotion (`--promote`)
@@ -86,10 +88,11 @@ to come back in a second, independent run. Promotion starts once trimming has st
   requests also came from as many runs as a promotion needs. Switching the whole tool off stays as the
   last resort: it still happens when requests remain frequent, for example an agent that always asks
   for everything.
-- **Evidence from more than one run** (`--switch-off-runs N`, `Adaptive(switch_off_runs=N)`; default 1, as
-  until now). With the default, one run is enough: four filtered results of a tool, two of them expanded,
-  and the tool stops being trimmed when that run closes, the first run included. With N, the expanded
-  results must come from at least N distinct runs. The larger of this and the runs a promotion needs
+- **Evidence from more than one run** (`--switch-off-runs N`, `Adaptive(switch_off_runs=N)`; **default
+  2**). The expanded results must come from at least N distinct runs: the switch-off is the last resort
+  and waits at least as long as a promotion by request. With `--switch-off-runs 1`, the rule up to 0.3.5,
+  one run is enough: four filtered results of a tool, two of them expanded, and the tool stops being
+  trimmed when that run closes, the first run included. The larger of this and the runs a promotion needs
   applies. Recalculated offline on the ten sequences of E2 (`python -m experiments.switch_off_recalc`,
   `results/v04/switch_off.json`): one tool was switched off as run, in the first run of a sequence; with 2
   or 3 runs asked for, none would have been at that point. What the agent would have asked of that tool in

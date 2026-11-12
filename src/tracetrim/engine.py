@@ -76,6 +76,10 @@ class Trimmer:
         self.hidden: dict[str, set] = {}
         self.tool_of: dict[str, str] = {}
         self._count = None
+        # Shared by several clients (the HTTP proxy): the reply to an unknown
+        # call_id must not name valid ones, or a client could expand another's
+        # results. With one agent (stdio, function calling) naming them helps.
+        self.shared = False
 
     def count(self, text: str) -> int:
         """Tokens (o200k_base), or characters when tiktoken is not installed."""
@@ -176,8 +180,12 @@ class Trimmer:
         """The model made up or cut short an id, or asked about a result that was
         not trimmed: say which ids exist and what `expand` is for."""
         recent = list(self.originals)[-RECENT_IDS:][::-1]
-        valid = ("Most recent valid call_ids: " + ", ".join(f"{c} ({self.tool_of.get(c, '?')})" for c in recent) + "."
-                 if recent else "No result has been trimmed so far.")
+        if self.shared:
+            valid = "Copy the call_id exactly as that line writes it."
+        elif recent:
+            valid = "Most recent valid call_ids: " + ", ".join(f"{c} ({self.tool_of.get(c, '?')})" for c in recent) + "."
+        else:
+            valid = "No result has been trimmed so far."
         return (f"Error: unknown call_id {str(call_id)[:40]!r}. expand only works on a result that ends with a line "
                 f"'[trimmed] call_id=...', with the call_id written there; a result without that line is complete "
                 f"as it is, and expand cannot give more rows of it. {valid}")
@@ -186,9 +194,12 @@ class Trimmer:
 class Engine:
     """`learner`: automatic mode (tracetrim.auto.Learner), or None to apply a
     fixed `policy` (or nothing). `structural`: re-encode every output after
-    the projection ("toon", "headroom"), whatever the config says."""
+    the projection ("toon", "headroom"), whatever the config says. `shared`:
+    several clients reach this engine (the HTTP proxy), so an error never names
+    the call_ids of results it holds."""
 
-    def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None):
+    def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
+                 shared: bool = False):
         self.learner = learner
         self.structural = structural
         if policy is None and learner is not None:
@@ -196,6 +207,7 @@ class Engine:
         if policy is None and structural:
             policy = Policy({"format": "tracetrim/config@1", "tools": {}}, None)
         self.trimmer = Trimmer(self._with_structural(policy))
+        self.trimmer.shared = shared
         self._expanded: set[str] = set()         # results already expanded once: a second request is a repeat
 
     def _with_structural(self, policy: Policy | None) -> Policy | None:

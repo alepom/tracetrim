@@ -273,10 +273,12 @@ def four_calls(tt, k, expand=2):
     tt.done(answer(k))
 
 
-def test_one_run_is_enough_to_switch_a_tool_off_unless_more_runs_are_asked_for(tmp_path):
+def test_a_tool_is_switched_off_on_two_runs_by_default_and_on_one_when_asked(tmp_path):
     # What happened in E2 on the real case: four filtered results in the first run, two of them
-    # expanded, and the tool stopped being trimmed on the evidence of that run alone.
-    as_before, careful = learned(tmp_path / "a"), learned(tmp_path / "b", switch_off_runs=2)
+    # expanded, and the tool stopped being trimmed on the evidence of that run alone. Since 02c the
+    # default asks for two runs; switch_off_runs=1 restores the behaviour up to 0.3.5.
+    assert Adaptive().switch_off_runs == 2
+    as_before, careful = learned(tmp_path / "a", switch_off_runs=1), learned(tmp_path / "b")
     four_calls(as_before, 4)
     four_calls(careful, 4)
     assert state(tmp_path / "a")["off"] == [TOOL] and not as_before.trimming
@@ -293,7 +295,8 @@ def test_one_run_is_enough_to_switch_a_tool_off_unless_more_runs_are_asked_for(t
 
 def test_the_runs_asked_for_are_the_most_any_setting_asks():
     from tracetrim.auto import over_expanded, runs_needed
-    assert runs_needed(Adaptive()) == 0 and runs_needed(Adaptive(promote=True)) == 2
+    assert runs_needed(Adaptive()) == 2 and runs_needed(Adaptive(switch_off_runs=1)) == 0
+    assert runs_needed(Adaptive(promote=True)) == 2 and runs_needed(Adaptive(promote=True, switch_off_runs=1)) == 2
     assert runs_needed(Adaptive(switch_off_runs=3)) == 3 and runs_needed(Adaptive(promote=True, switch_off_runs=3)) == 3
     assert runs_needed(Adaptive(promote=True, promote_requested_runs=4, switch_off_runs=2)) == 4
     assert over_expanded(4, 2, 1) and not over_expanded(3, 3, 1) and not over_expanded(4, 1, 1) and not over_expanded(4, 2, 1, 2)

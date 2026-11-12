@@ -154,7 +154,9 @@ async def one_run(session, k: int, variant: str | None, count) -> dict:
 
 async def scenario(adapter: str, variant: str, arm: str, count) -> dict:
     with tempfile.TemporaryDirectory() as work:
-        async with ADAPTERS[adapter](work, Adaptive(**ARMS[arm])) as session:
+        # The demo's results were computed with the switch-off rule of the time (one run is
+        # enough); the library's default became 2 runs afterwards (02c): pinned to keep them reproducible.
+        async with ADAPTERS[adapter](work, Adaptive(switch_off_runs=1, **ARMS[arm])) as session:
             runs = [await one_run(session, k, None if k <= LEARN_RUNS else variant, count)
                     for k in range(1, LEARN_RUNS + SHIFT_RUNS + 1)]
         state = json.loads((Path(work) / "state.json").read_text())

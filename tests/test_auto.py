@@ -2,6 +2,7 @@
 import json
 
 from tracetrim.auto import EXPAND_MIN_CALLS, Learner
+from tracetrim.evidence import Adaptive
 
 # A tool whose items carry many fields the agent never uses.
 ITEM_NOISE = {f"note_{i}": f"internal remark number {i} about the record" for i in range(12)}
@@ -42,7 +43,8 @@ def test_after_min_runs_the_safe_config_is_applied(tmp_path):
 
 
 def test_a_tool_expanded_too_often_is_switched_off(tmp_path):
-    lr = Learner(tmp_path, min_runs=3)
+    # One run's requests: the rule up to 0.3.5, kept with switch_off_runs=1 (the default asks for two runs).
+    lr = Learner(tmp_path, min_runs=3, adaptive=Adaptive(switch_off_runs=1))
     for _ in range(3):
         run(lr)
     for _ in range(EXPAND_MIN_CALLS):

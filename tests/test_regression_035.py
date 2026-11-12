@@ -16,6 +16,7 @@ import pytest
 
 from tracetrim import analyse, learn, load
 from tracetrim.auto import EXPAND_MAX_RATE, EXPAND_MIN_CALLS, AutoTrim, Learner
+from tracetrim.evidence import Adaptive
 from tracetrim.projection import Projection
 from tracetrim.runtime import Policy
 
@@ -179,7 +180,9 @@ def test_expand_returns_hidden_fields_from_the_original_without_a_new_call(tmp_p
 ])
 def test_a_tool_expanded_too_often_stops_being_trimmed(tmp_path, trimmed, expanded, off):
     assert (EXPAND_MIN_CALLS, EXPAND_MAX_RATE) == (4, 0.5)
-    tt = learned(tmp_path)
+    # Up to 0.3.5 one run was enough to switch a tool off; since 02c the default asks for two
+    # runs, and switch_off_runs=1 is the documented way back to the 0.3.5 rule pinned here.
+    tt = learned(tmp_path, adaptive=Adaptive(switch_off_runs=1))
     for n in range(trimmed):
         sent = tt.output(billing.TOOL, billing.arguments(3), billing.output(3))
         if n < expanded:

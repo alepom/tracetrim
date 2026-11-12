@@ -123,7 +123,8 @@ class Options:
     # Adaptive learning, with --auto; all off by default (see tracetrim.evidence.Adaptive).
     promote: bool = False
     promote_runs: int = 2
-    switch_off_runs: int = 1
+    switch_off_runs: int = 2
+    shared: bool = False             # set by serve_http: several clients may reach the proxy
     sample_rate: float = 0.0
     sample_max_share: float = 0.2
     sample_seed: int = 0
@@ -298,7 +299,7 @@ def _server(o: Options):
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
-    engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural)
+    engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)
@@ -485,9 +486,12 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
     from urllib.parse import parse_qs
 
     import uvicorn
+    from dataclasses import replace
+
     from mcp.server.transport_security import TransportSecuritySettings
 
-    server, learner = _server(o)
+    # Over HTTP the proxy may be reached by several clients: never name a call_id in an error.
+    server, learner = _server(replace(o, shared=True))
     # Always on: without it a web page could rebind its domain to 127.0.0.1 and
     # call the upstream tools with the credentials the proxy holds. Local
     # addresses on this port are always accepted; public ones (a tunnel) are

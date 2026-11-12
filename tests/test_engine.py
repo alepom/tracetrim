@@ -205,3 +205,44 @@ def test_the_core_imports_no_sdk():
             "if m in sys.modules]; print(bad); sys.exit(bool(bad))")
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_a_shared_engine_never_names_the_call_ids_it_holds(tmp_path):
+    # Over HTTP several clients can reach one proxy: an error naming valid ids would let one
+    # client expand another's results. The reply still says what expand is for.
+    engine = Engine(Learner(tmp_path, min_runs=3), shared=True)
+    for k in (1, 2, 3):
+        engine.observe(call(k), ToolResult(billing.output(k)))
+        engine.close(billing.answer(k))
+    ids = [engine.observe(call(3), ToolResult(billing.output(3))).call_id for _ in range(2)]
+    assert all(ids)
+    reply = engine.expand("c0000", ["*"])
+    assert reply.startswith("Error: unknown call_id 'c0000'.") and "[trimmed] call_id=..." in reply
+    assert reply.endswith("Copy the call_id exactly as that line writes it.")
+    assert not any(c in reply for c in ids) and "Most recent" not in reply
+
+
+def test_the_http_proxy_builds_a_shared_engine_and_stdio_does_not(monkeypatch):
+    import asyncio
+
+    import pytest
+    from tracetrim import proxy
+
+    seen = []
+
+    class Built(Exception):
+        pass
+
+    def fake_server(o):
+        seen.append(o.shared)
+        raise Built
+
+    monkeypatch.setattr(proxy, "_server", fake_server)
+    with pytest.raises(Built):
+        asyncio.run(proxy.serve_http(proxy.Options(), host="127.0.0.1", port=0, token=None, allowed_hosts=[]))
+    with pytest.raises(Built):
+        asyncio.run(proxy.serve(proxy.Options()))
+    assert seen == [True, False]
+    # The proxy's default for the switch-off is the library's.
+    from tracetrim.evidence import Adaptive
+    assert proxy.Options().switch_off_runs == Adaptive().switch_off_runs
