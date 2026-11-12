@@ -1,5 +1,7 @@
 # Protocol of E3: the skill's strategy on a model that issues fewer calls together
 
+Frozen on 2026-11-12 at commit `4dd774b`, approved by the author (REVISIONE-02a).
+
 Status: **frozen on 2026-11-12**, approved by the author, before any paid run. The commit that froze it is
 recorded in the line above by the commit that follows it. From that commit on, every change goes in "Deviations"
 at the bottom, dated, with the reason.

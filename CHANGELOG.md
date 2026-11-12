@@ -56,7 +56,7 @@ tests, not evaluated under a protocol. Nothing here changes the numbers of the p
     for did not occur. Both stay off by default.
   - *Trimming*, in the same runs: tool-output tokens down 44% and the cost of a run down 30% and 24% on the two
     cases with trimmed arms, with the gates passed in 5 runs of 5.
-- **A further experiment, prepared and not run**: `protocol-v04-e3.md` (a draft until the author approves it)
+- **A further experiment, prepared and not run**: `protocol-v04-e3.md` (frozen on 2026-11-12)
   measures the strategy on `gemini-3.8-flash`, a model said to issue fewer calls together, with simulated tools
   and with outputs already recorded in place of the search-data provider. `python -m experiments.run --e3 ...`.
 - **Offline demo**: `python -m experiments.adaptive_demo` (scripted agent, simulated tool, both adapters).
