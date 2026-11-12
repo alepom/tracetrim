@@ -64,7 +64,8 @@ def access(model: str) -> dict:
         out["error"] = f"credentials: {type(e).__name__}"
         return out
     try:
-        genai.Client(vertexai=True, project=project, location=LOCATION).models.count_tokens(model=model, contents="ciao")
+        client = genai.Client(vertexai=True, project=project, location=LOCATION)     # kept: a client dropped mid-call closes
+        client.models.count_tokens(model=model, contents="ciao")
         out["accepted"] = True
     except Exception as e:                                   # noqa: BLE001
         reason = ""
