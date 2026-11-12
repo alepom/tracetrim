@@ -28,6 +28,13 @@ adds an automatic mode: put one proxy in front of your MCP servers and it observ
 trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
 anything that matters.
 
+### What's new in 0.6
+
+- **What tool definitions weigh**: the report shows the tokens the tool list costs on every turn and the
+  tools the agent never called, and suggests what to do. tracetrim hides no tool: hosts like Claude Code
+  already load definitions on demand, and the measure says why
+  ([docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md)).
+
 ### What's new in 0.5
 
 - **`tracetrim init`** puts tracetrim in front of the servers your host already uses (Claude Desktop,

@@ -4,6 +4,29 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 0.6.0
+
+What tool definitions weigh, measured and reported. **Nothing changes in what the model receives**: tool
+lists, outputs and `expand` are those of 0.5, and tracetrim hides no tool.
+
+- **What tool definitions weigh.** The model receives the definition of every listed tool on every
+  turn. The report now has a section on them: tokens of the definitions per turn, tools offered,
+  tools called in at least one complete run, and tools never called with their weight. The proxy in
+  automatic mode records the list it publishes (`WORKDIR/tools.json`); with function calling, pass
+  yours with `tt.offered(tools)`; `tracetrim report --tools FILE` for saved traces. The weight per run
+  is not estimated: tracetrim does not see the model's turns.
+- **A manual suggestion on tools never called**, when there are at least `min_runs` complete runs and
+  those tools weigh at least half of the definitions and at least 5,000 tokens per turn: it names
+  them, heaviest first, and proposes disabling them in the host or using native tool search where
+  there is one (Claude Code, OpenAI Responses API). Never called is not never needed: tracetrim hides
+  no tool by itself.
+- **[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md)**: the
+  measure behind it, on the 138 recorded runs of the v0.4 measures. On the tool sets those agents had,
+  definitions were at most a few percent of a run's cost, mostly billed as cached; with a whole 79-tool
+  server enabled (a counterfactual), hiding the unused tools would save about 9–20% of a run's cost, and
+  a few extra turns would cancel it. Why tracetrim measures and does not hide.
+- `docs/hosts.md`: which hosts hide tool definitions by themselves.
+
 ## 0.5.0
 
 Easier to put tracetrim in front of the servers you already use. **Nothing changes in what the model
