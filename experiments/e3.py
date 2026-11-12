@@ -172,6 +172,46 @@ def estimate() -> dict:
             "usd_as_measured": round(low, 2), "usd_one_call_per_turn": round(high, 2), "cap_usd": CAP, "warn_usd": WARN}
 
 
+def estimate_after_pilot(where: Where) -> dict:
+    """The estimate of the runs still to make, corrected with what the pilot cost.
+
+    On the cases of the pilot (C4, C5) a run is costed at the pilot's mean. The
+    other two have no pilot: two figures, from how far the pilot fell from the
+    earlier estimate. `low`: they behave like the pilot case that issued calls
+    together, costed against the "as measured" figure. `high`: like the pilot
+    case that made one call per turn, against the "one call per turn" figure."""
+    before = estimate()["per_run"]
+    cost_of = {}
+    for c in PILOT_CASES:
+        metas = [json.loads(p.read_text()) for p in sorted((where.traces / c).glob("E3-pilot-*.meta.json"))]
+        if not metas:
+            raise SystemExit("the pilot has not been run")
+        per = [t["calls"] for m in metas for t in m["usage_per_turn"] if t["calls"]]
+        cost_of[c] = {"usd": sum(m["cost_usd"] for m in metas) / len(metas),
+                      "share_several": sum(n > 1 for n in per) / len(per) if per else 0.0,
+                      "cached_share": sum(m["usage"]["cached"] for m in metas) / max(1, sum(m["usage"]["input"] for m in metas))}
+    together = max(cost_of, key=lambda c: cost_of[c]["share_several"])       # the pilot case with more calls issued together
+    one_by_one = min(cost_of, key=lambda c: cost_of[c]["share_several"])
+    low_factor = cost_of[together]["usd"] / before[together]["usd_as_measured"]
+    high_factor = cost_of[one_by_one]["usd"] / before[one_by_one]["usd_one_call_per_turn"]
+    lines, low, high = [], 0.0, 0.0
+    for c in ORDER:
+        n = 2 * RUNS[c]
+        if c in cost_of:
+            a = b = n * cost_of[c]["usd"]
+        else:
+            a, b = n * before[c]["usd_as_measured"] * low_factor, n * before[c]["usd_one_call_per_turn"] * high_factor
+        lines.append({"case": c, "runs": n, "usd_low": round(a, 2), "usd_high": round(b, 2)})
+        low, high = low + a, high + b
+    spent_now = spent(where, ledger_path(where))
+    return {"pilot": {c: {k: round(v, 4) for k, v in x.items()} for c, x in cost_of.items()},
+            "factors": {"low": round(low_factor, 3), "from": together, "high": round(high_factor, 3), "from_": one_by_one},
+            "lines": lines, "runs_left": sum(x["runs"] for x in lines), "spent_usd": round(spent_now, 2),
+            "left_usd_low": round(low, 2), "left_usd_high": round(high, 2),
+            "total_usd_low": round(spent_now + low, 2), "total_usd_high": round(spent_now + high, 2),
+            "cap_usd": CAP, "warn_usd": WARN}
+
+
 # -- dry run -------------------------------------------------------------------------
 
 async def dry_run(directory: str | Path) -> list[dict]:
@@ -217,6 +257,8 @@ def main(argv=None):
               f"provider calls: {sum(e.get('dataforseo_calls', 0) for e in ledger(HERE, ledger_path(HERE)))}")
     elif a.cmd == "pilot":
         print(json.dumps(pilot(HERE), indent=2))
+        if pilot(HERE)["complete"]:
+            print(json.dumps(estimate_after_pilot(HERE), indent=2))
     elif a.cmd == "check":
         from .gemini import access
         r = access(PRICES["model"])
