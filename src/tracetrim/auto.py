@@ -105,7 +105,9 @@ class Learner:
         measure.tokenizer()
         self.state_path = self.dir / "state.json"
         self.evidence_path = self.dir / "evidence.json"
-        self.state = {"runs": 0, "complete_runs": 0, "trimmed": {}, "expanded": {}, "off": [],
+        # The format names the file, as in every other file of the work directory (since 0.7);
+        # a state written before has no key and loads the same.
+        self.state = {"format": "tracetrim/state@1", "runs": 0, "complete_runs": 0, "trimmed": {}, "expanded": {}, "off": [],
                       "config_from_runs": 0,
                       # Where the boundary of a run may be wrong (see `refused` and `call`).
                       "refused_closings": 0, "answered_runs_followed_by_calls": 0,

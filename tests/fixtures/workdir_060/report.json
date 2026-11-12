@@ -1,0 +1,430 @@
+{
+  "format": "tracetrim/report@1",
+  "generator": {
+    "name": "tracetrim",
+    "version": "0.6.0",
+    "description": "Learn which fields of tool outputs an agent visibly reuses, from its traces, and trim the rest.",
+    "author": "Alessio Pomaro",
+    "author_role": "Independent Researcher",
+    "orcid": "0009-0008-6975-996X",
+    "website": "https://www.alessiopomaro.it/",
+    "repository": "https://github.com/alepom/tracetrim",
+    "paper_doi": "10.5281/zenodo.23953934",
+    "software_doi": "10.5281/zenodo.23954125",
+    "license": "MIT"
+  },
+  "generated": "2026-11-12T23:14:08+00:00",
+  "unseen": "keep",
+  "protect_ids": true,
+  "traces": [
+    "run-0001.jsonl",
+    "run-0002.jsonl",
+    "run-0003.jsonl",
+    "run-0004.jsonl"
+  ],
+  "totals": {
+    "traces": 4,
+    "calls": 4,
+    "raw": 804,
+    "unescaped": 804,
+    "loo_prudent": 276,
+    "loo_aggressive": 252,
+    "loo_trimmed_calls": 4,
+    "loo_misses": 0,
+    "loo_misses_prudent": 0,
+    "errors": 0,
+    "duplicates": 0
+  },
+  "tools": {
+    "list_invoices": {
+      "calls": 4,
+      "raw": 804,
+      "unescaped": 804,
+      "prose_calls": 0,
+      "prose_tokens": 0,
+      "errors": 0,
+      "duplicates": 0,
+      "loo_raw": 804,
+      "loo_prudent": 276,
+      "loo_aggressive": 252,
+      "loo_trimmed_calls": 4,
+      "loo_misses": 0,
+      "error_examples": [],
+      "fields": {
+        "has_more": {
+          "tokens": 20,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "unjudged",
+          "missed": 0
+        },
+        "data[].id": {
+          "tokens": 32,
+          "seen": 4,
+          "used": 4,
+          "echo": 0,
+          "status": "used",
+          "missed": 0
+        },
+        "data[].account_id": {
+          "tokens": 36,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "key",
+          "missed": 0
+        },
+        "data[].amount_due": {
+          "tokens": 28,
+          "seen": 4,
+          "used": 4,
+          "echo": 0,
+          "status": "used",
+          "missed": 0
+        },
+        "data[].created": {
+          "tokens": 32,
+          "seen": 4,
+          "used": 4,
+          "echo": 0,
+          "status": "used",
+          "missed": 0
+        },
+        "data[].status": {
+          "tokens": 24,
+          "seen": 4,
+          "used": 4,
+          "echo": 0,
+          "status": "used",
+          "missed": 0
+        },
+        "data[].hosted_invoice_url": {
+          "tokens": 72,
+          "seen": 4,
+          "used": 4,
+          "echo": 0,
+          "status": "used",
+          "missed": 0
+        },
+        "data[].footer": {
+          "tokens": 48,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_0": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_1": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_2": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_3": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_4": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_5": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_6": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        },
+        "data[].remark_7": {
+          "tokens": 60,
+          "seen": 4,
+          "used": 0,
+          "echo": 0,
+          "status": "dropped",
+          "missed": 0
+        }
+      }
+    }
+  },
+  "turns": {
+    "runs": 0,
+    "runs_without_turns": 4,
+    "per_run": [],
+    "thresholds": {
+      "max_share_of_turns_with_several_calls": 0.2,
+      "min_share_of_calls_that_could_have_been_made_earlier": 0.25,
+      "min_runs": 2
+    },
+    "suggest_strategy": false
+  },
+  "definitions": {
+    "tokens_per_turn": 91,
+    "own_tokens": 0,
+    "own_tools": [],
+    "offered": 2,
+    "called": [
+      "list_invoices"
+    ],
+    "never_called": [
+      {
+        "name": "refund",
+        "tokens": 42
+      }
+    ],
+    "never_called_tokens": 42,
+    "never_called_share": 0.46153846153846156,
+    "runs": 4,
+    "per_run": null,
+    "suggest": false,
+    "thresholds": {
+      "min_runs": 3,
+      "min_share": 0.5,
+      "min_tokens": 5000
+    },
+    "unit": "tokens"
+  },
+  "lists": {
+    "list_invoices": {
+      "calls": 4,
+      "size_arguments": {},
+      "lists": {
+        "data[]": {
+          "calls": 4,
+          "received": {
+            "median": 1.0,
+            "max": 1
+          },
+          "reused": {
+            "median": 1.0,
+            "max": 1
+          },
+          "calls_with_reuse": 4,
+          "calls_reused_from_top": 4,
+          "deepest_reused": {
+            "median": 1.0,
+            "max": 1
+          }
+        }
+      }
+    }
+  },
+  "arguments": {
+    "list_invoices": {
+      "calls": 4,
+      "arguments": {
+        "customer": {
+          "calls": 4,
+          "distinct": 4
+        }
+      }
+    }
+  },
+  "savings": {
+    "unit": "tokens",
+    "runs": [
+      {
+        "run": "run-0001",
+        "calls": 1,
+        "expand_calls": 0,
+        "expand_tokens": 0,
+        "raw": 201,
+        "whole": 171,
+        "sent": 171,
+        "reserialisation": 30,
+        "fields": 0
+      },
+      {
+        "run": "run-0002",
+        "calls": 1,
+        "expand_calls": 0,
+        "expand_tokens": 0,
+        "raw": 201,
+        "whole": 171,
+        "sent": 171,
+        "reserialisation": 30,
+        "fields": 0
+      },
+      {
+        "run": "run-0003",
+        "calls": 1,
+        "expand_calls": 0,
+        "expand_tokens": 0,
+        "raw": 201,
+        "whole": 171,
+        "sent": 171,
+        "reserialisation": 30,
+        "fields": 0
+      },
+      {
+        "run": "run-0004",
+        "calls": 1,
+        "expand_calls": 1,
+        "expand_tokens": 15,
+        "raw": 201,
+        "whole": 171,
+        "sent": 121,
+        "reserialisation": 30,
+        "fields": 50
+      }
+    ],
+    "tools": {
+      "list_invoices": {
+        "calls": 4,
+        "raw": 804,
+        "whole": 684,
+        "sent": 634,
+        "reserialisation": 120,
+        "fields": 50
+      }
+    },
+    "total": {
+      "calls": 4,
+      "expand_calls": 1,
+      "expand_tokens": 15,
+      "raw": 804,
+      "whole": 684,
+      "sent": 634,
+      "reserialisation": 120,
+      "fields": 50
+    }
+  },
+  "adaptive": {
+    "settings": {
+      "promote": false,
+      "promote_requested_runs": 2,
+      "promote_reused_runs": 1,
+      "sample_rate": 0.0,
+      "sample_max_share": 0.2,
+      "sample_seed": 0,
+      "switch_off_runs": 2
+    },
+    "promotions": [],
+    "resumed": [],
+    "effect": {},
+    "evidence": {
+      "list_invoices": {
+        "origin": null,
+        "broad_requests": 0,
+        "fields": {
+          "data[].footer": {
+            "requested": 1,
+            "recovered": 1,
+            "reused": 0,
+            "seen_full": 0,
+            "used_in_full": 0
+          }
+        }
+      }
+    },
+    "expand": {
+      "list_invoices": {
+        "filtered": 1,
+        "expanded": 1,
+        "runs_with_expand": 1
+      }
+    },
+    "sampling": {},
+    "full_cheaper": {},
+    "sampling_unit": "tokens",
+    "conflicts": []
+  },
+  "suggestions": [
+    {
+      "rule": "few-traces",
+      "level": "warning",
+      "tool": null,
+      "en": "Only 4 traces: learned projections are unstable. Collect at least 5-10 runs of the same task before applying one.",
+      "it": "Solo 4 tracce: le proiezioni apprese sono instabili. Raccogli almeno 5-10 esecuzioni dello stesso compito prima di applicarne una.",
+      "action": {
+        "kind": "manual",
+        "type": "collect_traces",
+        "min": 5
+      }
+    },
+    {
+      "rule": "trim",
+      "level": "saving",
+      "tool": "list_invoices",
+      "en": "`list_invoices` carries 100% of all tool-output tokens. On runs it was not learned from, the prudent projection removes 66% of them (528 tokens over 4 calls).",
+      "it": "`list_invoices` porta il 100% di tutti i token restituiti dai tool. Sui run da cui non ha imparato, la proiezione prudente ne toglie il 66% (528 token su 4 chiamate).",
+      "action": {
+        "kind": "auto",
+        "type": "trim",
+        "tool": "list_invoices",
+        "mode": "prudent"
+      }
+    }
+  ],
+  "config": {
+    "format": "tracetrim/config@1",
+    "generated": "2026-11-12T23:14:08+00:00",
+    "projection": "report.projection.json",
+    "unescape": true,
+    "compact": true,
+    "tools": {
+      "list_invoices": {
+        "trim": "prudent",
+        "expand": true
+      }
+    },
+    "auto": {
+      "complete_runs": 4,
+      "min_runs": 3,
+      "applied": true,
+      "switched_off": [],
+      "refused_closings": 0,
+      "answered_runs_followed_by_calls": 0,
+      "idle_seconds": null,
+      "promoted": {},
+      "updated": "2026-11-12T23:14:08+00:00"
+    }
+  },
+  "config_file": "report.config.json",
+  "auto": {
+    "complete_runs": 4,
+    "min_runs": 3,
+    "applied": true,
+    "switched_off": [],
+    "refused_closings": 0,
+    "answered_runs_followed_by_calls": 0,
+    "idle_seconds": null,
+    "promoted": {},
+    "updated": "2026-11-12T23:14:08+00:00"
+  }
+}

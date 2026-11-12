@@ -1,0 +1,20 @@
+{
+  "format": "tracetrim/evidence@1",
+  "tools": {
+    "list_invoices": {
+      "fields": {
+        "data[].footer": {
+          "requested": [
+            "run-0004"
+          ],
+          "recovered": [
+            "run-0004"
+          ]
+        }
+      },
+      "broad_requests": []
+    }
+  },
+  "promotions": [],
+  "resumed": []
+}

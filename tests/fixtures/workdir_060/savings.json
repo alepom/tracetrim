@@ -1,0 +1,62 @@
+{
+  "format": "tracetrim/savings@1",
+  "unit": "tokens",
+  "runs": {
+    "run-0001": {
+      "tools": {
+        "list_invoices": {
+          "calls": 1,
+          "raw": 201,
+          "whole": 171,
+          "sent": 171
+        }
+      },
+      "expand": {
+        "calls": 0,
+        "tokens": 0
+      }
+    },
+    "run-0002": {
+      "tools": {
+        "list_invoices": {
+          "calls": 1,
+          "raw": 201,
+          "whole": 171,
+          "sent": 171
+        }
+      },
+      "expand": {
+        "calls": 0,
+        "tokens": 0
+      }
+    },
+    "run-0003": {
+      "tools": {
+        "list_invoices": {
+          "calls": 1,
+          "raw": 201,
+          "whole": 171,
+          "sent": 171
+        }
+      },
+      "expand": {
+        "calls": 0,
+        "tokens": 0
+      }
+    },
+    "run-0004": {
+      "tools": {
+        "list_invoices": {
+          "calls": 1,
+          "raw": 201,
+          "whole": 171,
+          "sent": 121
+        }
+      },
+      "expand": {
+        "calls": 1,
+        "tokens": 15
+      }
+    }
+  }
+}

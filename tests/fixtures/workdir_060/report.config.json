@@ -1,0 +1,24 @@
+{
+  "format": "tracetrim/config@1",
+  "generated": "2026-11-12T23:14:08+00:00",
+  "projection": "report.projection.json",
+  "unescape": true,
+  "compact": true,
+  "tools": {
+    "list_invoices": {
+      "trim": "prudent",
+      "expand": true
+    }
+  },
+  "auto": {
+    "complete_runs": 4,
+    "min_runs": 3,
+    "applied": true,
+    "switched_off": [],
+    "refused_closings": 0,
+    "answered_runs_followed_by_calls": 0,
+    "idle_seconds": null,
+    "promoted": {},
+    "updated": "2026-11-12T23:14:08+00:00"
+  }
+}

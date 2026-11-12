@@ -1,0 +1,2 @@
+{"kind": "observation", "index": 0, "tool": "list_invoices", "exposure": "filtered", "call_id": "ce970deb0", "hidden": ["data[].footer", "data[].remark_0", "data[].remark_1", "data[].remark_2", "data[].remark_3", "data[].remark_4", "data[].remark_5", "data[].remark_6", "data[].remark_7"]}
+{"kind": "expand", "index": 0, "after": 1, "tool": "list_invoices", "call_id": "ce970deb0", "requested": ["data[].footer"], "returned": ["data[].footer"], "recovered": ["data[].footer"], "targeted": ["data[].footer"], "broad": false, "repeat": false, "counts": true}

@@ -9,65 +9,9 @@ in front of any server without changing your agent.
 
 https://github.com/user-attachments/assets/66d7ac8b-1541-4ee3-89b4-4e6fbfe8d043
 
-
-
-It comes with a [study](https://doi.org/10.5281/zenodo.23953934), with protocols frozen before every run, of
-where this works and where it fails. In short:
-
-| | |
-|---|---|
-| Tool-output tokens removed on unseen runs (0.1) | real APIs: 63% and 70% (12% on the third agent); simulated: 69% and 77% |
-| …of which re-serialising the JSON alone, removing nothing | up to 13% (real APIs), up to 17% (simulated) |
-| Same conversations: tracetrim 0.1 / 0.2 / Headroom (stateless) / full minifier, no field removed | the same two real-API agents: 59–68% / 46–53% / 17–28% / 16–24%; simulated: 69–77% / 57–61% / 31–33% / 18–33% |
-| Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates; a later re-check found one unsupported volume among 180 reported keyword–volume pairs |
-| Learning from tool calls only (what a gateway sees) | a used field missed in 49% of the held-out structured calls it trims (156/317, 3 agents on real APIs), against 4% with the answer |
-| Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
-
-Version 0.2 keeps identifying fields and recognises transformed values by default. Version 0.3
-adds an automatic mode: put one proxy in front of your MCP servers and it observes, learns and
-trims on its own. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming
-anything that matters.
-
-### What's new in 0.6
-
-- **What tool definitions weigh**: the report shows the tokens the tool list costs on every turn and the
-  tools the agent never called, and suggests what to do. tracetrim hides no tool: hosts like Claude Code
-  already load definitions on demand, and the measure says why
-  ([docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md)).
-
-### What's new in 0.5
-
-- **`tracetrim init`** puts tracetrim in front of the servers your host already uses (Claude Desktop,
-  Claude Code, Cursor, VS Code): a dry run first, a backup, `--undo`, and no key ever printed.
-- **Which hosts were checked, and how**:
-  [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md). Check your own with
-  `--log-client` (since 0.4.1), which logs what a client asks for and never what it sends.
-- Since 0.4.1, the log and the report split the saving into *format* (compact JSON, nothing removed) and
-  *fields* (what learning removes).
-
-### What's new in 0.4
-
-Version 0.4 makes the automatic mode easier to trust in daily use. Every new function that changes what
-the model receives is off by default; the [CHANGELOG](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md) lists every behaviour that changed.
-
-- **Compact JSON from the first call.** In automatic mode, JSON outputs reach the model without
-  indentation and without spaces after separators, before anything is learned. Nothing is removed;
-  `--no-compact` turns it off.
-- **A skill instead of long tool descriptions.** The instructions for `expand` and `tracetrim_done` are
-  one versioned text, published through the MCP Skills extension (`--no-skill` to turn it off), with an
-  optional *strategy* level on organising tool calls (`--skill-strategy`).
-- **Learning from `expand`.** Requests are recorded as evidence per field. With `--promote`, a field the
-  agent keeps asking for is kept from then on, before the whole tool is switched off; with
-  `--sample-rate`, a few results go on whole to see whether the agent uses what is removed. A tool is
-  switched off only on evidence from two runs.
-- **Small results are passed whole** when trimming them, with the line that says what was removed,
-  would not save anything.
-- **`expand` takes positions** (`data[0].url`), and its errors say what to do.
-- **More robust runs**: repeated closings change nothing, a closing without an answer is refused, files
-  are written atomically.
-
-The new functions were checked by tests and by live runs after the paper, apart from its studies:
-[docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md).
+In short: the first runs are only observed; from then on each tool's output reaches the model without
+the fields the agent never reused, and a hidden field is one `expand` away. JSON is also written
+compactly from the first call. With MCP, nothing changes in your agent but one entry in its configuration.
 
 ## Install
 
@@ -81,10 +25,11 @@ From a clone: `pip install -e ".[measure,proxy,test]"`. To reproduce the
 study's numbers, figures and analyses: `pip install -e ".[measure,proxy,test]"` is enough (they need no agent SDK);
 to run new agent sessions, also `pip install -r requirements-study.txt` (the versions used, OpenAI SDK included).
 
-## The short way: automatic mode
+## Put it in front of your agent
 
-Your agent already uses one or more MCP servers. If its host is Claude Desktop, Claude Code, Cursor
-or VS Code, `tracetrim init` (since 0.5) puts tracetrim in front of them for you:
+### With `tracetrim init` (Claude Desktop, Claude Code, Cursor, VS Code)
+
+Your agent already uses one or more MCP servers. `tracetrim init` puts tracetrim in front of them:
 
 ```bash
 tracetrim init --host cursor            # dry run: shows what would change, writes nothing
@@ -95,10 +40,11 @@ It moves the servers it can stand in front of to `servers.json` in a work direct
 you), leaves one `tracetrim` entry in the host, and says which servers stay where they are and why. It
 never prints a key, and `tracetrim init --undo BACKUP` puts the host's file back byte for byte.
 [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md) has the details, and
-a table of what was verified host by host. Then restart the host and go to *Then use the agent as
-usual*, below.
+a table of what was verified host by host. Then restart the host: see *What happens next*, below.
 
-**By hand**, for any other host. Copy the `mcpServers` block of your servers — the same JSON
+### By hand, for any other host
+
+Copy the `mcpServers` block of your servers — the same JSON
 Claude Desktop, Claude Code and Cursor use — into a file:
 
 ```json
@@ -128,60 +74,7 @@ servers share one), plus `expand` and `tracetrim_done`. The proxy also publishes
 as an Agent Skill over MCP (since 0.4; see [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md)):
 a host that loads MCP skills needs no added line, the others keep it
 ([which hosts do](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md#what-was-verified-host-by-host)).
-Then use the agent as usual:
-
-- **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
-  (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
-  never uses, with suggestions;
-- **during the first runs** (5 by default, `--min-runs`) nothing is changed: the proxy only observes.
-  `tracetrim_done` is how it sees the answer — in the study, learning from tool calls alone missed a
-  used field in 49% of held-out calls (three agents on real APIs), against 4% with the answer;
-- **after that**, it applies the report's automatic actions on its own: the prudent projection, with
-  identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
-  report as a manual action for you to review;
-- **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
-  trimmed, and the report says so. Since 0.4, and off unless asked for: `--promote` keeps a single
-  field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
-  result whole now and then to see whether the agent uses what is removed
-  ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). Runs without `tracetrim_done` count for telemetry, not for learning.
-  One agent at a time: calls that arrive together from several agents end up in the same run. Over MCP the
-  proxy cannot see the model's turns, so calls emitted together are compared by arrival order: a later call's
-  arguments can count as using an earlier sibling's output. In the study this changed no figure; where turns
-  matter, record them (`AutoTrim` takes `turn`, JSONL traces accept a `"turn"` field).
-
-Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
-delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
-tool outputs of the two runs after learning went from 33,492 to 18,725 tokens (−44%, fields asked back
-included), the agent asked for a hidden field once in each, and all five tickets passed the keyword test in every
-run: a check, not a measurement (`results/checks/auto_check_mcp.json`) — the measurements are in the
-paper.
-
-### Servers that need credentials
-
-Two separate links, two separate credentials: **agent → tracetrim** is protected by the token you
-choose, in `$TRACETRIM_TOKEN` (or `--token`, which other users of the machine can see in the process
-list), only when tracetrim is reachable over HTTP; requests whose Host is not local or listed with
-`--allowed-host` are refused. **tracetrim → your servers**
-uses your servers' own credentials, which tracetrim holds and the agent no longer sees.
-
-| how your server authenticates | in `mcp.json` |
-|---|---|
-| API key or bearer token in a header | `"headers": {"Authorization": "Bearer ${MY_TOKEN}"}` (any header name) |
-| local server reading a key from the environment | `"env": {"API_KEY": "${MY_KEY}"}` |
-| OAuth, with a browser login (as in Claude Code or Cursor) | just `"url"`: no headers needed |
-
-`${VAR}` is read from the environment when the proxy starts, so keys stay out of the file. For
-OAuth servers, log in once:
-
-```bash
-tracetrim login --servers mcp.json     # opens the login page of each OAuth server
-```
-
-Discovery, client registration, PKCE and token renewal follow the MCP authorization spec (through
-the MCP SDK); tokens are kept in `~/.config/tracetrim/oauth/`, readable only by you, and renewed on
-their own, so the proxy never waits for a browser. `tracetrim logout --servers mcp.json` forgets them.
-Not supported: a different identity per end user (the proxy uses one identity for everyone) and the
-legacy SSE transport.
+Then use the agent as usual.
 
 ### Hosted agents (OpenAI Playground, Responses API)
 
@@ -222,8 +115,8 @@ else:
 tt.done(final_answer)
 ```
 
-`tt.output` records the call and returns what the model should receive: the raw result during the
-first runs, the trimmed one after. `tt.done` closes the run, updates the report
+`tt.output` records the call and returns what the model should receive: the whole result during the
+first runs (as compact JSON), the trimmed one after. `tt.done` closes the run, updates the report
 (`tt.report`, `tracetrim-data/report.html`) and, once `min_runs` runs exist, starts trimming; what
 was learned survives restarts. The rules are those of the proxy's automatic mode. Arguments can be
 a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a description and a JSON
@@ -242,11 +135,67 @@ hidden field once, and all five tickets passed the keyword test in every run (a 
 `results/checks/auto_check_function.json`, from
 `python -m experiments.auto_check --paid --runs 5 --min-runs 3 --mode function`).
 
+## What happens next
+
+Whichever way it is connected:
+
+- **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
+  (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
+  never uses, with suggestions;
+- **during the first runs** (5 by default, `--min-runs`) nothing is removed: the proxy only observes
+  (JSON is already written compactly).
+  `tracetrim_done` is how it sees the answer — in the study, learning from tool calls alone missed a
+  used field in 49% of held-out calls (three agents on real APIs), against 4% with the answer;
+- **after that**, it applies the report's automatic actions on its own: the prudent projection, with
+  identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
+  report as a manual action for you to review;
+- **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
+  trimmed, and the report says so. Since 0.4, and off unless asked for: `--promote` keeps a single
+  field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
+  result whole now and then to see whether the agent uses what is removed
+  ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). Runs without `tracetrim_done` count for telemetry, not for learning.
+  One agent at a time: calls that arrive together from several agents end up in the same run. Over MCP the
+  proxy cannot see the model's turns, so calls emitted together are compared by arrival order: a later call's
+  arguments can count as using an earlier sibling's output. In the study this changed no figure; where turns
+  matter, record them (`AutoTrim` takes `turn`, JSONL traces accept a `"turn"` field).
+
+Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
+delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
+tool outputs of the two runs after learning went from 33,492 to 18,725 tokens (−44%, fields asked back
+included), the agent asked for a hidden field once in each, and all five tickets passed the keyword test in every
+run: a check, not a measurement (`results/checks/auto_check_mcp.json`) — the measurements are in the
+paper.
+
 **Mind the work directory.** To learn, tracetrim keeps the full tool outputs of every run in
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
 treat the data: local, not shared, not committed.
 
-## Quickstart: five runs, one report, one config
+## Servers that need credentials
+
+Two separate links, two separate credentials: **agent → tracetrim** is protected by the token you
+choose, in `$TRACETRIM_TOKEN` (or `--token`, which other users of the machine can see in the process
+list), only when tracetrim is reachable over HTTP; requests whose Host is not local or listed with
+`--allowed-host` are refused. **tracetrim → your servers**
+uses your servers' own credentials, which tracetrim holds and the agent no longer sees.
+
+| how your server authenticates | in `mcp.json` |
+|---|---|
+| API key or bearer token in a header | `"headers": {"Authorization": "Bearer ${MY_TOKEN}"}` (any header name) |
+| local server reading a key from the environment | `"env": {"API_KEY": "${MY_KEY}"}` |
+| OAuth, with a browser login (as in Claude Code or Cursor) | just `"url"`: no headers needed |
+
+`${VAR}` is read from the environment when the proxy starts, so keys stay out of the file. For
+OAuth servers, log in once:
+
+```bash
+tracetrim login --servers mcp.json     # opens the login page of each OAuth server
+```
+
+Discovery, client registration, PKCE and token renewal follow the MCP authorization spec (through
+the MCP SDK); tokens are kept in `~/.config/tracetrim/oauth/`, readable only by you, and renewed on
+their own, so the proxy never waits for a browser. `tracetrim logout --servers mcp.json` forgets them.
+Not supported: a different identity per end user (the proxy uses one identity for everyone) and the
+legacy SSE transport.
 
 The manual way, with a review step before anything is applied.
 
@@ -289,7 +238,7 @@ tool_message = policy.apply(tool_name, raw_output)
 ```
 
 `Policy.apply` only trims: it adds no `[trimmed]` line and there is no `expand` behind it. For the way
-back, use `AutoTrim` (function calling, below) or the proxy.
+back, use `AutoTrim` (function calling, above) or the proxy.
 
 Or in front of any MCP server, with no code change — locally (Claude Desktop, Claude Code,
 Cursor):
@@ -350,6 +299,40 @@ removed and the *misses* (held-out calls in which a field the agent used would h
 - Structural re-encoding (`"structural": "toon"` or `"headroom"` in the config) is optional and was
   seen to change how a model resolves ambiguous data. Validate on your task first.
 
+## The study behind it
+
+tracetrim comes with a [study](https://doi.org/10.5281/zenodo.23953934), with protocols frozen before every run, of
+where this works and where it fails. In short:
+
+| | |
+|---|---|
+| Tool-output tokens removed on unseen runs (0.1) | real APIs: 63% and 70% (12% on the third agent); simulated: 69% and 77% |
+| …of which re-serialising the JSON alone, removing nothing | up to 13% (real APIs), up to 17% (simulated) |
+| Same conversations: tracetrim 0.1 / 0.2 / Headroom (stateless) / full minifier, no field removed | the same two real-API agents: 59–68% / 46–53% / 17–28% / 16–24%; simulated: 69–77% / 57–61% / 31–33% / 18–33% |
+| Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates; a later re-check found one unsupported volume among 180 reported keyword–volume pairs |
+| Learning from tool calls only (what a gateway sees) | a used field missed in 49% of the held-out structured calls it trims (156/317, 3 agents on real APIs), against 4% with the answer |
+| Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
+
+Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
+automatic mode. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming anything that
+matters. Measures made after the paper, on the functions of 0.4 and later, are in
+[docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md) and
+[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md).
+
+## Documentation
+
+- [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md): `tracetrim init`, host
+  formats, and what was verified host by host.
+- [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md): the instructions
+  tracetrim gives the model, and how to check whether a host loads them.
+- [docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md): how automatic
+  mode corrects itself (`expand` evidence, promotion, sampling, switch-off).
+- [docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md): what tool
+  definitions weigh, and why tracetrim hides no tool.
+- [STABILITY.md](https://github.com/alepom/tracetrim/blob/master/STABILITY.md): what is promised not to
+  break. [CHANGELOG.md](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md): what changed, version
+  by version.
+
 ## Reproducing the study
 
 `experiments/` contains the agent loop, the simulated MCP servers (Stripe- and GitHub-shaped,
@@ -361,8 +344,7 @@ with `PYTHONPATH=src`. The traces are in the Zenodo dataset: unzip it at the roo
 `dataset/traces/` (C3, C4 and C5; C1 and C2 are released as derived records only, since the search
 data cannot be redistributed, so their analyses run where they were recorded and their results are in
 `results/`; `python -m experiments.misses_from_derived` recomputes their misses from the records). The simulated
-servers download their pinned OpenAPI descriptions on first use. Changes by version are in
-[CHANGELOG.md](https://github.com/alepom/tracetrim/blob/master/CHANGELOG.md).
+servers download their pinned OpenAPI descriptions on first use.
 
 ## Citation
 

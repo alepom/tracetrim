@@ -1,0 +1,31 @@
+{
+  "format": "tracetrim/tools@1",
+  "tools": [
+    {
+      "type": "function",
+      "name": "list_invoices",
+      "description": "List the invoices of an account.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "type": "function",
+      "name": "refund",
+      "description": "Refund an invoice.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "invoice": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

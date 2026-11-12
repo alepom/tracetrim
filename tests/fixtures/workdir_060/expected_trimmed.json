@@ -1,0 +1,18 @@
+{
+  "written_by": "0.6.0",
+  "call": "billing.output(3), first call after loading the directory",
+  "body": {
+    "has_more": false,
+    "data": [
+      {
+        "id": "in_1004",
+        "account_id": "acct_773",
+        "amount_due": 7825,
+        "created": 1795428000,
+        "status": "open",
+        "hosted_invoice_url": "https://pay.example.test/i/in_1004"
+      }
+    ]
+  },
+  "hidden": "data[].footer, data[].remark_0, data[].remark_1, data[].remark_2, data[].remark_3, data[].remark_4, data[].remark_5, data[].remark_6, data[].remark_7"
+}

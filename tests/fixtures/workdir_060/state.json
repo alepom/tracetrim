@@ -1,0 +1,21 @@
+{
+  "runs": 4,
+  "complete_runs": 4,
+  "trimmed": {
+    "list_invoices": 1
+  },
+  "expanded": {
+    "list_invoices": 1
+  },
+  "off": [],
+  "config_from_runs": 4,
+  "refused_closings": 0,
+  "answered_runs_followed_by_calls": 0,
+  "expand_runs": {
+    "list_invoices": [
+      "run-0004"
+    ]
+  },
+  "sampling": {},
+  "full_cheaper": {}
+}
