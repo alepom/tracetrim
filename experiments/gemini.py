@@ -47,6 +47,35 @@ def function_response_payload(output: str) -> dict:
     return data if isinstance(data, dict) else {"result": data}
 
 
+def access(model: str) -> dict:
+    """Can the project named in .env use the model? Asked with a token count, which
+    generates nothing and is not billed. No value of the configuration is returned:
+    a metadata request on the model is not enough, it does not check the project."""
+    import google.auth
+    from google import genai
+    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") and env("GOOGLE_APPLICATION_CREDENTIALS"):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = env("GOOGLE_APPLICATION_CREDENTIALS")
+    project = os.environ.get("GCP_PROJECT") or env("GCP_PROJECT")
+    out = {"model": model, "location": LOCATION, "GCP_PROJECT_is_set": bool(project), "accepted": False, "error": None}
+    try:
+        _, own = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        out["GCP_PROJECT_is_the_service_accounts_project"] = own == project
+    except Exception as e:                                   # noqa: BLE001
+        out["error"] = f"credentials: {type(e).__name__}"
+        return out
+    try:
+        genai.Client(vertexai=True, project=project, location=LOCATION).models.count_tokens(model=model, contents="ciao")
+        out["accepted"] = True
+    except Exception as e:                                   # noqa: BLE001
+        reason = ""
+        try:
+            reason = e.details["error"]["details"][0].get("reason", "")
+        except Exception:                                    # noqa: BLE001
+            pass
+        out["error"] = f"{getattr(e, 'code', '')} {getattr(e, 'status', type(e).__name__)} {reason}".strip()
+    return out
+
+
 class Gemini:
     """`client.responses.create(**kwargs)` for a Gemini model on Vertex AI."""
 

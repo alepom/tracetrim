@@ -6,6 +6,7 @@
   python -m experiments.run --e3 pilot              # what the pilot showed, and whether the runs may go on
   python -m experiments.run --e3 dry-run DIR        # every arm and case with a stub in place of the model: no spend
   python -m experiments.run --e3 estimate [--json]  # the cost estimate, from E1's measured runs
+  python -m experiments.run --e3 check              # can the project in .env use the model? (not billed)
 
 The loop, the traces and the meta files are those of experiments/v04.py. What E3 has of its own:
 
@@ -201,7 +202,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(prog="experiments.run --e3", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name in ("schedule", "next", "pilot"):
+    for name in ("schedule", "next", "pilot", "check"):
         sub.add_parser(name)
     s = sub.add_parser("dry-run")
     s.add_argument("directory")
@@ -216,6 +217,12 @@ def main(argv=None):
               f"provider calls: {sum(e.get('dataforseo_calls', 0) for e in ledger(HERE, ledger_path(HERE)))}")
     elif a.cmd == "pilot":
         print(json.dumps(pilot(HERE), indent=2))
+    elif a.cmd == "check":
+        from .gemini import access
+        r = access(PRICES["model"])
+        print(json.dumps(r, indent=2))
+        if not r["accepted"]:
+            raise SystemExit("the project in .env cannot use the model: nothing can be run")
     elif a.cmd == "dry-run":
         metas = asyncio.run(dry_run(a.directory))
         print(f"\n{len(metas)} dry runs in {a.directory}: nothing spent")
@@ -238,6 +245,11 @@ def main(argv=None):
         run = next((r for r in runs if not done(HERE, r)), None)
         if run is None:
             raise SystemExit("every run of E3 is done")
+        from .gemini import access
+        r = access(PRICES["model"])
+        if not r["accepted"]:               # before anything is spent or written
+            raise SystemExit(f"E3: the project in .env cannot use {PRICES['model']} ({r['error']}). "
+                             "See `python -m experiments.run --e3 check`.")
         m = asyncio.run(execute(run))
         print(f"\n  {m['case']} {m['run']}: {m['turns']} turns, {m['calls']} calls, {m['cost_usd']:.3f} USD, flags {m['flags']}"
               + (f", replay {m['replay']}" if m["replay"] else ""))
