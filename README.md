@@ -303,7 +303,7 @@ removed and the *misses* (held-out calls in which a field the agent used would h
 
 ## The study behind it
 
-tracetrim comes with a [study](https://doi.org/10.5281/zenodo.23953934), with protocols frozen before every run, of
+tracetrim comes with a [study](https://doi.org/10.5281/zenodo.24189959), with protocols frozen before every run, of
 where this works and where it fails. In short:
 
 | | |
@@ -316,7 +316,7 @@ where this works and where it fails. In short:
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
-automatic mode. Read the [paper](https://doi.org/10.5281/zenodo.23953934) before trimming anything that
+automatic mode. Read the [paper](https://doi.org/10.5281/zenodo.24189959) before trimming anything that
 matters. Measures made after the paper, on the functions of 0.4 and later, are in
 [docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md) and
 [docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md).
@@ -351,9 +351,9 @@ servers download their pinned OpenAPI descriptions on first use.
 ## Citation
 
 Paper: Alessio Pomaro, *Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces,
-and When They Pay Off*, preprint, version 2, 2026. DOI [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934).
+and When They Pay Off*, preprint, version 2, 2026. DOI [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959) (version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934)).
 
-Software, protocols and dataset: DOI [10.5281/zenodo.23954125](https://doi.org/10.5281/zenodo.23954125).
+Software, protocols and dataset: DOI [10.5281/zenodo.24190053](https://doi.org/10.5281/zenodo.24190053) (version 1.0.0).
 See `CITATION.cff`.
 
 ## License

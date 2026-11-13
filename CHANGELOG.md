@@ -4,6 +4,30 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.0.0
+
+The first stable release: from here on, what [STABILITY.md](https://github.com/alepom/tracetrim/blob/master/STABILITY.md)
+lists does not break within 1.x. It comes with version 2 of the paper. **Nothing changes in what the model receives.**
+
+- **`tracetrim init --write` starts the new entry once** and says whether it answers: as the host will start it, with
+  its references resolved from init's own environment; it asks for the tools and calls none. It reports the time and
+  the tools; when the entry does not answer within 120 seconds it says so, names the variables it could not pass and
+  gives the undo command, with a non-zero exit. `--no-check` skips it. Found on Windows, where the first start right
+  after installing exceeded the 30 seconds Claude Code waits for a server.
+- **Hosts checked** ([docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md)): VS Code
+  (Copilot Chat, agent mode) and Claude Code on Windows join the OpenAI Playground and Claude Code on Linux, all with
+  an entry written by `init` where the host has a file.
+- **The paper, version 2**, subtitled *and When They Pay Off*
+  ([DOI 10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959)): Study 3 (the measures of
+  `protocol-v04.md` and `protocol-v04-e3.md`), an offline comparison with a minifier and a static filter fixed in
+  advance (`docs/baselines.md`, `experiments/baselines.py`), post-hoc audits of Study 3's answers
+  (`experiments/audit_v04.py`), definitions, a comparison with related work, and a table of what can be checked
+  independently. Every number is generated from `results/` (`experiments/paper_numbers.py`).
+- **The dataset** gains `study3/`: the runs of Study 3 on the simulated servers in full, derived records for the
+  search-data cases (`experiments/export_data.py`). No amount spent is published, in the dataset or anywhere.
+- `docs/measures-v04.md` and `docs/definitions.md` corrected where they did not match the results files;
+  `protocol-v04.md` records, as deviation 6, the billing audit run after the results.
+
 ## 0.7.0
 
 The release before 1.0: what is promised not to break, written down and held by tests, and the fixes of
