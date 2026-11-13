@@ -85,3 +85,12 @@ def test_a_tool_that_returns_bytes_is_read_as_text_with_or_without_the_breakdown
     on = AutoTrim(tmp_path / "on", min_runs=3).output("t", {}, b'{"a": 1}')
     off = AutoTrim(tmp_path / "off", min_runs=3, breakdown=False).output("t", {}, b'{"a": 1}')
     assert on == off == '{"a":1}'
+
+
+def test_the_dataset_never_publishes_an_amount_nor_what_the_agent_typed():
+    from experiments.export_data import public_meta
+    meta = {"run": "E2-base-s1-r1", "cost_usd": 0.42, "usage": {"input": 1}, "tool_failures": [{"arguments": {"q": "x"}}],
+            "domain_rejections": ["example.test"], "replay": {"exact": 1}}
+    full, derived = public_meta(dict(meta), derived=False), public_meta(dict(meta), derived=True)
+    assert "cost_usd" not in full and "tool_failures" in full and full["usage"] == {"input": 1}
+    assert set(derived) == {"run", "usage"}
