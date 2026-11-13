@@ -237,7 +237,8 @@ def main():
             print(f"  {case}: no Phase A traces in {STUDY_TRACES}, skipped")
             continue
         res[case] = measure(case, count)
-    out = {"traces": str(STUDY_TRACES), "arms": list(ARMS), "static_keys": sorted(STATIC_KEYS),
+    # The source is named, never as a local path: the file is published.
+    out = {"traces": "the Phase A traces of Studies 1-2 ($TRACETRIM_TRACES, or dataset/traces)", "arms": list(ARMS), "static_keys": sorted(STATIC_KEYS),
            "definitions": "docs/baselines.md", "cases": res,
            "pooled_real": pooled(res, REAL), "pooled_simulated": pooled(res, SIMULATED)}
 

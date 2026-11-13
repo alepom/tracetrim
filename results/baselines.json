@@ -1,5 +1,5 @@
 {
-  "traces": "/home/alepom/progetti/tracetrim/traces",
+  "traces": "the Phase A traces of Studies 1-2 ($TRACETRIM_TRACES, or dataset/traces)",
   "arms": [
     "raw",
     "minified",
