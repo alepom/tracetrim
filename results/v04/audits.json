@@ -1,0 +1,3100 @@
+{
+  "post_hoc": true,
+  "note": "Post-hoc analyses, asked by a reviewer on 2026-11-13 after the results of E1 and E2 were known; not in protocol-v04.md. Rules in experiments/audit_v04.py, written before these audits were run.",
+  "input": {
+    "e1_c4_runs_per_arm": {
+      "R": 5,
+      "S": 5,
+      "T": 5,
+      "ST": 5
+    },
+    "e1_json": {
+      "R": 5,
+      "S": 5,
+      "ST": 5,
+      "T": 5
+    },
+    "e1_match": true,
+    "e2_runs_per_sequence": {
+      "C1/base/s1": 5,
+      "C1/sampling/s1": 5,
+      "C4/base/s1": 5,
+      "C4/base/s2": 5,
+      "C4/promotion+sampling/s1": 5,
+      "C4/promotion+sampling/s2": 5,
+      "C4/promotion/s1": 5,
+      "C4/promotion/s2": 5,
+      "C4/sampling/s1": 5,
+      "C4/sampling/s2": 5
+    },
+    "e2_json": {
+      "C1/base/s1": 5,
+      "C1/sampling/s1": 5,
+      "C4/base/s1": 5,
+      "C4/base/s2": 5,
+      "C4/promotion+sampling/s1": 5,
+      "C4/promotion+sampling/s2": 5,
+      "C4/promotion/s1": 5,
+      "C4/promotion/s2": 5,
+      "C4/sampling/s1": 5,
+      "C4/sampling/s2": 5
+    },
+    "e2_match": true
+  },
+  "e1_c4": {
+    "R": {
+      "runs": 5,
+      "audit_total": 23,
+      "audit_of": 25,
+      "audit_per_run": {
+        "median": 5,
+        "min": 4,
+        "max": 5
+      },
+      "keyword_test_total": 25,
+      "gates_passed": 5,
+      "gate_facts": [
+        68,
+        68
+      ],
+      "audit_failed_by_ticket": {
+        "T2": 2
+      },
+      "runs_detail": [
+        {
+          "run": "E1-R-1",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            14,
+            14
+          ]
+        },
+        {
+          "run": "E1-R-2",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            14,
+            14
+          ]
+        },
+        {
+          "run": "E1-R-3",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            12,
+            12
+          ]
+        },
+        {
+          "run": "E1-R-4",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            14,
+            14
+          ]
+        },
+        {
+          "run": "E1-R-5",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            14,
+            14
+          ]
+        }
+      ]
+    },
+    "S": {
+      "runs": 5,
+      "audit_total": 20,
+      "audit_of": 25,
+      "audit_per_run": {
+        "median": 4,
+        "min": 3,
+        "max": 5
+      },
+      "keyword_test_total": 21,
+      "gates_passed": 5,
+      "gate_facts": [
+        66,
+        66
+      ],
+      "audit_failed_by_ticket": {
+        "T2": 4,
+        "T3": 1
+      },
+      "runs_detail": [
+        {
+          "run": "E1-S-1",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            14,
+            14
+          ]
+        },
+        {
+          "run": "E1-S-2",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 4,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            12,
+            12
+          ]
+        },
+        {
+          "run": "E1-S-3",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 4,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            12,
+            12
+          ]
+        },
+        {
+          "run": "E1-S-4",
+          "answer_parsed": true,
+          "audit": 3,
+          "audit_failed": [
+            "T2",
+            "T3"
+          ],
+          "keyword_test": 3,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-S-5",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            15,
+            15
+          ]
+        }
+      ]
+    },
+    "T": {
+      "runs": 5,
+      "audit_total": 20,
+      "audit_of": 25,
+      "audit_per_run": {
+        "median": 4,
+        "min": 4,
+        "max": 4
+      },
+      "keyword_test_total": 23,
+      "gates_passed": 5,
+      "gate_facts": [
+        64,
+        64
+      ],
+      "audit_failed_by_ticket": {
+        "T2": 5
+      },
+      "runs_detail": [
+        {
+          "run": "E1-T-1",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 4,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-T-2",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 4,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-T-3",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-T-4",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-T-5",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            12,
+            12
+          ]
+        }
+      ]
+    },
+    "ST": {
+      "runs": 5,
+      "audit_total": 21,
+      "audit_of": 25,
+      "audit_per_run": {
+        "median": 4,
+        "min": 3,
+        "max": 5
+      },
+      "keyword_test_total": 23,
+      "gates_passed": 5,
+      "gate_facts": [
+        72,
+        72
+      ],
+      "audit_failed_by_ticket": {
+        "T2": 3,
+        "T3": 1
+      },
+      "runs_detail": [
+        {
+          "run": "E1-ST-1",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            16,
+            16
+          ]
+        },
+        {
+          "run": "E1-ST-2",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        },
+        {
+          "run": "E1-ST-3",
+          "answer_parsed": true,
+          "audit": 5,
+          "audit_failed": [],
+          "keyword_test": 5,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            15,
+            15
+          ]
+        },
+        {
+          "run": "E1-ST-4",
+          "answer_parsed": true,
+          "audit": 4,
+          "audit_failed": [
+            "T2"
+          ],
+          "keyword_test": 5,
+          "keyword_only": [
+            "T2"
+          ],
+          "gates_passed": true,
+          "gate_facts": [
+            15,
+            15
+          ]
+        },
+        {
+          "run": "E1-ST-5",
+          "answer_parsed": true,
+          "audit": 3,
+          "audit_failed": [
+            "T2",
+            "T3"
+          ],
+          "keyword_test": 3,
+          "keyword_only": [],
+          "gates_passed": true,
+          "gate_facts": [
+            13,
+            13
+          ]
+        }
+      ]
+    }
+  },
+  "e2": {
+    "sequences": [
+      {
+        "case": "C1",
+        "arm": "base",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 5,
+        "items": 25,
+        "items_correct": 23,
+        "runs_all_items_correct": 2,
+        "failures": {
+          "video_of_another_channel": 1,
+          "video_not_identified": 1
+        },
+        "per_run": [
+          {
+            "run": "E2-base-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 0,
+            "items_correct": 0,
+            "failures": {},
+            "detail": [],
+            "youtube_items": 59,
+            "plan_items_with_views_and_no_channel": 3,
+            "how_matched": {},
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 3,
+              "items_correct": 3,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-base-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 8,
+            "items_correct": 8,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 3,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 4,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 5,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 8,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 9,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 52,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "short": 5,
+              "title": 3
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 8,
+              "items_correct": 8,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-base-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 9,
+            "items_correct": 8,
+            "failures": {
+              "video_of_another_channel": 1
+            },
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": false,
+                "kind": "video_of_another_channel",
+                "how": null
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 3,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 5,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 6,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 7,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 8,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 9,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 34,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 7,
+              "short": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 9,
+              "items_correct": 8,
+              "failures": {
+                "video_of_another_channel": 1
+              },
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-base-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 4,
+            "items_correct": 3,
+            "failures": {
+              "video_not_identified": 1
+            },
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": false,
+                "kind": "video_not_identified",
+                "how": null
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 3,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 40,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 3
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 4,
+              "items_correct": 3,
+              "failures": {
+                "video_not_identified": 1
+              },
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-base-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 4,
+            "items_correct": 4,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 3,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 54,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 4
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 4,
+              "items_correct": 4,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          }
+        ]
+      },
+      {
+        "case": "C1",
+        "arm": "sampling",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 5,
+        "items": 21,
+        "items_correct": 20,
+        "runs_all_items_correct": 4,
+        "failures": {
+          "video_not_identified": 1
+        },
+        "per_run": [
+          {
+            "run": "E2-sampling-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 5,
+            "items_correct": 4,
+            "failures": {
+              "video_not_identified": 1
+            },
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": false,
+                "kind": "video_not_identified",
+                "how": null
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 4,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 5,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 56,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 3,
+              "short": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 5,
+              "items_correct": 4,
+              "failures": {
+                "video_not_identified": 1
+              },
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-sampling-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 59,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "short": 1,
+              "title": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 2,
+              "items_correct": 2,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-sampling-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 4,
+            "items_correct": 4,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 6,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 9,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 40,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 3,
+              "short": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 4,
+              "items_correct": 4,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-sampling-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 33,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 1,
+              "short": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 2,
+              "items_correct": 2,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          },
+          {
+            "run": "E2-sampling-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 8,
+            "items_correct": 8,
+            "failures": {},
+            "detail": [
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 0,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 1,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 2,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 4,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 5,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 6,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 8,
+                "ok": true,
+                "kind": null,
+                "how": "title",
+                "rounded": false
+              },
+              {
+                "plan": "piano_editoriale_brevissimo_termine",
+                "item": 9,
+                "ok": true,
+                "kind": null,
+                "how": "short",
+                "rounded": false
+              }
+            ],
+            "youtube_items": 32,
+            "plan_items_with_views_and_no_channel": 0,
+            "how_matched": {
+              "title": 7,
+              "short": 1
+            },
+            "rounded_views_accepted": 0,
+            "sensitivity_without_context_words": {
+              "items": 8,
+              "items_correct": 8,
+              "failures": {},
+              "plan_items_with_views_and_no_channel": 0
+            }
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "base",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 9,
+        "items": 9,
+        "items_correct": 9,
+        "runs_all_items_correct": 5,
+        "failures": {},
+        "per_run": [
+          {
+            "run": "E2-base-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "base",
+        "sequence": 2,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 10,
+        "items": 10,
+        "items_correct": 9,
+        "runs_all_items_correct": 4,
+        "failures": {
+          "ambiguous_collection": 1
+        },
+        "per_run": [
+          {
+            "run": "E2-base-s2-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s2-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s2-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s2-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-base-s2-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 1,
+            "failures": {
+              "ambiguous_collection": 1
+            },
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": false,
+                "kind": "ambiguous_collection",
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "charge_automatically",
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "promotion",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 8,
+        "items": 8,
+        "items_correct": 7,
+        "runs_all_items_correct": 4,
+        "failures": {
+          "ambiguous_collection": 1
+        },
+        "per_run": [
+          {
+            "run": "E2-promotion-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 0,
+            "failures": {
+              "ambiguous_collection": 1
+            },
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": false,
+                "kind": "ambiguous_collection",
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically",
+                  "send_invoice"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "promotion",
+        "sequence": 2,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 10,
+        "items": 10,
+        "items_correct": 10,
+        "runs_all_items_correct": 5,
+        "failures": {},
+        "per_run": [
+          {
+            "run": "E2-promotion-s2-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s2-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s2-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s2-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion-s2-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "promotion+sampling",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 10,
+        "items": 10,
+        "items_correct": 9,
+        "runs_all_items_correct": 4,
+        "failures": {
+          "ambiguous_collection": 1
+        },
+        "per_run": [
+          {
+            "run": "E2-promotion+sampling-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 1,
+            "failures": {
+              "ambiguous_collection": 1
+            },
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": false,
+                "kind": "ambiguous_collection",
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically",
+                  "send_invoice"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "promotion+sampling",
+        "sequence": 2,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 9,
+        "items": 9,
+        "items_correct": 9,
+        "runs_all_items_correct": 5,
+        "failures": {},
+        "per_run": [
+          {
+            "run": "E2-promotion+sampling-s2-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s2-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s2-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s2-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-promotion+sampling-s2-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "sampling",
+        "sequence": 1,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 8,
+        "items": 8,
+        "items_correct": 8,
+        "runs_all_items_correct": 5,
+        "failures": {},
+        "per_run": [
+          {
+            "run": "E2-sampling-s1-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s1-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s1-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s1-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s1-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "case": "C4",
+        "arm": "sampling",
+        "sequence": 2,
+        "runs": 5,
+        "requirement_met_runs": 5,
+        "requirement_items": 8,
+        "items": 8,
+        "items_correct": 8,
+        "runs_all_items_correct": 5,
+        "failures": {},
+        "per_run": [
+          {
+            "run": "E2-sampling-s2-r1",
+            "n": 1,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s2-r2",
+            "n": 2,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s2-r3",
+            "n": 3,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s2-r4",
+            "n": 4,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 1,
+              "items_met": 1
+            },
+            "items": 1,
+            "items_correct": 1,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l",
+                  "in_u4DuTUJyVBySqB"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          },
+          {
+            "run": "E2-sampling-s2-r5",
+            "n": 5,
+            "answer_parsed": true,
+            "requirement": {
+              "met": true,
+              "items": 2,
+              "items_met": 2
+            },
+            "items": 2,
+            "items_correct": 2,
+            "failures": {},
+            "detail": [
+              {
+                "ticket": "T2",
+                "cited": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "linked": [
+                  "in_MDzeEylbyKv1IT"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "send_invoice"
+                ],
+                "stated": [
+                  "send_invoice"
+                ]
+              },
+              {
+                "ticket": "T5",
+                "cited": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "linked": [
+                  "in_Ut4KVVRa4u1J6l"
+                ],
+                "ok": true,
+                "kind": null,
+                "true_methods": [
+                  "charge_automatically"
+                ],
+                "stated": [
+                  "charge_automatically"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "input_checks": {
+      "c4_invoice_outputs": 225,
+      "c4_invoice_outputs_disagreeing_with_world": 0,
+      "c1_runs_without_youtube_items": [],
+      "requirement_recomputed_differs": []
+    }
+  }
+}
