@@ -44,8 +44,8 @@ the traces by \texttt{experiments/paper\_figures.py}.}
 \subsection{The learner needs the answer}
 
 Learning only from later tool calls, which is all a proxy between agent and tools can observe, multiplied the
-misses: held-out structured calls that the projection trims and in which a used field would have been removed went
-from \MissesPooledRealFull{} to
+misses of the aggressive projection of version 0.1 (Table~\ref{tab:phasea}): held-out structured calls that the
+projection trims and in which a used field would have been removed went from \MissesPooledRealFull{} to
 \MissesPooledRealCalls{} over the three cases with real APIs, and from \MissesPooledSimFull{} to \MissesPooledSimCalls{}
 over the two simulated ones; from \PhaseAMissesi{} to \PhaseAMissesCallsi{} in the editorial plan,
 and to every trimmed call in the literature scan (\PhaseAMissesCallsiii) and in CI triage (\PhaseAMissesCallsv):
@@ -65,7 +65,9 @@ an agent needs from a tool depends on the task, not only on the tool.
 Replaying the same conversation with projected tool outputs (Table~\ref{tab:phaseb}) removed
 \PhaseBPrudentTokensi, \PhaseBPrudentTokensiii, \PhaseBPrudentTokensiv{} and \PhaseBPrudentTokensv{} of the
 tool-message tokens with the prudent projection, against \PhaseBHeadroomTokensi, \PhaseBHeadroomTokensiii,
-\PhaseBHeadroomTokensiv{} and \PhaseBHeadroomTokensv{} for Headroom on the same conversations. H2, as frozen, was
+\PhaseBHeadroomTokensiv{} and \PhaseBHeadroomTokensv{} for Headroom on the same conversations: an illustrative
+comparison of tokens in the configurations chosen (Section~\ref{sec:design}), not of methods, since the quality of
+Headroom's outputs was not evaluated. H2, as frozen, was
 rejected in almost every case: with two runs per arm the raw arm's range is often a single value, so any difference
 counts, including improvements. Reading the answers rather than the rule, the losses are concentrated in three
 mechanisms, each traced to a specific field.

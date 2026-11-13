@@ -1,0 +1,20 @@
+\begin{tabular}{llrrrr}
+\toprule
+& & & \multicolumn{2}{c}{Tool-output tokens} & \\
+\cmidrule(lr){4-5}
+Case & Arm & Billed input & before recovery & with \texttt{expand} replies & LLM API cost per run \\
+\midrule
+Editorial plan & R & 704{,}930 & -- & -- & -- \\
+ & S & 763{,}969 & -- & -- & +2\% \\
+ & T & 476{,}266 & $-$44\% & $-$34\% & $-$30\% \\
+ & ST & 442{,}252 & $-$44\%$^{a}$ & $-$44\%$^{a}$ & $-$35\% \\
+\addlinespace
+Content gaps & R & 236{,}839 & -- & -- & -- \\
+ & S & 191{,}175 & -- & -- & $-$7\% \\
+\addlinespace
+Billing support$^\dagger$ & R & 43{,}275 & -- & -- & -- \\
+ & S & 45{,}359 & -- & -- & $-$1\% \\
+ & T & 17{,}340 & $-$44\% & $-$44\% & $-$24\% \\
+ & ST & 33{,}613 & $-$43\% & $-$43\% & $-$20\% \\
+\bottomrule
+\end{tabular}

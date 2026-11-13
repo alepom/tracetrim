@@ -27,9 +27,12 @@ V06 = ROOT / "results" / "v06"
 LOWER = {"C1": "editorial plan", "C2": "content gaps", "C4": "billing support", "C5": "CI triage"}
 CASE = {"C1": "Editorial plan", "C2": "Content gaps", "C4": "Billing support$^\\dagger$",
         "C5": "CI triage$^\\dagger$"}
+CASE_EXTRA = {"C3": "Literature scan"}
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
           "November", "December")
 
+
+PREFIXES = ("Sthree", "Base", "AuditEOne", "AuditETwo")
 
 TEN = ("no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
 
@@ -79,8 +82,10 @@ def macros(m, GEN: Path) -> None:
     define = m
 
     def m(name, value):                                                      # noqa: F811
-        # LaTeX macro names are letters only; the prefix keeps Study 3 apart from Studies 1 and 2.
-        assert name.startswith("Sthree") and name.isalpha() and name not in seen, name
+        # LaTeX macro names are letters only; the prefixes keep Study 3 apart from Studies 1 and 2
+        # (whose own audits use `AuditC...`): `Sthree` for the protocols' measures, `Base` for the
+        # offline baselines, `AuditEOne`/`AuditETwo` for the post-hoc audits of E1 and E2.
+        assert name.startswith(PREFIXES) and name.isalpha() and name not in seen, name
         seen.add(name)
         define(name, value)
 
@@ -140,6 +145,9 @@ def macros(m, GEN: Path) -> None:
     g = comp["C1 ST vs T"]["gates"]
     m("SthreeHOneGatesST", f"{g[0]}/{per_arm}")
     m("SthreeHOneGatesT", f"{g[1]}/{per_arm}")
+    # The appendix: the ST run of the editorial plan that failed the gates is the one that asked a question.
+    failed = [r for r in e1["per_run"] if (r["case"], r["arm"]) == ("C1", "ST") and not r["gates_passed"]]
+    assert len(failed) == 1 and failed[0]["no_tool_call"], failed
     m("SthreeHTwoS", f"{h['H2']['turns_median_S']:g}")
     m("SthreeHTwoR", f"{h['H2']['turns_min_R']:g}")
     strategy_runs = [r for r in e1["per_run"] if r["arm"] in ("S", "ST")]
@@ -156,26 +164,65 @@ def macros(m, GEN: Path) -> None:
     kept = all(v for r in e1["per_run"] for k, v in r["coverage"]["checks"].items() if k in prescribed)
     m("SthreeEOnePrescribedRuns", str(len(rs_checked)))
     m("SthreeEOnePrescribedKept", "respected" if kept else "not always respected")
+    # Tool-output tokens of trimming, per run, then the median of the runs (review 12.1). Two
+    # figures, because `outputs_sent` and `expand_replies` are separate counters: before recovery,
+    # 1 - sum(outputs_sent) / outputs_original; including what `expand` sent back,
+    # 1 - (sum(outputs_sent) + expand_replies) / outputs_original. A run that called no tool has no
+    # ratio: it stays in every other figure of its arm and is left out of these two only.
+    def reduction(case, arm, recovery):
+        out = []
+        for r in e1["per_run"]:
+            if (r["case"], r["arm"]) != (case, arm) or not r["tokens"]["outputs_original"]:
+                continue
+            tk = r["tokens"]
+            sent = sum(tk["outputs_sent"].values()) + (tk["expand_replies"] if recovery else 0)
+            out.append(1 - sent / tk["outputs_original"])
+        return statistics.median(out), len(out)
     for c in ("C1", "C4"):
         R, a = ROMAN[c], t[c]["T"]
         m(f"SthreeEOneTrimTokens{R}", apct(a["tokens_outputs_sent"]["median"] / a["tokens_outputs_original"]["median"] - 1))
+        m(f"SthreeEOneTrimBefore{R}", apct(reduction(c, "T", False)[0], False))
+        m(f"SthreeEOneTrimNet{R}", apct(reduction(c, "T", True)[0], False))
         m(f"SthreeEOneTrimCost{R}", apct(a["cost_vs_R"]))
         m(f"SthreeEOneTrimGates{R}", f"{a['gates_passed']}/{a['runs']}")
-    rows_e1 = []
+        m(f"SthreeEOneTrimExpand{R}", word(int(a["expand_calls"]["median"])))
+        m(f"SthreeEOneTrimExpandRuns{R}", word(sum(r["expand_calls"] > 0 for r in e1["per_run"]
+                                                   if (r["case"], r["arm"]) == (c, "T"))))
+    # The text: in billing support no run of T called expand, so the two figures coincide there.
+    assert t["C4"]["T"]["expand_calls"]["max"] == 0
+    # Tool calls exclude expand; the turns with several calls count it (calls_in_turns holds every call).
+    assert all(r["calls"] == sum(r["calls_per_tool"].values()) and
+               sum(r["calls_in_turns"]) == r["calls"] + r["expand_calls"] for r in e1["per_run"])
+    no_call = [r for r in e1["per_run"] if not r["tokens"]["outputs_original"]]
+    assert [(r["case"], r["arm"]) for r in no_call] == [("C1", "ST")], no_call     # the run that asked a question
+    m("SthreeEOneTrimRatioRuns", word(reduction("C1", "ST", False)[1]))
+    rows_q, rows_t = [], []
     for c, arms in t.items():
         for arm, a in arms.items():
-            trim = (pct(a["tokens_outputs_sent"]["median"] / a["tokens_outputs_original"]["median"] - 1)
-                    if arm in ("T", "ST") else "--")
-            rows_e1.append(f"{CASE[c] if arm == 'R' else ''} & {arm} & {a['runs']} & {a['gates_passed']}/{a['runs']} & "
-                           f"{rng(a['turns'])} & {rng(a['calls'])} & {rng_pct(a['several_calls_share_per_run'])} & "
-                           f"{num(a['billed_input']['median'])} & {trim} & "
-                           f"{pct(a['cost_vs_R']) if arm != 'R' else '--'} \\\\")
-        rows_e1.append("\\addlinespace")
+            label = CASE[c] if arm == "R" else ""
+            rows_q.append(f"{label} & {arm} & {a['runs']} & {a['gates_passed']}/{a['runs']} & "
+                          f"{rng(a['turns'])} & {rng(a['calls'])} & {rng(a['expand_calls'])} & "
+                          f"{rng_pct(a['several_calls_share_per_run'])} \\\\")
+            if arm in ("T", "ST"):
+                before, n = reduction(c, arm, False)
+                net, _ = reduction(c, arm, True)
+                mark = "$^{a}$" if n < a["runs"] else ""
+                trim = f"{pct(-before)}{mark} & {pct(-net)}{mark}"
+            else:
+                trim = "-- & --"
+            rows_t.append(f"{label} & {arm} & {num(a['billed_input']['median'])} & {trim} & "
+                          f"{pct(a['cost_vs_R']) if arm != 'R' else '--'} \\\\")
+        rows_q.append("\\addlinespace")
+        rows_t.append("\\addlinespace")
     (GEN / "table_s3_e1.tex").write_text(
-        "\\begin{tabular}{llrrlllrrr}\n\\toprule\n"
-        "Case & Arm & Runs & Gates & Turns & Tool calls & Turns with several calls & Billed input & "
-        "Tool-output tokens & Cost of a run \\\\\n"
-        "\\midrule\n" + "\n".join(rows_e1[:-1]) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+        "\\begin{tabular}{llrrllll}\n\\toprule\n"
+        "Case & Arm & Runs & Gates & Turns & Tool calls & \\texttt{expand} calls & Turns with several calls \\\\\n"
+        "\\midrule\n" + "\n".join(rows_q[:-1]) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+    (GEN / "table_s3_e1_tokens.tex").write_text(
+        "\\begin{tabular}{llrrrr}\n\\toprule\n"
+        "& & & \\multicolumn{2}{c}{Tool-output tokens} & \\\\\n\\cmidrule(lr){4-5}\n"
+        "Case & Arm & Billed input & before recovery & with \\texttt{expand} replies & LLM API cost per run \\\\\n"
+        "\\midrule\n" + "\n".join(rows_t[:-1]) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     # ---- E2: adaptive learning --------------------------------------------------
     seqs, h2 = e2["e2"], e2["e2_hypotheses"]
@@ -260,7 +307,7 @@ def macros(m, GEN: Path) -> None:
         rows_e3.append("\\addlinespace")
     (GEN / "table_s3_e3.tex").write_text(
         "\\begin{tabular}{llrlllrr}\n\\toprule\n"
-        "Case & Arm & Runs & Turns & Tool calls & Turns with several calls & Billed input & Cost of a run \\\\\n"
+        "Case & Arm & Runs & Turns & Tool calls & Turns with several calls & Billed input & LLM API cost per run \\\\\n"
         "\\midrule\n" + "\n".join(rows_e3[:-1]) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
     m("SthreeEThreeRunsPerArmMin", word(min(t3[c][a]["runs"] for c in t3 for a in "RS")))
     m("SthreeEThreeRunsPerArmMax", word(max(t3[c][a]["runs"] for c in t3 for a in "RS")))
@@ -355,7 +402,7 @@ def macros(m, GEN: Path) -> None:
     m("SthreeHypotheses", word(sum(x[3] != "--" for x in hyp)))
     (GEN / "table_s3_hypotheses.tex").write_text(
         "\\begin{tabular}{llp{6.2cm}lp{5.2cm}}\n\\toprule\n& Exp. & Hypothesis, as frozen & Outcome & Detail \\\\\n\\midrule\n"
-        + "\n".join(f"{a} & {b} & {c} & {d} & {e} \\\\" for a, b, c, d, e in hyp)
+        + "\n".join(f"P4-{a} & {b} & {c} & {d} & {e} \\\\" for a, b, c, d, e in hyp)
         + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
 
     # ---- offline, not in a protocol: modes of use, rows, tool definitions -------
@@ -416,3 +463,164 @@ def macros(m, GEN: Path) -> None:
     first_turn = sc["cache"]["recorded"]
     m("SthreeDefFirstTurnAll", num(first_turn["R79_first_turn_input"]["median"]))
     m("SthreeDefFirstTurnHidden", num(first_turn["D_first_turn_input"]["median"]))
+
+
+    post_hoc_audits(m, GEN)
+    baselines(m, GEN)
+
+
+# ---- post hoc: the C4 audit of E1, and the full associations of E2 -----------------------
+# results/v04/audits.json applies rules (experiments/audit_v04.py). Where a rule fails an answer
+# that is right, the paper says so, and the cases were read by hand: they are listed here, by
+# run, so that the reading is visible and checked against the rule's own output.
+
+# E1, billing support, ticket T2 (why the payment was declined). The audit's rule failed T2 in
+# these three runs, whose diagnosis gives the reason in words the rule rejects (a negated verb
+# next to it, or "fondi sufficienti" after a negation): read by hand, the reason is there.
+T2_REASON_GIVEN_BY_HAND = ("E1-R-5", "E1-S-1", "E1-ST-4")
+# E2, editorial plan: the three pairs the rule fails, read by hand.
+C1_FAILURES_BY_HAND = {
+    "E2-base-s1-r3": ("video_of_another_channel", "misattributed"),     # a video of another channel
+    "E2-base-s1-r4": ("video_not_identified", "title_not_from_outputs"),  # channel and views right, title
+    #   written as the video's original title, not the one the run's outputs gave
+    "E2-sampling-s1-r1": ("video_not_identified", "rule"),             # a channel named like a common word
+}
+
+
+def post_hoc_audits(m, GEN: Path) -> None:
+    au, e1 = _load(V04 / "audits.json"), _load(V04 / "e1.json")
+    assert au["post_hoc"] and au["input"]["e1_match"] and au["input"]["e2_match"]
+    arms = ("R", "S", "T", "ST")
+    a1 = au["e1_c4"]
+    t2_failed = {r["run"] for a in arms for r in a1[a]["runs_detail"] if "T2" in r["audit_failed"]}
+    assert set(T2_REASON_GIVEN_BY_HAND) <= t2_failed
+    missing = t2_failed - set(T2_REASON_GIVEN_BY_HAND)
+    # Where the reason was missing, the model had listed the charges of the other customers only:
+    # one call fewer to the charges tool, in exactly those runs (results/v04/e1.json).
+    charges = {r["run"]: r["calls_per_tool"].get("stripe_list_charges", 0) for r in e1["per_run"] if r["case"] == "C4"}
+    assert missing == {k for k, v in charges.items() if v < max(charges.values())}, (missing, charges)
+    runs = sum(a1[a]["runs"] for a in arms)
+    facts = sum(a1[a]["audit_of"] for a in arms)
+    m("AuditEOneRuns", word(runs))
+    m("AuditEOneFacts", str(facts))
+    m("AuditEOneAudit", str(sum(a1[a]["audit_total"] for a in arms)))
+    m("AuditEOneKeyword", str(sum(a1[a]["keyword_test_total"] for a in arms)))
+    m("AuditEOneRuleCaused", word(len(T2_REASON_GIVEN_BY_HAND)))
+    m("AuditEOneByHand", str(sum(a1[a]["audit_total"] for a in arms) + len(T2_REASON_GIVEN_BY_HAND)))
+    m("AuditEOneMissing", str(len(missing)))
+    m("AuditEOneGates", "every" if all(a1[a]["gates_passed"] == a1[a]["runs"] for a in arms) else "not every")
+    period = sum(a1[a]["audit_failed_by_ticket"].get("T3", 0) for a in arms)
+    m("AuditEOnePeriod", word(period))
+    # The text: the period-end ticket (T3) failed only in arms with the strategy text.
+    assert all(not a1[a]["audit_failed_by_ticket"].get("T3") for a in ("R", "T")), "T3"
+    accepted = {r["run"] for a in arms for r in a1[a]["runs_detail"] if "T2" in r["keyword_only"]}
+    m("AuditEOneKeywordMissed", word(len(missing & accepted)))
+    other = {k for a in arms for k in a1[a]["audit_failed_by_ticket"]} - {"T2", "T3"}
+    assert not other, other                                     # the text: no other ticket failed
+    rows = []
+    for a in arms:
+        x = a1[a]
+        miss = sum(r in missing for r in (d["run"] for d in x["runs_detail"]))
+        m(f"AuditEOneMissing{a}", word(miss))
+        m(f"AuditEOneAudit{a}", f"{x['audit_total']}/{x['audit_of']}")
+        m(f"AuditEOneKeyword{a}", f"{x['keyword_test_total']}/{x['audit_of']}")
+        rows.append(f"{a} & {x['runs']} & {x['gates_passed']}/{x['runs']} & {x['keyword_test_total']}/{x['audit_of']} & "
+                    f"{x['audit_total']}/{x['audit_of']} & {rng(x['audit_per_run'])} & {miss}/{x['runs']} \\\\")
+    (GEN / "table_s3_audit_eone.tex").write_text(
+        "\\begin{tabular}{lrrrrlr}\n\\toprule\n"
+        "Arm & Runs & Gates & Keyword test & Audit & Audit per run & Decline reason missing \\\\\n"
+        "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    seqs = au["e2"]["sequences"]
+    assert not any(au["e2"]["input_checks"][k] for k in ("c4_invoice_outputs_disagreeing_with_world",
+                                                         "c1_runs_without_youtube_items",
+                                                         "requirement_recomputed_differs"))
+    c1 = [s for s in seqs if s["case"] == "C1"]
+    c4 = [s for s in seqs if s["case"] == "C4"]
+    fails = {r["run"]: k for s in c1 for r in s["per_run"] for k in r["failures"]}
+    assert {k: v[0] for k, v in C1_FAILURES_BY_HAND.items()} == fails, fails
+    assert all(sum(r["failures"].values()) <= 1 for s in c1 for r in s["per_run"])
+    kinds = [v[1] for v in C1_FAILURES_BY_HAND.values()]
+    m("AuditETwoPairsi", str(sum(s["items"] for s in c1)))
+    m("AuditETwoCorrecti", str(sum(s["items_correct"] for s in c1)))
+    m("AuditETwoFailedi", word(sum(s["items"] - s["items_correct"] for s in c1)))
+    m("AuditETwoMisattributedi", word(kinds.count("misattributed")))
+    m("AuditETwoTitlei", word(kinds.count("title_not_from_outputs")))
+    m("AuditETwoRulei", word(kinds.count("rule")))
+    m("AuditETwoRunsAlli", word(sum(s["runs_all_items_correct"] for s in c1)))
+    m("AuditETwoRunsi", word(sum(s["runs"] for s in c1)))
+    # One run named its videos without "YouTube", "channel" or "canale": the rule does not check
+    # its items; the sensitivity without that condition does, and finds them right.
+    unchecked = [r for s in c1 for r in s["per_run"] if r["plan_items_with_views_and_no_channel"]]
+    assert len(unchecked) == 1 and unchecked[0]["items"] == 0
+    sens = unchecked[0]["sensitivity_without_context_words"]
+    assert sens["items"] == sens["items_correct"]
+    m("AuditETwoUncheckedi", word(len(unchecked)))
+    m("AuditETwoUncheckedItemsi", word(sens["items"]))
+    c4_kinds = {k for s in c4 for r in s["per_run"] for k in r["failures"]}
+    assert c4_kinds == {"ambiguous_collection"}, c4_kinds
+    m("AuditETwoTicketsiv", str(sum(s["items"] for s in c4)))
+    m("AuditETwoCorrectiv", str(sum(s["items_correct"] for s in c4)))
+    m("AuditETwoAmbiguousiv", word(sum(s["items"] - s["items_correct"] for s in c4)))
+    m("AuditETwoByHandiv", str(sum(s["items"] for s in c4)))     # the three, read: right (a negated
+    #   mention of the other method, "not sent for payment", which the rule reads as stating both)
+
+
+# ---- offline baselines: minified, static filter, learned (docs/baselines.md) --------------
+
+def baselines(m, GEN: Path) -> None:
+    b = _load(ROOT / "results" / "baselines.json")
+    assert b["arms"] == ["raw", "minified", "static", "learned", "learned+static"]
+    cs = b["cases"]
+    for c, x in cs.items():
+        ic = x["input_check"]
+        assert ic["runs"] == 8 and ic["minified_matches_reserialize_json"], c     # the input was read whole
+        assert all(x["misses"][a]["calls"] == 0 for a in ("raw", "minified")), c
+    m("BaseStaticKeys", str(len(b["static_keys"])))
+    rows = []
+    for c in ("C1", "C2", "C3", "C4", "C5"):
+        x, R = cs[c], ROMAN[c]
+        vr, vm, vs = x["removed_vs_raw"], x["removed_vs_minified"], x["removed_vs_static"]
+        n = x["misses"]["static"]["of_structured_calls"]
+        m(f"BaseStructured{R}", str(n))
+        m(f"BaseMinRaw{R}", apct(vr["minified"], False))
+        m(f"BaseLearnedRaw{R}", apct(vr["learned"], False))
+        m(f"BaseBothRaw{R}", apct(vr["learned+static"], False))
+        m(f"BaseStaticMin{R}", apct(vm["static"], False))
+        m(f"BaseLearnedMin{R}", apct(vm["learned"], False))
+        m(f"BaseLearnedStatic{R}", apct(vs["learned"], False))
+        m(f"BaseBothStatic{R}", apct(vs["learned+static"], False))
+        m(f"BaseBothMin{R}", apct(vm["learned+static"], False))
+        for a, k in (("static", "Static"), ("learned", "Learned"), ("learned+static", "Both")):
+            m(f"BaseMiss{k}{R}", word(x["misses"][a]["calls"]))
+        def cell(a):
+            return pct(-vr[a])
+        miss = lambda a: f"{x['misses'][a]['calls']}" + ("$^{\\ast}$" if c == "C4" and a != "learned" else "")  # noqa: E731
+        rows.append(f"{CASE.get(c, CASE_EXTRA.get(c))} & {n} & {num(x['tokens']['raw'])} & {cell('minified')} & "
+                    f"{cell('static')} & {cell('learned')} & {cell('learned+static')} & {pct(-vs['learned'])} & "
+                    f"{miss('static')} & {miss('learned')} & {miss('learned+static')} \\\\")
+    (GEN / "table_s3_baselines.tex").write_text(
+        "\\begin{tabular}{lrrrrrrrrrr}\n\\toprule\n"
+        "& & & \\multicolumn{4}{c}{Tokens removed, against raw} & Learned & \\multicolumn{3}{c}{Misses} \\\\\n"
+        "\\cmidrule(lr){4-7}\\cmidrule(lr){9-11}\n"
+        "Case & Calls & Raw tokens & Minified & Static & Learned & Both & vs static & Static & Learned & Both \\\\\n"
+        "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+    # The reading: learning beyond the static filter, per group of cases.
+    big = [vs for c in ("C1", "C3", "C5") for vs in [cs[c]["removed_vs_static"]["learned"]]]
+    m("BaseLearnedStaticBigMin", apct(min(big), False))
+    m("BaseLearnedStaticBigMax", apct(max(big), False))
+    mins = [cs[c]["removed_vs_raw"]["minified"] for c in cs]
+    m("BaseMinRawMin", apct(min(mins), False))
+    m("BaseMinRawMax", apct(max(mins), False))
+    # C4: every static miss is Stripe's type tag, matched by the argument name of later calls.
+    sv = cs["C4"]["static_missed_values"]
+    assert set(cs["C4"]["missed_fields"]["static"]) == {"data[].object"}
+    assert sum(sv.values()) == cs["C4"]["misses"]["static"]["calls"]
+    m("BaseObjectCustomer", str(sv["data[].object = 'customer'"]))
+    m("BaseObjectCharge", word(sv["data[].object = 'charge'"]))
+    # The learned arm is the library's default projection: misses counted on the structured calls.
+    lm = [cs[c]["misses"]["learned"]["calls"] for c in ("C1", "C3", "C5")]
+    m("BaseMissLearnedBigMin", word(min(lm)))
+    m("BaseMissLearnedBigMax", word(max(lm)))
+    m("BaseBothAddsiii", f"{100 * (cs['C3']['removed_vs_minified']['learned+static'] - cs['C3']['removed_vs_minified']['learned']):.1f}")
+    m("BaseBothAddsiv", f"{100 * (cs['C4']['removed_vs_minified']['learned+static'] - cs['C4']['removed_vs_minified']['learned']):.1f}")

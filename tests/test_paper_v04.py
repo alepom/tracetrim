@@ -17,6 +17,7 @@ from experiments import paper_numbers_v04  # noqa: E402
 
 DOC = " ".join((ROOT / "docs" / "measures-v04.md").read_text(encoding="utf-8").split())
 DEFS = " ".join((ROOT / "docs" / "definitions.md").read_text(encoding="utf-8").split())
+BASE = " ".join((ROOT / "docs" / "baselines.md").read_text(encoding="utf-8").split())
 
 
 @pytest.fixture(scope="module")
@@ -30,9 +31,20 @@ def M(tmp_path_factory):
 def test_every_macro_is_a_valid_latex_name_and_the_tables_are_written(tmp_path):
     macros = {}
     paper_numbers_v04.macros(macros.__setitem__, tmp_path)
-    assert macros and all(re.fullmatch(r"Sthree[A-Za-z]+", k) for k in macros)
-    assert {p.name for p in tmp_path.glob("table_s3_*.tex")} == {"table_s3_e1.tex", "table_s3_e3.tex",
-                                                                 "table_s3_hypotheses.tex"}
+    assert macros and all(re.fullmatch(r"(Sthree|Base|AuditEOne|AuditETwo)[A-Za-z]+", k) for k in macros)
+    assert {p.name for p in tmp_path.glob("table_s3_*.tex")} == {
+        "table_s3_e1.tex", "table_s3_e1_tokens.tex", "table_s3_e3.tex", "table_s3_hypotheses.tex",
+        "table_s3_audit_eone.tex", "table_s3_baselines.tex"}
+
+
+def test_study3_macros_do_not_collide_with_studies_1_and_2(tmp_path):
+    # Studies 1 and 2 have audits of their own (`AuditC...`): a name defined twice would be silently overwritten.
+    from experiments import paper_numbers
+    names = []
+    paper_numbers_v04.macros(lambda k, v: names.append(k), tmp_path)
+    src = (ROOT / "experiments" / "paper_numbers.py").read_text(encoding="utf-8")
+    assert not [n for n in names if f'"{n}"' in src or f"'{n}'" in src]
+    assert len(names) == len(set(names)) and hasattr(paper_numbers, "main")
 
 
 def test_adaptive_learning(M):
@@ -51,9 +63,17 @@ def test_adaptive_learning(M):
 
 
 def test_trimming_and_the_strategy_on_the_first_model(M):
-    assert (f"tool-output tokens down {M['SthreeEOneTrimTokensi']} on C1 and on C4, cost of a run down "
-            f"{M['SthreeEOneTrimCosti']} and {M['SthreeEOneTrimCostiv']}") in DOC
     assert M["SthreeEOneTrimTokensiv"] == M["SthreeEOneTrimTokensi"] == "44%"
+    # Review 12.1: per run, before recovery and with the expand replies; the cost from billed usage.
+    assert (M["SthreeEOneTrimBeforei"], M["SthreeEOneTrimBeforeiv"]) == ("44%", "44%")
+    assert (M["SthreeEOneTrimNeti"], M["SthreeEOneTrimNetiv"]) == ("34%", "44%")
+    assert M["SthreeEOneTrimBeforei"] == M["SthreeEOneTrimBeforeiv"]
+    assert (f"tool-output tokens before recovery down {M['SthreeEOneTrimBeforei']} on C1 and on C4, cost of a run "
+            f"down {M['SthreeEOneTrimCosti']} and {M['SthreeEOneTrimCostiv']}") in DOC
+    assert (f"down {M['SthreeEOneTrimNeti']} on C1, where every run of T called `expand` (median "
+            f"{d(M['SthreeEOneTrimExpandi'])} calls), and {M['SthreeEOneTrimNetiv']} on C4, where no run did") in DOC
+    assert "The cost of a run is the LLM API cost per run, from billed usage" in DOC
+    assert f"medians of the {d(M['SthreeEOneTrimRatioRuns'])} runs that called a tool" in DOC
     assert (M["SthreeEOneTrimCosti"], M["SthreeEOneTrimCostiv"]) == ("30%", "24%")
     assert (f"{M['SthreeEOneSeveralRi']}, {M['SthreeEOneSeveralRii']} and {M['SthreeEOneSeveralRiv']} "
             "of the turns that made a call made several") in DOC
@@ -100,3 +120,41 @@ def test_the_tool_definitions(M):
     assert (f"save between about {M['SthreeDefHideGainMin']} and {M['SthreeDefHideGainMax']} of a run's cost"
             in DEFS)
     assert f"the first turn goes from {M['SthreeDefFirstTurnAll']} to {M['SthreeDefFirstTurnHidden']} tokens" in DEFS
+
+
+def test_the_post_hoc_audits(M):
+    assert (M["AuditEOneAudit"], M["AuditEOneFacts"], M["AuditEOneKeyword"], M["AuditEOneByHand"]) == \
+        ("84", "100", "92", "87")
+    assert (f"The audit passed {M['AuditEOneAudit']} of {M['AuditEOneFacts']} diagnoses, the keyword test "
+            f"{M['AuditEOneKeyword']}; {d(M['AuditEOneRuleCaused'])} of the audit's failures are the rule's") in DOC
+    assert f"so {M['AuditEOneByHand']} of {M['AuditEOneFacts']} are right read by hand" in DOC
+    assert (f"missing in {M['AuditEOneMissing']} runs of {M['AuditEOneRuns']}, in every arm") in DOC
+    for arm in ("R", "S", "T", "ST"):
+        assert (f"| {arm} | 5 | 5/5 | {M['AuditEOneKeyword' + arm]} | {M['AuditEOneAudit' + arm]} | "
+                f"{d(M['AuditEOneMissing' + arm])}/5 |") in DOC
+    assert (M["AuditEOneMissingR"], M["AuditEOneMissingS"], M["AuditEOneMissingT"], M["AuditEOneMissingST"]) == \
+        ("one", "three", "five", "two")
+    assert f"The keyword test accepted {d(M['AuditEOneKeywordMissed'])} of the 11" in DOC
+    assert (f"{M['AuditETwoCorrecti']} of {M['AuditETwoPairsi']} pairs right by rule; every pair right in "
+            f"{d(M['AuditETwoRunsAlli'])} runs of {d(M['AuditETwoRunsi'])}") in DOC
+    assert (f"{M['AuditETwoCorrectiv']} of {M['AuditETwoTicketsiv']} tickets by rule; the "
+            f"{d(M['AuditETwoAmbiguousiv'])} failures are the rule's") in DOC
+    assert f"by hand {M['AuditETwoByHandiv']} of {M['AuditETwoTicketsiv']} are right" in DOC
+
+
+def test_the_baselines(M):
+    # docs/baselines.md writes one decimal (−51.3%); the paper rounds to whole points.
+    for case, R in (("C1", "i"), ("C2", "ii"), ("C3", "iii"), ("C4", "iv"), ("C5", "v")):
+        n = M[f"BaseStructured{R}"]
+        static, learned = d(M[f"BaseMissStatic{R}"]), d(M[f"BaseMissLearned{R}"])
+        assert re.search(rf"\| {case}†? \| {n} \| {static} \([0-9.]+%\)\*? \| {learned} \(", BASE), case
+    for case, R in (("C1", "i"), ("C3", "iii"), ("C4", "iv"), ("C5", "v"), ("C2", "ii")):
+        row = re.search(rf"\| {case}†? \| −[0-9.]+% \| −[0-9.]+% \| −[0-9.]+% \| −([0-9.]+)% \|", BASE)
+        assert row and f"{round(float(row.group(1)))}%" == M[f"BaseLearnedStatic{R}"], case
+    assert (M["BaseLearnedStaticBigMin"], M["BaseLearnedStaticBigMax"]) == ("40%", "56%")
+    assert "removes 40–56% of what is left after the static filter in C1, C3 and C5, and 24% in C4" in BASE
+    assert M["BaseLearnedStaticiv"] == "24%" and M["BaseLearnedStaticii"] == "4%"
+    assert f"Minification is a large share of every figure** ({M['BaseMinRawMin'][:-1]}–{M['BaseMinRawMax']} of raw)" in BASE
+    assert (f"the value `\"customer\"` ({M['BaseObjectCustomer']} calls of `stripe_search_customers`) or "
+            f"`\"charge\"` ({d(M['BaseObjectCharge'])})") in BASE
+    assert "adds 3.5 points in C3" in BASE and M["BaseBothAddsiii"] == "3.5"

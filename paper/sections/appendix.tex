@@ -58,7 +58,9 @@ the prudent, aggressive and structural arms of Phase B in \PhaseBOriginalGatesPr
 \input{generated/table_c4_audit.tex}
 \caption{Billing support: tickets passing the frozen keyword test and the stricter rules on the diagnosis alone
 (exact amounts, year and outcome of the scenario, negations rejected; \texttt{experiments/c4\_audit.py}, deviation
-15). Rules, not a reading: they show what the keyword test lets through, not that a diagnosis is right.}
+15). Runs: A, B and C are Phases A, B and C of Study~1, with their arms; D is Study~2, the replays with the
+safeguards; n is the number of runs, each with five tickets. Rules, not a reading: they show what the keyword test
+lets through, not that a diagnosis is right. The same audit for Study~3 is in Table~\ref{tab:s3audit}.}
 \label{tab:c4audit}
 \end{table}
 
@@ -66,8 +68,9 @@ the prudent, aggressive and structural arms of Phase B in \PhaseBOriginalGatesPr
 \centering\small
 \resizebox{\textwidth}{!}{\input{generated/table_savings_detail.tex}}
 \caption{Tool-output tokens on the replayed conversations, change against the raw outputs: re-serialised as tracetrim
-writes JSON (default separators), fully minified, the 0.1 prudent projection, the 0.2 projection, the 0.2 projection
-against the re-serialised outputs (what removing fields adds), and Headroom.}
+writes JSON (default separators), fully minified, the 0.1 prudent projection, the 0.2 projection; then the 0.2
+projection against the re-serialised outputs and against the fully minified ones (what removing fields adds beyond
+each lossless rewriting); and Headroom, as an illustration of tokens only in the configuration chosen.}
 \label{tab:savingsdetail}
 \end{table}
 

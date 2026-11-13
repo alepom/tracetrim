@@ -67,3 +67,29 @@ tool. This turns a loss into a round trip, provided the agent knows what is miss
 \texttt{doi}, \texttt{url}, \texttt{number}, \texttt{title}, \texttt{name} and similar) whatever the usage says.
 S2 recognises transformed values: Unix timestamps and ISO dates also match as written dates, in Italian and English;
 integers in money-named fields also match as major units with two decimals; URLs also match by their last segment.
+
+\subsection{Detected reuse, required information and misses}
+\label{sec:definitions}
+
+Three terms are used throughout with a fixed meaning. \emph{Detected reuse}: a leaf path of a tool output is
+detected as reused in a run when one of its judgeable values matches, by the rules above (and, with S2, the
+transformations it recognises), something the agent wrote in a later model turn and not before. It is a property of
+the trace and of the matcher. \emph{Required information}: for a task and a run, the leaf paths whose values the
+agent needs to produce a correct answer, whether it writes them as they are, writes them transformed, or only reads
+them to decide. It is defined by the task and its correct answers, not by the trace, and in general it cannot be
+observed. \emph{Projection miss}: a held-out call in which the projection removes a path that the held-out run
+reused, as detected. Misses are counted against detected reuse, not against required information: a projection
+without misses has removed nothing the detector saw used, which is not the same as removing nothing required.
+
+\paragraph{Why absence of detected reuse certifies nothing by itself.} A tool returns two issues, each with an
+identifier and a title: issue A, titled ``staging deploy fails'', and issue B, titled ``flaky unit test''. In a first
+task the agent must report the open issue with the earliest identifier; in a second, the issue that reports a failed
+staging deployment; in both it answers with an identifier only. Issue A is both the earliest and the one about
+staging, so the two tasks can produce the same trace, call, output and answer, in every run. In neither is the title
+ever detected as reused, since its value never appears in what the agent writes. A rule that reads traces alone
+cannot tell the two tasks apart: if it removes the title in the first, where it is not needed, it removes it in the
+second, where the agent needs it to choose. Study~1 met this case in CI triage (Section~\ref{sec:study1}). However
+many traces are collected, the absence of detected reuse supports removing a field only under an added assumption,
+for instance that every required value is written verbatim, which fields used only to reason violate. This is why a
+learned projection is treated here as a proposal, with identifiers protected, the hidden fields listed and
+\texttt{expand} as a way back.

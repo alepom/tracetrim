@@ -1,12 +1,22 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
+With the defaults it ships today, a projection learned from an agent's own traces makes agents cheaper to run
+without the implemented checks detecting a loss: in live runs on one model, a fixed projection with \texttt{expand}
+lowered the LLM API cost per run by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents with every
+gate passing, fields that a changed task needed came back by themselves from the next run in \SthreeHFiveKept{} of
+\SthreeHFiveRecoveries{} cases, and, offline, learning removed \BaseLearnedStaticBigMin{} to
+\BaseLearnedStaticBigMax{} of what a minifier and a static filter leave on three of five agents. The studies with
+earlier versions show where these defaults come from.
+
 Agents read far more than they visibly reuse, and what they reuse in writing can be learned from their own traces:
-on four of the five agents studied, a projection learned from other runs removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of
+with today's defaults the learned projection removes \BaseLearnedRawi, \BaseLearnedRawiii, \BaseLearnedRawiv{} and
+\BaseLearnedRawv{} of held-out tool-output tokens on four of the five agents (offline, Table~\ref{tab:baselines}); in
+Study~1, on the same four, the prudent projection of version 0.1 removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of
 the tool-output tokens of a new run on two agents with real APIs, and \PhaseAPrudentSavingiv{} and
 \PhaseAPrudentSavingv{} on two simulated ones (re-serialisation alone, which removes no field, accounting for up to
 \ReserialAi{} and \ReserialAiv{}). Where it failed, it failed for a reason: the agent had transformed a value, used a field only
-to reason, or, deprived of an identifier, invented one. Two safeguards, keeping identifying fields and recognising
+to reason, or, deprived of an identifier, invented one. The two safeguards of version 0.2, keeping identifying fields and recognising
 transformed values, repaired the specific failures that motivated them, in the conversations where they were found,
 while keeping a saving of \StudyTwoVtwoTokensi{} and
 \StudyTwoVtwoTokensiii{} on those real-API agents and \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} on the
@@ -15,9 +25,9 @@ tokens on those real-API agents and \VtwoVsMiniv{} and \VtwoVsMinv{} on the simu
 cites most of what it receives a minifier alone did better; a fourth mechanism, translation, remains open. In short: a projection learned from
 textual reuse can shrink already minified outputs in several workloads; the quality of the answers depends on
 information that this reuse makes only partly observable, and the safeguards correct some of the documented failures.
-A study on new tasks, models and runs is needed to say how often quality is preserved.
 The method is therefore best used as it is implemented: as a proposal learned from complete traces, reviewed by a
-person, applied with identifiers protected and with a way back for the agent when a cut was wrong. Study 3 adds
-that this way back also corrects the projection: in its runs, fields recovered and written came back by themselves
-from the next run. It is a small study, on one model for trimming and learning and two for the strategy, and it
-says what happened in these runs, not what holds in general.
+person, applied with identifiers protected and with a way back for the agent when a cut was wrong, which in Study 3
+also corrected the projection. It helps most where tool outputs carry much that the task does not use, and least
+where the agent cites most of what it reads, where minifying is enough. The evidence comes from few runs, one model
+for trimming and learning, and the tasks on which the method was developed; validation on new tasks is the next
+step.

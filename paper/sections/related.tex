@@ -22,10 +22,43 @@ failures, and distils the compressor into smaller models \citep{kang2026acon}. F
 masking older observations halves cost relative to the unmanaged agent while matching the solve rate of LLM
 summarisation \citep{lindenbauer2025complexity}. Squeez
 fine-tunes a small model to return, for a focused query and one tool output, the smallest verbatim evidence block
-the agent should inspect next \citep{kovacs2026squeez}. Our setting differs in three ways: the projection is learned
-from the agent's own traces without training or calling any model, so it adds no inference cost and its decisions
-are a reviewable list of fields; it targets structured outputs of arbitrary APIs rather than code-agent
-observations; and we measure where such learning fails, not only how much it saves.
+the agent should inspect next \citep{kovacs2026squeez}. A systematic study of context-compression policies
+for agents (truncation, clearing of tool results, summarisation and their combinations, about 35{,}000 runs of
+open-weight models on two software-engineering benchmarks) finds that fewer tokens need not mean faster or cheaper
+runs, partly because of cached-prefix pricing, and that no single policy is best across task success and cost
+\citep{satish2026beyond}. Coca-Cola compresses tool observations into continuous latent tokens, with a compressor
+trained so that the agent's next actions match those it takes with the full observations; it needs gradients through
+the agent and was evaluated on open-weight models in web-search question answering \citep{liu2026tools}. Our setting
+differs in three ways: the projection is learned from the agent's own traces without training or calling any model,
+so it adds no inference cost, works with models reachable only through an API, and its decisions are a reviewable
+list of fields with a way back; it targets structured outputs of arbitrary APIs rather than code-agent observations
+or free text; and we measure where such learning fails, not only how much it saves. Table~\ref{tab:related}
+compares these approaches on the dimensions that separate them. It is a map of the closest work we found, not a
+systematic review.
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llllll}
+\toprule
+Approach & Unit removed & Signal & Training or extra inference & Recoverable & Live evaluation \\
+\midrule
+LLMLingua family \citep{jiang2023llmlingua,pan2024llmlingua2} & tokens of text & small-model scores & extra inference & no & -- (not agents) \\
+ACON \citep{kang2026acon} & observations, history & guidelines optimised from failures & LLM calls; distillation & no$^a$ & success, tokens$^a$ \\
+Observation masking \citep{lindenbauer2025complexity} & older observations & recency & none & no & solve rate, cost \\
+Squeez \citep{kovacs2026squeez} & lines of one tool output & the current query & fine-tuned small model & no$^a$ & --$^a$ \\
+Policies study \citep{satish2026beyond} & history, tool results & recency, content type, summaries & none, or summariser calls & no & success, tokens, latency, cost \\
+Coca-Cola \citep{liu2026tools} & observations (to latent tokens) & next-action matching & trained compressor, open weights & no & success, tokens, runtime \\
+Headroom \citep{headroom2026} & by content type & rules, per-tool usage & none for its JSON path$^a$ & yes & --$^b$ \\
+tracetrim (this work) & fields of structured outputs & reuse in the agent's own text & none & yes (\texttt{expand}) & gates, tokens, cost \\
+\bottomrule
+\end{tabular}}
+\caption{The closest approaches, on the dimensions that separate them, as their sources describe them. ``Live
+evaluation'': what the source measures in agent runs. $^a$As far as the source states. $^b$A tool, not a study; we
+compared its token counts on our replays (Section~\ref{sec:study2}). None of these, tracetrim included, reports a
+validation on tasks held out from development: for tracetrim this is a limit (Section~\ref{sec:limitations}).}
+\label{tab:related}
+\end{table}
 
 \paragraph{Tools.} Headroom compresses agent context in front of the model, routing content to compressors by type
 \citep{headroom2026}. Two of its components are close to ours: one learns, over repeated calls of a tool, which items

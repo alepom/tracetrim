@@ -20,23 +20,39 @@ test it on five agents: three that use real APIs (an editorial planner and a con
 API, a literature scanner on a scholarly catalogue) and two that use simulated servers whose payloads follow the
 public OpenAPI descriptions of a payment API and a code-hosting API.
 
-The paper has three parts. \textbf{Study~1}, with a protocol frozen before any run, measures how much a projection
+In its current version (0.4), the library protects identifiers, recognises transformed values, writes compact JSON,
+offers \texttt{expand} for any hidden field and can keep learning while the agent works. Measured with these
+defaults, in live runs on \texttt{\SthreeModelA}, a fixed projection with \texttt{expand} lowered the median LLM
+API cost per run by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents with every implemented gate
+passing, and when a changed task needed fields the projection had removed, the agent recovered them and they were
+kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases. Offline, the projection learned with
+these defaults removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what a minifier and a static
+metadata filter leave on three of the five agents. The earlier studies, run with versions 0.1 and 0.2, are where
+those defaults come from.
+ \textbf{Study~1}, with a protocol frozen before any run, measures how much a projection
 learned from other runs removes on a held-out run, where it must be learned to work, whether it transfers between
 tasks, and whether the agent's answer survives when the conversation is replayed with projected tool outputs. It
 finds large savings and three precise ways in which the projection fails: values the agent \emph{transforms}
 before writing them (a Unix timestamp written as a date), fields the agent uses only \emph{to reason}, and, most
 seriously, an agent that \emph{invents identifiers} when the identifier field has been removed. \textbf{Study~2}
 adds two safeguards motivated by those failures and tests, again with a protocol frozen in advance, whether they
-remove the losses while keeping most of the saving. \textbf{Study~3}, added in version 2 of this paper, measures
-under two further frozen protocols what version 0.4 of the library added: learning while the agent works, with
-\texttt{expand} requests as evidence, and a text that teaches the agent how to organise its tool calls, on two models;
-it also reports, as such, three offline analyses that no protocol covered and what was checked in MCP hosts.
+remove those specific losses, on the conversations that showed them, while keeping most of the saving.
+\textbf{Study~3}, added in version 2 of this paper, measures in live runs, under two further frozen protocols, what
+version 0.4 of the library added: a \emph{fixed} projection with \texttt{expand} (E1), learning that \emph{adapts}
+while the agent works, with \texttt{expand} requests as evidence (E2), and, without trimming, a text that teaches the
+agent how to organise its tool calls, on a second model (E3, reported in an appendix). It also reports offline
+analyses, among them a comparison with a minifier and with a static filter fixed before any number, and post-hoc
+audits of the answers, each labelled as such.
 
 The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
 that estimates savings and misses on runs the projection has never seen; (ii) evidence that, in these agents,
-learning without the final answer misses far more of what is used, so a proxy placed only between agent and tools
-(an MCP gateway) learns poorly by itself;
+learning without the final answer misses far more of what is used (with the aggressive projection of version 0.1,
+\MissesPooledShareRealCalls{} against \MissesPooledShareRealFull{} of the held-out structured calls it trims on the
+three agents with real APIs), so a proxy placed only between agent and tools (an MCP gateway) learns poorly by
+itself;
 (iii) a characterisation of the failure modes, including identifier fabrication; (iv) safeguards and their test;
 (v) an open-source implementation with a bilingual telemetry report that is useful on its own, independently of
-any trimming; (vi) a measure of that implementation's automatic mode and of a call-organising text in live runs,
-with the hypotheses that failed reported as failed.
+any trimming; (vi) a live measure of that implementation's fixed trimming and adaptive learning, and of a call-organising
+text, with the hypotheses that failed reported as failed; (vii) an offline comparison with minification and a
+pre-registered static filter, which separates what learning adds from what any serialiser or metadata filter
+removes.

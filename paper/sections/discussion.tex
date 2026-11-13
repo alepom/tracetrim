@@ -1,18 +1,27 @@
 \section{Discussion}
 \label{sec:discussion}
 
+\paragraph{What the current version delivers.} With the defaults the library ships today (identifiers protected,
+transformed values recognised, compact JSON, \texttt{expand}), trimming paid off in live runs: the LLM API cost per
+run fell by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on the two agents measured, recovery included, with
+every implemented gate passing. Learning kept up with a changed task by itself: fields the agent recovered and wrote
+were kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases, with no correction needed. And
+what the projection removes is mostly what only learning can find: beyond a minifier and a static metadata filter it
+removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what was left on three of five agents.
+
 \paragraph{What the agent uses can be learned, best from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
 of it on a new run. In these agents the learner needed the final answer: an MCP gateway placed between agent and tools can
 \emph{apply} a projection, but learning from what it sees alone misses far more of what the agent uses
-(\MissesPooledShareRealCalls{} of held-out calls against \MissesPooledShareRealFull{} with real APIs). The practical
+(with the aggressive projection of version 0.1, \MissesPooledShareRealCalls{} of the held-out structured calls it
+trims against \MissesPooledShareRealFull, on the three agents with real APIs). The practical
 consequence is an architecture: learn offline from full traces, review, apply anywhere. Version 0.3 of the library
 adds a second route, not evaluated in Studies 1 and 2: the proxy offers the agent one more tool, through
 which the agent hands over its final answer, so that the gateway sees complete traces and can learn and apply the
 safe part of a projection on its own. Study 3 measured automatic learning through the function-calling adapter,
 not through the proxy; in the hosts checked, the agent did call that tool.
 
-\paragraph{Where usage detection is blind, a projection fails.} The losses we found have one cause: the projection
+\paragraph{Where usage detection is blind.} The losses we found have one cause: the projection
 removes what the detector cannot see. The agent transforms values (timestamps into dates, cents into euros, URLs
 into short identifiers, English into Italian), or reads a field only to decide something (an issue title to match
 a failure). Safeguards can close known blind spots, and S1 and S2 closed three of the four we found, but the list of
@@ -24,7 +33,8 @@ identifier it was asked to report, an agent invented plausible ones. Identifiers
 lose, so a projection should never remove them, whatever the usage says.
 
 \paragraph{The recovery path matters.} With \texttt{expand}, a wrong cut can cost one round trip instead of a wrong
-answer: in the live runs the agents asked for hidden fields, and the end-to-end cost still fell. It is not a
+answer: in the live runs the agents asked for hidden fields, and the LLM API cost per run, which includes the recovery
+turns, still fell. It is not a
 guarantee: in one billing-support run the agent did not ask for the period end and got a ticket wrong. It works only
 when the agent knows what is hidden, which is why the hidden fields are listed, grouped, after every trimmed output,
 and only while the original is kept: the library keeps the last 256 originals per proxy and lists at most 25 groups,
@@ -36,16 +46,31 @@ proposed configuration, a plain list of kept and dropped fields; apply it with i
 \texttt{expand}; and keep recording, so that a field the agent starts needing shows up in the next report. The
 library implements each step, including an MCP proxy that applies a configuration in front of any server without
 changes to the agent. Reported savings should also be read against re-serialisation alone, which removes up to \ReserialAi{} of the
-real-API outputs and \ReserialAiv{} of the simulated ones without removing anything.
+real-API outputs and \ReserialAiv{} of the simulated ones without removing anything, and against a full minifier.
 
-\paragraph{What Study 3 adds.} When the task changed and needed fields the projection removed, the agent recovered
-them, wrote them, and ordinary learning kept them from the next run; the two corrections designed for harder
-cases, promotion and sampling, were not needed in these runs, and sampling only cost tokens. The agent also found a
-route around a removed field that no part of the library sees, another tool, which on an API billed per call has a
-price. A text teaching the agent to issue independent calls together did nothing measurable for a model that
-already did so, and shortened the runs of one agent of a model that did not: whether it helps depends on the
-model and the task, so it stays off by default and the telemetry report suggests it when the traces show calls made
-one per turn that did not have to wait. The negative results are as informative. Measured offline on these runs,
-specialising projections by argument value gained nothing, cutting rows by position would have removed elements the
-agent reuses, and hiding unused tool definitions would gain a modest share of the cost where they are cached, which
-a few extra turns would cancel.
+\paragraph{What the baselines add.} The offline comparison of Section~\ref{sec:s3offline} separates three things
+that the savings of Studies~1 and~2 mix: what any serialiser removes (minification, \BaseMinRawMin{} to
+\BaseMinRawMax{} of the raw tokens), what a filter of generic metadata and empty values removes without looking at
+any trace, and what only learning from traces removes. Where payloads are large and the task uses little of them,
+learning removed most of what was left after the static filter (\BaseLearnedStaticBigMin{} to
+\BaseLearnedStaticBigMax{} in three cases); where the agent cites most of what it reads, as in the content-gap
+analysis, it added little, and minification is the honest choice. The static filter is a complement, not a rival:
+it removes the nulls and flags that the prudent projection keeps because they can never be judged. The comparison is
+offline: it shows where learning can add value in tokens, not that the answers stay as good, which only live runs
+can show.
+
+\paragraph{What else Study 3 shows.} Counting what \texttt{expand} sent back, the tool outputs shrank less where the
+agent recovered fields (\SthreeEOneTrimNeti{} against \SthreeEOneTrimBeforei{} before recovery, in the editorial
+plan), and the cost figure already includes that. The two corrections designed for harder cases of adaptation,
+promotion and sampling, were not needed in these runs, and sampling only cost tokens, so both stay off by default.
+The agent also found a route around a removed field that no part of the library sees, another tool, which on an API
+billed per call has a price. The stricter post-hoc checks confirmed the answers in nearly all cases; the one
+recurring gap, a decline reason missing in billing support, came from the model's choice of which records to list
+and occurred in every arm, with or without trimming (Section~\ref{sec:s3audit}). The strategy text (in the appendix)
+is useful for models that issue calls one at a time: it shortened the runs of one agent of such a model, and changed
+nothing measurable against R for a model that already grouped its calls (combined with trimming, its
+results there were mixed), so it stays off by default and the
+telemetry report suggests it when the traces show calls made one per turn that did not have to wait. The negative
+results are as informative. Measured offline on these runs, specialising projections by argument value gained
+nothing, cutting rows by position would have removed elements the agent reuses, and hiding unused tool definitions
+would gain a modest share of the cost where they are cached, which a few extra turns would cancel.

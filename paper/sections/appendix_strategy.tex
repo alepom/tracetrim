@@ -1,0 +1,111 @@
+\section{The strategy text, and the hosts checked}
+\label{app:strategy}
+
+This appendix holds the part of Study~3 that concerns the strategy level of the skill, a text that teaches the agent
+how to organise its tool calls, and the checks of the proxy in MCP hosts (Section~\ref{sec:s3pointer} summarises
+them). The hypotheses are numbered as in Table~\ref{tab:s3hyp}, where every outcome is given.
+
+\subsection{E1: the strategy text on the first model}
+\label{sec:s3e1strategy}
+
+\paragraph{The strategy alone changed nothing measurable on this model.} Against the arm without it, the median of S
+stayed inside R's range for turns, tool calls, billed input tokens and the share of turns with several calls in
+\SthreeEOneSinsideR{} of \SthreeEOneSinsideRof{} comparisons (\SthreeEOneCases{} cases, \SthreeEOneMeasures{}
+measures; Tables~\ref{tab:s3e1} and~\ref{tab:s3e1tokens}). This holds for S against R and for these measures only.
+There was little to organise: without the strategy, \SthreeEOneSeveralRi, \SthreeEOneSeveralRii{} and
+\SthreeEOneSeveralRiv{} of the turns that made a call made several (editorial plan, content gaps, billing support;
+\SthreeEOneSeveralSi, \SthreeEOneSeveralSii{} and \SthreeEOneSeveralSiv{} with it).
+
+\paragraph{Combined with trimming, the results were mixed, and the hypotheses on the strategy failed as frozen.}
+P4-H1 failed in \SthreeHOneFails{} comparison of \SthreeHOneOf: in the editorial plan ST passed the gates in
+\SthreeHOneGatesST{} runs against \SthreeHOneGatesT{} for T (the run that failed is the one that asked a question).
+P4-H2 failed: on billing support the median turns of S were \SthreeHTwoS, not below R's minimum of \SthreeHTwoR.
+P4-H4 failed on billing support, where the median billed input of ST (\SthreeEOneBilledSTiv{} tokens) was above T's
+maximum (\SthreeEOneBilledTmaxiv); in the editorial plan it was below T's minimum (\SthreeEOneBilledSTi{} against
+\SthreeEOneBilledTmini). With the strategy, the values the prompts prescribe (result limits, search depth, keywords
+per call) were \SthreeEOnePrescribedKept{} in all \SthreeEOnePrescribedRuns{} runs of the two cases whose prompts
+prescribe them. Runs that asked a question instead of doing the task: \SthreeEOneAsked{} of the
+\SthreeEOneStrategyRuns{} with the strategy (in arm ST), \SthreeEOneAskedOther{} of those without it; that run is
+kept in every figure. In the billing audit (Section~\ref{sec:s3audit}) the period-end ticket failed in
+\AuditEOnePeriod{} runs, all with the strategy text.
+
+\subsection{E3: the strategy text on a second model, without trimming}
+\label{sec:s3e3}
+
+E1 left open what the strategy does for a model that issues calls one at a time. E3 asked it of
+\texttt{\SthreeModelB}, with arms R and S and no trimming, on billing support and CI triage, whose simulated
+servers were live, and on the editorial plan and the content-gap analysis, whose search-data provider was replaced
+by recorded outputs: a call got the recorded output of the same call when there was one and otherwise the output of
+the recorded call of the same tool with the most similar arguments. The provider was called in \SthreeProviderCallsEThree{} run.
+On those two cases only the organisation of calls is evaluated, not the answers. Runs per arm go from
+\SthreeEThreeRunsPerArmMin{} to \SthreeEThreeRunsPerArmMax{} (Table~\ref{tab:s3e3}).
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{\input{generated/table_s3_e3.tex}}
+\caption{E3, \texttt{\SthreeModelB}, without and with the strategy text, no trimming. Turns, tool calls and turns with several calls as in
+Table~\ref{tab:s3e1}; billed input as in Table~\ref{tab:s3e1tokens}; LLM API cost per run relative to the arm without
+the strategy, from billed usage at the model's list prices. Billed tokens are
+not comparable with E1's (another tokenizer, price list and caching). $^\dagger$Simulated tools, live.
+$^\ddagger$Recorded outputs in place of the provider: calls and turns only.}
+\label{tab:s3e3}
+\end{table}
+
+\paragraph{The hypotheses on turns and grouped calls failed as stated.} P4-H8 (median turns with the strategy below
+the fewest turns of any run without it) held in \SthreeHEightHolds{} cases of \SthreeHEightOf, the two with
+recorded outputs; P4-H9 (median share of turns with several calls above the highest share of any run without it) held
+in \SthreeHNineHolds{} case: in each, a run without the strategy reached the same share or more. Why they failed
+concerns the rule, not the runs, whose results stand as they are. Comparing the median of one arm with the extreme
+of the other lets a single run decide: with \SthreeEThreeRunsCv{} runs per arm, as on CI triage, one unusual run without the strategy
+is enough to fail the hypothesis, and there that is what happened. A protocol that wants to know whether an
+arm is usually shorter should compare what is usual in both. The two simulated cases are therefore read apart.
+
+\paragraph{CI triage, where this model issued one call per turn.} Without the strategy, \SthreeEThreeLongRunsv{}
+runs of \SthreeEThreeRunsCv{} made every call in a turn of its own (\SthreeEThreeLongMinv{} to
+\SthreeEThreeLongMaxv{} turns); the remaining one grouped its calls and took \SthreeEThreeTurnsRminv. With the strategy all
+runs took \SthreeEThreeTurnsSminv{} to \SthreeEThreeTurnsSmaxv{} turns, with a similar number of calls. The median
+went from \SthreeEThreeTurnsRv{} turns to \SthreeEThreeTurnsSv, billed input tokens fell by
+\SthreeEThreeInputChangev, and the LLM API cost per run by \SthreeEThreeCostv: less than the tokens, because most of the
+input re-read at each turn is billed at the cached price. P4-H8 fails on this case because of that one run: the
+strategy's median, \SthreeEThreeTurnsSv, is not below \SthreeEThreeTurnsRminv.
+
+\paragraph{Billing support, where it already grouped its calls.} Little was left: runs without the strategy took
+\SthreeEThreeTurnsRminiv{} to \SthreeEThreeTurnsRmaxiv{} turns, those with it always \SthreeEThreeTurnsSiv, which
+is the fewest this task needs (see the post-hoc analysis below).
+
+\paragraph{The implemented gates and coverage checks detected no loss, and the prompts were not overridden.}
+P4-H10 holds: the gates passed in
+\SthreeHTenGatesiv{} and \SthreeHTenGatesv{} runs of both arms of billing support and CI triage, every requirement of
+the prompts covered, as far as the gates and the coverage checks test them. P4-H11 holds: the prescribed values were respected in \SthreeHElevenPassed{} of
+\SthreeHElevenChecks{} checks, in the \SthreeHElevenRuns{} strategy runs with recorded outputs. Those two cases point
+the same way as CI triage (median turns from \SthreeEThreeTurnsRi{} to \SthreeEThreeTurnsSi{} in the editorial
+plan, from \SthreeEThreeTurnsRii{} to \SthreeEThreeTurnsSii{} in the content-gap analysis), on
+\SthreeEThreeRunsRi{} and \SthreeEThreeRunsRii{} runs per arm and with recorded outputs: the model's call matched a
+recorded call exactly in \SthreeExactMini{} to \SthreeExactMaxi{} of the calls of a run in the editorial plan and in
+\SthreeExactMinii{} to \SthreeExactMaxii{} in the content-gap analysis, and got the nearest recorded output otherwise.
+They say how calls were organised, not whether the task was done well.
+
+\paragraph{Post hoc: calls that could have been made earlier.} This analysis is not in the protocol; it was added
+after the runs, to tell a sequence the task imposes from one the model chose. A call whose arguments name something
+an earlier result returned (a run, a job, a customer, an invoice) can only follow that result; any other could have
+been made at once. The longest chain of such calls gives the fewest turns a run needed. In CI triage
+\SthreeDependingv{} of the calls depended on an earlier result, but the chain was short (the runs, then their jobs,
+then the logs): \SthreeFewestv{} turns were enough in every run. Without the strategy \SthreeEarlierRv{} of the calls
+were made later than they could have been, with it \SthreeEarlierSv; in billing support \SthreeEarlierRiv{} and
+\SthreeEarlierSiv, with \SthreeFewestiv{} turns needed. The rule reads identifiers only and cannot know that a model
+wanted to read one log before asking for the next: it gives a lower bound on the turns, not what a careful agent
+should do.
+
+\subsection{The hosts checked}
+\label{sec:s3hosts}
+
+After the runs of Study~3, the proxy was put in front of servers in several hosts, in most checks with a log that
+records each request of the host's client and none of its content; the repository's page on hosts states what was verified,
+when and how, and everything else as not verified. In the OpenAI Playground, Claude Code (on Linux and on Windows)
+and VS Code (Copilot Chat in agent mode), the tools passed and the model called \texttt{tracetrim\_done} at the end
+of its run; in the Playground it did so guided by the tool's description alone. \texttt{expand} was verified in the
+Playground only: in the other hosts nothing had yet been trimmed. MCP Inspector, which has no model, showed that the
+skill is served as the MCP Skills extension asks. None of the hosts with a model loaded the skill as a skill: no
+client declared the extension. The Playground's and VS Code's clients asked for neither the skill nor resources; in Claude Code the model
+read the skill through the host's tool for MCP resources before its first call, as a resource. Claude Desktop and
+Cursor were not verified. These checks show that the path works in those hosts, not how often or how well.

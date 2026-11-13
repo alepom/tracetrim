@@ -332,3 +332,11 @@ brings a field to the model when the model does not ask for it, and on C1 no oth
 (on C4 the model got them from a tool that is not trimmed): C1 is where H7 can be put to the test. The hypotheses
 are those written above. **On C1, H6 is not evaluated**: there is no arm with promotion. H5 on C1 is read on the
 two arms run.
+
+**6 — 2026-11-13, after all the results: the billing-support audit, run late.** The stricter audit this protocol
+requires for C4 beside the keyword test (`experiments/c4_audit.py`, under "Measures") was not run by
+`experiments/analyze_v04.py`; a review found it missing. It was run on the E1 runs of C4 with its rules unchanged,
+after the results were known (`experiments/audit_v04.py`, `results/v04/audits.json`), and is reported as late. In the
+same analysis, also written after the results, E2's added requirement was checked with its full associations (C1:
+channel, video and views; C4: the cited invoice's link and collection method). Neither changes a hypothesis or a
+measure of this protocol.

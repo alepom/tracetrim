@@ -1,0 +1,13 @@
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+& & & \multicolumn{4}{c}{Tokens removed, against raw} & Learned & \multicolumn{3}{c}{Misses} \\
+\cmidrule(lr){4-7}\cmidrule(lr){9-11}
+Case & Calls & Raw tokens & Minified & Static & Learned & Both & vs static & Static & Learned & Both \\
+\midrule
+Editorial plan & 167 & 817{,}865 & $-$25\% & $-$26\% & $-$63\% & $-$63\% & $-$50\% & 0 & 1 & 1 \\
+Content gaps & 90 & 527{,}542 & $-$9\% & $-$9\% & $-$13\% & $-$13\% & $-$4\% & 0 & 8 & 8 \\
+Literature scan & 61 & 2{,}262{,}885 & $-$16\% & $-$20\% & $-$52\% & $-$55\% & $-$40\% & 0 & 2 & 2 \\
+Billing support$^\dagger$ & 84 & 154{,}833 & $-$33\% & $-$47\% & $-$59\% & $-$69\% & $-$24\% & 45$^{\ast}$ & 9 & 48$^{\ast}$ \\
+CI triage$^\dagger$ & 64 & 599{,}808 & $-$18\% & $-$20\% & $-$65\% & $-$66\% & $-$56\% & 0 & 3 & 3 \\
+\bottomrule
+\end{tabular}

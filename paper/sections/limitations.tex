@@ -2,6 +2,17 @@
 \label{sec:limitations}
 
 \begin{itemize}
+\item \textbf{Validated on the development tasks only.} The tasks, prompts, gates, safeguards and default rules
+were developed on the same five agents on which they are evaluated, and Studies~2 and~3 reuse them. No result has
+yet been tested on tasks, agents or APIs kept apart from development: the results describe these workloads, and
+validation on new ones is the main step still missing.
+\item \textbf{What the checks check.} The gates, the protocols' tests and the rule-based audits added afterwards
+check identifiers, links, names, keywords and some relations (a volume against its keyword, a link against the
+invoice cited, a view count against its video), not every association an answer makes. The stricter post-hoc audits confirmed nearly all answers, and their
+exceptions, such as a decline reason the agent never fetched, passed the gates (Section~\ref{sec:s3audit}).
+\item \textbf{No independent human rating.} Answers were checked by gates and rules; where a check failed, a rule
+seemed wrong or a result was unexpected, they were read one by one by the AI agents that ran the analyses, under the
+author's review. No independent human rater read every answer, and no agreement between raters was measured.
 \item \textbf{Small numbers of runs.} Eight live runs per case to learn, two to five replays per arm to judge
   quality. No significance test is claimed; differences inside the range of the raw arm are reported as not
   distinguishable from run-to-run variation, which in these tasks is large (in Phase C the raw arm itself
@@ -33,16 +44,21 @@
 \item \textbf{Number formats.} Usage detection in the studies matched numbers written plainly or with dot thousands
   separators; numbers written with comma separators would have gone unseen. In all Phase A runs the agents wrote
   \CommaNumbersWritten{} such numbers, so no use was missed this way; the library matches them since version 0.3.4.
-\item \textbf{Study 3.} Trimming and adaptive learning were measured on one model, the strategy text on two; other
+\item \textbf{Study 3.} Trimming and adaptive learning were measured on one model, \texttt{\SthreeModelA}, the strategy text on two; other
   models may organise calls, call \texttt{expand} or reword values differently. Runs are few: \SthreeRunsPerArmEOne{} per arm in E1;
   in E2 \SthreeETwoSeqPerArmSim{} sequences per arm on the simulated case and \SthreeETwoSeqPerArmReal{} on the
   real-API case, a single trajectory per arm; \SthreeEThreeRunsPerArmMin{} to \SthreeEThreeRunsPerArmMax{} per arm
   in E3, with one task per case and no trimming, so the strategy combined with trimming was not
   measured on the second model. In E3 the editorial plan and the content-gap analysis ran on recorded outputs,
   mostly the nearest recorded call rather than the same one, so only the organisation of calls is evaluated there.
-  The gates and the test of E2's added requirement look for identifiers, links, names and keywords. Only the
-  function-calling adapter was exercised. The offline analyses and the post-hoc analysis of E3 were not in a
-  protocol, and the host checks are few observations per host.
+  The gates and the test of E2's added requirement look for identifiers, links, names and keywords; the full
+  associations and the billing audit were checked only after the results, by rules, with the cases those rules got
+  wrong read one by one. The audit that \texttt{protocol-v04.md} required for billing support was run after the results,
+  a deviation. Only the function-calling adapter was exercised. The offline analyses, the baselines among them, use
+  the traces on which the method was developed and say nothing about live answers; apart from the baselines, whose
+  rules were fixed before any number, they and the post-hoc analysis of E3 were not in a protocol, and the host
+  checks are few observations per host. Every attempt is kept in every figure, the run that asked a question instead
+  of doing the task included; a ratio that such a run cannot have is computed without it and says so.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
   on them, the released data are derived per-call records: enough to recompute which fields each call used and the
   misses, but neither the token savings, which need the payloads, nor a replay of the conversations.

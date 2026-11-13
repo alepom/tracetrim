@@ -1,28 +1,20 @@
-Agents built on large language models read tool outputs written for programs: most of what an API returns is never
-visibly reused in the agent's answer, yet it is paid for at every turn. In an exploratory study, we learn from an agent's
-own execution traces which fields of each tool output it visibly reuses, and remove the rest. On five agents (three on real APIs, two on simulated
-servers following public OpenAPI descriptions), a projection learned from seven runs and applied to an unseen one
-removed \PhaseAPrudentSavingi{} and \PhaseAPrudentSavingiii{} of tool-output tokens on two of the agents with real APIs
-and \PhaseAPrudentSavingii{} on the third, and \PhaseAPrudentSavingiv{} and \PhaseAPrudentSavingv{} on the simulated
-ones (writing the same JSON compactly, with no field removed, already removes up to \ReserialAi{} and \ReserialAiv{}
-respectively, and a full minifier up to \ReserialMinAi{} and \ReserialMinAiv); in live
-runs with an \texttt{expand} tool for hidden fields, billed input tokens fell by \PhaseCChangeInputi{} and
-\PhaseCChangeInputiv{}, and every run passed its gates, although a later re-check found one unsupported volume among
-\RecheckPairsTotal{} reported keyword--volume pairs. Learning only from tool
-calls, as a gateway would, missed a used field in \MissesPooledShareRealCalls{} of the held-out structured calls it trims
-(\MissesPooledRealCalls) on the three agents with real APIs, against \MissesPooledShareRealFull{} when learning from
-complete traces. Replays with projected outputs, under a
-protocol frozen in advance, located the failures precisely: values the agent transforms before writing them,
-fields it uses only to reason, and, without an identifier field, agents inventing identifiers. A second
-pre-registered study, on the same conversations, showed that two safeguards, keeping identifying fields and recognising transformed values,
-repaired those failures while keeping savings of \StudyTwoVtwoTokensi{} and \StudyTwoVtwoTokensiii{} on those two
-real-API agents and \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} on the simulated ones, with the search-volume measures of the editorial plan (median; median and mean on the protocol's computable
-list) outside the raw arm's range; a post-hoc check
-found a fourth mechanism, translated values, not covered. Version 2 adds a third study, of the automatic mode of
-tracetrim 0.4, under two further frozen protocols: on \texttt{\SthreeModelA}, trimming with \texttt{expand} cut the
-cost of a run by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents with every gate passed, fields that a changed task needed and
-the agent recovered and wrote were kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases,
-and a text teaching the agent to issue independent calls together changed nothing measurable; on
-\texttt{\SthreeModelB} it shortened the runs of one agent (median turns from \SthreeEThreeTurnsRv{} to
-\SthreeEThreeTurnsSv), although both hypotheses on turns and grouped calls failed as stated. We release the library, with a bilingual telemetry report
-and an MCP proxy that applies a reviewed projection in front of any server.
+Language-model agents read tool outputs written for programs: most of what an API returns is never visibly reused,
+yet is paid for at every turn. We learn from an agent's own traces which fields of each tool output it
+visibly reuses and remove the rest, protecting identifiers and letting the agent recover any hidden field with an
+\texttt{expand} tool. In live runs of tracetrim 0.4 on \texttt{\SthreeModelA}, under frozen protocols, a fixed
+projection with \texttt{expand} lowered the median LLM API cost per run by \SthreeEOneTrimCosti{} and
+\SthreeEOneTrimCostiv{} on two agents, every implemented gate passing; when a changed task needed removed fields,
+the agent recovered them and adaptive learning kept them from the next run in \SthreeHFiveKept{} of
+\SthreeHFiveRecoveries{} cases. Offline, on five agents, the projection
+learned with today's defaults removed \BaseLearnedRawi, \BaseLearnedRawiii{} and \BaseLearnedRawv{} of held-out
+tool-output tokens on three of them; beyond a minifier and a static metadata filter fixed in advance, it removed
+\BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what remained there, and on billing support, combined with
+that filter, \BaseBothStaticiv. Earlier studies (versions 0.1 and 0.2) explain these defaults: learned from tool
+calls alone, as a gateway would, the 0.1 aggressive projection missed a used field in \MissesPooledShareRealCalls{}
+of the held-out structured calls it trims on the real-API agents, against \MissesPooledShareRealFull{} from complete
+traces; replays located three failure mechanisms (transformed values, fields used only to
+reason, invented identifiers), and the safeguards of 0.2 repaired the specific failures that motivated them, on the
+conversations already observed, keeping savings of \StudyTwoVtwoTokensiii{} to \StudyTwoVtwoTokensv{} on four agents.
+The method helps most where outputs carry much the task does not use, least where the agent cites most of what
+it reads; it has not yet been validated on tasks held out from development. The library, a telemetry report
+and an MCP proxy are released.

@@ -3,15 +3,16 @@
 
 Study~2 replayed the Phase B conversations again, \StudyTwoRunsPerArm{} runs per arm, with the projection learned
 with both safeguards (arm \texttt{v02}) and with the same projection followed by structural compression
-(Table~\ref{tab:study2}). It is a pre-registered check that the safeguards repair the failures observed, on the
-same conversations that showed them, not an independent validation on new tasks, runs or seeds.
+(Table~\ref{tab:study2}). It is a pre-registered check that the safeguards repair the specific failures that
+motivated them, on the conversations already observed, not an independent validation on new tasks, runs or seeds.
 
 \begin{table}[t]
 \centering\small
 \resizebox{\textwidth}{!}{\input{generated/table_study2.tex}}
 \caption{Study 2: replay of the same runs as Phase B, \StudyTwoRunsPerArm{} runs per arm, safeguards S1 and S2 on.
-Columns and $^{\ast}$ as in Table~\ref{tab:phaseb}: in billing support the \texttt{v02} arm holds under the frozen
-test, not under the strict one.}
+Columns as in Table~\ref{tab:phaseb}. No cell carries that table's asterisk, but the same caveat applies: in
+billing support the \texttt{v02} arm meets H2 under the frozen keyword test, not under the strict test added after
+the fact (deviation 11; see the text).}
 \label{tab:study2}
 \end{table}
 
@@ -41,7 +42,8 @@ including the one lost in Phase B. \emph{H8} is a token count on fixed replays, 
 deterministic and equals the offline estimate given in the protocol: the \texttt{v02} arm still removed \StudyTwoVtwoTokensi,
 \StudyTwoVtwoTokensiii, \StudyTwoVtwoTokensiv{} and \StudyTwoVtwoTokensv{} of the tool-message tokens in the
 editorial plan, the literature scan, billing support and CI triage, against \StudyTwoHeadroomTokensi, \StudyTwoHeadroomTokensiii, \StudyTwoHeadroomTokensiv{} and
-\StudyTwoHeadroomTokensv{} for Headroom and \ReserialMinReplayi, \ReserialMinReplayiii, \ReserialMinReplayiv{} and
+\StudyTwoHeadroomTokensv{} for Headroom (tokens only, in the configuration chosen; an illustration, not a comparison of methods) and
+\ReserialMinReplayi, \ReserialMinReplayiii, \ReserialMinReplayiv{} and
 \ReserialMinReplayv{} for a full minifier that removes no field (Figure~\ref{fig:savings}). Measured against JSON
 already minified, the \texttt{v02} projection still removes \VtwoVsMini, \VtwoVsMiniii, \VtwoVsMiniv{} and
 \VtwoVsMinv{} of the tokens in these four cases (Table~\ref{tab:savingsdetail}). The safeguards cost part of the saving (compare

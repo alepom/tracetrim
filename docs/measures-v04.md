@@ -42,8 +42,14 @@ without trimming: the configuration tracetrim builds there trims no tool. 50 run
   30 runs of the two cases whose prompts prescribe them (C1, C2); the billing prompt prescribes none.
 - **One run asked a question instead of working**, in the arm with strategy and trimming. One in 25 with the
   strategy, none in 25 without, none in the 60 live runs of the original study.
-- **Trimming**, which E1 was not about: tool-output tokens down 44% on C1 and on C4, cost of a run down 30% and
-  24%, gates passed in 5 runs of 5 in the trimmed arm of both.
+- **Trimming**, which E1 was not about (arm T against R): tool-output tokens before recovery down 44% on C1 and on
+  C4, cost of a run down 30% and 24%. In detail: tool-output tokens per run, median of the runs; including what
+  `expand` sent back (1 − (sum of outputs sent + expand replies) / outputs original), down 34% on C1, where every
+  run of T called `expand` (median 2 calls), and 44% on C4, where no run did. The cost of a run is the LLM API cost
+  per run, from billed usage at the model's list prices, so recovery turns and `expand` replies are included; the
+  calls to the tool provider are not in it. The gates passed in 5 runs of 5 in the trimmed arm of both. Tool calls exclude `expand`; the
+  share of turns with several calls counts it. In the arm with strategy and trimming on C1, the reductions are
+  medians of the 4 runs that called a tool (the fifth asked a question and made no call).
 
 The strategy stays off by default.
 
@@ -56,7 +62,10 @@ promotion off/on × sampling off/on, two sequences per arm, 40 runs. On the real
 
 - **The fields came back by themselves.** In every sequence the model got them once, wrote them, and from the
   next run they were in the filtered results with no `expand`: from the second run in 8 sequences of 10, from the
-  third in 2. The requirement the variant adds was met in all 50 runs.
+  third in 2. The requirement the variant adds was met in all 50 runs, as the protocol's
+  test (`coverage.requirement`) checks it: on C1 that the answer names a channel the run's YouTube outputs contain;
+  on C4 that a ticket citing an invoice has a link found in the run's invoice outputs and a keyword about
+  collection. The full association was checked afterwards (below, post-hoc audits).
 - **Promotion made no difference here**, because the model wrote the values it recovered: ordinary learning was
   enough. Whether promotion helps when a value is used and never written is still open.
 - **Sampling only cost tokens here**: in the last run of each sequence of the simulated case, a median of 35% of
@@ -73,6 +82,40 @@ promotion off/on × sampling off/on, two sequences per arm, 40 runs. On the real
   not hidden fields. Twice it wrote an index (`data[0]`) where paths use `data[]`.
 
 Promotion and sampling stay off by default.
+
+## Post-hoc audits of E1 and E2
+
+Asked by a reviewer on 2026-11-13, after the results were known; not in the frozen protocol. Rules in
+`experiments/audit_v04.py`, written before they were run; results in `results/v04/audits.json`. Where a rule fails
+an answer that is right, the cases were read by hand and are listed, by run, in `experiments/paper_numbers_v04.py`.
+
+**The C4 audit for E1 (a deviation).** `protocol-v04.md` required, on C4, the stricter audit of
+`experiments/c4_audit.py` beside the keyword test. It was not run with the results; it is reported here as a
+deviation, run after the results with its rules unchanged.
+
+| Arm | Runs | Gates | Keyword test | Audit | Decline reason missing |
+|---|---:|---:|---:|---:|---:|
+| R | 5 | 5/5 | 25/25 | 23/25 | 1/5 |
+| S | 5 | 5/5 | 21/25 | 20/25 | 3/5 |
+| T | 5 | 5/5 | 23/25 | 20/25 | 5/5 |
+| ST | 5 | 5/5 | 23/25 | 21/25 | 2/5 |
+
+- The audit passed 84 of 100 diagnoses, the keyword test 92; 3 of the audit's failures are the rule's (the reason
+  given next to a negation), so 87 of 100 are right read by hand.
+- The decline reason was missing in 11 runs of 20, in every arm: in each, the model listed that customer's
+  invoices rather than its charges, and the reason, which is on the charge, never reached it. It happened without
+  trimming too; with five runs per arm these data cannot tell whether trimming made that route more likely. The
+  keyword test accepted 5 of the 11. The period-end ticket failed in 2 runs, both with the strategy text.
+
+**E2, the full associations.**
+
+- C1, the channel, its video and the views: 43 of 46 pairs right by rule; every pair right in 6 runs of 10. Of the
+  3 failures, 1 is a real misattribution (a video of another channel), 1 names the right channel and views with a
+  title that is not the one in the outputs, 1 is the rule's (a channel whose name is a common word taken as named).
+  One run names its videos without "YouTube"/"canale"/"channel": its 3 items pass when that condition is dropped.
+- C4, the cited invoice's link and collection method: 69 of 72 tickets by rule; the 3 failures are the rule's (a
+  reply saying the invoice is charged automatically and *not* sent for payment is read as stating both), and read
+  by hand 72 of 72 are right.
 
 ## E3 — the strategy on a second model
 
@@ -193,7 +236,8 @@ without trimming, at the providers' list prices.
   together on the second model was not measured.
 - Few runs: five per arm in E1; in E2 two sequences per arm on the simulated case and one on the real case, which
   is a single trajectory per arm.
-- The gates and the test of the added requirement look for identifiers, links, names and keywords.
+- The gates and the test of the added requirement look for identifiers, links, names and keywords; the post-hoc
+  audits check the associations, by rules, after the results.
 - Only the function-calling adapter was exercised. That the MCP proxy takes the same decisions is covered by a
   test; whether a host loads the skill over MCP was not tried.
 - Promotion where reuse cannot be seen, and sampling where the agent has no other way, were not put to the test:
