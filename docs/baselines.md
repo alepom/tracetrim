@@ -109,6 +109,96 @@ the learned arm against misses of the static arm. Learning adds value in a case 
 clearly more than static at a comparable number of misses; where it does not, the paper should say
 so.
 
+## Results (13 November 2026)
+
+`TRACETRIM_TRACES=… PYTHONPATH=src python -m experiments.baselines`, offline, from the 40 Phase A
+runs; every figure below is in `results/baselines.json` with its counts.
+
+**Input check, passed for every case**: runs (8 per case), calls (C1 173, C2 136, C3 61, C4 84, C5 104),
+raw tool-output tokens and Study 1's own leave-one-out (prudent tokens, trimmed calls, misses of both
+projections) recomputed here equal `results/phase_a.json`; the minified totals equal
+`results/reserialize.json`; for the learned arm, Study 1's `removes()` and the generic form of a miss
+agree on every call. Outputs that are not JSON (C1 6, C2 46: page parses and failed searches, C5 40:
+job logs) are left as they are in every arm.
+
+### Tokens removed with respect to raw
+
+| Case | Calls (structured) | Raw tokens | minified | static | learned | learned+static |
+|---|---:|---:|---:|---:|---:|---:|
+| C1 | 173 (167) | 817,865 | −24.6% | −25.9% | −63.3% | −63.4% |
+| C2 | 136 (90) | 527,542 | −9.0% | −9.2% | −12.9% | −13.0% |
+| C3 | 61 (61) | 2,262,885 | −15.7% | −20.1% | −51.9% | −54.9% |
+| C4† | 84 (84) | 154,833 | −33.2% | −46.7% | −59.3% | −69.3% |
+| C5† | 104 (64) | 599,808 | −18.3% | −20.1% | −65.0% | −66.5% |
+
+### Tokens removed with respect to minified, and learning beyond static
+
+| Case | static | learned | learned+static | learned vs static | learned+static vs static |
+|---|---:|---:|---:|---:|---:|
+| C1 | −1.7% | −51.3% | −51.4% | −50.5% | −50.6% |
+| C2 | −0.2% | −4.3% | −4.4% | −4.1% | −4.2% |
+| C3 | −5.3% | −43.0% | −46.5% | −39.8% | −43.6% |
+| C4† | −20.1% | −39.0% | −54.0% | −23.7% | −42.4% |
+| C5† | −2.2% | −57.2% | −59.0% | −56.2% | −58.0% |
+
+Of the static filter's saving over minified, the metadata keys alone give C1 1.7%, C2 0.2%, C3 0.4%,
+C4 8.0%, C5 1.1%; the empty values alone C1 0.0%, C2 0.0%, C3 5.0%, C4 12.4%, C5 1.2% (diagnostics,
+`static_rules_vs_minified`; the rules were not changed).
+
+### Misses: held-out structured calls in which the arm removes a field the run used later
+
+Raw and minified: 0 in every case (checked). Share of the structured calls.
+
+| Case | Structured calls | static | learned | learned+static |
+|---|---:|---:|---:|---:|
+| C1 | 167 | 0 (0.0%) | 1 (0.6%) | 1 (0.6%) |
+| C2 | 90 | 0 (0.0%) | 8 (8.9%) | 8 (8.9%) |
+| C3 | 61 | 0 (0.0%) | 2 (3.3%) | 2 (3.3%) |
+| C4† | 84 | 45 (53.6%)* | 9 (10.7%) | 48 (57.1%)* |
+| C5† | 64 | 0 (0.0%) | 3 (4.7%) | 3 (4.7%) |
+
+Pooled within each group (never across): real C1–C3, removed vs raw minified −16.7%, static −19.8%,
+learned −48.8%, learned+static −50.7%; misses static 0/318, learned 11/318. Simulated C4–C5: −21.3%,
+−25.5%, −63.8%, −67.0%; misses static 45/148, learned 12/148, learned+static 51/148. With the library's
+current usage detection (transformed values recognised) the misses are the same in every cell.
+†Simulated tools.
+
+*All 45 static misses are one field, `data[].object`, Stripe's type tag, and all are a
+coincidence of the detection, not a use: the value `"customer"` (40 calls of `stripe_search_customers`)
+or `"charge"` (5) matches the argument *name* of the agent's later calls
+(`stripe_list_charges {"customer": "cus_…"}`), which the word matcher reads as a reuse of the value.
+Without that field the static filter has no miss in C4, and learned+static has exactly the learned
+arm's 9. The learned arm keeps `object` for the same reason: it learned the same coincidence from the
+other runs.
+
+### Reading
+
+- **Learning adds value beyond a static filter in four cases of five.** On the same calls the learned
+  projection removes 40–56% of what is left after the static filter in C1, C3 and C5, and 24% in C4,
+  at 1–3 misses in C1, C3 and C5 (0.6–4.7% of calls) and 9 in C4 (10.7%), against none for static
+  apart from the coincidence marked *. A field filter
+  that knows nothing of the task cannot reach that: what it removes is metadata, and the payloads
+  here carry little of it.
+- **Where not: C2.** The content-gap analyst cites most of what the search results contain and the
+  rest of its input is prose; learning removes 4.1% beyond static, at 8 misses in 90 calls (7 of them
+  `items[].type`). Here the honest baseline is minification.
+- **Why the static filter is weak on C1 and C2, and not a strawman.** The search-data MCP server
+  already returns a trimmed envelope (`id`, `items`, `status_code`, `status_message`, `total_count`)
+  with almost no empty value (4 nulls and 4 empty lists in 167 payloads): the static part of the job
+  is done upstream, so the filter can only remove the status pair and `check_url`. On OpenAlex (C3)
+  and the Stripe-like payloads (C4), which carry nulls, empty lists and per-record type tags, it
+  removes 5% and 20% beyond minification.
+- **Static and learned are complementary, not rivals.** The prudent projection keeps every field
+  usage detection cannot judge, and nulls and booleans are never judgeable: so it keeps exactly what
+  rule (a) and the `livemode`-type rules remove. Applied after the projection, the static filter
+  adds 3.5 points in C3 and 15 points in C4 (−39.0% → −54.0% of minified), and no miss beyond the
+  learned arm's except the `object` coincidence above.
+- **Minification is a large share of every figure** (9–33% of raw): part of what Table 1 credits to
+  the projection is lossless and would be obtained by any serialiser.
+
 ## Deviations
 
-None so far.
+None. Two things were added after the first run, neither a change of rule: (1) switches to apply
+rule (a) or rule (b) alone, to split the static saving between them (a diagnostic, not an arm);
+(2) the values behind the static arm's misses, to check what was removed. The key list, the order of
+the rules and the arms are as committed in the pre-registration.

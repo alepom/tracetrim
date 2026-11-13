@@ -1,0 +1,916 @@
+{
+  "traces": "/home/alepom/progetti/tracetrim/traces",
+  "arms": [
+    "raw",
+    "minified",
+    "static",
+    "learned",
+    "learned+static"
+  ],
+  "static_keys": [
+    "_links",
+    "api_version",
+    "check_url",
+    "correlation_id",
+    "cost",
+    "datetime",
+    "etag",
+    "first_page_url",
+    "has_more",
+    "idempotency_key",
+    "last_page_url",
+    "livemode",
+    "next_cursor",
+    "next_page",
+    "next_page_url",
+    "next_url",
+    "object",
+    "path",
+    "prev_cursor",
+    "prev_page_url",
+    "prev_url",
+    "previous_cursor",
+    "previous_page_url",
+    "previous_url",
+    "request_id",
+    "requestid",
+    "se_type",
+    "status_code",
+    "status_message",
+    "tasks_count",
+    "tasks_error",
+    "time",
+    "trace_id",
+    "version",
+    "x_request_id"
+  ],
+  "definitions": "docs/baselines.md",
+  "cases": {
+    "C1": {
+      "input_check": {
+        "runs": 8,
+        "calls": 173,
+        "raw": 817865,
+        "study1_misses_aggressive": 2,
+        "study1_misses_prudent": 2,
+        "study1_trimmed_calls": 166,
+        "structured_calls": 167,
+        "minified_matches_reserialize_json": true
+      },
+      "tokens": {
+        "raw": 817865,
+        "minified": 616929,
+        "static": 606372,
+        "learned": 300435,
+        "learned+static": 299577,
+        "static_keys_only": 606404,
+        "static_empties_only": 616901
+      },
+      "removed_vs_raw": {
+        "raw": 0.0,
+        "minified": 0.24568357858570788,
+        "static": 0.2585915768494801,
+        "learned": 0.6326594242326056,
+        "learned+static": 0.6337084971236084
+      },
+      "removed_vs_minified": {
+        "raw": -0.32570360608757243,
+        "minified": 0.0,
+        "static": 0.01711217984565483,
+        "learned": 0.5130152740428802,
+        "learned+static": 0.5144060337575312
+      },
+      "removed_vs_static": {
+        "learned": 0.5045368189824069,
+        "learned+static": 0.5059517919692862
+      },
+      "static_rules_vs_minified": {
+        "keys": 0.017060310019467395,
+        "empties": 4.538609791404635e-05
+      },
+      "misses": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 167,
+          "share": 0.0
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 167,
+          "share": 0.0
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 167,
+          "share": 0.0
+        },
+        "learned": {
+          "calls": 1,
+          "of_structured_calls": 167,
+          "share": 0.005988023952095809
+        },
+        "learned+static": {
+          "calls": 1,
+          "of_structured_calls": 167,
+          "share": 0.005988023952095809
+        }
+      },
+      "learned_trimmed_calls": 166,
+      "misses_sensitivity_default_detection": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 167
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 167
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 167
+        },
+        "learned": {
+          "calls": 1,
+          "of_structured_calls": 167
+        },
+        "learned+static": {
+          "calls": 1,
+          "of_structured_calls": 167
+        }
+      },
+      "missed_fields": {
+        "learned": {
+          "items[].duration_time_seconds": 1
+        },
+        "learned+static": {
+          "items[].duration_time_seconds": 1
+        }
+      },
+      "static_missed_values": {},
+      "per_tool": {
+        "dataforseo_labs_bulk_keyword_difficulty": {
+          "calls": 8,
+          "raw": 4404,
+          "minified": 2496,
+          "static": 2408,
+          "learned": 1764,
+          "learned+static": 1724
+        },
+        "dataforseo_labs_google_keyword_ideas": {
+          "calls": 9,
+          "raw": 38396,
+          "minified": 26592,
+          "static": 26504,
+          "learned": 11511,
+          "learned+static": 11471
+        },
+        "dataforseo_labs_google_keyword_suggestions": {
+          "calls": 36,
+          "raw": 131222,
+          "minified": 89866,
+          "static": 89446,
+          "learned": 39606,
+          "learned+static": 39417
+        },
+        "dataforseo_labs_google_ranked_keywords": {
+          "calls": 8,
+          "raw": 91027,
+          "minified": 68271,
+          "static": 59495,
+          "learned": 28115,
+          "learned+static": 28075
+        },
+        "dataforseo_labs_google_related_keywords": {
+          "calls": 1,
+          "raw": 56,
+          "minified": 42,
+          "static": 23,
+          "learned": 42,
+          "learned+static": 23
+        },
+        "dataforseo_labs_google_relevant_pages": {
+          "calls": 8,
+          "raw": 8651,
+          "minified": 5835,
+          "static": 5747,
+          "learned": 4587,
+          "learned+static": 4547
+        },
+        "dataforseo_labs_search_intent": {
+          "calls": 11,
+          "raw": 7494,
+          "minified": 4404,
+          "static": 4338,
+          "learned": 1272,
+          "learned+static": 1242
+        },
+        "kw_data_google_ads_search_volume": {
+          "calls": 17,
+          "raw": 28145,
+          "minified": 19126,
+          "static": 18939,
+          "learned": 13834,
+          "learned+static": 13749
+        },
+        "kw_data_google_trends_explore": {
+          "calls": 33,
+          "raw": 171533,
+          "minified": 111686,
+          "static": 111323,
+          "learned": 3071,
+          "learned+static": 2906
+        },
+        "serp_organic_live_advanced": {
+          "calls": 26,
+          "raw": 192999,
+          "minified": 165289,
+          "static": 165003,
+          "learned": 147418,
+          "learned+static": 147288
+        },
+        "serp_youtube_organic_live_advanced": {
+          "calls": 16,
+          "raw": 143938,
+          "minified": 123322,
+          "static": 123146,
+          "learned": 49215,
+          "learned+static": 49135
+        }
+      }
+    },
+    "C2": {
+      "input_check": {
+        "runs": 8,
+        "calls": 136,
+        "raw": 527542,
+        "study1_misses_aggressive": 9,
+        "study1_misses_prudent": 9,
+        "study1_trimmed_calls": 90,
+        "structured_calls": 90,
+        "minified_matches_reserialize_json": true
+      },
+      "tokens": {
+        "raw": 527542,
+        "minified": 479838,
+        "static": 478848,
+        "learned": 459386,
+        "learned+static": 458936,
+        "static_keys_only": 478848,
+        "static_empties_only": 479838
+      },
+      "removed_vs_raw": {
+        "raw": 0.0,
+        "minified": 0.09042692335396996,
+        "static": 0.09230355118644584,
+        "learned": 0.12919540055578516,
+        "learned+static": 0.13004841320691052
+      },
+      "removed_vs_minified": {
+        "raw": -0.099416886532538,
+        "minified": 0.0,
+        "static": 0.0020631963287609523,
+        "learned": 0.04262271850082733,
+        "learned+static": 0.04356053501390056
+      },
+      "removed_vs_static": {
+        "learned": 0.040643377439187334,
+        "learned+static": 0.04158313285217852
+      },
+      "static_rules_vs_minified": {
+        "keys": 0.0020631963287609523,
+        "empties": 0.0
+      },
+      "misses": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 90,
+          "share": 0.0
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 90,
+          "share": 0.0
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 90,
+          "share": 0.0
+        },
+        "learned": {
+          "calls": 8,
+          "of_structured_calls": 90,
+          "share": 0.08888888888888889
+        },
+        "learned+static": {
+          "calls": 8,
+          "of_structured_calls": 90,
+          "share": 0.08888888888888889
+        }
+      },
+      "learned_trimmed_calls": 90,
+      "misses_sensitivity_default_detection": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 90
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 90
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 90
+        },
+        "learned": {
+          "calls": 8,
+          "of_structured_calls": 90
+        },
+        "learned+static": {
+          "calls": 8,
+          "of_structured_calls": 90
+        }
+      },
+      "missed_fields": {
+        "learned": {
+          "items[].type": 7,
+          "items[].items[].alt": 1
+        },
+        "learned+static": {
+          "items[].type": 7,
+          "items[].items[].alt": 1
+        }
+      },
+      "static_missed_values": {},
+      "per_tool": {
+        "on_page_content_parsing": {
+          "calls": 31,
+          "raw": 236352,
+          "minified": 236352,
+          "static": 236352,
+          "learned": 236352,
+          "learned+static": 236352
+        },
+        "serp_organic_live_advanced": {
+          "calls": 105,
+          "raw": 291190,
+          "minified": 243486,
+          "static": 242496,
+          "learned": 223034,
+          "learned+static": 222584
+        }
+      }
+    },
+    "C3": {
+      "input_check": {
+        "runs": 8,
+        "calls": 61,
+        "raw": 2262885,
+        "study1_misses_aggressive": 3,
+        "study1_misses_prudent": 3,
+        "study1_trimmed_calls": 61,
+        "structured_calls": 61,
+        "minified_matches_reserialize_json": true
+      },
+      "tokens": {
+        "raw": 2262885,
+        "minified": 1908725,
+        "static": 1808013,
+        "learned": 1087625,
+        "learned+static": 1020232,
+        "static_keys_only": 1901799,
+        "static_empties_only": 1813675
+      },
+      "removed_vs_raw": {
+        "raw": 0.0,
+        "minified": 0.15650817429962194,
+        "static": 0.2010141920601356,
+        "learned": 0.5193635558148116,
+        "learned+static": 0.5491454492826635
+      },
+      "removed_vs_minified": {
+        "raw": -0.1855479443083734,
+        "minified": 0.0,
+        "static": 0.052764017865328916,
+        "learned": 0.43018245163656366,
+        "learned+static": 0.46549031421498643
+      },
+      "removed_vs_static": {
+        "learned": 0.39844182536298134,
+        "learned+static": 0.4357164467290888
+      },
+      "static_rules_vs_minified": {
+        "keys": 0.0036286002436181075,
+        "empties": 0.049797639785720826
+      },
+      "misses": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 61,
+          "share": 0.0
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 61,
+          "share": 0.0
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 61,
+          "share": 0.0
+        },
+        "learned": {
+          "calls": 2,
+          "of_structured_calls": 61,
+          "share": 0.03278688524590164
+        },
+        "learned+static": {
+          "calls": 2,
+          "of_structured_calls": 61,
+          "share": 0.03278688524590164
+        }
+      },
+      "learned_trimmed_calls": 61,
+      "misses_sensitivity_default_detection": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 61
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 61
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 61
+        },
+        "learned": {
+          "calls": 2,
+          "of_structured_calls": 61
+        },
+        "learned+static": {
+          "calls": 2,
+          "of_structured_calls": 61
+        }
+      },
+      "missed_fields": {
+        "learned": {
+          "results[].authorships[].raw_author_name": 1,
+          "results[].best_oa_location.raw_type": 1,
+          "results[].locations[].raw_type": 1,
+          "results[].primary_location.raw_type": 1,
+          "results[].type": 1
+        },
+        "learned+static": {
+          "results[].authorships[].raw_author_name": 1,
+          "results[].best_oa_location.raw_type": 1,
+          "results[].locations[].raw_type": 1,
+          "results[].primary_location.raw_type": 1,
+          "results[].type": 1
+        }
+      },
+      "static_missed_values": {},
+      "per_tool": {
+        "openalex_search_works": {
+          "calls": 61,
+          "raw": 2262885,
+          "minified": 1908725,
+          "static": 1808013,
+          "learned": 1087625,
+          "learned+static": 1020232
+        }
+      }
+    },
+    "C4": {
+      "input_check": {
+        "runs": 8,
+        "calls": 84,
+        "raw": 154833,
+        "study1_misses_aggressive": 9,
+        "study1_misses_prudent": 9,
+        "study1_trimmed_calls": 84,
+        "structured_calls": 84,
+        "minified_matches_reserialize_json": true
+      },
+      "tokens": {
+        "raw": 154833,
+        "minified": 103366,
+        "static": 82541,
+        "learned": 63017,
+        "learned+static": 47567,
+        "static_keys_only": 95136,
+        "static_empties_only": 90571
+      },
+      "removed_vs_raw": {
+        "raw": 0.0,
+        "minified": 0.33240329903831867,
+        "static": 0.46690305038331625,
+        "learned": 0.5930002002157163,
+        "learned+static": 0.6927851297849942
+      },
+      "removed_vs_minified": {
+        "raw": -0.49791033802217366,
+        "minified": 0.0,
+        "static": 0.20146856800108348,
+        "learned": 0.39035079233016656,
+        "learned+static": 0.5398196699108024
+      },
+      "removed_vs_static": {
+        "learned": 0.2365369937364461,
+        "learned+static": 0.4237166983680838
+      },
+      "static_rules_vs_minified": {
+        "keys": 0.07961999109958784,
+        "empties": 0.12378344910318673
+      },
+      "misses": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 84,
+          "share": 0.0
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 84,
+          "share": 0.0
+        },
+        "static": {
+          "calls": 45,
+          "of_structured_calls": 84,
+          "share": 0.5357142857142857
+        },
+        "learned": {
+          "calls": 9,
+          "of_structured_calls": 84,
+          "share": 0.10714285714285714
+        },
+        "learned+static": {
+          "calls": 48,
+          "of_structured_calls": 84,
+          "share": 0.5714285714285714
+        }
+      },
+      "learned_trimmed_calls": 84,
+      "misses_sensitivity_default_detection": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 84
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 84
+        },
+        "static": {
+          "calls": 45,
+          "of_structured_calls": 84
+        },
+        "learned": {
+          "calls": 9,
+          "of_structured_calls": 84
+        },
+        "learned+static": {
+          "calls": 48,
+          "of_structured_calls": 84
+        }
+      },
+      "missed_fields": {
+        "static": {
+          "data[].object": 45
+        },
+        "learned": {
+          "data[].payment_method_details.type": 3,
+          "data[].tax.automatic_tax": 3,
+          "data[].status": 2,
+          "data[].account_country": 1,
+          "data[].failure_message": 1,
+          "data[].outcome.reason": 1,
+          "data[].reason": 1,
+          "data[].receipt_number": 1
+        },
+        "learned+static": {
+          "data[].object": 45,
+          "data[].payment_method_details.type": 3,
+          "data[].tax.automatic_tax": 3,
+          "data[].status": 2,
+          "data[].account_country": 1,
+          "data[].failure_message": 1,
+          "data[].outcome.reason": 1,
+          "data[].reason": 1,
+          "data[].receipt_number": 1
+        }
+      },
+      "static_missed_values": {
+        "data[].object = 'customer'": 40,
+        "data[].object = 'charge'": 5
+      },
+      "per_tool": {
+        "stripe_list_charges": {
+          "calls": 18,
+          "raw": 40480,
+          "minified": 27874,
+          "static": 22600,
+          "learned": 17589,
+          "learned+static": 13629
+        },
+        "stripe_list_invoices": {
+          "calls": 16,
+          "raw": 74597,
+          "minified": 49154,
+          "static": 40291,
+          "learned": 28418,
+          "learned+static": 21656
+        },
+        "stripe_list_refunds": {
+          "calls": 2,
+          "raw": 740,
+          "minified": 498,
+          "static": 442,
+          "learned": 198,
+          "learned+static": 150
+        },
+        "stripe_list_subscriptions": {
+          "calls": 8,
+          "raw": 9104,
+          "minified": 6000,
+          "static": 5024,
+          "learned": 3504,
+          "learned+static": 2776
+        },
+        "stripe_search_customers": {
+          "calls": 40,
+          "raw": 29912,
+          "minified": 19840,
+          "static": 14184,
+          "learned": 13308,
+          "learned+static": 9356
+        }
+      }
+    },
+    "C5": {
+      "input_check": {
+        "runs": 8,
+        "calls": 104,
+        "raw": 599808,
+        "study1_misses_aggressive": 3,
+        "study1_misses_prudent": 3,
+        "study1_trimmed_calls": 64,
+        "structured_calls": 64,
+        "minified_matches_reserialize_json": true
+      },
+      "tokens": {
+        "raw": 599808,
+        "minified": 490304,
+        "static": 479320,
+        "learned": 210046,
+        "learned+static": 201110,
+        "static_keys_only": 485088,
+        "static_empties_only": 484536
+      },
+      "removed_vs_raw": {
+        "raw": 0.0,
+        "minified": 0.18256508749466493,
+        "static": 0.2008776141698677,
+        "learned": 0.6498112729406744,
+        "learned+static": 0.6647093736662399
+      },
+      "removed_vs_minified": {
+        "raw": -0.22333898968803023,
+        "minified": 0.0,
+        "static": 0.022402427881477616,
+        "learned": 0.5716004764391072,
+        "learned+static": 0.589825903928991
+      },
+      "removed_vs_static": {
+        "learned": 0.5617833597596595,
+        "learned+static": 0.5804264374530586
+      },
+      "static_rules_vs_minified": {
+        "keys": 0.010638297872340385,
+        "empties": 0.01176413000913723
+      },
+      "misses": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 64,
+          "share": 0.0
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 64,
+          "share": 0.0
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 64,
+          "share": 0.0
+        },
+        "learned": {
+          "calls": 3,
+          "of_structured_calls": 64,
+          "share": 0.046875
+        },
+        "learned+static": {
+          "calls": 3,
+          "of_structured_calls": 64,
+          "share": 0.046875
+        }
+      },
+      "learned_trimmed_calls": 64,
+      "misses_sensitivity_default_detection": {
+        "raw": {
+          "calls": 0,
+          "of_structured_calls": 64
+        },
+        "minified": {
+          "calls": 0,
+          "of_structured_calls": 64
+        },
+        "static": {
+          "calls": 0,
+          "of_structured_calls": 64
+        },
+        "learned": {
+          "calls": 3,
+          "of_structured_calls": 64
+        },
+        "learned+static": {
+          "calls": 3,
+          "of_structured_calls": 64
+        }
+      },
+      "missed_fields": {
+        "learned": {
+          "[].author_association": 2,
+          "workflow_runs[].display_title": 1
+        },
+        "learned+static": {
+          "[].author_association": 2,
+          "workflow_runs[].display_title": 1
+        }
+      },
+      "static_missed_values": {},
+      "per_tool": {
+        "gh_download_job_logs": {
+          "calls": 40,
+          "raw": 92816,
+          "minified": 92816,
+          "static": 92816,
+          "learned": 92816,
+          "learned+static": 92816
+        },
+        "gh_list_issues": {
+          "calls": 8,
+          "raw": 141528,
+          "minified": 109688,
+          "static": 107704,
+          "learned": 43398,
+          "learned+static": 41910
+        },
+        "gh_list_jobs_for_workflow_run": {
+          "calls": 40,
+          "raw": 73024,
+          "minified": 53112,
+          "static": 52488,
+          "learned": 14552,
+          "learned+static": 14240
+        },
+        "gh_list_pull_requests": {
+          "calls": 8,
+          "raw": 178032,
+          "minified": 142264,
+          "static": 134896,
+          "learned": 40380,
+          "learned+static": 33772
+        },
+        "gh_list_workflow_runs": {
+          "calls": 8,
+          "raw": 114408,
+          "minified": 92424,
+          "static": 91416,
+          "learned": 18900,
+          "learned+static": 18372
+        }
+      }
+    }
+  },
+  "pooled_real": {
+    "cases": [
+      "C1",
+      "C2",
+      "C3"
+    ],
+    "tokens": {
+      "raw": 3608292,
+      "minified": 3005492,
+      "static": 2893233,
+      "learned": 1847446,
+      "learned+static": 1778745,
+      "static_keys_only": 2987051,
+      "static_empties_only": 2910414
+    },
+    "removed_vs_raw": {
+      "raw": 0.0,
+      "minified": 0.16705965038306214,
+      "static": 0.19817104602399138,
+      "learned": 0.4879998625388411,
+      "learned+static": 0.5070396187448244
+    },
+    "removed_vs_minified": {
+      "raw": -0.2005661635432734,
+      "minified": 0.0,
+      "static": 0.03735128890710737,
+      "learned": 0.38530995923462785,
+      "learned+static": 0.4081684462976445
+    },
+    "removed_vs_static": {
+      "learned": 0.3614596543036803,
+      "learned+static": 0.38520506298663126
+    },
+    "misses": {
+      "raw": {
+        "calls": 0,
+        "of_structured_calls": 318,
+        "share": 0.0
+      },
+      "minified": {
+        "calls": 0,
+        "of_structured_calls": 318,
+        "share": 0.0
+      },
+      "static": {
+        "calls": 0,
+        "of_structured_calls": 318,
+        "share": 0.0
+      },
+      "learned": {
+        "calls": 11,
+        "of_structured_calls": 318,
+        "share": 0.03459119496855346
+      },
+      "learned+static": {
+        "calls": 11,
+        "of_structured_calls": 318,
+        "share": 0.03459119496855346
+      }
+    }
+  },
+  "pooled_simulated": {
+    "cases": [
+      "C4",
+      "C5"
+    ],
+    "tokens": {
+      "raw": 754641,
+      "minified": 593670,
+      "static": 561861,
+      "learned": 273063,
+      "learned+static": 248677,
+      "static_keys_only": 580224,
+      "static_empties_only": 575107
+    },
+    "removed_vs_raw": {
+      "raw": 0.0,
+      "minified": 0.2133080497879124,
+      "static": 0.25545921835680807,
+      "learned": 0.6381550962643164,
+      "learned+static": 0.6704697995470694
+    },
+    "removed_vs_minified": {
+      "raw": -0.2711455859315781,
+      "minified": 0.0,
+      "static": 0.05358027186820957,
+      "learned": 0.5400424478245489,
+      "learned+static": 0.5811191402631091
+    },
+    "removed_vs_static": {
+      "learned": 0.5140025735902651,
+      "learned+static": 0.5574047673712894
+    },
+    "misses": {
+      "raw": {
+        "calls": 0,
+        "of_structured_calls": 148,
+        "share": 0.0
+      },
+      "minified": {
+        "calls": 0,
+        "of_structured_calls": 148,
+        "share": 0.0
+      },
+      "static": {
+        "calls": 45,
+        "of_structured_calls": 148,
+        "share": 0.30405405405405406
+      },
+      "learned": {
+        "calls": 12,
+        "of_structured_calls": 148,
+        "share": 0.08108108108108109
+      },
+      "learned+static": {
+        "calls": 51,
+        "of_structured_calls": 148,
+        "share": 0.34459459459459457
+      }
+    }
+  }
+}
