@@ -146,8 +146,8 @@ its value, the field was in the trimmed outputs from the next run on, with no \t
 \SthreeHFiveRecoveries{} recovered and written fields were kept in every later run, in \SthreeETwoSequences{}
 sequences; from the second run in \SthreeETwoFromSecond{} sequences and from the third in \SthreeETwoFromThird.
 
-\paragraph{What the requirement test checks.} The protocol's test of the added requirement
-(\texttt{requirement()} in \texttt{experiments/coverage.py}) is partial. In the editorial plan it checks that the
+\paragraph{What the requirement test checks.} The protocol's test of the added requirement is
+partial.\footnote{The function \texttt{requirement()} of \path{experiments/coverage.py}.} In the editorial plan it checks that the
 answer names a channel that the run's YouTube outputs contain; it checks neither the video, nor the views, nor that
 they belong together. In billing support it checks that a ticket citing an invoice contains a link found in the
 run's invoice outputs and a keyword about collection; it checks neither that the link is the cited invoice's nor
@@ -163,7 +163,7 @@ shortened title or identifier) and state its views as the output gives them, wit
 \AuditETwoRunsi. Of the \AuditETwoFailedi{} failures, \AuditETwoMisattributedi{} is a real misattribution (a video of
 another channel), \AuditETwoTitlei{} names the right channel and views but writes a title that is not the one the
 outputs gave, and \AuditETwoRulei{} is caused by the rule, which takes a channel whose name is a common word as named
-in the item. \AuditETwoUncheckedi{} run names its videos without the words the rule requires (``YouTube'',
+in the item. In \AuditETwoUncheckedi{} run the answer names its videos without the words the rule requires (``YouTube'',
 ``canale'', ``channel''), so its \AuditETwoUncheckedItemsi{} items are not counted; without that condition they pass.
 In billing support, each ticket citing an invoice must link that invoice's hosted page and state exactly its
 collection method: \AuditETwoCorrectiv{} of \AuditETwoTicketsiv{} tickets passed the rule. The \AuditETwoAmbiguousiv{}

@@ -20,7 +20,7 @@ test it on five agents: three that use real APIs (an editorial planner and a con
 API, a literature scanner on a scholarly catalogue) and two that use simulated servers whose payloads follow the
 public OpenAPI descriptions of a payment API and a code-hosting API.
 
-In its current version (0.4), the library protects identifiers, recognises transformed values, writes compact JSON,
+Since version 0.4, the library protects identifiers, recognises transformed values, writes compact JSON,
 offers \texttt{expand} for any hidden field and can keep learning while the agent works. Measured with these
 defaults, in live runs on \texttt{\SthreeModelA}, a fixed projection with \texttt{expand} lowered the median LLM
 API cost per run by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents with every implemented gate

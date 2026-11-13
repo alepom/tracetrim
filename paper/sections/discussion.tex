@@ -6,8 +6,8 @@ transformed values recognised, compact JSON, \texttt{expand}), trimming paid off
 run fell by \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on the two agents measured, recovery included, with
 every implemented gate passing. Learning kept up with a changed task by itself: fields the agent recovered and wrote
 were kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases, with no correction needed. And
-what the projection removes is mostly what only learning can find: beyond a minifier and a static metadata filter it
-removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what was left on three of five agents.
+what the learned projection removes goes well beyond the tested static baseline: beyond a minifier and a static
+metadata filter it removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what was left on three of five agents.
 
 \paragraph{What the agent uses can be learned, best from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
@@ -51,7 +51,7 @@ real-API outputs and \ReserialAiv{} of the simulated ones without removing anyth
 \paragraph{What the baselines add.} The offline comparison of Section~\ref{sec:s3offline} separates three things
 that the savings of Studies~1 and~2 mix: what any serialiser removes (minification, \BaseMinRawMin{} to
 \BaseMinRawMax{} of the raw tokens), what a filter of generic metadata and empty values removes without looking at
-any trace, and what only learning from traces removes. Where payloads are large and the task uses little of them,
+any trace, and what the learned projection removes beyond that tested static baseline. Where payloads are large and the task uses little of them,
 learning removed most of what was left after the static filter (\BaseLearnedStaticBigMin{} to
 \BaseLearnedStaticBigMax{} in three cases); where the agent cites most of what it reads, as in the content-gap
 analysis, it added little, and minification is the honest choice. The static filter is a complement, not a rival:

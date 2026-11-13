@@ -3,7 +3,8 @@ yet is paid for at every turn. We learn from an agent's own traces which fields 
 visibly reuses and remove the rest, protecting identifiers and letting the agent recover any hidden field with an
 \texttt{expand} tool. In live runs of tracetrim 0.4 on \texttt{\SthreeModelA}, under frozen protocols, a fixed
 projection with \texttt{expand} lowered the median LLM API cost per run by \SthreeEOneTrimCosti{} and
-\SthreeEOneTrimCostiv{} on two agents, every implemented gate passing; when a changed task needed removed fields,
+\SthreeEOneTrimCostiv{} on two agents with every implemented gate passing, though a stricter audit of billing
+diagnoses found them less complete with trimming, so preservation of answer quality is not yet established; when a changed task needed removed fields,
 the agent recovered them and adaptive learning kept them from the next run in \SthreeHFiveKept{} of
 \SthreeHFiveRecoveries{} cases. Offline, on five agents, the projection
 learned with today's defaults removed \BaseLearnedRawi, \BaseLearnedRawiii{} and \BaseLearnedRawv{} of held-out
