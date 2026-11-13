@@ -50,3 +50,4 @@ tracetrim = ["skills/*/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["real_check: runs the check that tracetrim init does after writing"]

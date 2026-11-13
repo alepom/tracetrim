@@ -125,7 +125,7 @@ def test_the_python_api_keeps_its_names():
 
 COMMANDS = {
     "learn": [], "apply": [], "measure": [], "report": ["--tools"], "promotions": ["--revert"], "skill": ["--strategy"],
-    "init": ["--host", "--file", "--scope", "--workdir", "--name", "--exclude", "--http", "--write", "--force", "--undo"],
+    "init": ["--host", "--file", "--scope", "--workdir", "--name", "--exclude", "--http", "--write", "--force", "--undo", "--no-check"],
     "proxy": ["--servers", "--upstream-cmd", "--upstream-url", "--header", "--config", "--record", "--http", "--token",
               "--allowed-host", "--quiet", "--auto", "--min-runs", "--structural", "--skill-strategy", "--no-skill",
               "--no-compact", "--no-breakdown", "--log-client", "--promote", "--promote-runs", "--sample-rate",

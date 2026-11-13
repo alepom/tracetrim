@@ -452,6 +452,8 @@ def main(argv=None):
     s.add_argument("--force", action="store_true",
                    help="write servers.json even inside a git repository that does not ignore it; with --undo, "
                         "restore even if the host's file changed since")
+    s.add_argument("--no-check", action="store_true",
+                   help="after --write, do not start the new entry once to see that it answers (it calls no tool)")
     s.add_argument("--undo", metavar="BACKUP", help="restore the host's file from the backup --write made, byte for byte")
     s.set_defaults(func=cmd_init)
 

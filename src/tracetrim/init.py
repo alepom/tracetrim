@@ -735,6 +735,67 @@ def _say(text: str) -> None:
     sys.stdout.flush()
 
 
+# ---------------------------------------------------------------- the check after writing
+
+CHECK_TIMEOUT = 120.0   # seconds; a first start on Windows, right after installing, can take more than 30
+
+
+def _resolved_env(p: Plan) -> tuple[dict, list[str]]:
+    """The entry's env as the host would pass it, resolved from init's own environment;
+    and the names not set here (the host may set them: then the check can fail where the
+    host would not)."""
+    env, missing = {}, []
+    for name, expr in (p.entry.get("env") or {}).items():
+        m = _CC.fullmatch(expr) or _ENV.fullmatch(expr)
+        if not m:
+            env[name] = expr
+            continue
+        var, default = m.group(1), (m.group(2) if m.re is _CC else None)
+        if var in os.environ:
+            env[name] = os.environ[var]
+        elif default is not None:
+            env[name] = default
+        else:
+            missing.append(var)
+    return env, missing
+
+
+def check(p: Plan, timeout: float | None = None) -> tuple[bool, str]:
+    """Start the entry just written, as the host will, and ask for its tools; no tool is
+    called. (ok, a line for the user). Starting it once here also means the slow first
+    start of a fresh install happens now, not inside the host."""
+    try:
+        import anyio
+        from mcp import ClientSession
+        from mcp.client.stdio import StdioServerParameters, stdio_client
+    except ImportError:
+        return True, "Check           skipped: the check needs tracetrim[proxy], as the entry does"
+    timeout = CHECK_TIMEOUT if timeout is None else timeout
+    env, missing = _resolved_env(p)
+    params = StdioServerParameters(command=p.entry["command"], args=list(p.entry.get("args") or []),
+                                   env={**os.environ, **env})
+    started = time.monotonic()
+
+    async def go():
+        with anyio.fail_after(timeout):
+            async with stdio_client(params, errlog=open(os.devnull, "w")) as (r, w):
+                async with ClientSession(r, w) as s:
+                    await s.initialize()
+                    return [t.name for t in (await s.list_tools()).tools]
+    try:
+        tools = anyio.run(go)
+    except BaseException as e:         # a timeout, a crash, a missing command: never its message (it may hold a value)
+        if isinstance(e, KeyboardInterrupt):
+            raise
+        why = "it did not answer within %d seconds" % timeout if isinstance(e, TimeoutError) else \
+              f"it could not be started or stopped answering ({type(e).__name__})"
+        note = f"; not set here, so not passed: {', '.join(map(_safe_key, missing))}" if missing else ""
+        return False, f"Check           FAILED: the entry was started as the host will start it, and {why}{note}"
+    own = [t for t in tools if t in ("expand", "tracetrim_done")]
+    return True, (f"Check           the entry starts and answers in {time.monotonic() - started:.1f} s: "
+                  f"{len(tools) - len(own)} tools of your servers, plus {', '.join(own) or 'none of its own'}")
+
+
 def run(a) -> None:
     try:
         if a.undo:
@@ -763,13 +824,20 @@ def run(a) -> None:
             _say(text)
             raise SystemExit("tracetrim init: nothing was written.")
         backup = apply(p, a.force) if write else None
+        checked = None
+        if backup is not None and p.http is None and not getattr(a, "no_check", False):
+            checked = check(p)
         try:
-            _say(text + (closing(p, write, backup) if p.leaving else ""))
+            _say(text + (closing(p, write, backup) if p.leaving else "") + (checked[1] + "\n" if checked and checked[1] else ""))
         except Exception:
             if backup is None:
                 raise
             raise SystemExit(f"tracetrim init: the files were written, but the summary could not be shown. "
                              f"Backup {backup}; undo with: tracetrim init --undo {backup}") from None
+        if checked and not checked[0]:
+            raise SystemExit(f"tracetrim init: the host's file is written, but the entry did not start here. "
+                             f"Start the host and see whether it connects; if it does not, undo with: "
+                             f"tracetrim init --undo {backup}")
     except SystemExit:
         raise
     except Exception as e:                # never a traceback or a message that could carry a value of the file

@@ -172,6 +172,8 @@ Notes:
   they run, while the host starts its other servers too); the next start connected in 2 seconds. If a
   host reports that `tracetrim` did not connect, start it again, or give servers more time: for Claude
   Code, set `MCP_TIMEOUT` (milliseconds) before starting it, as in `$env:MCP_TIMEOUT=90000; claude`.
+  Since 1.0, `tracetrim init --write` starts the new entry once itself (up to 120 seconds), so the
+  slow first start happens there, not inside the host.
 - VS Code shows what tracetrim writes on standard error (its per-call log) in *Output → MCP: tracetrim*
   with the label `[warning]`: that is the channel, not a problem. `--quiet` silences it.
 - *Hides tool definitions by itself*: whether the host or the API loads tool definitions only when the

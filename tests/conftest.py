@@ -79,3 +79,13 @@ def temp_home(tmp_path, monkeypatch):
         monkeypatch.setenv(var, str(home / ".config") if var == "XDG_CONFIG_HOME" else
                            str(home / "AppData" / "Roaming") if var == "APPDATA" else str(home))
     return home
+
+
+@pytest.fixture(autouse=True)
+def no_init_check(request, monkeypatch):
+    """`tracetrim init --write` starts the entry it wrote, once, to see that it answers.
+    Tests about writing files do not need it; those about the check are marked `real_check`."""
+    if request.node.get_closest_marker("real_check"):
+        return
+    from tracetrim import init
+    monkeypatch.setattr(init, "check", lambda p, timeout=None: (True, ""))

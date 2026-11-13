@@ -38,7 +38,9 @@ tracetrim init --host cursor --write    # backup, servers moved to a work direct
 
 It moves the servers it can stand in front of to `servers.json` in a work directory (readable only by
 you), leaves one `tracetrim` entry in the host, and says which servers stay where they are and why. It
-never prints a key, and `tracetrim init --undo BACKUP` puts the host's file back byte for byte.
+never prints a key, and `tracetrim init --undo BACKUP` puts the host's file back byte for byte. After
+writing, it starts the new entry once, as the host will, and says whether it answers and how many tools
+it lists (it calls none; `--no-check` skips it).
 [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md) has the details, and
 a table of what was verified host by host. Then restart the host: see *What happens next*, below.
 
