@@ -53,6 +53,8 @@ def plain(tex_path, macros) -> str:
     return " ".join(t.split())
 
 
+PAPER_VERSION_TWO_DATE = "November 2026"
+
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
 
@@ -78,7 +80,10 @@ def main():
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
-        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, {about.NAME} {about.VERSION} (studies run with versions 0.1 and 0.2)}}\n"
+        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 2. {about.NAME} {about.VERSION}; Studies 1 and 2 ran "
+        f"with versions 0.1 and 0.2, Study 3 with 0.4}}\n"
+        # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
+        f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
         + (f" DOI \\href{{https://doi.org/{about.PAPER_DOI}}}{{{about.PAPER_DOI}}}." if about.PAPER_DOI else "") + "}\n"
         f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{about.SOFTWARE_DOI}}}{{{about.SOFTWARE_DOI}}}}}\n"
@@ -331,6 +336,11 @@ def main():
         m("TurnsCallsChanged", str(sum(v["calls_changed"] for v in ts.values())))
         m("TurnsCalls", str(sum(v["calls"] for v in ts.values())))
         m("TurnsFiguresUnchanged", "unchanged" if all(v["turn_aware"] == v["published"] for v in ts.values()) else "changed")
+
+    # ---- Study 3 (version 2): results/v04 and results/v06 ------------------------
+    # Before abstract.txt, which fills in the macros of the whole abstract, Study 3's included.
+    from . import paper_numbers_v04
+    paper_numbers_v04.macros(m, GEN)
 
     (GEN / "abstract.txt").write_text(plain(ROOT / "paper" / "sections" / "abstract.tex", macros) + "\n",
                                       encoding="utf-8")

@@ -1,0 +1,17 @@
+\begin{tabular}{llp{6.2cm}lp{5.2cm}}
+\toprule
+& Exp. & Hypothesis, as frozen & Outcome & Detail \\
+\midrule
+H1 & E1 & With the strategy, gates and coverage are no worse & failed & 4 of 5 comparisons hold; editorial plan: ST passed the gates in 4/5 runs, T in 5/5 \\
+H2 & E1 & Billing support: median turns with the strategy below the minimum without & failed & median 4 against minimum 3 \\
+H3 & E1 & Removed before freezing (it concerned arms that are not run) & -- & -- \\
+H4 & E1 & The strategy does not undo the saving of trimming (billed input) & failed & editorial plan holds; billing support fails \\
+H5 & E2 & A field recovered with \texttt{expand} and written is kept from the next run & holds & 16 of 16 recoveries, 10 sequences \\
+H6 & E2 & A reworded field needs promotion to come back & not testable & reworded in 2 sequences, all with promotion on \\
+H7 & E2 & Sampling reaches a field the agent does not ask for & failed & runs with a field removed and no \texttt{expand}: 1 with sampling, 1 without; requirement met in both \\
+H8 & E3 & Median turns with the strategy below the minimum without & failed & holds in 2 of 4 cases \\
+H9 & E3 & Median share of turns with several calls above the maximum without & failed & holds in 0 of 4 cases \\
+H10 & E3 & Gates and coverage are no worse with the strategy & holds & gates, billing support: 8/8 with, 8/8 without; gates, CI triage: 6/6 with, 6/6 without \\
+H11 & E3 & The strategy does not override the values the prompts prescribe & holds & 9 of 9 checks \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,255 @@
+\section{Study 3: the automatic mode at work (tracetrim 0.4)}
+\label{sec:study3}
+
+Studies~1 and~2 learned a projection offline and applied it fixed. Version 0.4 of the library added what this study
+measures. In \emph{automatic mode} the library learns while the agent works: runs are recorded in a work directory,
+a run counts for learning once the agent's final answer is known (through \texttt{tracetrim\_done} behind the MCP
+proxy, or directly in a function-calling loop), and trimming starts once enough runs are recorded. Each
+\texttt{expand} request is kept as evidence, with two optional corrections: \emph{promotion}, which keeps a field
+that the evidence shows to be needed, and \emph{sampling}, which passes a share of the results that would be
+trimmed whole. A tool whose trimmed results are expanded often enough stops being trimmed (\emph{switch-off}).
+Version 0.4 also ships a \emph{skill}, a text for the agent: its base level explains \texttt{tracetrim\_done} and
+\texttt{expand}; an optional \emph{strategy} level teaches how to organise tool calls (independent calls together,
+grouped inputs, when to stop) and prescribes no parameter value. Study~3 changes nothing in Studies~1 and~2.
+
+\paragraph{Design.} Two protocols, each frozen before its first paid run. \texttt{protocol-v04.md} (frozen on
+\SthreeFrozenVfour) covers E1, on the strategy level of the skill, and E2, on adaptive learning:
+\SthreeRunsEOneTwo{} runs of \texttt{\SthreeModelA}, the model of Studies~1 and~2, at default parameters.
+\texttt{protocol-v04-e3.md} (frozen on \SthreeFrozenEthree) covers E3, the strategy on a second model,
+\texttt{\SthreeModelB}: \SthreeRunsEThree{} runs after \SthreeRunsEThreePilot{} pilot runs that enter no
+result. All runs used the library's function-calling adapter in the study's own loop; the MCP proxy was not
+exercised (that the two adapters take the same decisions is covered by a test, not by these protocols). The
+protocols list \SthreeDeviationsVfour{} and \SthreeDeviationsEthree{} deviations respectively, dated and explained,
+each decided before the measured runs it concerns; two of them reduced E2 on the real-API case to two arms of one
+sequence each. The protocols number their hypotheses H1--H11 independently of Studies~1 and~2; in this section
+H-numbers refer to them. As before, a difference inside the other arm's range is not read as a difference, and no
+significance test is claimed. Table~\ref{tab:s3hyp} gives every outcome as frozen.
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{\input{generated/table_s3_hypotheses.tex}}
+\caption{Study 3: the hypotheses of \texttt{protocol-v04.md} (E1, E2) and \texttt{protocol-v04-e3.md} (E3), stated
+before the runs and numbered independently of Studies~1 and~2, with their outcomes as frozen. A hypothesis whose
+precondition did not occur is \emph{not testable}. ST and T: arms of E1 with the strategy and trimming, and with
+trimming alone.}
+\label{tab:s3hyp}
+\end{table}
+
+\subsection{E1: the strategy level of the skill}
+\label{sec:s3e1}
+
+Four arms: R (neither strategy text nor trimming), S (strategy text), T (trimming with \texttt{expand}) and ST
+(both), \SthreeRunsPerArmEOne{} runs each, on the editorial plan, the content-gap analysis and billing support,
+with the prompts of Studies~1 and~2; \SthreeRunsEOne{} runs in all. Trimming is a fixed configuration learned from
+the \PhaseARunsi{} Phase A runs of the case with the library's default rules; on the content-gap case these rules
+trim no tool, so it has arms R and S only.
+
+\paragraph{The strategy changed nothing measurable on this model.} Against the arm without it, the median of S
+stayed inside R's range for turns, tool calls, billed input tokens and the share of turns with several calls in
+\SthreeEOneSinsideR{} of \SthreeEOneSinsideRof{} comparisons (\SthreeEOneCases{} cases, \SthreeEOneMeasures{} measures;
+Table~\ref{tab:s3e1}).
+There was little to organise: without the strategy, \SthreeEOneSeveralRi, \SthreeEOneSeveralRii{} and
+\SthreeEOneSeveralRiv{} of the turns that made a call made several (editorial plan, content gaps, billing support;
+\SthreeEOneSeveralSi, \SthreeEOneSeveralSii{} and \SthreeEOneSeveralSiv{} with it). The hypotheses on the strategy
+failed as frozen. H1 failed in \SthreeHOneFails{} comparison of \SthreeHOneOf: in the editorial plan ST passed the gates in
+\SthreeHOneGatesST{} runs against \SthreeHOneGatesT{} for T. H2 failed: on billing support the median turns of S were \SthreeHTwoS, not below R's minimum of \SthreeHTwoR. H4 failed on billing support, where the median billed input of ST (\SthreeEOneBilledSTiv{} tokens) was
+above T's maximum (\SthreeEOneBilledTmaxiv); in the editorial plan it was below T's minimum (\SthreeEOneBilledSTi{}
+against \SthreeEOneBilledTmini). With the strategy, the values the prompts prescribe (result limits, search depth,
+keywords per call) were \SthreeEOnePrescribedKept{} in all \SthreeEOnePrescribedRuns{} runs of the two cases whose
+prompts prescribe them. Runs that asked a question instead of doing the task: \SthreeEOneAsked{} of the
+\SthreeEOneStrategyRuns{} with the strategy (in arm ST), \SthreeEOneAskedOther{} of those without it.
+
+\paragraph{Trimming, measured as a side arm.} E1 was not about trimming and states no hypothesis on it, but its
+arm T gives a live measure of the fixed configuration against R. The tool outputs as passed to the model were
+\SthreeEOneTrimTokensi{} smaller than the same outputs unfiltered in the editorial plan, and \SthreeEOneTrimTokensiv{}
+smaller in billing support (medians of the runs); the median cost of a run, at the model's list prices, was
+\SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} lower than in R; the gates passed in \SthreeEOneTrimGatesi{} and
+\SthreeEOneTrimGatesiv{} runs. Costs are reported only as changes relative to R.
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{\input{generated/table_s3_e1.tex}}
+\caption{E1, \texttt{\SthreeModelA}, \SthreeRunsPerArmEOne{} runs per arm. Turns and tool calls: median [min--max];
+turns with several calls: share of the turns with a call that made more than one, per run, median [min--max] (the
+text gives the share over all the turns of an arm). Billed input: median tokens of a run, as billed. Tool-output
+tokens: the outputs as passed on, against the same outputs unfiltered. Cost of a run: median, relative to R, at
+the model's list prices. $^\dagger$Simulated tools.}
+\label{tab:s3e1}
+\end{table}
+
+\subsection{E2: adaptive learning}
+\label{sec:s3e2}
+
+Each case was given a variant of its task that needs two fields its projection removes: in billing support, the
+link to an invoice and how it is collected; in the editorial plan, a video's channel and its views. A sequence is
+\SthreeETwoSequenceLength{} consecutive runs in one work directory, seeded with the \PhaseARunsi{} Phase A runs
+of the case, with automatic mode on and the base level of the skill. Billing support ran on a copy of its simulated
+world in which those two invoice fields vary, with promotion off or on and sampling off or on, two sequences per
+arm (\SthreeRunsETwoSim{} runs); the editorial plan ran the arms without promotion, base and sampling, one sequence
+each (\SthreeRunsETwoReal{} runs).
+
+\paragraph{Fields came back by themselves (H5 holds).} Each time the model recovered a needed field and wrote its
+value, the field was in the trimmed outputs from the next run on, with no \texttt{expand}: \SthreeHFiveKept{} of
+\SthreeHFiveRecoveries{} recovered and written fields were kept in every later run, in \SthreeETwoSequences{}
+sequences; from the second run in \SthreeETwoFromSecond{} sequences and from the third in \SthreeETwoFromThird. The
+requirement the variant adds was met in \SthreeETwoRequirementMet{} of \SthreeETwoRuns{} runs.
+
+\paragraph{Promotion and sampling made no difference here.} Promotion exists for a field that is used without
+being written; this model wrote the values it recovered, so ordinary learning was enough. The field expected to be
+reworded was reworded in \SthreeHSixReworded{} sequences, both with promotion on, so H6 could not be tested.
+Sampling only cost tokens: in the last run of each billing-support sequence, the median saving on tool-output tokens
+was \SthreeETwoSavingSampling{} with sampling and \SthreeETwoSavingNoSampling{} without. The model never needed it:
+H7 failed: in the runs where a needed field was removed and the model did not call \texttt{expand}
+(\SthreeHSevenPerGroup{} with sampling, \SthreeHSevenPerGroup{} without), the requirement was met in both, so
+not more often with sampling.
+
+\paragraph{Another route to a removed field.} In those \SthreeETwoOtherTool{} billing-support runs the model did not
+call \texttt{expand}: it called another tool, which retrieves a single invoice and is not trimmed, and read the
+fields there. That is a limit of the design on that case (it left H7 little to test), and a behaviour to know: on an
+API billed per call, that route has a price. In the editorial plan no other tool returns the two fields, and the
+model used \texttt{expand} in both sequences.
+
+\paragraph{One switch-off.} In the first run of the editorial plan's base sequence the model expanded
+\SthreeSwitchExpanded{} of the \SthreeSwitchFiltered{} trimmed results of the trends tool, all in
+\SthreeSwitchRunsWithExpand{} run, and under the rule then in force the tool stopped being trimmed. The saving of
+that sequence was \SthreeSwitchSavingFirst{} in its first run and between \SthreeSwitchSavingLaterMin{} and
+\SthreeSwitchSavingLaterMax{} later; in the sampling sequence, where no tool was switched off, it stayed between
+\SthreeSwitchSamplingMin{} and \SthreeSwitchSamplingMax. An offline recalculation on the \SthreeETwoSequences{}
+sequences, not in the protocol, replayed the rule with expansions required from \SthreeSwitchRuleA{} or
+\SthreeSwitchRuleB{} distinct runs: \SthreeSwitchWithRules{} tool would have been switched off at that point (the
+recalculation is exact up to the first run in which two rules decide differently; what the agent would have asked
+afterwards is not in the traces). The library now requires expansions from \SthreeSwitchDefaultNow{} distinct runs
+by default.
+
+\paragraph{Requests that gave nothing back.} Of the \SthreeExpandRequests{} \texttt{expand} requests of E1 and E2,
+\SthreeExpandNothing{} returned nothing. \SthreeExpandUnknownId{} named a result that did not exist (an identifier
+made up or cut short), \SthreeExpandRows{} of them asking for more rows than the tool had returned: the agent wanted more rows, not hidden
+fields, which \texttt{expand} cannot give.
+The other \SthreeExpandIndex{} wrote a list index where paths collapse indices; the library now accepts such a path,
+and answers an unknown identifier by saying how to copy a valid one.
+
+\subsection{E3: the strategy on a second model}
+\label{sec:s3e3}
+
+E1 left open what the strategy does for a model that issues calls one at a time. E3 asked it of
+\texttt{\SthreeModelB}, with arms R and S and no trimming, on billing support and CI triage, whose simulated
+servers were live, and on the editorial plan and the content-gap analysis, whose search-data provider was replaced
+by recorded outputs: a call got the recorded output of the same call when there was one and otherwise the output of
+the recorded call of the same tool with the most similar arguments. The provider was called in \SthreeProviderCallsEThree{} run.
+On those two cases only the organisation of calls is evaluated, not the answers. Runs per arm go from
+\SthreeEThreeRunsPerArmMin{} to \SthreeEThreeRunsPerArmMax{} (Table~\ref{tab:s3e3}).
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{\input{generated/table_s3_e3.tex}}
+\caption{E3, \texttt{\SthreeModelB}, without and with the strategy text, no trimming. Columns as in
+Table~\ref{tab:s3e1}; cost relative to the arm without the strategy, at the model's list prices. Billed tokens are
+not comparable with E1's (another tokenizer, price list and caching). $^\dagger$Simulated tools, live.
+$^\ddagger$Recorded outputs in place of the provider: calls and turns only.}
+\label{tab:s3e3}
+\end{table}
+
+\paragraph{The hypotheses on turns and grouped calls failed as stated.} H8 (median turns with the strategy below
+the fewest turns of any run without it) held in \SthreeHEightHolds{} cases of \SthreeHEightOf, the two with
+recorded outputs; H9 (median share of turns with several calls above the highest share of any run without it) held
+in \SthreeHNineHolds{} case: in each, a run without the strategy reached the same share or more. Why they failed
+concerns the rule, not the runs, whose results stand as they are. Comparing the median of one arm with the extreme
+of the other lets a single run decide: with \SthreeEThreeRunsCv{} runs per arm, as on CI triage, one unusual run without the strategy
+is enough to fail the hypothesis, and there that is what happened. A protocol that wants to know whether an
+arm is usually shorter should compare what is usual in both. The two simulated cases are therefore read apart.
+
+\paragraph{CI triage, where this model issued one call per turn.} Without the strategy, \SthreeEThreeLongRunsv{}
+runs of \SthreeEThreeRunsCv{} made every call in a turn of its own (\SthreeEThreeLongMinv{} to
+\SthreeEThreeLongMaxv{} turns); the remaining one grouped its calls and took \SthreeEThreeTurnsRminv. With the strategy all
+runs took \SthreeEThreeTurnsSminv{} to \SthreeEThreeTurnsSmaxv{} turns, with a similar number of calls. The median
+went from \SthreeEThreeTurnsRv{} turns to \SthreeEThreeTurnsSv, billed input tokens fell by
+\SthreeEThreeInputChangev, and the cost of a run by \SthreeEThreeCostv: less than the tokens, because most of the
+input re-read at each turn is billed at the cached price. H8 fails on this case because of that one run: the
+strategy's median, \SthreeEThreeTurnsSv, is not below \SthreeEThreeTurnsRminv.
+
+\paragraph{Billing support, where it already grouped its calls.} Little was left: runs without the strategy took
+\SthreeEThreeTurnsRminiv{} to \SthreeEThreeTurnsRmaxiv{} turns, those with it always \SthreeEThreeTurnsSiv, which
+is the fewest this task needs (see the post-hoc analysis below).
+
+\paragraph{Nothing was lost for it, and the prompts were not overridden.} H10 holds: the gates passed in
+\SthreeHTenGatesiv{} and \SthreeHTenGatesv{} runs of both arms of billing support and CI triage, every requirement of
+the prompts covered. H11 holds: the prescribed values were respected in \SthreeHElevenPassed{} of
+\SthreeHElevenChecks{} checks, in the \SthreeHElevenRuns{} strategy runs with recorded outputs. Those two cases point
+the same way as CI triage (median turns from \SthreeEThreeTurnsRi{} to \SthreeEThreeTurnsSi{} in the editorial
+plan, from \SthreeEThreeTurnsRii{} to \SthreeEThreeTurnsSii{} in the content-gap analysis), on
+\SthreeEThreeRunsRi{} and \SthreeEThreeRunsRii{} runs per arm and with recorded outputs: the model's call matched a
+recorded call exactly in \SthreeExactMini{} to \SthreeExactMaxi{} of the calls of a run in the editorial plan and in
+\SthreeExactMinii{} to \SthreeExactMaxii{} in the content-gap analysis, and got the nearest recorded output otherwise.
+They say how calls were organised, not whether the task was done well.
+
+\paragraph{Post hoc: calls that could have been made earlier.} This analysis is not in the protocol; it was added
+after the runs, to tell a sequence the task imposes from one the model chose. A call whose arguments name something
+an earlier result returned (a run, a job, a customer, an invoice) can only follow that result; any other could have
+been made at once. The longest chain of such calls gives the fewest turns a run needed. In CI triage
+\SthreeDependingv{} of the calls depended on an earlier result, but the chain was short (the runs, then their jobs,
+then the logs): \SthreeFewestv{} turns were enough in every run. Without the strategy \SthreeEarlierRv{} of the calls
+were made later than they could have been, with it \SthreeEarlierSv; in billing support \SthreeEarlierRiv{} and
+\SthreeEarlierSiv, with \SthreeFewestiv{} turns needed. The rule reads identifiers only and cannot know that a model
+wanted to read one log before asking for the next: it gives a lower bound on the turns, not what a careful agent
+should do.
+
+\subsection{Offline analyses, not in a protocol}
+\label{sec:s3offline}
+
+Three recalculations on runs already recorded, made after E3 with no new run. None was in a protocol; they are
+reported as such.
+
+\paragraph{Projections per mode of use.} Would one projection per value of a low-cardinality argument (a result
+type, a time range, a sort order) do better than one projection per tool? On the \SthreeModesRuns{} recorded runs
+in which the model saw whole outputs, each held out in turn, \SthreeModesCandidates{} candidate arguments on
+\SthreeModesTools{} tools were evaluated, identifiers left out. The rule, written before the numbers: a benefit is at
+least \SthreeModesThreshold{} more points of the tool's tokens removed without more calls losing a field the run
+used. A benefit was found for \SthreeModesBenefit{} candidate. The most any candidate added was
+\SthreeModesMaxPoints{} points, and \SthreeModesUnderOne{} added less than \SthreeModesSmall; \SthreeModesLoseMore{}
+lost a used field in more calls than the projection per tool, because a profile learns from fewer calls;
+\SthreeModesThin{} had a profile with fewer than \SthreeModesMinProfile{} calls, and \SthreeModesFallback{} held-out
+calls fell on a profile too thin to have its own projection. The specialisation was not implemented.
+
+\paragraph{Rows.} The library removes fields, never rows. In the \SthreeRowsRuns{} recorded runs in which the model
+saw whole results, on the search-data API the elements of a list that the run reused afterwards were exactly the
+first ones in \SthreeRowsTopSearch{} of the calls with any reuse, and keeping only the first \SthreeRowsCut{} would
+have removed a reused element in \SthreeRowsCutFiveSearch{} of them; on the other APIs, whose lists are short, the
+figures are \SthreeRowsTopOther{} and \SthreeRowsCutFiveOther. On the search-data API a cut by position would remove
+elements the agent reuses, and a removed row, unlike a removed field, cannot be told from one that does not exist.
+No cut of rows is implemented; the telemetry report shows how many list elements are reused, and from where.
+
+\paragraph{Tool definitions.} The model receives the definition of every listed tool at every turn. Counted on the
+schemas as sent in the \SthreeDefRuns{} recorded runs of E1, E2 and E3, in the reference arms the definitions were
+\SthreeDefInputMin{} to \SthreeDefInputMax{} of the input tokens (median per case and model), but, sitting in the
+cached head of the prompt, \SthreeDefCostMin{} to \SthreeDefCostMax{} of a run's cost at the providers' list prices;
+had nothing been cached, up to \SthreeDefUncachedMax. A counterfactual, with no run made, asks what a whole server
+would weigh: the search-data provider's MCP server lists \SthreeDefServerTools{} tools, of which the editorial-plan
+agent was given \SthreeDefCaseTools{} and called \SthreeDefUsedTools. Taking its \SthreeDefScenarioRuns{} recorded
+R runs as they happened and changing only the definitions, listing every tool would send \SthreeDefAllTokens{}
+tokens per turn instead of \SthreeDefCaseTokens; listing the tools called and putting the other
+\SthreeDefHiddenTools{} behind a search tool and a call tool, with no search ever made (the most hiding could gain),
+\SthreeDefDeferredTokens, \SthreeDefSavedShare{} fewer than the whole server, and the first turn would go from
+\SthreeDefFirstTurnAll{} to \SthreeDefFirstTurnHidden{} tokens. With a cache, depending on what is assumed cached,
+the cost of a run would fall by \SthreeDefHideGainMin{} to \SthreeDefHideGainMax, and \SthreeDefExtraTurnsMin{} to
+\SthreeDefExtraTurnsMax{} extra turns (medians) would cancel the gain; the scenario also assumes that the model
+works with the whole server as it did with its own tools. The library therefore measures the definitions and does
+not hide tools: its report lists the tools never called, with their weight, and suggests disabling them in the host
+or using native search where it exists. Some hosts already defer definitions: Claude Code loads MCP tools on demand
+by default \citep{anthropic2026mcp}; the OpenAI Responses API offers tool search when the request asks for it
+\citep{openai2026toolsearch}; Cursor does so according to a blog post, which we did not verify in its documentation
+\citep{cursor2026dynamic}. A second search on top of theirs would add turns, and a hidden tool called through a
+generic call tool would bypass the per-tool permissions that hosts grant.
+
+\subsection{Hosts}
+\label{sec:s3hosts}
+
+Between 11 and 13 November 2026 the proxy was put in front of servers in several hosts, in most checks with a log that
+records each request of the host's client and none of its content; the repository's page on hosts states what was verified,
+when and how, and everything else as not verified. In the OpenAI Playground, Claude Code (on Linux and on Windows)
+and VS Code (Copilot Chat in agent mode), the tools passed and the model called \texttt{tracetrim\_done} at the end
+of its run; in the Playground it did so guided by the tool's description alone. \texttt{expand} was verified in the
+Playground only: in the other hosts nothing had yet been trimmed. MCP Inspector, which has no model, showed that the
+skill is served as the MCP Skills extension asks. None of the hosts with a model loaded the skill as a skill: no
+client declared the extension. The Playground's and VS Code's clients asked for neither the skill nor resources; in Claude Code the model
+read the skill through the host's tool for MCP resources before its first call, as a resource. Claude Desktop and
+Cursor were not verified. These checks show that the path works in those hosts, not how often or how well.

@@ -6,4 +6,8 @@ redistribution of results, only derived per-call records are released: tool, fie
 judgeable, every field path seen, and token counts of the raw outputs. They are enough to recompute which fields
 were used and the misses without the provider's data (\texttt{experiments/misses\_from\_derived.py} does, and checks
 the result against Table~\ref{tab:phasea}), but not the token savings of those two cases, which need the payloads. The simulated servers
-and the payload generator are included, with the exact versions of the OpenAPI descriptions they follow.
+and the payload generator are included, with the exact versions of the OpenAPI descriptions they follow. For
+Study 3 the repository adds the two frozen protocols with their deviations (\texttt{protocol-v04.md},
+\texttt{protocol-v04-e3.md}), the aggregate results (\texttt{results/v04}, \texttt{results/v06}) and a summary of the
+measures (\texttt{docs/measures-v04.md}); the traces of the two cases built on the search-data API, and the recorded
+outputs of E3, are not redistributable either.

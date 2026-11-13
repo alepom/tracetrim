@@ -32,12 +32,14 @@ Four arms (strategy text × trimming), five runs each, on three agents: an edito
 briefing on a real search-data API (C1, C2), billing support on a simulated API (C4). On C2 only the two arms
 without trimming: the configuration tracetrim builds there trims no tool. 50 runs.
 
-- **On this model the strategy changed nothing that could be measured.** Turns, tool calls, billed tokens and cost
-  stayed inside the ranges of the arms without it, in all three cases.
+- **On this model the strategy changed nothing that could be measured.** With the strategy alone (S against R),
+  turns, tool calls, billed input tokens and the share of turns with several calls stayed inside the range of the
+  arm without it in 12 comparisons of 12 (three cases, four measures). With trimming (ST against T) the billed input
+  went above T's range on billing support (H4) and below it on the editorial plan.
 - **This model already issues calls together**: without the strategy, 77%, 68% and 77% of the turns that made a
   call made several. The effect of the strategy on a model that issues calls one at a time is the subject of E3.
 - **The strategy did not override the prompts.** The parameter values the prompts prescribe were respected in all
-  50 runs.
+  30 runs of the two cases whose prompts prescribe them (C1, C2); the billing prompt prescribes none.
 - **One run asked a question instead of working**, in the arm with strategy and trimming. One in 25 with the
   strategy, none in 25 without, none in the 60 live runs of the original study.
 - **Trimming**, which E1 was not about: tool-output tokens down 44% on C1 and on C4, cost of a run down 30% and
@@ -57,8 +59,8 @@ promotion off/on × sampling off/on, two sequences per arm, 40 runs. On the real
   third in 2. The requirement the variant adds was met in all 50 runs.
 - **Promotion made no difference here**, because the model wrote the values it recovered: ordinary learning was
   enough. Whether promotion helps when a value is used and never written is still open.
-- **Sampling only cost tokens here**: on the simulated case about 35% of tool-output tokens removed against 42%
-  without it. The model never needed it: it asked with `expand` or found another way.
+- **Sampling only cost tokens here**: in the last run of each sequence of the simulated case, a median of 35% of
+  tool-output tokens removed with sampling against 42% without it. The model never needed it: it asked with `expand` or found another way.
 - **Another way to a removed field.** In two runs of the simulated case the model did not call `expand`: it called
   another tool, whose results are not trimmed, and read the fields there. That is a limit of the design on that
   case (H7 could hardly be tested), and a behaviour to know: on an API billed per call that route has a price.
@@ -67,8 +69,8 @@ promotion off/on × sampling off/on, two sequences per arm, 40 runs. On the real
   the values of the Trends tool, and the tool stopped being trimmed. The saving of that sequence went from 33% to
   between 26% and 38% in the later runs; in the sampling sequence, where it did not happen, it stayed at 35–40%.
 - **`expand` requests that gave nothing back**: 10 of 38. Eight times the model made up or truncated the id of
-  the result, asking for `items` or for the rows after the tenth, mostly on results that were not trimmed: it
-  seemed to want more rows, not hidden fields. Twice it wrote an index (`data[0]`) where paths use `data[]`.
+  the result, asking for `items` or for the rows after the tenth: it seemed to want more rows,
+  not hidden fields. Twice it wrote an index (`data[0]`) where paths use `data[]`.
 
 Promotion and sampling stay off by default.
 
@@ -167,8 +169,8 @@ a case).
 **The switch-off with evidence from more runs** (`python -m experiments.switch_off_recalc`,
 `results/v04/switch_off.json`): on the ten sequences of E2, one tool was switched off, on the evidence of the
 first run alone. Asking for results expanded in 2 distinct runs, or 3, it would not have been at that point;
-the replay of the rule as run gives back what the ten work directories recorded. The setting exists and is off
-by default ([adaptive.md](adaptive.md)).
+the replay of the rule as run gives back what the ten work directories recorded. Since 0.4.0 the default asks
+for expansions from 2 distinct runs; `--switch-off-runs 1` restores the earlier rule ([adaptive.md](adaptive.md)).
 
 **Rows** (`python -m experiments.rows`, `results/v04/rows.json`): of the 10 `expand` requests of E1 and E2 that
 gave nothing back, 7 asked for more rows with an id that did not exist, and 2 named an element by its index,

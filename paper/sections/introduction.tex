@@ -20,14 +20,17 @@ test it on five agents: three that use real APIs (an editorial planner and a con
 API, a literature scanner on a scholarly catalogue) and two that use simulated servers whose payloads follow the
 public OpenAPI descriptions of a payment API and a code-hosting API.
 
-The study has two parts. \textbf{Study~1}, with a protocol frozen before any run, measures how much a projection
+The paper has three parts. \textbf{Study~1}, with a protocol frozen before any run, measures how much a projection
 learned from other runs removes on a held-out run, where it must be learned to work, whether it transfers between
 tasks, and whether the agent's answer survives when the conversation is replayed with projected tool outputs. It
 finds large savings and three precise ways in which the projection fails: values the agent \emph{transforms}
 before writing them (a Unix timestamp written as a date), fields the agent uses only \emph{to reason}, and, most
 seriously, an agent that \emph{invents identifiers} when the identifier field has been removed. \textbf{Study~2}
 adds two safeguards motivated by those failures and tests, again with a protocol frozen in advance, whether they
-remove the losses while keeping most of the saving.
+remove the losses while keeping most of the saving. \textbf{Study~3}, added in version 2 of this paper, measures
+under two further frozen protocols what version 0.4 of the library added: learning while the agent works, with
+\texttt{expand} requests as evidence, and a text that teaches the agent how to organise its tool calls, on two models;
+it also reports, as such, three offline analyses that no protocol covered and what was checked in MCP hosts.
 
 The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
 that estimates savings and misses on runs the projection has never seen; (ii) evidence that, in these agents,
@@ -35,4 +38,5 @@ learning without the final answer misses far more of what is used, so a proxy pl
 (an MCP gateway) learns poorly by itself;
 (iii) a characterisation of the failure modes, including identifier fabrication; (iv) safeguards and their test;
 (v) an open-source implementation with a bilingual telemetry report that is useful on its own, independently of
-any trimming.
+any trimming; (vi) a measure of that implementation's automatic mode and of a call-organising text in live runs,
+with the hypotheses that failed reported as failed.

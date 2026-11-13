@@ -40,7 +40,7 @@ Reference arm R of each case and model, median [min–max]:
 | C5 | gemini-3.8-flash | 6 | 6 | 792 | 17 [5–19] | 13,464 [3,960–15,048] | 1.5% [1.4–1.7] | 88% [60–89] | 0.9% [0.7–1.0] | 4.1% [1.6–4.3] |
 
 The other arms are in the results file, of the same order. **On the tool sets these agents actually had,
-definitions were at most a few percent of a run's cost**: a sizeable share of the input tokens, but
+definitions were 0.2% to 8.5% of a run's cost** (medians per case and model): a sizeable share of the input tokens, but
 billed mostly at the cached price. The share overstates them slightly: it puts our count over billed
 tokens.
 
@@ -128,7 +128,7 @@ a use like C1's it appears; with C1's 12 tools it does not (`tests/test_report_d
 2. **Host permissions.** Hosts approve, deny or switch off tools by name. A hidden tool called through
    a generic `call_tool` would inherit the permission given to `call_tool`: a hole in a system that is
    meant to be predictable.
-3. **The gain is fragile.** Below 3% of the cost on the tool sets these agents had; 9–20% with a whole
+3. **The gain is fragile.** 0.2% to 8.5% of the cost on the tool sets these agents had (below 3.5% on the first model); 9–20% with a whole
    large server enabled, in a counterfactual that a few extra turns cancel.
 
 ## Note: the design that was not built

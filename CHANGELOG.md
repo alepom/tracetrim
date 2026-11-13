@@ -58,7 +58,7 @@ lists, outputs and `expand` are those of 0.5, and tracetrim hides no tool.
   no tool by itself.
 - **[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md)**: the
   measure behind it, on the 138 recorded runs of the v0.4 measures. On the tool sets those agents had,
-  definitions were at most a few percent of a run's cost, mostly billed as cached; with a whole 79-tool
+  definitions were 0.2% to 8.5% of a run's cost (medians per case and model), mostly billed as cached; with a whole 79-tool
   server enabled (a counterfactual), hiding the unused tools would save about 9–20% of a run's cost, and
   a few extra turns would cancel it. Why tracetrim measures and does not hide.
 - `docs/hosts.md`: which hosts hide tool definitions by themselves.

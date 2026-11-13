@@ -6,7 +6,7 @@
   quality. No significance test is claimed; differences inside the range of the raw arm are reported as not
   distinguishable from run-to-run variation, which in these tasks is large (in Phase C the raw arm itself
   misdiagnosed a ticket in two of three runs).
-\item \textbf{One model.} All runs used \texttt{gpt-5.6-terra} at default parameters. Whether other models use
+\item \textbf{One model.} All runs of Studies 1 and 2 used \texttt{gpt-5.6-terra} at default parameters. Whether other models use
   tool outputs differently, or read projected and TOON-encoded outputs differently, is untested.
 \item \textbf{Replay is not a live loop.} Phases B and Study 2 replay a fixed sequence of calls up to the final
   answer; in a live loop a projected output can also change which calls come next. Phase C measured the live loop
@@ -33,6 +33,16 @@
 \item \textbf{Number formats.} Usage detection in the studies matched numbers written plainly or with dot thousands
   separators; numbers written with comma separators would have gone unseen. In all Phase A runs the agents wrote
   \CommaNumbersWritten{} such numbers, so no use was missed this way; the library matches them since version 0.3.4.
+\item \textbf{Study 3.} Trimming and adaptive learning were measured on one model, the strategy text on two; other
+  models may organise calls, call \texttt{expand} or reword values differently. Runs are few: \SthreeRunsPerArmEOne{} per arm in E1;
+  in E2 \SthreeETwoSeqPerArmSim{} sequences per arm on the simulated case and \SthreeETwoSeqPerArmReal{} on the
+  real-API case, a single trajectory per arm; \SthreeEThreeRunsPerArmMin{} to \SthreeEThreeRunsPerArmMax{} per arm
+  in E3, with one task per case and no trimming, so the strategy combined with trimming was not
+  measured on the second model. In E3 the editorial plan and the content-gap analysis ran on recorded outputs,
+  mostly the nearest recorded call rather than the same one, so only the organisation of calls is evaluated there.
+  The gates and the test of E2's added requirement look for identifiers, links, names and keywords. Only the
+  function-calling adapter was exercised. The offline analyses and the post-hoc analysis of E3 were not in a
+  protocol, and the host checks are few observations per host.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
   on them, the released data are derived per-call records: enough to recompute which fields each call used and the
   misses, but neither the token savings, which need the payloads, nor a replay of the conversations.
