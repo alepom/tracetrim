@@ -14,7 +14,7 @@ repository-code: "https://github.com/alepom/tracetrim"
 doi: "10.5281/zenodo.23954125"
 preferred-citation:
   type: report
-  title: "Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and Where They Fail"
+  title: "Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces, and When They Pay Off"
   authors:
     - family-names: "Pomaro"
       given-names: "Alessio"
