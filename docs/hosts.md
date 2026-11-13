@@ -156,6 +156,7 @@ In a host such as Claude Code or Cursor, where a person talks to the agent:
 | Responses API | not verified | not verified | not verified | not verified | not verified | **only if asked**: `tool_search` with `defer_loading: true` (`gpt-5.4` and later); documentation, read 12 November 2026 | — |
 | Claude Desktop | not verified | not verified | not verified | not verified | not verified | not verified | — |
 | Claude Code | stdio, entry written by `tracetrim init` (references in `env` resolved by the host) | yes | yes: 1 run of 1, without the line in the prompt | **read, not loaded**: the client (2.1.322) declares only `io.modelcontextprotocol/tasks`, not the Skills extension; it lists the resources, and the model read `skill://tracetrim/SKILL.md` through its tool for MCP resources before the first call, after the server's instructions | not tried: nothing was trimmed yet | **yes, by default**: MCP tool search defers the definitions (`ENABLE_TOOL_SEARCH=false` turns it off); documentation, read 12 November 2026 | 12 November 2026, one run with `--log-client` (0.4.1 proxy, `init` of 0.5) on a simulated orders server |
+| Claude Code on Windows | stdio, entry written by `tracetrim init` in PowerShell (Windows paths, `tracetrim.exe`) | yes | yes: 1 run of 1 | **read, not loaded**, as on Linux: the model read `skill://tracetrim/SKILL.md` as an MCP resource | not tried: nothing was trimmed yet | yes, by default (see the note) | 13 November 2026, tracetrim 0.7.0 from PyPI with the Windows Python, on a simulated orders server; `init` left in the host a server with `100%%` in its `env`, as its Windows rules require. The first start after installing timed out (see the notes) |
 | Cursor | not verified | not verified | not verified | not verified | not verified | according to its blog ("dynamic context discovery"), **not verified** | — |
 | VS Code | stdio, entry written by `tracetrim init` (references in `env` resolved by the host), folder opened from WSL | yes | yes: 1 run of 1, without the line in the prompt | **no**: the client (1.144.1) declares only `io.modelcontextprotocol/ui` and asks neither for the skill nor for resources | not tried: nothing was trimmed yet | not verified | 13 November 2026, one run in Copilot Chat's agent mode with `--log-client`, tracetrim 0.7.0 from PyPI, on a simulated orders server |
 | MCP Inspector | stdio | not verified | does not apply: no model | the skill is served correctly: outcome `verified` | not verified | does not apply: no model | 11 November 2026, MCP Inspector CLI 2.13.0, `--method skills/list --verify` ([docs/skill.md](skill.md)) |
@@ -166,6 +167,11 @@ Notes:
   with `server/discover` (protocol 2026-07-28) and holds the conversation after `initialize`
   (2025-11-25). It called `tracetrim_done` guided by the tool's description alone.
 - MCP Inspector shows that the skill is served as the extension asks, not that a model follows it.
+- **Windows, first start.** Right after `pip install`, the first start of the proxy took more than
+  the 30 seconds Claude Code waits for a server to connect (Windows checks the new files the first time
+  they run, while the host starts its other servers too); the next start connected in 2 seconds. If a
+  host reports that `tracetrim` did not connect, start it again, or give servers more time: for Claude
+  Code, set `MCP_TIMEOUT` (milliseconds) before starting it, as in `$env:MCP_TIMEOUT=90000; claude`.
 - VS Code shows what tracetrim writes on standard error (its per-call log) in *Output → MCP: tracetrim*
   with the label `[warning]`: that is the channel, not a problem. `--quiet` silences it.
 - *Hides tool definitions by itself*: whether the host or the API loads tool definitions only when the
