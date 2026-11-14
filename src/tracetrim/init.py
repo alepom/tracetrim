@@ -103,11 +103,19 @@ def _check_shape(spec) -> None:
     kind = spec.get("type")
     if kind == "sse":
         raise Refuse("SSE transport: tracetrim speaks streamable HTTP only")
+    if has_url and kind is None and isinstance(spec["url"], str) and \
+            spec["url"].split("?", 1)[0].split("#", 1)[0].rstrip("/").endswith("/sse"):
+        # The host would try SSE for it, and it works there; behind tracetrim, which speaks streamable HTTP only,
+        # it would not. Its owner can say which it is with "type".
+        raise Refuse("a URL ending in /sse with no 'type': it may be SSE, which tracetrim does not speak "
+                     "(add \"type\": \"http\" if it is streamable HTTP)")
     if kind not in (None, "stdio", "http", "streamable-http") or (kind is not None and (kind == "stdio") == has_url):
         raise Refuse("a 'type' that does not match the server")
+    # Each field checked as it is, when it is there: until 1.0 `"env": []` or `"args": false` passed as empty
+    # and then stopped the whole run with an unexpected error.
     ok = (all(isinstance(spec.get(f, ""), str) for f in ("command", "url", "cwd"))
-          and isinstance(spec.get("args") or [], list) and all(isinstance(v, str) for v in spec.get("args") or [])
-          and all(isinstance(spec.get(f) or {}, dict) and all(isinstance(v, str) for v in (spec.get(f) or {}).values())
+          and ("args" not in spec or isinstance(spec["args"], list) and all(isinstance(v, str) for v in spec["args"]))
+          and all(f not in spec or isinstance(spec[f], dict) and all(isinstance(v, str) for v in spec[f].values())
                   for f in ("env", "headers")))
     if not ok:
         raise Refuse("a value that is not text (tracetrim passes text only)")
@@ -287,14 +295,25 @@ def _ours(spec) -> dict | None:
     tracetrim all the same, and must not be wrapped in a second one."""
     if not isinstance(spec, dict) or not isinstance(spec.get("command"), str) or not isinstance(spec.get("args"), list):
         return None
-    args = [a for a in spec["args"] if isinstance(a, str)]
-    stem = re.split(r"[\\/]", spec["command"])[-1].lower()
-    stem = stem[:-4] if stem.endswith(".exe") else stem
-    if stem != "tracetrim":
-        if args[:2] != ["-m", "tracetrim.cli"]:
-            return None
-        args = args[2:]
-    if args[:1] != ["proxy"]:
+    # tracetrim may come after a launcher: `uvx tracetrim proxy`, `cmd /c tracetrim proxy` (Windows),
+    # `python /venv/bin/tracetrim proxy`, `python -m tracetrim.cli proxy`. Until 1.0 only the first word was
+    # looked at, and such an entry was wrapped in a second tracetrim.
+    toks = [spec["command"]] + [a for a in spec["args"] if isinstance(a, str)]
+
+    def is_tracetrim(tok: str) -> bool:
+        stem = re.split(r"[\\/]", tok)[-1].lower()
+        stem = stem[:-4] if stem.endswith(".exe") else stem
+        return re.split(r"[@=<>\[ ]", stem, maxsplit=1)[0] == "tracetrim"
+
+    args = None
+    for n, tok in enumerate(toks):
+        if is_tracetrim(tok) and toks[n + 1:n + 2] == ["proxy"]:
+            args = toks[n + 1:]
+            break
+        if tok == "-m" and toks[n + 1:n + 3] == ["tracetrim.cli", "proxy"]:
+            args = toks[n + 2:]
+            break
+    if args is None:
         return None
     servers, work = _option(args, "--servers"), _option(args, "--auto")
     if not servers:
@@ -432,6 +451,16 @@ def plan(host: Host, file: Path, scope: str, root: Path | None, workdir: str | N
                          ", ".join(map(_safe_key, found)) + "): undo first to move to --http")
     if found:
         (p.name, p.existing), = found.items()
+        # A relative path (or ~, or a variable) in the entry is read by the proxy from wherever the host starts it,
+        # which init cannot know: until 1.0 it was read from init's own directory, and the servers file moved there.
+        for what, raw_path in (("servers file", block[p.name]["args"] and _option(
+                [a for a in block[p.name]["args"] if isinstance(a, str)], "--servers")),
+                               ("work directory", _option([a for a in block[p.name]["args"] if isinstance(a, str)],
+                                                          "--auto"))):
+            if raw_path and (not Path(raw_path).is_absolute() or "~" in raw_path or "$" in raw_path):
+                raise SystemExit(f"tracetrim init: the host's tracetrim entry names its {what} with a path that is "
+                                 "not absolute: init cannot tell where the host starts it. Write the full path in "
+                                 "that entry, then run init again")
         if workdir and wd != p.existing["workdir"].absolute():
             raise SystemExit(f"tracetrim init: this host already goes through tracetrim with the work directory "
                              f"{p.existing['workdir']}: leave --workdir out, or undo first")
@@ -656,18 +685,34 @@ def apply(p: Plan, force: bool) -> Path | None:
                              "run init again")
     p.workdir.mkdir(parents=True, exist_ok=True, mode=0o700)
     p.servers_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    backup = None
+    if p.http is None:
+        # The backup first: if it cannot be written, nothing else is (until 1.0 servers.json was written first,
+        # and a failure here left a server both in the host and behind tracetrim).
+        mode = (p.file.stat().st_mode & 0o777) or 0o600
+        new = rewritten(p)
+        backup = backup_path(p.file)
+        _write(backup, p.raw, mode)
+        # Next to the backup, what `--undo` needs to tell whether the host's file changed since: no content.
+        _write(backup.with_name(backup.name + ".json"),
+               _dump({"format": "tracetrim/init-backup@1", "file": str(p.file), "host": p.host.name,
+                      "written_sha256": _sha(new), "backup_sha256": _sha(p.raw)}), 0o600)
     _write(p.servers_path, _dump({"mcpServers": p.servers_file}), 0o600)
     if p.http is not None:
         return None
-    mode = (p.file.stat().st_mode & 0o777) or 0o600
-    new = rewritten(p)
-    backup = backup_path(p.file)
-    _write(backup, p.raw, mode)
-    # Next to the backup, what `--undo` needs to tell whether the host's file changed since: no content.
-    _write(backup.with_name(backup.name + ".json"),
-           _dump({"format": "tracetrim/init-backup@1", "file": str(p.file), "host": p.host.name,
-                  "written_sha256": _sha(new), "backup_sha256": _sha(p.raw)}), 0o600)
-    _write(p.file, new, mode)
+    try:
+        _write(p.file, new, mode)
+    except BaseException:
+        # The host's file could not be written: the servers file goes back to what it was, so that no server
+        # runs twice. The backup stays (the host's file is unchanged).
+        try:
+            if p.servers_raw is None:
+                p.servers_path.unlink(missing_ok=True)
+            else:
+                _write(p.servers_path, p.servers_raw, 0o600)
+        except OSError:
+            pass
+        raise
     return backup
 
 
@@ -771,6 +816,15 @@ def check(p: Plan, timeout: float | None = None) -> tuple[bool, str]:
     except ImportError:
         return True, "Check           skipped: the check needs tracetrim[proxy], as the entry does"
     timeout = CHECK_TIMEOUT if timeout is None else timeout
+    # A remote server that signs in with OAuth and has no token yet would open a browser login from inside the
+    # check, with its output hidden, and the check would fail after two minutes (until 1.0). Not started here.
+    from .oauth import token_path, wants_oauth
+    login = [n for n, spec in p.servers_file.items()
+             if isinstance(spec, dict) and wants_oauth(spec) and not token_path(n, spec["url"]).exists()]
+    if login:
+        return True, ("Check           skipped: " + ", ".join(map(_safe_key, login)) + " sign" +
+                      ("s" if len(login) == 1 else "") + " in with OAuth and has no token yet: run "
+                      "`tracetrim login` as shown above, then start the host")
     env, missing = _resolved_env(p)
     params = StdioServerParameters(command=p.entry["command"], args=list(p.entry.get("args") or []),
                                    env={**os.environ, **env})
@@ -824,16 +878,24 @@ def run(a) -> None:
             _say(text)
             raise SystemExit("tracetrim init: nothing was written.")
         backup = apply(p, a.force) if write else None
-        checked = None
-        if backup is not None and p.http is None and not getattr(a, "no_check", False):
-            checked = check(p)
+        # The summary, with the backup and how to undo, comes before the check: the check can take up to two
+        # minutes, and a user who stops it must still know where the backup is (until 1.0 it came after).
         try:
-            _say(text + (closing(p, write, backup) if p.leaving else "") + (checked[1] + "\n" if checked and checked[1] else ""))
+            _say(text + (closing(p, write, backup) if p.leaving else ""))
         except Exception:
             if backup is None:
                 raise
             raise SystemExit(f"tracetrim init: the files were written, but the summary could not be shown. "
                              f"Backup {backup}; undo with: tracetrim init --undo {backup}") from None
+        checked = None
+        if backup is not None and p.http is None and not getattr(a, "no_check", False):
+            try:
+                checked = check(p)
+            except KeyboardInterrupt:
+                raise SystemExit(f"tracetrim init: the check was interrupted; the host's file is written. "
+                                 f"Undo with: tracetrim init --undo {backup}") from None
+            if checked[1]:
+                _say(checked[1] + "\n")
         if checked and not checked[0]:
             raise SystemExit(f"tracetrim init: the host's file is written, but the entry did not start here. "
                              f"Start the host and see whether it connects; if it does not, undo with: "

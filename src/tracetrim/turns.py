@@ -69,6 +69,9 @@ def organisation(trace: Trace) -> dict | None:
     if not cs or any(e.turn is None for e in cs):
         return None
     prompts = " ".join(e.text for e in trace.events if e.kind == "prompt")
+    # Turns counted from the run's first call, whatever the numbering: until 1.0 turns that started at 1 made
+    # every call look as if it could have been made one turn earlier.
+    base = min(c.turn for c in cs)
     available: dict[str, int] = {}                  # value -> the first turn in which a call could use it
     earliest, earlier, dependent = [], 0, 0
     for c in cs:
@@ -85,9 +88,9 @@ def organisation(trace: Trace) -> dict | None:
             need = max(need, available[ref])
         earliest.append(need)
         dependent += need > 0
-        earlier += need < c.turn
+        earlier += need < c.turn - base
     per_turn = Counter(c.turn for c in cs)
-    return {"calls": len(cs), "turns": max(c.turn for c in cs) + 2, "fewest_turns": max(earliest) + 2,
+    return {"calls": len(cs), "turns": max(c.turn for c in cs) - base + 2, "fewest_turns": max(earliest) + 2,
             "turns_with_calls": len(per_turn), "turns_with_several_calls": sum(n > 1 for n in per_turn.values()),
             "calls_that_depend_on_an_earlier_result": dependent, "calls_that_could_have_been_made_earlier": earlier}
 

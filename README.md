@@ -143,15 +143,23 @@ hidden field once, and all five tickets passed the keyword test in every run (a 
 Whichever way it is connected:
 
 - **from the first run**, a telemetry report is kept up to date in `tracetrim-data/report.html`
-  (over HTTP also live at `/report?token=...`): which tools fill the context, which fields the agent
-  never uses, with suggestions;
+  (over HTTP also live at `/report?token=...`, updating in place): which tools fill the context, which fields
+  the agent never uses, with suggestions;
 - **during the first runs** (5 by default, `--min-runs`) nothing is removed: the proxy only observes
   (JSON is already written compactly).
   `tracetrim_done` is how it sees the answer — in the study, learning from tool calls alone missed a
   used field in 49% of held-out calls (three agents on real APIs), against 4% with the answer;
 - **after that**, it applies the report's automatic actions on its own: the prudent projection, with
   identifying fields kept, transformed values recognised and `expand` on. Everything else stays in the
-  report as a manual action for you to review;
+  report as a manual action for you to review. Since 1.1, `--protect-ids record` (off by default) keeps
+  ids and links only when they belong to the record itself, and names and titles at any depth: on the
+  study's traces it removed 10–13 more points of tool-output tokens on two agents, with no extra miss, and
+  live 6–11 more points on three agents, with the same checks passed
+  ([docs/measures-v1.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v1.md));
+- **at every closing it checks the answer** (since 1.1): numbers and codes the answer cites that no tool
+  output of the run contains are logged and listed in the report, and a MANUAL suggestion is given when
+  they appear only where results were filtered. An agent that no longer sees a field can make one up; on
+  the study's runs this check flags the identifiers made up that way, and nothing elsewhere;
 - **it corrects itself**: a tool whose trimmed outputs the agent expands too often is no longer
   trimmed, and the report says so. Since 0.4, and off unless asked for: `--promote` keeps a single
   field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
@@ -222,7 +230,7 @@ Playground Python exports are also read directly (`.py`).
 tracetrim report traces/*.jsonl -o report.html
 ```
 
-You get `report.html` (bilingual EN/IT: which tools fill the context, which calls fail and with
+You get `report.html` (in English, Italian, Spanish, French and Chinese: which tools fill the context, which calls fail and with
 which provider error, which fields the agent never uses, with suggestions), `report.json`, and a
 runtime config with the projection it uses: `report.config.json`, `report.projection.json`.
 
@@ -299,6 +307,8 @@ removed and the *misses* (held-out calls in which a field the agent used would h
   titles are kept for this reason; other such fields need your review.
 - It does not translate: a value the agent rewrites in another language (or form) that the
   normalisers do not cover looks unused.
+- The check on the answer knows whether a value appeared in a tool output, not whether it was given to the
+  right item: a true volume attributed to the wrong keyword passes it.
 - Structural re-encoding (`"structural": "toon"` or `"headroom"` in the config) is optional and was
   seen to change how a model resolves ambiguous data. Validate on your task first.
 
@@ -319,8 +329,9 @@ where this works and where it fails. In short:
 Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
 automatic mode. Read the [paper](https://doi.org/10.5281/zenodo.24189959) before trimming anything that
 matters. Measures made after the paper, on the functions of 0.4 and later, are in
-[docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md) and
-[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md).
+[docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md),
+[docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md) and, for 1.1,
+[docs/measures-v1.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v1.md).
 
 ## Documentation
 

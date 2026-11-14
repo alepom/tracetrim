@@ -24,6 +24,9 @@ CASE_NAME = {"C1": "Editorial plan", "C2": "Content gaps", "C3": "Literature sca
              "C4": "Billing support$^\\dagger$", "C5": "CI triage$^\\dagger$"}
 
 
+POSTHOC = "$^{\\ast}$"                  # outside the band, seen after the results
+
+
 def pct(x, signed=True):
     v = round(100 * x)
     return (f"$-${abs(v)}\\%" if v < 0 else (f"+{v}\\%" if signed and v > 0 else f"{v}\\%"))
@@ -54,6 +57,9 @@ def plain(tex_path, macros) -> str:
 
 
 PAPER_VERSION_TWO_DATE = "November 2026"
+# The release that version 2 of the paper came with: the paper does not move with later releases
+# (1.1 changes nothing it reports), so its version line names this one, not about.VERSION.
+PAPER_SOFTWARE_VERSION = "1.0.0"
 
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
@@ -80,7 +86,7 @@ def main():
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
-        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 2. {about.NAME} {about.VERSION}; Studies 1 and 2 ran "
+        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 2. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
         f"with versions 0.1 and 0.2, Study 3 with 0.4}}\n"
         # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
@@ -167,7 +173,7 @@ def main():
                 m(f"{label}{key}Gates{R}", f"{x['gates_passed']}/{len(x['runs'])}")
                 meds = ", ".join(f"{k.replace('_', ' ')} {v:g}" for k, v in x["medians"].items())
                 rows.append(f"{CASE_NAME[c] if arm == 'raw' else ''} & {arm} & {pct(x['tool_tokens'] / raw_tok - 1) if arm != 'raw' else num(raw_tok)} & "
-                            f"{x['gates_passed']}/{len(x['runs'])} & {'' if arm == 'raw' else ('meets' if x['holds'] else 'fails') + ('$^{\\ast}$' if x.get('outside_band_posthoc') else '')} & "
+                            f"{x['gates_passed']}/{len(x['runs'])} & {'' if arm == 'raw' else ('meets' if x['holds'] else 'fails') + (POSTHOC if x.get('outside_band_posthoc') else '')} & "
                             f"{'' if arm == 'raw' else ('meets' if x.get('holds_protocol_list') else 'fails')} \\\\")
             if r.get("headroom"):
                 h = r["headroom"]

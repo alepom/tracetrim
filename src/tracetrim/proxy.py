@@ -93,7 +93,10 @@ class Live:
         self.run_whole = None if w is None or self.run_whole is None else self.run_whole + w
         self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
         self.run = [self.run[0] + 1, self.run[1] + r, self.run[2] + s, self.run[3]]
-        hidden = sent.rsplit(MARK, 1)[1].split("hidden: ", 1)[1] if MARK in sent else ""
+        # A tool's own text may hold a line that starts like ours: a log, a trace, an echo. Only count what
+        # follows "hidden: " when it is there; this is a log line, never a reason to fail a call.
+        tail = sent.rsplit(MARK, 1)[1] if MARK in sent else ""
+        hidden = tail.split("hidden: ", 1)[1] if "hidden: " in tail else ""
         groups = len(hidden.split(", ")) if hidden else 0
         self._print(f"{tool:<34} {r:>8,} -> {s:>8,} {self.unit} ({self._pct(s, r)})"
                     + (f"  hidden: {groups} group{'s' if groups != 1 else ''}" if groups else ""))
@@ -153,6 +156,8 @@ class Options:
     compact: bool | None = None      # compact JSON; None: from the first call with --auto, else as the config says
     breakdown: bool = True           # count what re-serialising saves apart from what removing fields saves
     log_client: str | None = None    # a file for one line per client request (tracetrim.clientlog); off by default
+    protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
+    learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -318,7 +323,8 @@ def _server(o: Options):
     adaptive = Adaptive(promote=o.promote, promote_requested_runs=o.promote_runs, sample_rate=o.sample_rate,
                         switch_off_runs=o.switch_off_runs,
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
-    learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive)
+    learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive,
+                       protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False)
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
@@ -348,13 +354,19 @@ def _server(o: Options):
             if engine.done(answer) is None:
                 return False
             run_total = live.new_run()
-            await asyncio.to_thread(engine.relearn)
+            # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
+            # the loop never sees the policy change halfway through.
+            engine.install(await asyncio.to_thread(engine.learn_policy))
             st = learner.state
             log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
             log(f"  {st['complete_runs']} complete runs · report updated · "
                 + (f"trimming {len(engine.policy.tools)} tools" if engine.trimming
                    else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
                 + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
+            if learner.unsupported:
+                shown = ", ".join(learner.unsupported[:5]) + (" …" if len(learner.unsupported) > 5 else "")
+                log(f"  {len(learner.unsupported)} value{'' if len(learner.unsupported) == 1 else 's'} of the answer "
+                    f"appear in no tool output of the run: {shown} (see the report)")
             return True
 
     routes: dict[str, tuple[str, str]] = {}
@@ -513,26 +525,123 @@ async def serve(o: Options) -> None:
     server, learner = _server(o)
     if learner:
         print(f"[tracetrim] report: {(learner.dir / 'report.html').resolve()}", file=sys.stderr, flush=True)
+    # SIGTERM (how a host, or `tracetrim init`'s check, stops the proxy) closes it in order: the upstream servers,
+    # started in sessions of their own, are stopped with it instead of being left running (until 1.0).
+    import asyncio
+    import signal
+    task = asyncio.current_task()
+    try:
+        asyncio.get_running_loop().add_signal_handler(signal.SIGTERM, task.cancel)
+    except (NotImplementedError, RuntimeError, AttributeError):   # Windows: no signal handlers on the loop
+        pass
     try:
         async with stdio_server() as (read, write):
             await server.run(read, write, server.create_initialization_options())
+    except asyncio.CancelledError:
+        pass
     finally:
         if learner:
             learner.flush()
 
 
+LIVE_SECONDS = 5      # how often the live report asks whether it changed
+
+
+def report_stamp(page: Path) -> str:
+    """What changes when the report is written again: its size and modification time. "none" before the first."""
+    try:
+        st = page.stat()
+    except OSError:
+        return "none"
+    return f"{st.st_mtime_ns:x}-{st.st_size:x}"
+
+
+async def _respond(send, status, body, ctype=b"text/plain; charset=utf-8"):
+    await send({"type": "http.response.start", "status": status,
+                "headers": [(b"content-type", ctype), (b"cache-control", b"no-store")]})
+    await send({"type": "http.response.body", "body": body})
+
+
+def _same(given: str, expected: str) -> bool:
+    return hmac.compare_digest(given.encode(), expected.encode())
+
+
+def guard(app, live, token: str | None):
+    """The HTTP front: the live report (when there is one), then the bearer token on everything else."""
+    async def guarded(scope, receive, send):
+        if live is not None and await live(scope, send):
+            return
+        if token and scope["type"] == "http":
+            auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode("latin-1")
+            if not _same(auth, f"Bearer {token}"):
+                return await _respond(send, 401, b"unauthorized")
+        await app(scope, receive, send)
+    return guarded
+
+
+def live_report(workdir: Path, hosts: list[str], token: str | None, seconds: int = LIVE_SECONDS):
+    """The live report, over HTTP: `/report` serves the page, `/report/stamp` says whether it changed.
+
+    Until 1.0 the page reloaded itself every 10 seconds (a refresh meta): scroll position and open sections were
+    lost at every reload. Since 1.1 the page asks for the stamp, a few bytes, and when it changed fetches the page
+    again and swaps its content in place (the script is in the page: tracetrim.report). Both paths check the Host
+    header and the token as the page always did. Returns an ASGI-style handler: `await handle(scope, send)` is True
+    when it answered the request."""
+    from urllib.parse import parse_qs
+
+    page = Path(workdir) / "report.html"
+    respond, same = _respond, _same
+
+    async def handle(scope, send) -> bool:
+        if scope.get("type") != "http" or scope.get("path") not in ("/report", "/report/stamp"):
+            return False
+        host = dict(scope.get("headers") or []).get(b"host", b"").decode("latin-1")
+        # As the SDK accepts them for /mcp: an exact host, or `name:*` for any port.
+        if host not in hosts and not any(h.endswith(":*") and host.rsplit(":", 1)[0] == h[:-2] for h in hosts):
+            await respond(send, 421, b"invalid Host header: add it with --allowed-host")
+            return True
+        q = parse_qs(scope.get("query_string", b"").decode("latin-1"))
+        if token and not same(q.get("token", [""])[0], token):
+            await respond(send, 401, b"unauthorized")
+            return True
+        stamp = report_stamp(page)
+        if scope["path"] == "/report/stamp":
+            await respond(send, 200, stamp.encode())
+            return True
+        live = f'<meta name="tracetrim-live" content="{seconds}"><meta name="tracetrim-stamp" content="{stamp}">'.encode()
+        if stamp == "none":
+            html = (b"<!doctype html><html><head><meta charset=utf-8>" + live + b"<title>tracetrim</title></head>"
+                    b"<body style='font:16px system-ui;padding:24px'>tracetrim is observing: the report appears "
+                    b"after the first run.<script>" + WAITING_JS + b"</script></body></html>")
+        else:
+            try:
+                html = page.read_bytes().replace(b"<head>", b"<head>" + live, 1)
+            except OSError:                  # replaced between the stat and the read: the next request has it
+                await respond(send, 503, b"the report is being written: try again")
+                return True
+        await respond(send, 200, html, b"text/html; charset=utf-8")
+        return True
+
+    return handle
+
+
+# Before the first report there is no page to update in place: the placeholder reloads once the stamp appears.
+WAITING_JS = b"""(function(){var m=document.querySelector('meta[name="tracetrim-live"]');var s=(+m.content||5)*1000;
+function tick(){fetch(location.pathname+'/stamp'+location.search,{cache:'no-store'}).then(function(r){return r.text();})
+.then(function(t){if(t&&t!=='none')location.reload();else setTimeout(tick,s);},function(){setTimeout(tick,s*2);});}
+setTimeout(tick,s);})();"""
+
+
 async def serve_http(o: Options, *, host: str, port: int, token: str | None, allowed_hosts: list[str]) -> None:
     """Streamable HTTP at /mcp, for hosted clients (e.g. the OpenAI Playground)
     that call the server from their own infrastructure. In automatic mode the
-    live report is served at /report?token=..., refreshing itself.
+    live report is served at /report?token=..., updating itself in place (`live_report`).
 
     Exposed through a tunnel, the proxy is reachable by anyone who knows the
     URL, and it holds the upstream credentials: `token` makes every request
     carry `Authorization: Bearer <token>` (the report page, opened in a
     browser, takes it as a query parameter instead).
     """
-    from urllib.parse import parse_qs
-
     import uvicorn
     from dataclasses import replace
 
@@ -553,35 +662,8 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
         allowed_origins=["http://localhost:*", "http://127.0.0.1:*", "http://[::1]:*"]
                         + [f"https://{h}" for h in allowed_hosts])
 
-    def same(given: str, expected: str) -> bool:
-        return hmac.compare_digest(given.encode(), expected.encode())
     app = server.streamable_http_app(host=host, transport_security=security)
-
-    async def respond(send, status, body, ctype=b"text/plain; charset=utf-8"):
-        await send({"type": "http.response.start", "status": status, "headers": [(b"content-type", ctype)]})
-        await send({"type": "http.response.body", "body": body})
-
-    async def guarded(scope, receive, send):
-        if scope["type"] == "http" and learner and scope.get("path") == "/report":
-            host = dict(scope.get("headers") or []).get(b"host", b"").decode("latin-1")
-            if host not in hosts:
-                return await respond(send, 421, b"invalid Host header: add it with --allowed-host")
-            q = parse_qs(scope.get("query_string", b"").decode())
-            if token and not same(q.get("token", [""])[0], token):
-                return await respond(send, 401, b"unauthorized")
-            page = learner.dir / "report.html"
-            if not page.exists():
-                html = ("<!doctype html><meta charset=utf-8><meta http-equiv=refresh content=10>"
-                        "<body style='font:16px system-ui;padding:24px'>tracetrim is observing: the report appears "
-                        "after the first run.</body>").encode()
-            else:
-                html = page.read_bytes().replace(b"<head>", b"<head><meta http-equiv=\"refresh\" content=\"10\">", 1)
-            return await respond(send, 200, html, b"text/html; charset=utf-8")
-        if token and scope["type"] == "http":
-            auth = dict(scope.get("headers") or []).get(b"authorization", b"").decode("latin-1")
-            if not same(auth, f"Bearer {token}"):
-                return await respond(send, 401, b"unauthorized")
-        await app(scope, receive, send)
+    guarded = guard(app, live_report(learner.dir, hosts, token) if learner else None, token)
 
     if allowed_hosts and not token:
         print("[tracetrim] WARNING: reachable through " + ", ".join(allowed_hosts) + " with no token: anyone with the "

@@ -121,7 +121,7 @@ def reused_paths(events: list[dict], answer: str, call_index: int, after: int, p
     wanted, found = set(paths), set()
     for path, value in leaves(payload):
         if path in wanted and path not in found:
-            keys = keys_of(value) + transformed_keys(value, path)
+            keys = keys_of(value, unsigned=True) + transformed_keys(value, path)
             if any(k in later and k not in before for k in keys):
                 found.add(path)
     return found

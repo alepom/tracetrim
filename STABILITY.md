@@ -43,10 +43,14 @@ hold arguments, results, headers, tokens or the values of what a client declares
   `analyse`.
 - `tracetrim.auto.AutoTrim`, the adapter for function calling:
   - the first two arguments, `workdir` and `min_runs`;
-  - the keyword arguments `structural`, `strategy`, `adaptive`, `compact`, `breakdown`;
+  - the keyword arguments `structural`, `strategy`, `adaptive`, `compact`, `breakdown`, and, since 1.1,
+    `protect_ids` (`"all"`, the default, or `"record"`) and `learning` (`"1.1"`, the default, or `"1.0"`, the
+    rules of 1.0: see the CHANGELOG's *Changed behaviour* for 1.1);
   - `output`, `expand`, `done`, `offered`, `instructions`, `report`, `expand_tool`, `trimming`.
 
   Pass every argument after `min_runs` by keyword.
+- `learn(..., protect_ids=...)`: `True` and `False` keep their meaning; since 1.1 it also takes `"all"`
+  (the same as `True`), `"record"` and `"none"` (the same as `False`).
 - `tracetrim.evidence.Adaptive` and its fields.
 - `tracetrim.runtime.Policy`: `Policy.load`, `apply`.
 - `tracetrim.contract`: `ToolCall`, `ToolResult`, `Observation`, `Sizes`, `Evidence` and the exposure

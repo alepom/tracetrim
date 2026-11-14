@@ -1,0 +1,727 @@
+{
+  "C4": {
+    "arms": {
+      "T": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.5161510942760943,
+        "saving_with_expand": 0.5161510942760943,
+        "gates_passed": 5,
+        "unsupported": 0,
+        "unsupported_values": [],
+        "turns": 4,
+        "calls": 11,
+        "expand_calls": 0,
+        "per_run": [
+          {
+            "run": "E4-T-1",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.5163089225589226,
+            "saving_with_expand": 0.5163089225589226,
+            "original": 19008,
+            "sent": 9194,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 29,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-2",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.5158880471380471,
+            "saving_with_expand": 0.5158880471380471,
+            "original": 19008,
+            "sent": 9202,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 30,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-3",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.514786470143613,
+            "saving_with_expand": 0.514786470143613,
+            "original": 21168,
+            "sent": 10271,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              15,
+              15
+            ],
+            "values": 32,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 12,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-4",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.519851915441571,
+            "saving_with_expand": 0.519851915441571,
+            "original": 18638,
+            "sent": 8949,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 29,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 10,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-5",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.5161510942760943,
+            "saving_with_expand": 0.5161510942760943,
+            "original": 19008,
+            "sent": 9197,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 28,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          }
+        ]
+      },
+      "TR": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.5747053872053872,
+        "saving_with_expand": 0.5747053872053872,
+        "gates_passed": 5,
+        "unsupported": 0,
+        "unsupported_values": [],
+        "turns": 4,
+        "calls": 11,
+        "expand_calls": 0,
+        "per_run": [
+          {
+            "run": "E4-TR-1",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.555590871527557,
+            "saving_with_expand": 0.555590871527557,
+            "original": 15731,
+            "sent": 6991,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              12,
+              12
+            ],
+            "values": 27,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-2",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5749684343434344,
+            "saving_with_expand": 0.5749684343434344,
+            "original": 19008,
+            "sent": 8079,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              12,
+              12
+            ],
+            "values": 27,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-3",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5745475589225589,
+            "saving_with_expand": 0.5745475589225589,
+            "original": 19008,
+            "sent": 8087,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 30,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-4",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5758245985190884,
+            "saving_with_expand": 0.5758245985190884,
+            "original": 20798,
+            "sent": 8822,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              15,
+              15
+            ],
+            "values": 35,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 11,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-5",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5747053872053872,
+            "saving_with_expand": 0.5747053872053872,
+            "original": 19008,
+            "sent": 8084,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              13,
+              13
+            ],
+            "values": 29,
+            "unsupported": [],
+            "turns": 4,
+            "calls": 11,
+            "expand_calls": 0
+          }
+        ]
+      }
+    },
+    "saving_difference": 0.05855429292929293,
+    "H1": null,
+    "H2": true,
+    "H3": true,
+    "cost_TR_vs_T": -0.04401408450704225
+  },
+  "C5": {
+    "arms": {
+      "T": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.6395779982927869,
+        "saving_with_expand": 0.6314287238583014,
+        "gates_passed": 5,
+        "unsupported": 2,
+        "unsupported_values": [
+          "600",
+          "600"
+        ],
+        "turns": 5,
+        "calls": 13,
+        "expand_calls": 6,
+        "per_run": [
+          {
+            "run": "E4-T-1",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.6395513230900555,
+            "saving_with_expand": 0.632615770379855,
+            "original": 74976,
+            "sent": 27025,
+            "expand_tokens": 520,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 22,
+            "unsupported": [],
+            "turns": 5,
+            "calls": 13,
+            "expand_calls": 5
+          },
+          {
+            "run": "E4-T-2",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.6395779982927869,
+            "saving_with_expand": 0.6314287238583014,
+            "original": 74976,
+            "sent": 27023,
+            "expand_tokens": 611,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 26,
+            "unsupported": [
+              "600"
+            ],
+            "turns": 5,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-T-3",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.6395913358941527,
+            "saving_with_expand": 0.6303083653435766,
+            "original": 74976,
+            "sent": 27022,
+            "expand_tokens": 696,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 31,
+            "unsupported": [
+              "600"
+            ],
+            "turns": 6,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-T-4",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.6395513230900555,
+            "saving_with_expand": 0.6314020486555698,
+            "original": 74976,
+            "sent": 27025,
+            "expand_tokens": 611,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 31,
+            "unsupported": [],
+            "turns": 6,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-T-5",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.6395779982927869,
+            "saving_with_expand": 0.6326424455825864,
+            "original": 74976,
+            "sent": 27023,
+            "expand_tokens": 520,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 27,
+            "unsupported": [],
+            "turns": 5,
+            "calls": 13,
+            "expand_calls": 5
+          }
+        ]
+      },
+      "TR": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.7459720443875373,
+        "saving_with_expand": 0.7366890738369611,
+        "gates_passed": 5,
+        "unsupported": 2,
+        "unsupported_values": [
+          "600",
+          "600"
+        ],
+        "turns": 6,
+        "calls": 13,
+        "expand_calls": 6,
+        "per_run": [
+          {
+            "run": "E4-TR-1",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.74593203158344,
+            "saving_with_expand": 0.7366490610328639,
+            "original": 74976,
+            "sent": 19049,
+            "expand_tokens": 696,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 28,
+            "unsupported": [],
+            "turns": 7,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-TR-2",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.7459053563807085,
+            "saving_with_expand": 0.7389698036705079,
+            "original": 74976,
+            "sent": 19051,
+            "expand_tokens": 520,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 31,
+            "unsupported": [
+              "600"
+            ],
+            "turns": 5,
+            "calls": 13,
+            "expand_calls": 5
+          },
+          {
+            "run": "E4-TR-3",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.7459987195902689,
+            "saving_with_expand": 0.7367157490396927,
+            "original": 74976,
+            "sent": 19044,
+            "expand_tokens": 696,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 27,
+            "unsupported": [],
+            "turns": 6,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-TR-4",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.7459720443875373,
+            "saving_with_expand": 0.7366890738369611,
+            "original": 74976,
+            "sent": 19046,
+            "expand_tokens": 696,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 30,
+            "unsupported": [
+              "600"
+            ],
+            "turns": 6,
+            "calls": 13,
+            "expand_calls": 6
+          },
+          {
+            "run": "E4-TR-5",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.7459987195902689,
+            "saving_with_expand": 0.735248612889458,
+            "original": 74976,
+            "sent": 19044,
+            "expand_tokens": 806,
+            "gates_passed": true,
+            "facts": [
+              16,
+              16
+            ],
+            "values": 27,
+            "unsupported": [],
+            "turns": 8,
+            "calls": 13,
+            "expand_calls": 7
+          }
+        ]
+      }
+    },
+    "saving_difference": 0.10639404609475034,
+    "H1": true,
+    "H2": true,
+    "H3": true,
+    "cost_TR_vs_T": -0.1928406466512701
+  },
+  "C3": {
+    "arms": {
+      "T": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.49459352774077125,
+        "saving_with_expand": 0.49459352774077125,
+        "gates_passed": 5,
+        "unsupported": 0,
+        "unsupported_values": [],
+        "turns": 3,
+        "calls": 7,
+        "expand_calls": 0,
+        "per_run": [
+          {
+            "run": "E4-T-1",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.49459352774077125,
+            "saving_with_expand": 0.49459352774077125,
+            "original": 283734,
+            "sent": 143401,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              20,
+              20
+            ],
+            "values": 33,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 7,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-2",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.5000354972066429,
+            "saving_with_expand": 0.5000354972066429,
+            "original": 366226,
+            "sent": 183100,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              20,
+              20
+            ],
+            "values": 31,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 8,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-3",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.4840073991991559,
+            "saving_with_expand": 0.4840073991991559,
+            "original": 226511,
+            "sent": 116878,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              24,
+              24
+            ],
+            "values": 41,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 6,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-4",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.49478175632820154,
+            "saving_with_expand": 0.49478175632820154,
+            "original": 277488,
+            "sent": 140192,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              20,
+              20
+            ],
+            "values": 34,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 7,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-T-5",
+            "arm": "T",
+            "flags": [],
+            "saving": 0.48017374296890614,
+            "saving_with_expand": 0.48017374296890614,
+            "original": 280184,
+            "sent": 145647,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              20,
+              20
+            ],
+            "values": 36,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 7,
+            "expand_calls": 0
+          }
+        ]
+      },
+      "TR": {
+        "runs": 5,
+        "flagged": 0,
+        "saving": 0.5604883393915314,
+        "saving_with_expand": 0.5604883393915314,
+        "gates_passed": 5,
+        "unsupported": 0,
+        "unsupported_values": [],
+        "turns": 3,
+        "calls": 8,
+        "expand_calls": 0,
+        "per_run": [
+          {
+            "run": "E4-TR-1",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5599492411812961,
+            "saving_with_expand": 0.5599492411812961,
+            "original": 312064,
+            "sent": 137324,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              22,
+              22
+            ],
+            "values": 40,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 8,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-2",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.571186760595968,
+            "saving_with_expand": 0.571186760595968,
+            "original": 328474,
+            "sent": 140854,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              20,
+              20
+            ],
+            "values": 35,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 8,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-3",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5465068182200326,
+            "saving_with_expand": 0.5465068182200326,
+            "original": 297365,
+            "sent": 134853,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              22,
+              22
+            ],
+            "values": 40,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 7,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-4",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5623482854986435,
+            "saving_with_expand": 0.5623482854986435,
+            "original": 343161,
+            "sent": 150185,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              22,
+              22
+            ],
+            "values": 37,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 8,
+            "expand_calls": 0
+          },
+          {
+            "run": "E4-TR-5",
+            "arm": "TR",
+            "flags": [],
+            "saving": 0.5604883393915314,
+            "saving_with_expand": 0.5604883393915314,
+            "original": 322153,
+            "sent": 141590,
+            "expand_tokens": 0,
+            "gates_passed": true,
+            "facts": [
+              22,
+              22
+            ],
+            "values": 40,
+            "unsupported": [],
+            "turns": 3,
+            "calls": 7,
+            "expand_calls": 0
+          }
+        ]
+      }
+    },
+    "saving_difference": 0.06589481165076017,
+    "H1": true,
+    "H2": true,
+    "H3": true,
+    "cost_TR_vs_T": -0.027621027621027583
+  }
+}

@@ -49,11 +49,12 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import definitions, evidence, store, turns
+from . import definitions, evidence, grounding, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine, requested_fields
 from .evidence import Adaptive
 from .runtime import Policy
+from .traces import load as load_trace
 
 DONE = {
     "name": "tracetrim_done",
@@ -84,12 +85,25 @@ def over_expanded(filtered: int, expanded: int, runs: int, needed: int = 0) -> b
 
 class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None,
-                 adaptive: Adaptive | None = None):
+                 adaptive: Adaptive | None = None, protect_ids: str = "all", learning: str = "1.1",
+                 compact: bool = True):
         """`idle_seconds`: the pause after which the integration closes a run
         by itself (the proxy does; a function-calling loop closes its own
         runs, and passes None). Only used to count runs that an answer closed
         and that were followed by more calls within that pause.
-        `adaptive`: promotion and sampling (tracetrim.evidence.Adaptive); all off by default."""
+        `adaptive`: promotion and sampling (tracetrim.evidence.Adaptive); all off by default.
+        `protect_ids`: which identifying fields learning keeps whatever the usage, "all" (the default) or
+        "record" (tracetrim.projection.PROTECT_IDS; since 1.1).
+        `learning`: the rules of usage detection and of the report's measure, "1.1" (the default) or "1.0"
+        (tracetrim.usage.LEARNING). `compact`: whether run time writes compact JSON, for the measure."""
+        from .projection import protect_mode
+        from .usage import learning_flags
+        self.learning = learning
+        self._flags = learning_flags(learning)
+        self.compact = compact
+        self.protect_ids = protect_mode(protect_ids)
+        if self.protect_ids == "none":
+            raise ValueError('protect_ids: "all" or "record" in automatic mode')
         self.dir = Path(workdir)
         (self.dir / "traces").mkdir(parents=True, exist_ok=True)
         store.clean(self.dir)
@@ -140,6 +154,7 @@ class Learner:
         self._count = None
         # The open run, counted (contract.Sizes): tool -> [calls, raw, whole, sent]; expand: [calls, tokens].
         self.savings_path = self.dir / "savings.json"
+        self.unsupported: list[str] = []             # the last run closed: values of its answer no output contains
         self._sizes: dict[str, list[int]] = {}
         self._expand_sizes = [0, 0]
 
@@ -284,10 +299,18 @@ class Learner:
             counts = first and call_id in self._counted.get(tool, set())
             if counts:
                 self.expanded(tool)
-            self.notes.append({"kind": "expand", "index": self._index_of.get(call_id), "after": len(self.events),
-                               "tool": tool, "call_id": call_id, "requested": requested, "returned": returned,
-                               "recovered": recovered, "targeted": targeted, "broad": broad,
-                               "repeat": bool(recovered) and not first, "counts": counts})
+            note = {"kind": "expand", "index": self._index_of.get(call_id), "after": len(self.events),
+                    "tool": tool, "call_id": call_id, "requested": requested, "returned": returned,
+                    "recovered": recovered, "targeted": targeted, "broad": broad,
+                    "repeat": bool(recovered) and not first, "counts": counts}
+            if not self.events and self.state["runs"]:
+                # No run is open: the request is about a result of the run just closed (the agent closed too
+                # early). Its evidence goes there now, as `flush` does; until 1.0 it went to the next run, and
+                # one task could count as two runs for the switch-off and the promotions.
+                self._absorb(f"run-{self.state['runs']:04d}", [], [dict(note, index=None)], None)
+                self._save()
+            else:
+                self.notes.append(note)
 
     def refused(self) -> None:
         """A closing that carried no answer and was refused: the run stays
@@ -328,12 +351,29 @@ class Learner:
             # still be pending, and the closing could be tried again.
             self.events, self.notes, self._index_of = [], [], {}
             self.state["runs"] = number
-            self._absorb(run, events, notes, answer if complete else None)
-            self._save_sizes(run)
+            # From here the run is on disk: its counts and the state are kept whatever fails next (until 1.0 a
+            # failure in the evidence left complete_runs behind for good and moved its sizes to the next run).
+            failed = None
+            try:
+                self._absorb(run, events, notes, answer if complete else None)
+            except Exception as e:           # noqa: BLE001
+                failed = e
+            try:
+                self._save_sizes(run)
+            except Exception as e:           # noqa: BLE001
+                failed = failed or e
+            # What the proxy's log says at this closing (since 1.1): values of the answer no output contains.
+            # A measure: it never stops a closing.
+            try:
+                self.unsupported = grounding.unsupported(load_trace(path))[1] if complete else []
+            except Exception:                # noqa: BLE001
+                self.unsupported = []
             if complete:
                 self.state["complete_runs"] += 1
                 self._answered_at = time.time()
             self._save()
+            if failed is not None:
+                raise failed
             return path
 
     def _absorb(self, run: str, events: list[dict], notes: list[dict], answer: str | None) -> None:
@@ -387,13 +427,36 @@ class Learner:
         paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
         if not paths:
             return None
+        # A trace that cannot be read (written in place by 0.3.5 and cut short by a killed process) is set aside,
+        # as state.json is: until 1.0 it stopped every later relearning.
+        readable = {}
+        for p in paths:
+            try:
+                readable[p] = load(p)
+            except (ValueError, OSError):
+                try:
+                    p.replace(p.with_name(p.name + ".corrupt"))
+                except OSError:
+                    pass
+        paths = [p for p in paths if p in readable]
+        if not paths:
+            return None
         complete = [p for p in paths if "noanswer" not in p.name]
         # Telemetry from every run; learning only from runs with an answer.
         learn_from = complete or paths
-        traces = [load(p) for p in learn_from]
-        usages = [analyse(t) for t in traces]
-        d = rp.compute([t.name for t in traces], usages)
+        traces = [readable[p] for p in learn_from]
+        usages = [analyse(t, **self._flags) for t in traces]
+        # The default keeps the report's value as before 1.1 (true); "record" is written as such.
+        d = rp.compute([t.name for t in traces], usages,
+                       protect_ids=True if self.protect_ids == "all" else self.protect_ids,
+                       runtime=self.learning != "1.0", compact=self.compact)
         d["turns"] = turns.summarise(traces)
+        # Values of the answers that no tool output of their run contains (since 1.1): runs with an answer only,
+        # which are the traces just loaded when there are any. A measure: the report goes without it if it fails.
+        try:
+            d["grounding"] = grounding.summarise(traces if complete else [], self.dir)
+        except Exception:                    # noqa: BLE001
+            pass
         published = definitions.load(self.dir)
         if published is not None:
             # Tools called in complete runs only: a run with no answer says nothing of what a task needs.
@@ -462,6 +525,10 @@ class Learner:
                           # The pause that counter is about (None: the integration closes its own runs).
                           "idle_seconds": self.idle_seconds,
                           "promoted": {t: sorted(f) for t, f in sorted(active.items())},
+                          # Only when not the default, so that a config of 1.0 and one of 1.1 at the
+                          # defaults are the same file; `tracetrim promotions` reads it back.
+                          **({"protect_ids": self.protect_ids} if self.protect_ids != "all" else {}),
+                          **({"learning": self.learning} if self.learning != "1.1" else {}),
                           "updated": datetime.now(timezone.utc).isoformat(timespec="seconds")}
 
         projection.save(self.dir / "report.projection.json")
@@ -533,9 +600,15 @@ class Learner:
         """The config learned in a previous session, if any."""
         p = self.dir / "report.config.json"
         if p.exists():
-            config = json.loads(p.read_text())
+            try:
+                config = json.loads(p.read_text())
+            except ValueError:               # cut short (written in place up to 0.3.5): learnt again at the next closing
+                return None
             if config.get("auto", {}).get("applied") and config.get("tools"):
-                return Policy.load(p)
+                try:
+                    return Policy.load(p)
+                except (ValueError, OSError, KeyError):  # its projection unreadable: learnt again at the next closing
+                    return None
         return None
 
     def _save(self) -> None:
@@ -571,6 +644,14 @@ class AutoTrim:
     of fields on evidence and the sampling of unfiltered results
     (tracetrim.evidence). Both off by default.
 
+    `protect_ids="record"` keeps, whatever the usage, ids and links only when they belong to the
+    record itself, and names and titles at any depth; the default, "all", keeps every field named
+    like an identifier, as up to 1.0 (tracetrim.projection.PROTECT_IDS). Since 1.1.
+
+    `learning="1.0"` restores the learning rules of 1.0 (tracetrim.usage.LEARNING): negative numbers never
+    found, a long text cancelled by one piece written before the call, the report measuring without compact
+    JSON. Since 1.1.
+
     `breakdown=False` stops counting, call by call, what re-serialising saves
     and what removing fields saves (the report's section on where the saving
     comes from). The count changes nothing the model receives.
@@ -578,8 +659,9 @@ class AutoTrim:
 
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
                  strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
-                 breakdown: bool = True):
-        self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive), structural=structural,
+                 breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1"):
+        self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
+                                     compact=compact), structural=structural,
                              compact=compact, breakdown=breakdown)
         self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],

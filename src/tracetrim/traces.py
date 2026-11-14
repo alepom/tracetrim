@@ -68,7 +68,9 @@ def load_jsonl(path: Path) -> Trace:
                 "call",
                 text=args if isinstance(args, str) else json.dumps(args, ensure_ascii=False),
                 tool=d.get("tool") or "?",
-                output=d.get("output"),
+                # An output written as JSON rather than as the text of JSON (until 1.0 it stopped the reading).
+                output=out if (out := d.get("output")) is None or isinstance(out, str)
+                else json.dumps(out, ensure_ascii=False),
                 turn=d.get("turn"),
             ))
         elif kind in ("prompt", "message"):
@@ -105,6 +107,7 @@ def load_openai_playground(path: Path) -> Trace:
         raise ValueError(f"{path.name}: no `input=` argument found")
 
     trace = Trace(path.name)
+    pending: dict = {}                      # call_id -> its function_call event, until its output arrives
     for v in items:
         if not isinstance(v, dict):
             continue
@@ -130,4 +133,20 @@ def load_openai_playground(path: Path) -> Trace:
                 text = raw
             trace.events.append(Event(
                 "call", text=text, tool=v.get("name") or "?", output=v.get("output") or ""))
+        elif v.get("type") == "function_call":
+            # Function tools (since 1.1; until 1.0 an agent with function tools loaded with no call): the
+            # output comes in its own item, `function_call_output`, with the same call_id.
+            raw = v.get("arguments") or ""
+            try:
+                text = json.dumps(json.loads(raw), ensure_ascii=False)
+            except (json.JSONDecodeError, TypeError):
+                text = raw if isinstance(raw, str) else json.dumps(raw, ensure_ascii=False)
+            ev = Event("call", text=text, tool=v.get("name") or "?", output=None)
+            trace.events.append(ev)
+            pending[v.get("call_id")] = ev
+        elif v.get("type") == "function_call_output":
+            ev = pending.pop(v.get("call_id"), None)
+            if ev is not None:
+                out = v.get("output")
+                ev.output = out if isinstance(out, str) else json.dumps(out, ensure_ascii=False)
     return trace

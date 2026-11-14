@@ -51,11 +51,16 @@ def leaves(node, path=""):
         yield path, node
 
 
-def keys_of(value, comma_grouping: bool = True) -> list[tuple[str, ...]]:
+def keys_of(value, comma_grouping: bool = True, unsigned: bool = False) -> list[tuple[str, ...]]:
     """The n-grams under which a value can reappear, or none when it is too
-    generic to attribute: `10`, `true`, `LOW` show up everywhere."""
+    generic to attribute: `10`, `true`, `LOW` show up everywhere.
+
+    `unsigned` (learning 1.1): a negative number is looked for without its sign, as `words` reads text (it
+    never keeps a `-`); up to 1.0 the key kept the sign and a negative number could never be found."""
     if isinstance(value, bool) or value is None:
         return []
+    if unsigned and isinstance(value, (int, float)) and value < 0:
+        value = -value
     if isinstance(value, int):
         if abs(value) < 100:
             return []
@@ -185,7 +190,23 @@ def first_written(trace: Trace):
     return pos, first, first_in_calls
 
 
-def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -> list[CallUsage]:
+# Learning rules by version (`--learning`): 1.1 corrects two misses of usage detection, 1.0 restores them, as
+# STABILITY.md asks of any change in what the model receives. The studies' scripts call `analyse` with the 1.0
+# rules, its defaults, so that the paper's numbers stay what they were.
+#   unsigned   negative numbers are found (up to 1.0 they never were)
+#   prose_any  a long text counts as reused when any of its 4-grams is written after the call for the first time;
+#              up to 1.0 one 4-gram written before (in the user's request, say) cancelled all the others
+LEARNING = {"1.1": {"unsigned": True, "prose_any": True}, "1.0": {"unsigned": False, "prose_any": False}}
+
+
+def learning_flags(learning: str = "1.1") -> dict:
+    if learning not in LEARNING:
+        raise ValueError(f"learning in {tuple(LEARNING)}")
+    return dict(LEARNING[learning])
+
+
+def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True, unsigned: bool = False,
+            prose_any: bool = False) -> list[CallUsage]:
     """`normalize`: also look for transformed forms of each value (dates,
     amounts in minor units, short ids from URLs). On by default since 0.2.
     `comma_grouping`: also match numbers written "1,600". On by default since
@@ -203,18 +224,21 @@ def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -
             continue
         own = ngrams(words(texts[i]))
         for path, value in leaves(u.payload):
-            k = keys_of(value, comma_grouping)
+            k = keys_of(value, comma_grouping, unsigned)
             if k:
                 u.judgeable.add(path)
             if normalize:
                 k = k + transformed_keys(value, path)
             if any(x in own for x in k):
                 u.echo.add(path)
+            # A value written before the call is not reuse of its output: every form must be new. Prose is
+            # quoted in pieces, and one piece may well be in the request: any piece written only afterwards.
+            later = any if (prose_any and isinstance(value, str) and len(words(value)) > N_MAX) else None
             seen = [first_in_calls[x] for x in k if x in first_in_calls]
-            if seen and min(seen) > pos[i]:
+            if seen and (later(t > pos[i] for t in seen) if later else min(seen) > pos[i]):
                 u.used_by_calls.add(path)
             seen = [first[x] for x in k if x in first]
-            if seen and min(seen) > pos[i]:
+            if seen and (later(t > pos[i] for t in seen) if later else min(seen) > pos[i]):
                 u.used.add(path)
                 # Bucketed numbers (search volumes: 1,600, 2,400...) can match
                 # by coincidence. A string cannot.

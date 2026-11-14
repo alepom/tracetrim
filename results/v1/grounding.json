@@ -1,0 +1,457 @@
+{
+  "C1": {
+    "B-aggressive": {
+      "runs": 2,
+      "values": 132,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-prudent": {
+      "runs": 2,
+      "values": 142,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-raw": {
+      "runs": 2,
+      "values": 108,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-structural": {
+      "runs": 2,
+      "values": 165,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-raw": {
+      "runs": 5,
+      "values": 304,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-v02": {
+      "runs": 5,
+      "values": 348,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-v02-structural": {
+      "runs": 5,
+      "values": 381,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-R": {
+      "runs": 5,
+      "values": 241,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-S": {
+      "runs": 5,
+      "values": 244,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-ST": {
+      "runs": 5,
+      "values": 188,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-T": {
+      "runs": 5,
+      "values": 282,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    }
+  },
+  "C2": {
+    "B-aggressive": {
+      "runs": 2,
+      "values": 2,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-prudent": {
+      "runs": 2,
+      "values": 12,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-raw": {
+      "runs": 2,
+      "values": 2,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "B-structural": {
+      "runs": 2,
+      "values": 4,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-raw": {
+      "runs": 5,
+      "values": 50,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-v02": {
+      "runs": 5,
+      "values": 58,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "D-v02-structural": {
+      "runs": 5,
+      "values": 2,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-R": {
+      "runs": 5,
+      "values": 254,
+      "unsupported": 0,
+      "runs_flagged": 0,
+      "suspect": 0
+    },
+    "E1-S": {
+      "runs": 5,
+      "values": 337,
+      "unsupported": 1,
+      "runs_flagged": 1,
+      "suspect": 0
+    }
+  },
+  "C3": {
+    "B-aggressive": {
+      "runs": 2,
+      "values": 77,
+      "unsupported": [
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578",
+        "W4368137354",
+        "W4387599929",
+        "W4404840967",
+        "W4417652063",
+        "W4412669510",
+        "W4415477844",
+        "W4417345078",
+        "W4420567707",
+        "W4416507395",
+        "W4425642509",
+        "W4422209246"
+      ],
+      "runs_flagged": 2,
+      "suspect": [
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578",
+        "W4368137354",
+        "W4387599929",
+        "W4404840967",
+        "W4417652063",
+        "W4412669510",
+        "W4415477844",
+        "W4417345078",
+        "W4420567707",
+        "W4416507395",
+        "W4425642509",
+        "W4422209246"
+      ]
+    },
+    "B-prudent": {
+      "runs": 2,
+      "values": 80,
+      "unsupported": [
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578",
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578"
+      ],
+      "runs_flagged": 2,
+      "suspect": [
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578",
+        "W4391234567",
+        "W4391234568",
+        "W4391234569",
+        "W4391234570",
+        "W4391234571",
+        "W4391234572",
+        "W4391234573",
+        "W4391234574",
+        "W4391234575",
+        "W4391234576",
+        "W4391234577",
+        "W4391234578"
+      ]
+    },
+    "B-raw": {
+      "runs": 2,
+      "values": 80,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "B-structural": {
+      "runs": 2,
+      "values": 64,
+      "unsupported": [
+        "W4391234567"
+      ],
+      "runs_flagged": 1,
+      "suspect": [
+        "W4391234567"
+      ]
+    },
+    "D-raw": {
+      "runs": 5,
+      "values": 185,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-v02": {
+      "runs": 5,
+      "values": 192,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-v02-structural": {
+      "runs": 5,
+      "values": 181,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    }
+  },
+  "C4": {
+    "B-aggressive": {
+      "runs": 2,
+      "values": 60,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "B-prudent": {
+      "runs": 2,
+      "values": 65,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "B-raw": {
+      "runs": 2,
+      "values": 59,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "B-structural": {
+      "runs": 2,
+      "values": 61,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-raw": {
+      "runs": 5,
+      "values": 166,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-v02": {
+      "runs": 5,
+      "values": 156,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-v02-structural": {
+      "runs": 5,
+      "values": 160,
+      "unsupported": [
+        "58,00"
+      ],
+      "runs_flagged": 1,
+      "suspect": []
+    },
+    "E1-R": {
+      "runs": 5,
+      "values": 156,
+      "unsupported": [
+        "58,00"
+      ],
+      "runs_flagged": 1,
+      "suspect": []
+    },
+    "E1-S": {
+      "runs": 5,
+      "values": 154,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "E1-ST": {
+      "runs": 5,
+      "values": 165,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "E1-T": {
+      "runs": 5,
+      "values": 164,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    }
+  },
+  "C5": {
+    "B-aggressive": {
+      "runs": 2,
+      "values": 49,
+      "unsupported": [
+        "600"
+      ],
+      "runs_flagged": 1,
+      "suspect": []
+    },
+    "B-prudent": {
+      "runs": 2,
+      "values": 46,
+      "unsupported": [
+        "600",
+        "600"
+      ],
+      "runs_flagged": 2,
+      "suspect": []
+    },
+    "B-raw": {
+      "runs": 2,
+      "values": 52,
+      "unsupported": [
+        "600",
+        "600"
+      ],
+      "runs_flagged": 2,
+      "suspect": []
+    },
+    "B-structural": {
+      "runs": 2,
+      "values": 43,
+      "unsupported": [],
+      "runs_flagged": 0,
+      "suspect": []
+    },
+    "D-raw": {
+      "runs": 5,
+      "values": 129,
+      "unsupported": [
+        "600",
+        "600",
+        "600",
+        "600",
+        "600"
+      ],
+      "runs_flagged": 5,
+      "suspect": []
+    },
+    "D-v02": {
+      "runs": 5,
+      "values": 141,
+      "unsupported": [
+        "600",
+        "600",
+        "600"
+      ],
+      "runs_flagged": 3,
+      "suspect": []
+    },
+    "D-v02-structural": {
+      "runs": 5,
+      "values": 126,
+      "unsupported": [
+        "600",
+        "600",
+        "600",
+        "600",
+        "600"
+      ],
+      "runs_flagged": 5,
+      "suspect": []
+    }
+  }
+}

@@ -44,7 +44,59 @@ def dumps(payload, compact: bool = False) -> str:
 
 
 def identifying(path: str) -> bool:
-    return bool(IDENTIFYING.search(path.rsplit(".", 1)[-1].removesuffix("[]")))
+    # Every list level off the name: `ids[][]` is `ids` (until 1.0 only one level came off).
+    name = path.rsplit(".", 1)[-1]
+    while name.endswith("[]"):
+        name = name[:-2]
+    return bool(IDENTIFYING.search(name))
+
+
+# Which identifying fields `protect_ids` keeps (since 1.1):
+#   all     every field named like one, at any depth (the rule since 0.2, and the default)
+#   record  names and titles at any depth; ids and links only when they belong to the record itself:
+#           at most one list level, and no object between the list and the field (`results[].id`,
+#           `items[].url`, `id`; with no list, also one wrapping object: `data.id`), not
+#           `results[].authorships[].author.id`, `data[].refunds.url` or `data.customer.id`
+#   none    no protection (the studies' 0.1 arm, `--v01`)
+# Fields the agent was seen to use are kept in every case. On the study's traces, `record` removed 10-13
+# more points of tool-output tokens on two cases, with no extra miss (`docs/measures-v1.md`); whether an
+# agent makes up the nested identifiers it no longer sees was not measured live, so it is off by default.
+PROTECT_IDS = ("all", "record", "none")
+LABELS = ("title", "name", "display_name")
+
+
+def record_level(path: str) -> bool:
+    """An identifying field of the record itself, or a name or title at any depth.
+
+    In a list, the record is each element: `items[].id`, not `items[].owner.id`. With no list, the record is the
+    output itself or the one object that wraps it (`{"data": {"id": ...}}`, as many APIs return one record):
+    `id` and `data.id`, not `data.customer.id`."""
+    name = path.rsplit(".", 1)[-1]
+    while name.endswith("[]"):
+        name = name[:-2]
+    if name in LABELS:
+        return True
+    if path.count("[]") > 1:
+        return False
+    if "[]" not in path:
+        return path.count(".") <= 1
+    return "." not in path.rsplit("[]", 1)[-1].lstrip(".")
+
+
+def protect_mode(protect_ids) -> str:
+    """`protect_ids` as one of PROTECT_IDS: True and False, as before 1.1, are "all" and "none"."""
+    if protect_ids is True:
+        return "all"
+    if protect_ids is False or protect_ids is None:
+        return "none"
+    if protect_ids not in PROTECT_IDS:
+        raise ValueError(f"protect_ids in {PROTECT_IDS} (or True/False)")
+    return protect_ids
+
+
+def protected(path: str, protect_ids="all") -> bool:
+    mode = protect_mode(protect_ids)
+    return mode != "none" and identifying(path) and (mode == "all" or record_level(path))
 
 
 MODES = ("prudent", "aggressive")
@@ -125,10 +177,12 @@ def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_em
 
 
 def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="keep",
-          protect_ids: bool = True) -> Projection:
-    """`usages`: one list of CallUsage per trace (see usage.analyse)."""
+          protect_ids: bool | str = True) -> Projection:
+    """`usages`: one list of CallUsage per trace (see usage.analyse).
+    `protect_ids`: True or "all" (the default), "record", False or "none" (see PROTECT_IDS)."""
     if mode not in MODES or source not in SOURCES or unseen not in UNSEEN:
         raise ValueError(f"mode in {MODES}, source in {SOURCES}, unseen in {UNSEEN}")
+    protect = protect_mode(protect_ids)
     used, judgeable, seen = defaultdict(set), defaultdict(set), defaultdict(set)
     for calls in usages:
         for c in calls:
@@ -138,6 +192,6 @@ def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="
             judgeable[c.tool] |= c.judgeable
             seen[c.tool] |= {p for p, _ in leaves(c.payload)}
     keep = {t: used[t] | (seen[t] - judgeable[t]) if mode == "prudent" else used[t] for t in seen}
-    if protect_ids:
-        keep = {t: k | {p for p in seen[t] if identifying(p)} for t, k in keep.items()}
+    if protect != "none":
+        keep = {t: k | {p for p in seen[t] if protected(p, protect)} for t, k in keep.items()}
     return Projection(mode, source, keep, {t: set(v) for t, v in seen.items()}, unseen)

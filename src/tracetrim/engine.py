@@ -378,10 +378,19 @@ class Engine:
         """Regenerate the report from the runs on disk; reload the policy when
         one applies. True when a policy was (re)loaded. Slow: an async adapter
         runs it in a thread."""
+        return self.install(self.learn_policy())
+
+    def learn_policy(self) -> Policy | None:
+        """The relearning, without installing its result: an async adapter runs this in a thread and installs the
+        policy on its own loop (`install`), so that no call is trimmed half with the old policy, half with the new."""
         new = self.learner.relearn() if self.learner is not None else None
-        if new is not None:
-            self.trimmer.policy = self._adjusted(new)
-        return new is not None
+        return self._adjusted(new) if new is not None else None
+
+    def install(self, policy: Policy | None) -> bool:
+        """Put a policy from `learn_policy` in place. True when there was one."""
+        if policy is not None:
+            self.trimmer.policy = policy
+        return policy is not None
 
     def close(self, answer: str | None) -> Path | None:
         path = self.done(answer)

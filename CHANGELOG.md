@@ -4,6 +4,105 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.1.0
+
+A check on the answer, and an option to remove more. **With the default options, what the model receives
+changes only where learning missed a field the agent used** (*Changed behaviour*, below; `--learning 1.0`
+restores 1.0); everything else listed in STABILITY.md holds. Measured offline on the recorded runs, and the option
+live under `protocol-v11.md`: [docs/measures-v1.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v1.md).
+The paper is unchanged.
+
+- **Values of the answer that no tool returned** (`tracetrim.grounding`). At every closing, the numbers of three
+  digits or more and the codes containing them that the answer cites are searched in every tool output of the
+  run, as the tool returned it (amounts in minor units, dates from timestamps and grouped numbers included), and
+  in the agent's arguments; a rounding of a value (`1.600` for 1612) and, written as a percentage, a value times
+  100 count as found; years, so any 4-digit number from 1900 to 2099, are not checked. The proxy logs those it
+  does not find; the report has a new
+  section, with the runs and the values, and `report.json` a new key, `grounding`. When a value appears only in
+  runs whose results were filtered, and never where nothing was, a MANUAL suggestion asks to read those
+  answers: an agent that no longer sees a field can make one up. On the study's recorded runs it flags the
+  identifiers made up in Study 1, and no value elsewhere. It does not see a true value given to the wrong item.
+  `tracetrim report` has the section too.
+- **`--protect-ids record`** (proxy with `--auto`, `learn`, `measure`, `report`; `AutoTrim(protect_ids="record")`;
+  `learn(protect_ids="record")`), off by default. Ids and links are kept whatever the usage only when they belong
+  to the record itself (`results[].id`, `items[].url`, and `data.id` when one object wraps the record); names and
+  titles at any depth; nested ids and links
+  (`results[].concepts[].id`, `data[].refunds.url`) only if the agent was seen to use them. On the study's
+  traces: 10.1 more points of tool-output tokens removed on the literature scan, 12.6 on the CI-failure report, 5.9 on
+  billing, with no extra miss. Live, under `protocol-v11.md` (30 runs, frozen before the first): +6.6 points on
+  the literature scan, +10.6 on the CI-failure report, +5.9 on billing, against the rule of 1.0, with the same
+  gates, no value made up, and answers that read the same; cost per run −2.8%, −19.3% and −4.4%. A candidate
+  for the default in a later minor release; off by default in 1.1. The default, `all`, is the rule since 0.2; in automatic mode
+  the config records `protect_ids` only when it is not the default.
+- **The report in five languages**: English, Italian, Spanish, French and Simplified Chinese, chosen from a menu
+  (by default the browser's, when the report has it). The suggestions in `report.json` carry the three new
+  languages as new keys (`es`, `fr`, `zh`); the texts in the other languages live in `tracetrim.i18n`, and a test
+  fails if any is missing.
+- **The report, redesigned** (its layout is not part of STABILITY.md; its text, sections and `report.json` are
+  unchanged): a sticky bar with the language and a light/dark/automatic theme, navigation by section, the saving
+  with its split and the state of automatic mode at the top, suggestions as cards with their counts by level and
+  long lists folded, the runtime config folded with a copy button, tables that scroll inside their card instead of
+  widening the page. Still one file, with nothing loaded from the network.
+- **The live report updates in place.** Served by the proxy over HTTP, the page no longer reloads every 10
+  seconds: it asks `/report/stamp` (same token) whether the report changed, and swaps the content when it did,
+  keeping scroll position, open sections, language and theme. A "live" mark in the bar; paused while the tab is
+  hidden, slower after a failure.
+- `tracetrim --version`.
+
+### Changed behaviour
+
+What the model receives can change with these, so each is listed here and `--learning 1.0` (proxy with
+`--auto`, `learn`, `measure`, `report`; `AutoTrim(learning="1.0")`) restores the rules of 1.0 for the rest of
+1.x. All of them make learning keep a field it was missing, or measure what run time deploys. The studies'
+scripts keep the rules of 1.0, so the paper's numbers do not move.
+
+- **Negative numbers are found.** Usage detection read text without the minus sign and looked for numbers with
+  it: a negative value the agent wrote was never seen as used, and the prudent projection could remove it.
+- **A long text quoted in part counts as used** when any of its pieces is written for the first time after the
+  call. Until 1.0 one piece already present before (in the user's request, as search snippets often are)
+  cancelled all the others.
+- **The report measures as run time writes**: compact JSON, empty containers kept. Until 1.0 it measured with
+  the spaces of `json.dumps`, so on outputs already compact the saving came out negative (the page showed
+  "−-49%") and a tool could stay untrimmed for it. With `--no-compact` it measures without compact JSON.
+
+### Fixed (an independent review of all the code, before this release)
+
+Each with a test in `tests/test_review_11.py`, `tests/test_coverage_11.py`.
+
+- **Proxy**: over HTTP with a token, an unauthorised request crashed the handler instead of getting 401 (a
+  regression of this release's live report, never published); a tool text with a line starting like
+  `[trimmed]` raised an error in the log after the tool had run; a new policy could be installed by the
+  learning thread while a call was being trimmed, mixing old and new; SIGTERM left upstream servers still
+  starting running; `/report` refused `--allowed-host name:*`.
+- **Automatic mode**: a failure after a run's trace was written (the evidence, the disk) left `complete_runs`
+  behind for good and moved the run's sizes to the next run; a trace or a config written in place by 0.3.5 and
+  cut short stopped every later relearning (it is now set aside as `.corrupt`); an `expand` made after a
+  closing was counted in the next run, so one task could look like two for the switch-off and promotions;
+  turns numbered from 1 made every call look as if it could have been made earlier.
+- **The check on the answer**: values rounded to their decimals (`29,46` for 29.456, `4.57%` for 0.04567),
+  rounded millions and negative numbers were reported as unsupported.
+- **Report**: `"error": null` counted as an error; with no tool output the page showed −100% and suggested
+  re-serialising; `-o report.json` overwrote the page with the JSON (now refused).
+- **Traces**: a JSONL `output` written as a JSON object stopped the reading; an OpenAI Playground export of an
+  agent with function tools (`function_call`, `function_call_output`) loaded with no call.
+- **Projection**: an identifier in a list of lists (`ids[][]`) was not recognised.
+- **`tracetrim init`**: a tracetrim entry started through a launcher (`uvx tracetrim proxy`, `cmd /c tracetrim
+  proxy`, `python …/tracetrim proxy`) was wrapped in a second one; a relative `--servers` or `--auto` in an
+  existing entry was resolved from init's directory (now refused, with what to do); if the host's file could not
+  be written, the servers file had already been rewritten (now the backup comes first and the servers file goes
+  back); stopping the check with Ctrl-C hid the backup and the undo command (the summary now comes before the
+  check); a URL ending in `/sse` with no `type` was moved although the host may use SSE for it (now it stays);
+  the check of a server that signs in with OAuth started a hidden browser login and failed after two minutes
+  (now skipped, with what to run); `"env": []`, `"args": false` stopped the whole run instead of leaving that
+  server in the host.
+- **OAuth**: two proxies refreshing the same token at once could collide on the temporary file.
+- The work directory of 0.6.0 that `tests/test_stability.py` reads had its `traces/` left out of git by
+  `.gitignore`, so on a clean checkout that test failed. The fixture's traces are now in the repository.
+- Measures, scripts and results of the analysis behind this release: `docs/measures-v1.md`,
+  `experiments/remaining.py`, `remaining_detail.py`, `identifiers.py`, `grounding.py`, `results/v1/`. Where the
+  saving is not: the JSON format (a columnar encoding saves at most 5% more; TOON is larger than compact JSON on
+  these payloads) and the rows (`docs/rows.md`).
+
 ## 1.0.0
 
 The first stable release: from here on, what [STABILITY.md](https://github.com/alepom/tracetrim/blob/master/STABILITY.md)

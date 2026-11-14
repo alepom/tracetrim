@@ -28,6 +28,7 @@ import sys
 from pathlib import Path
 
 from . import measure as m
+from .about import VERSION
 from .evidence import Adaptive
 from .projection import MODES, SOURCES, UNSEEN, Projection, learn
 from .traces import load
@@ -50,14 +51,24 @@ def row(cols, widths) -> str:
                           for i, (c, w) in enumerate(zip(cols, widths)))
 
 
-def _read(paths, v01=False):
+def _read(paths, v01=False, learning="1.1"):
     traces = [load(p) for p in paths]
-    return traces, [analyse(t, normalize=not v01, comma_grouping=not v01) for t in traces]
+    from .usage import learning_flags
+    flags = learning_flags("1.0" if v01 else learning)
+    return traces, [analyse(t, normalize=not v01, comma_grouping=not v01, **flags) for t in traces]
+
+
+def _protect(a):
+    """--v01 means no protection; --protect-ids picks the rule otherwise (since 1.1)."""
+    if a.v01 and a.protect_ids != "all":
+        raise SystemExit("--v01 already turns identifier protection off: drop --protect-ids")
+    # The values of 1.0 (true, false) where they existed, so that report.json keeps its meaning.
+    return False if a.v01 else (True if a.protect_ids == "all" else a.protect_ids)
 
 
 def cmd_learn(a):
-    _, usages = _read(a.traces, a.v01)
-    p = learn(usages, a.mode, a.source, a.unseen, protect_ids=not a.v01)
+    _, usages = _read(a.traces, a.v01, a.learning)
+    p = learn(usages, a.mode, a.source, a.unseen, protect_ids=_protect(a))
     p.save(a.output)
     fields = sum(len(v) for v in p.keep.values())
     print(f"{a.output}: {len(p.keep)} tools, {fields} fields kept ({a.mode}, source={a.source})")
@@ -73,7 +84,7 @@ def cmd_apply(a):
 
 
 def cmd_measure(a):
-    traces, usages = _read(a.traces, a.v01)
+    traces, usages = _read(a.traces, a.v01, a.learning)
 
     print("\n  TRACES READ\n")
     w = [28, 8, 8, 8, 10, 8]
@@ -85,7 +96,7 @@ def cmd_measure(a):
         print(row([t.name[:27], len(us), js, len(us) - js, fmt(lv), sum(len(u.used) for u in us)], w))
     print("  json = structured output · other = prose, errors, empty")
 
-    rows = m.leave_one_out([t.name for t in traces], usages, a.source, a.unseen, protect_ids=not a.v01)
+    rows = m.leave_one_out([t.name for t in traces], usages, a.source, a.unseen, protect_ids=_protect(a))
     seen = "everything the agent wrote" if a.source == "full" else "tool calls only (MCP proxy)"
     print(f"\n\n  LEAVE-ONE-OUT PROJECTION   learned from: {seen} · unseen fields: {a.unseen}\n")
     w = [28, 12, 12, 7, 12, 7, 9, 7]
@@ -125,8 +136,11 @@ def cmd_measure(a):
 
 def cmd_report(a):
     from . import report as rp
-    traces, usages = _read(a.traces, a.v01)
-    d = rp.compute([t.name for t in traces], usages, a.unseen, protect_ids=not a.v01)
+    traces, usages = _read(a.traces, a.v01, a.learning)
+    d = rp.compute([t.name for t in traces], usages, a.unseen, protect_ids=_protect(a),
+                   runtime=not a.v01 and a.learning != "1.0")
+    from . import grounding
+    d["grounding"] = grounding.summarise(traces)
     from . import turns
     d["turns"] = turns.summarise(traces, a.strategy_max_several, a.strategy_min_earlier, a.strategy_min_runs)
     if a.tools:
@@ -141,6 +155,9 @@ def cmd_report(a):
                                                  measure.tokenizer(), rp.MIN_TRACES)
     sugg = rp.suggestions(d)
     out = Path(a.output)
+    if out.suffix.lower() == ".json":
+        raise SystemExit("-o names the HTML page (report.html); report.json, the config and the projection are "
+                         "written next to it")
     out.parent.mkdir(parents=True, exist_ok=True)
     cfg_path, proj_path = out.with_suffix(".config.json"), out.with_suffix(".projection.json")
     config, projection = rp.build_config(d, sugg, usages, proj_path.name)
@@ -174,6 +191,10 @@ def cmd_proxy(a):
     given = [name for name, on in adaptive.items() if on]
     if given and not a.auto:
         raise SystemExit(f"{', '.join(given)}: adaptive learning works in automatic mode only; add --auto WORKDIR")
+    if a.learning != "1.1" and not a.auto:
+        raise SystemExit("--learning sets the rules of learning: it works in automatic mode only; add --auto WORKDIR")
+    if a.protect_ids != "all" and not a.auto:
+        raise SystemExit("--protect-ids sets what learning keeps: it works in automatic mode only; add --auto WORKDIR")
     if adaptive["--promote-runs"] and not a.promote:
         raise SystemExit("--promote-runs sets the threshold of --promote: add --promote")
     if (adaptive["--sample-max-share"] or adaptive["--sample-seed"]) and not a.sample_rate:
@@ -190,7 +211,7 @@ def cmd_proxy(a):
                 compact=False if a.no_compact else None,
                 breakdown=not a.no_breakdown, log_client=a.log_client,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
-                switch_off_runs=a.switch_off_runs,
+                switch_off_runs=a.switch_off_runs, protect_ids=a.protect_ids, learning=a.learning,
                 sample_max_share=a.sample_max_share, sample_seed=a.sample_seed,
                 servers=load_servers(a.servers) if a.servers else {})
     if a.http:
@@ -225,7 +246,10 @@ def cmd_promotions(a):
         saved = (report.get("adaptive") or {}).get("settings") or {}
         known = {f.name for f in fields(Adaptive)}
         adaptive = Adaptive(**{k: v for k, v in saved.items() if k in known})
-        Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive).relearn()
+        Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive,
+                protect_ids=config.get("auto", {}).get("protect_ids", "all"),
+                learning=config.get("auto", {}).get("learning", "1.1"),
+                compact=config.get("compact", True) is not False).relearn()
     for p in data["promotions"]:
         mark = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"
@@ -315,6 +339,7 @@ def cmd_logout(a):
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tracetrim", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--version", action="version", version=f"tracetrim {VERSION}")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("learn", help="learn a projection from traces")
@@ -325,6 +350,10 @@ def main(argv=None):
     s.add_argument("--unseen", choices=UNSEEN, default="keep")
     s.add_argument("--v01", action="store_true",
                    help="tracetrim 0.1 behaviour: no identifier protection, no transformed values")
+    s.add_argument("--protect-ids", choices=("all", "record"), default="all",
+                   help="which identifying fields are kept whatever the usage: all (every field named like an id, the default) or record (ids and links of the record itself, names and titles at any depth; since 1.1)")
+    s.add_argument("--learning", choices=("1.1", "1.0"), default="1.1",
+                   help="the learning rules: 1.1 (the default) or 1.0, the rules of tracetrim 1.0 (negative numbers never found, a long text cancelled by one piece written before the call, the report measured without compact JSON)")
     s.set_defaults(func=cmd_learn)
 
     s = sub.add_parser("apply", help="trim one tool output read from stdin")
@@ -340,9 +369,13 @@ def main(argv=None):
                    help="drop reproduces the original measurements")
     s.add_argument("--v01", action="store_true",
                    help="tracetrim 0.1 behaviour: no identifier protection, no transformed values")
+    s.add_argument("--protect-ids", choices=("all", "record"), default="all",
+                   help="which identifying fields are kept whatever the usage: all (every field named like an id, the default) or record (ids and links of the record itself, names and titles at any depth; since 1.1)")
+    s.add_argument("--learning", choices=("1.1", "1.0"), default="1.1",
+                   help="the learning rules: 1.1 (the default) or 1.0, the rules of tracetrim 1.0 (negative numbers never found, a long text cancelled by one piece written before the call, the report measured without compact JSON)")
     s.set_defaults(func=cmd_measure)
 
-    s = sub.add_parser("report", help="bilingual telemetry report (HTML + JSON)")
+    s = sub.add_parser("report", help="telemetry report in five languages (HTML + JSON)")
     s.add_argument("traces", nargs="+")
     s.add_argument("-o", "--output", default="report.html")
     s.add_argument("--tools", metavar="FILE",
@@ -359,6 +392,10 @@ def main(argv=None):
                    help=f"... and at least this share of the calls could have been made in an earlier turn (default {MIN_EARLIER}) ...")
     s.add_argument("--strategy-min-runs", type=int, default=MIN_RUNS, metavar="N",
                    help=f"... in at least this many runs that record their turns (default {MIN_RUNS})")
+    s.add_argument("--protect-ids", choices=("all", "record"), default="all",
+                   help="which identifying fields are kept whatever the usage: all (every field named like an id, the default) or record (ids and links of the record itself, names and titles at any depth; since 1.1)")
+    s.add_argument("--learning", choices=("1.1", "1.0"), default="1.1",
+                   help="the learning rules: 1.1 (the default) or 1.0, the rules of tracetrim 1.0 (negative numbers never found, a long text cancelled by one piece written before the call, the report measured without compact JSON)")
     s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("proxy", help="MCP proxy: upstream tools with trimmed outputs and expand")
@@ -409,9 +446,13 @@ def main(argv=None):
     s.add_argument("--sample-max-share", type=float, default=0.2, metavar="F",
                    help="cost limit of sampling: tokens it may add, as a share of the tokens trimming removed (default 0.2)")
     s.add_argument("--sample-seed", type=int, default=0, help="seed of the sampling sequence")
+    s.add_argument("--protect-ids", choices=("all", "record"), default="all",
+                   help="--auto: " + "which identifying fields are kept whatever the usage: all (every field named like an id, the default) or record (ids and links of the record itself, names and titles at any depth; since 1.1)")
     s.add_argument("--switch-off-runs", type=int, default=SWITCH_OFF_RUNS, metavar="N",
                    help="--auto: stop trimming a tool only when its results were expanded in at least N distinct "
                         f"runs (default {SWITCH_OFF_RUNS}; 1 restores the behaviour up to 0.3.5)")
+    s.add_argument("--learning", choices=("1.1", "1.0"), default="1.1",
+                   help="the learning rules: 1.1 (the default) or 1.0, the rules of tracetrim 1.0 (negative numbers never found, a long text cancelled by one piece written before the call, the report measured without compact JSON)")
     s.set_defaults(func=cmd_proxy)
 
     s = sub.add_parser("promotions", help="list the fields promoted on evidence (--auto), or take them back")

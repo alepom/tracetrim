@@ -1,0 +1,259 @@
+{
+  "C1": {
+    "totals": {
+      "raw": 817865,
+      "compact": 616815,
+      "other_paths": 0,
+      "prudent": 300279,
+      "toon_prudent": 334228,
+      "unseen": 504,
+      "unjudged": 29393,
+      "elsewhere": 72765,
+      "identifier": 66195,
+      "oracle": 131422,
+      "toon_oracle": 148858,
+      "prose": 114,
+      "untrimmed_tool": 42
+    },
+    "per_tool": {
+      "kw_data_google_trends_explore": {
+        "prudent": 3071,
+        "unseen": 0,
+        "unjudged": 1554,
+        "elsewhere": 0,
+        "identifier": 748,
+        "oracle": 769
+      },
+      "serp_organic_live_advanced": {
+        "prudent": 147418,
+        "unseen": 504,
+        "unjudged": 5131,
+        "elsewhere": 45783,
+        "identifier": 34617,
+        "oracle": 61383
+      },
+      "serp_youtube_organic_live_advanced": {
+        "prudent": 49215,
+        "unseen": 0,
+        "unjudged": 4875,
+        "elsewhere": 10336,
+        "identifier": 27436,
+        "oracle": 6568
+      },
+      "dataforseo_labs_google_keyword_suggestions": {
+        "prudent": 39606,
+        "unseen": 0,
+        "unjudged": 7216,
+        "elsewhere": 11602,
+        "identifier": 813,
+        "oracle": 19975
+      },
+      "dataforseo_labs_google_keyword_ideas": {
+        "prudent": 11492,
+        "unseen": 0,
+        "unjudged": 2094,
+        "elsewhere": 2795,
+        "identifier": 182,
+        "oracle": 6421
+      },
+      "kw_data_google_ads_search_volume": {
+        "prudent": 13834,
+        "unseen": 0,
+        "unjudged": 175,
+        "elsewhere": 1589,
+        "identifier": 393,
+        "oracle": 11677
+      },
+      "dataforseo_labs_search_intent": {
+        "prudent": 1177,
+        "unseen": 0,
+        "unjudged": 30,
+        "elsewhere": 0,
+        "identifier": 137,
+        "oracle": 1010
+      },
+      "dataforseo_labs_bulk_keyword_difficulty": {
+        "prudent": 1764,
+        "unseen": 0,
+        "unjudged": 254,
+        "elsewhere": 0,
+        "identifier": 183,
+        "oracle": 1327
+      },
+      "dataforseo_labs_google_ranked_keywords": {
+        "prudent": 28115,
+        "unseen": 0,
+        "unjudged": 5432,
+        "elsewhere": 660,
+        "identifier": 1507,
+        "oracle": 20516
+      },
+      "dataforseo_labs_google_relevant_pages": {
+        "prudent": 4587,
+        "unseen": 0,
+        "unjudged": 2632,
+        "elsewhere": 0,
+        "identifier": 179,
+        "oracle": 1776
+      }
+    }
+  },
+  "C2": {
+    "totals": {
+      "raw": 527542,
+      "compact": 243231,
+      "other_paths": 0,
+      "prudent": 222779,
+      "toon_prudent": 236176,
+      "unseen": 132,
+      "unjudged": 14701,
+      "elsewhere": 41052,
+      "identifier": 31087,
+      "oracle": 135807,
+      "toon_oracle": 139634,
+      "prose": 236607
+    },
+    "per_tool": {
+      "serp_organic_live_advanced": {
+        "prudent": 222779,
+        "unseen": 132,
+        "unjudged": 14701,
+        "elsewhere": 41052,
+        "identifier": 31087,
+        "oracle": 135807
+      }
+    }
+  },
+  "C3": {
+    "totals": {
+      "raw": 2262885,
+      "compact": 1908725,
+      "other_paths": 0,
+      "prudent": 1087625,
+      "toon_prudent": 1192555,
+      "unseen": 13415,
+      "unjudged": 190318,
+      "elsewhere": 204774,
+      "identifier": 359791,
+      "oracle": 319327,
+      "toon_oracle": 341309
+    },
+    "per_tool": {
+      "openalex_search_works": {
+        "prudent": 1087625,
+        "unseen": 13415,
+        "unjudged": 190318,
+        "elsewhere": 204774,
+        "identifier": 359791,
+        "oracle": 319327
+      }
+    }
+  },
+  "C4": {
+    "totals": {
+      "raw": 154833,
+      "compact": 103366,
+      "other_paths": 0,
+      "prudent": 63017,
+      "toon_prudent": 70809,
+      "unseen": 0,
+      "unjudged": 16721,
+      "elsewhere": 8838,
+      "identifier": 11548,
+      "oracle": 25910,
+      "toon_oracle": 28996
+    },
+    "per_tool": {
+      "stripe_search_customers": {
+        "prudent": 13308,
+        "unseen": 0,
+        "unjudged": 3840,
+        "elsewhere": 976,
+        "identifier": 4450,
+        "oracle": 4042
+      },
+      "stripe_list_charges": {
+        "prudent": 17589,
+        "unseen": 0,
+        "unjudged": 3894,
+        "elsewhere": 4045,
+        "identifier": 1670,
+        "oracle": 7980
+      },
+      "stripe_list_invoices": {
+        "prudent": 28418,
+        "unseen": 0,
+        "unjudged": 7615,
+        "elsewhere": 3600,
+        "identifier": 4724,
+        "oracle": 12479
+      },
+      "stripe_list_subscriptions": {
+        "prudent": 3504,
+        "unseen": 0,
+        "unjudged": 1344,
+        "elsewhere": 211,
+        "identifier": 688,
+        "oracle": 1261
+      },
+      "stripe_list_refunds": {
+        "prudent": 198,
+        "unseen": 0,
+        "unjudged": 28,
+        "elsewhere": 6,
+        "identifier": 16,
+        "oracle": 148
+      }
+    }
+  },
+  "C5": {
+    "totals": {
+      "raw": 599808,
+      "compact": 397488,
+      "other_paths": 0,
+      "prudent": 117230,
+      "toon_prudent": 132546,
+      "unseen": 0,
+      "unjudged": 16769,
+      "elsewhere": 1671,
+      "identifier": 86720,
+      "oracle": 12070,
+      "toon_oracle": 13524,
+      "prose": 92816
+    },
+    "per_tool": {
+      "gh_list_workflow_runs": {
+        "prudent": 18900,
+        "unseen": 0,
+        "unjudged": 1640,
+        "elsewhere": 252,
+        "identifier": 14872,
+        "oracle": 2136
+      },
+      "gh_list_jobs_for_workflow_run": {
+        "prudent": 14552,
+        "unseen": 0,
+        "unjudged": 200,
+        "elsewhere": 360,
+        "identifier": 8080,
+        "oracle": 5912
+      },
+      "gh_list_issues": {
+        "prudent": 43398,
+        "unseen": 0,
+        "unjudged": 7144,
+        "elsewhere": 574,
+        "identifier": 33048,
+        "oracle": 2632
+      },
+      "gh_list_pull_requests": {
+        "prudent": 40380,
+        "unseen": 0,
+        "unjudged": 7785,
+        "elsewhere": 485,
+        "identifier": 30720,
+        "oracle": 1390
+      }
+    }
+  }
+}

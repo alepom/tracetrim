@@ -26,6 +26,7 @@ import html
 import json
 import logging
 import os
+import secrets
 import sys
 import time
 import webbrowser
@@ -72,8 +73,8 @@ class FileStorage:
     def _save(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         os.chmod(self.path.parent, 0o700)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.unlink(missing_ok=True)
+        # A name of its own: two proxies refreshing the same server at once must not collide on it.
+        tmp = self.path.with_name(f"{self.path.name}.{os.getpid()}.{secrets.token_hex(4)}.tmp")
         # Created readable by the owner only, never even briefly by others.
         fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         with os.fdopen(fd, "w") as fh:

@@ -60,6 +60,8 @@ WARN, CAP = caps("v04")          # local, never published: experiments/caps.py
 DATAFORSEO = ("C1", "C2")                      # cases whose tools are billed by the provider
 GUARD_CALLS, GUARD_TURNS = 80, 40              # a safety guard, as in the original study: a run that hits it is flagged
 E1_ARMS = {"R": (False, False), "S": (True, False), "T": (False, True), "ST": (True, True)}      # strategy, trimming
+# E4 (protocol-v11.md, experiments/e4.py): the fixed configuration with the identifier rule of 1.0 or of `record`.
+E4_ARMS = {"T": "all", "TR": "record"}
 E2 = V04["e2"]
 E2_ARMS = {"base": {}, "promotion": {"promote": True},
            "sampling": {"sample_rate": E2["sample_rate"], "sample_max_share": E2["sample_max_share"]},
@@ -230,6 +232,9 @@ def book(where: Where, run: "Run") -> dict:
     if run.experiment == "E3":
         from . import e3
         return e3.book(where)
+    if run.experiment == "E4":
+        from . import e4
+        return e4.book(where)
     return {"ledger": where.ledger, "cap": CAP, "cost": cost, "model": PRICES["model"], "prices": "experiments/prices.json",
             "may_start": may_start}
 
@@ -339,9 +344,10 @@ class Trimmed:
         return self.last.text
 
 
-def fixed_policy(case: str):
+def fixed_policy(case: str, protect_ids="all"):
     """E1, arms T and ST: the configuration tracetrim builds from the case's
-    Phase A traces, fixed for every run. Nothing is learned between runs."""
+    Phase A traces, fixed for every run. Nothing is learned between runs.
+    E4: the same, with the identifier rule of its arm (`protect_ids`)."""
     from tracetrim import analyse
     from tracetrim import report as rp
     from tracetrim.runtime import Policy
@@ -349,7 +355,7 @@ def fixed_policy(case: str):
     if len(traces) < 2:
         raise SystemExit(f"{case}: the Phase A traces are needed ($TRACETRIM_TRACES), found {len(traces)}")
     usages = [analyse(t) for t in traces]
-    d = rp.compute([t.name for t in traces], usages)
+    d = rp.compute([t.name for t in traces], usages, protect_ids=True if protect_ids == "all" else protect_ids)
     config, projection = rp.build_config(d, rp.suggestions(d), usages, "report.projection.json")
     if not config["tools"]:
         raise SystemExit(f"{case}: the configuration trims no tool, so the protocol gives it no trimmed arm")
@@ -395,7 +401,9 @@ def projection_keeps(workdir: Path, case: str) -> dict:
 def instructions(run: Run) -> tuple[str, str]:
     """(the case's system prompt, the skill text this arm adds to it)."""
     system = (PROMPTS / f"{run.case.lower()}-system.md").read_text(encoding="utf-8")
-    if run.experiment in ("E1", "E3"):
+    if run.experiment == "E4":
+        added = skill.text(strategy=False, done=False, expand=True)      # as E1's arm T: both arms trim
+    elif run.experiment in ("E1", "E3"):
         strategy, trimming = E1_ARMS[run.arm]
         added = skill.text(strategy=strategy, done=False, expand=trimming)
     else:
@@ -456,6 +464,8 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
                 raise SystemExit(f"{workdir}: run {run.n} of a sequence needs the work directory of the runs before it")
             tt = AutoTrim(workdir, MIN_RUNS, adaptive=adaptive, compact=False)  # serialisation it was run with (compact JSON came in 0.4)
         engine, kept_before = tt.engine, projection_keeps(workdir, run.case)
+    elif run.experiment == "E4":
+        engine = Engine(policy=fixed_policy(run.case, E4_ARMS[run.arm]))
     elif E1_ARMS[run.arm][1]:
         engine = Engine(policy=fixed_policy(run.case))
 
@@ -595,7 +605,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
             "sampling": st["sampling"], "full_cheaper": st["full_cheaper"],
         }
     meta = {
-        "protocol": "protocol-v04.md", "experiment": run.experiment, "case": run.case, "run": run.id, "arm": run.arm,
+        "protocol": acct.get("protocol", "protocol-v04.md"), "experiment": run.experiment, "case": run.case, "run": run.id, "arm": run.arm,
         "sequence": run.sequence or None, "n": run.n, "model": model, "dry_run": dry,
         "started": datetime.fromtimestamp(t0, timezone.utc).isoformat(timespec="seconds"),
         "seconds": round(time.time() - t0, 1),

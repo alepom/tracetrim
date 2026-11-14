@@ -1,0 +1,131 @@
+{
+  "C1": {
+    "unjudged_values": {
+      "string": 716,
+      "boolean": 431,
+      "number": 3882
+    },
+    "unjudged_tokens_by_kind": {
+      "string": 4070,
+      "boolean": 3200,
+      "number": 20702
+    },
+    "identifier_tokens_top": {
+      "serp_organic_live_advanced: items[].url": 13110,
+      "serp_youtube_organic_live_advanced: items[].url": 12297,
+      "serp_youtube_organic_live_advanced: items[].channel_id": 6247,
+      "serp_organic_live_advanced: items[].links[].url": 3714,
+      "serp_youtube_organic_live_advanced: items[].video_id": 3521,
+      "serp_organic_live_advanced: items[].items[].references[].title": 3265,
+      "serp_organic_live_advanced: items[].items[].references[].url": 3105,
+      "serp_youtube_organic_live_advanced: items[].title": 2954
+    },
+    "identifier_tokens_total_marginal": 65752,
+    "prudent": 300279,
+    "columnar": 295888
+  },
+  "C2": {
+    "unjudged_values": {
+      "string": 90,
+      "number": 2825,
+      "boolean": 116
+    },
+    "unjudged_tokens_by_kind": {
+      "string": 450,
+      "number": 13192,
+      "boolean": 1059
+    },
+    "identifier_tokens_top": {
+      "serp_organic_live_advanced: items[].url": 11744,
+      "serp_organic_live_advanced: items[].links[].url": 5235,
+      "serp_organic_live_advanced: items[].items[].url": 4171,
+      "serp_organic_live_advanced: items[].items[].items[].url": 3321,
+      "serp_organic_live_advanced: id": 2077,
+      "serp_organic_live_advanced: items[].items[].title": 1704,
+      "serp_organic_live_advanced: items[].title": 1331,
+      "serp_organic_live_advanced: items[].images[].url": 411
+    },
+    "identifier_tokens_total_marginal": 30813,
+    "prudent": 222779,
+    "columnar": 221856
+  },
+  "C3": {
+    "unjudged_values": {
+      "number": 12937,
+      "null": 2066,
+      "string": 5289,
+      "boolean": 13626
+    },
+    "unjudged_tokens_by_kind": {
+      "number": 64190,
+      "null": 13093,
+      "string": 27595,
+      "boolean": 87195
+    },
+    "identifier_tokens_top": {
+      "openalex_search_works: results[].concepts[].id": 56425,
+      "openalex_search_works: results[].authorships[].author.id": 30511,
+      "openalex_search_works: results[].authorships[].institutions[].id": 28990,
+      "openalex_search_works: results[].authorships[].institutions[].display_name": 19788,
+      "openalex_search_works: results[].authorships[].author.display_name": 19549,
+      "openalex_search_works: results[].topics[].subfield.id": 11895,
+      "openalex_search_works: results[].locations[].id": 11066,
+      "openalex_search_works: results[].topics[].field.id": 10980
+    },
+    "identifier_tokens_total_marginal": 329873,
+    "prudent": 1087625,
+    "columnar": 1034189
+  },
+  "C4": {
+    "unjudged_values": {
+      "boolean": 1657,
+      "string": 396,
+      "number": 821,
+      "null": 236
+    },
+    "unjudged_tokens_by_kind": {
+      "boolean": 9055,
+      "string": 1584,
+      "number": 4664,
+      "null": 1489
+    },
+    "identifier_tokens_top": {
+      "stripe_list_charges: data[].refunds.url": 1598,
+      "stripe_list_invoices: data[].lines.url": 1051,
+      "stripe_list_invoices: data[].lines.data[].id": 789,
+      "stripe_list_invoices: data[].default_tax_rates[].id": 707,
+      "stripe_list_invoices: data[].payments.url": 672,
+      "stripe_search_customers: data[].sources.data[].id": 608,
+      "stripe_list_invoices: data[].number": 576,
+      "stripe_search_customers: data[].sources.url": 520
+    },
+    "identifier_tokens_total_marginal": 11356,
+    "prudent": 63017,
+    "columnar": 62791
+  },
+  "C5": {
+    "unjudged_values": {
+      "number": 1560,
+      "null": 208,
+      "boolean": 1768
+    },
+    "unjudged_tokens_by_kind": {
+      "number": 7976,
+      "null": 960,
+      "boolean": 7880
+    },
+    "identifier_tokens_top": {
+      "gh_list_jobs_for_workflow_run: jobs[].html_url": 2464,
+      "gh_list_jobs_for_workflow_run: jobs[].steps[].number": 2416,
+      "gh_list_issues: [].html_url": 1360,
+      "gh_list_issues: [].labels[].node_id": 1216,
+      "gh_list_jobs_for_workflow_run: jobs[].node_id": 1176,
+      "gh_list_issues: [].labels[].url": 1144,
+      "gh_list_issues: [].assignees[].html_url": 1120,
+      "gh_list_issues: [].user.html_url": 1120
+    },
+    "identifier_tokens_total_marginal": 83904,
+    "prudent": 117230,
+    "columnar": 115654
+  }
+}

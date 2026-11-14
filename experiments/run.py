@@ -178,6 +178,9 @@ def main():
         # The runs of protocol-v04-e3.md, on another model: experiments/e3.py.
         from . import e3
         return e3.main([a for a in sys.argv[1:] if a != "--e3"])
+    if "--e4" in sys.argv[1:]:
+        from . import e4
+        return e4.main([a for a in sys.argv[1:] if a != "--e4"])
     if "--v04" in sys.argv[1:]:
         # The runs of protocol-v04.md have their own arms, ledger and stop rules: experiments/v04.py.
         from . import v04

@@ -1,0 +1,62 @@
+{
+  "C1": {
+    "raw_structured": 817695,
+    "all": 300279,
+    "labels": 293147,
+    "record": 291115,
+    "none": 264982,
+    "calls": 166,
+    "miss_all": 2,
+    "miss_labels": 2,
+    "miss_record": 3,
+    "miss_none": 3
+  },
+  "C2": {
+    "raw_structured": 290935,
+    "all": 222779,
+    "labels": 219322,
+    "record": 219162,
+    "none": 217085,
+    "calls": 90,
+    "miss_all": 8,
+    "miss_labels": 8,
+    "miss_record": 9,
+    "miss_none": 9
+  },
+  "C3": {
+    "raw_structured": 2262885,
+    "all": 1087625,
+    "labels": 861020,
+    "record": 827864,
+    "none": 827864,
+    "calls": 61,
+    "miss_all": 2,
+    "miss_labels": 2,
+    "miss_record": 3,
+    "miss_none": 3
+  },
+  "C4": {
+    "raw_structured": 154833,
+    "all": 63017,
+    "labels": 53830,
+    "record": 53221,
+    "none": 51661,
+    "calls": 84,
+    "miss_all": 9,
+    "miss_labels": 9,
+    "miss_record": 9,
+    "miss_none": 9
+  },
+  "C5": {
+    "raw_structured": 506992,
+    "all": 117230,
+    "labels": 53278,
+    "record": 51542,
+    "none": 37998,
+    "calls": 64,
+    "miss_all": 3,
+    "miss_labels": 3,
+    "miss_record": 3,
+    "miss_none": 3
+  }
+}
