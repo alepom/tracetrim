@@ -4,7 +4,10 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
-## Unreleased
+## 1.1.1
+
+Fixes only. **Nothing changes in what the model receives.** Not archived on Zenodo: the archive of 1.1.0
+(DOI 10.5281/zenodo.24263018) stays the version to cite.
 
 - Report: the table of values no tool returned, and the list of tools never called, sat outside the box that
   scrolls, and the values stayed on one line: with ten identifiers the whole page grew wider than the window.
