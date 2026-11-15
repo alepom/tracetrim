@@ -365,8 +365,9 @@ def _server(o: Options):
                 + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
             if learner.unsupported:
                 shown = ", ".join(learner.unsupported[:5]) + (" …" if len(learner.unsupported) > 5 else "")
-                log(f"  {len(learner.unsupported)} value{'' if len(learner.unsupported) == 1 else 's'} of the answer "
-                    f"appear in no tool output of the run: {shown} (see the report)")
+                one = len(learner.unsupported) == 1
+                log(f"  {len(learner.unsupported)} value{'' if one else 's'} of the answer "
+                    f"appear{'s' if one else ''} in no tool output of the run: {shown} (see the report)")
             return True
 
     routes: dict[str, tuple[str, str]] = {}

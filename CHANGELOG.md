@@ -4,6 +4,10 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## Unreleased
+
+- The proxy's log line for a single value of the answer that no tool returned is in the singular ("1 value … appears").
+
 ## 1.1.0
 
 A check on the answer, and an option to remove more. **With the default options, what the model receives

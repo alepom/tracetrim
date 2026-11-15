@@ -182,8 +182,9 @@ def test_the_proxy_logs_values_no_output_contains(tmp_path):
 
     asyncio.run(go())
     lines = log.read_text().splitlines()
-    flagged = [x for x in lines if "appear in no tool output" in x]
+    flagged = [x for x in lines if "in no tool output" in x]
     assert len(flagged) == 1 and "4870" in flagged[0] and "1600" not in flagged[0]
+    assert "1 value of the answer appears in no tool output" in flagged[0]       # singular, since 1.1.1
 
 
 # -- review of 1.1 -------------------------------------------------------------------------
