@@ -58,8 +58,9 @@ def plain(tex_path, macros) -> str:
 
 PAPER_VERSION_TWO_DATE = "November 2026"
 # The release that version 2 of the paper came with: the paper does not move with later releases
-# (1.1 changes nothing it reports), so its version line names this one, not about.VERSION.
+# (1.1 changes nothing it reports), so its version line and software DOI name this one, not about.*.
 PAPER_SOFTWARE_VERSION = "1.0.0"
+PAPER_SOFTWARE_DOI = "10.5281/zenodo.24190053"     # the archive of that release
 
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
@@ -92,7 +93,7 @@ def main():
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
         + (f" DOI \\href{{https://doi.org/{about.PAPER_DOI}}}{{{about.PAPER_DOI}}}." if about.PAPER_DOI else "") + "}\n"
-        f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{about.SOFTWARE_DOI}}}{{{about.SOFTWARE_DOI}}}}}\n"
+        f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{PAPER_SOFTWARE_DOI}}}{{{PAPER_SOFTWARE_DOI}}}}}\n"
         f"\\newcommand{{\\RepositoryURL}}{{\\url{{{about.REPOSITORY}}}}}\n", encoding="utf-8")
 
     nf = load("number_formats.json")
