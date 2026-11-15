@@ -238,7 +238,7 @@ def suggestions(d: dict) -> list[dict]:
         add("duplicates", "quick-win", None,
             {"duplicates": T["duplicates"]},
             f"{_calls(T['duplicates'], 'en')} repeat an earlier call of the same run with identical arguments. Cache tool results within a run.",
-            f"{_calls(T['duplicates'], 'it')} {'ripete' if T['duplicates'] == 1 else 'ripetono'} una chiamata precedente dello stesso run con argomenti identici. Metti in cache i risultati dei tool all'interno di un run.")
+            f"{_calls(T['duplicates'], 'it')} {'ripete' if T['duplicates'] == 1 else 'ripetono'} una chiamata precedente della stessa esecuzione con argomenti identici. Metti in cache i risultati dei tool all'interno di un'esecuzione.")
 
     for tool, t in d["tools"].items():
         share = t["raw"] / total
@@ -251,7 +251,7 @@ def suggestions(d: dict) -> list[dict]:
                 add("trim", "saving", tool,
             {"tool": tool, "share": share, "saving": saving, "tokens": t["loo_raw"] - t["loo_prudent"], "calls": t["calls"]},
                     f"`{tool}` carries {_p(share, 'en')} of all tool-output tokens. On runs it was not learned from, the prudent projection removes {_p(saving, 'en')} of them ({_n(t['loo_raw'] - t['loo_prudent'], 'en')} tokens over {t['calls']} calls).",
-                    f"`{tool}` porta {_il(share)} di tutti i token restituiti dai tool. Sui run da cui non ha imparato, la proiezione prudente ne toglie {_il(saving)} ({_n(t['loo_raw'] - t['loo_prudent'], 'it')} token su {t['calls']} chiamate).")
+                    f"`{tool}` porta {_il(share)} di tutti i token restituiti dai tool. Sulle esecuzioni da cui non ha imparato, la proiezione prudente ne toglie {_il(saving)} ({_n(t['loo_raw'] - t['loo_prudent'], 'it')} token su {t['calls']} chiamate).")
             rate = t["loo_misses"] / t["loo_trimmed_calls"]
             if trimmed_by_config and rate >= MISS_RATE and t["loo_trimmed_calls"] >= MIN_CALLS:
                 top = [f for f, v in sorted(t["fields"].items(), key=lambda x: -x[1]["missed"]) if v["missed"]][:4]
@@ -385,7 +385,7 @@ ACTION_TEXT = {
     "unescape": ("The generated config re-serialises every JSON output as UTF-8.",
                  "La configurazione generata riserializza ogni output JSON in UTF-8."),
     "cache": ("If these results do not change within a run, cache them in the agent or the tool: tracetrim does not.",
-              "Se questi risultati non cambiano all'interno di un run, mettili in cache nell'agente o nel tool: tracetrim non lo fa."),
+              "Se questi risultati non cambiano all'interno di un'esecuzione, mettili in cache nell'agente o nel tool: tracetrim non lo fa."),
     "fix_tool_description": ("Rewrite the tool description with the constraint these errors reveal:",
                              "Riscrivi la descrizione del tool con il vincolo che questi errori rivelano:"),
     "review_fields": ("Review these fields and add the ones the task does not need to the projection's dropped list:",
@@ -450,7 +450,7 @@ L = {
     "raw": ("tool-output tokens", "token restituiti dai tool"),
     "prudent": ("after prudent projection", "dopo la proiezione prudente"),
     "aggressive": ("after aggressive projection", "dopo la proiezione aggressiva"),
-    "misses": ("held-out misses", "mancati sui run esclusi"),
+    "misses": ("held-out misses", "mancati sulle esecuzioni escluse"),
     "suggestions": ("Suggestions", "Suggerimenti"), "none": ("No suggestion.", "Nessun suggerimento."),
     "auto_title": ("Automatic mode", "Modalità automatica"),
     "auto_applied": ("trimming is on, with the automatic actions below",
@@ -484,9 +484,9 @@ L = {
     "savings_per_tool": ("Per tool, all runs", "Per tool, tutte le esecuzioni"),
     "project": ("Project and author", "Progetto e autore"),
     "hero": ("of tool-output tokens removed by the prudent projection, on runs it never saw",
-             "dei token restituiti dai tool tolti dalla proiezione prudente, su run mai visti"),
+             "dei token restituiti dai tool tolti dalla proiezione prudente, su esecuzioni mai viste"),
     "misses_prudent": ("held-out misses, prudent projection (the one applied)",
-                       "mancati sui run esclusi, proiezione prudente (quella applicata)"),
+                       "mancati sulle esecuzioni escluse, proiezione prudente (quella applicata)"),
     "hero_sub": ("aggressive projection", "proiezione aggressiva"),
     # With one run there is nothing to hold out: the saving is re-serialisation only.
     "hero_one": ("of tool-output tokens saved so far by writing compact JSON alone, no field removed: "
@@ -495,7 +495,7 @@ L = {
                  "campi: per imparare e verificare una proiezione servono almeno due esecuzioni"),
     "where": ("Where the tokens go", "Dove vanno i token"),
     "where_sub": ("Tokens returned by each tool, and the part the prudent projection removes on held-out runs.",
-                  "Token restituiti da ogni tool, e la parte che la proiezione prudente toglie sui run esclusi."),
+                  "Token restituiti da ogni tool, e la parte che la proiezione prudente toglie sulle esecuzioni escluse."),
     "kept": ("reaches the agent", "arriva all'agente"), "removed": ("removed", "tolto"),
     "others": ("other tools", "altri tool"),
     "fields_bar": ("field tokens", "token dei campi"),
@@ -615,8 +615,8 @@ L = {
         "A miss is a call where the aggressive projection removed a field that the run used later. Usage is a lower bound: "
         "a field read only while reasoning is invisible. Field tokens are the tokens of each field's fragment, summed over calls. "
         "Suggestions come from fixed rules; the numbers are in report.json.",
-        "Risparmi e mancati sono misurati lasciando fuori un run alla volta: ogni run è tagliato con una proiezione imparata dagli altri. "
-        "Un mancato è una chiamata in cui la proiezione aggressiva ha tolto un campo che il run ha usato più avanti. L'uso è un limite inferiore: "
+        "Risparmi e mancati sono misurati lasciando fuori un'esecuzione alla volta: ogni esecuzione è tagliata con una proiezione imparata dalle altre. "
+        "Un mancato è una chiamata in cui la proiezione aggressiva ha tolto un campo che l'esecuzione ha usato più avanti. L'uso è un limite inferiore: "
         "un campo letto solo nel ragionamento non si vede. I token di un campo sono quelli del suo frammento, sommati sulle chiamate. "
         "I suggerimenti vengono da regole fisse; i numeri sono in report.json."),
     "level": {"warning": ("warning", "attenzione"), "risk": ("risk", "rischio"), "saving": ("saving", "risparmio"),
@@ -883,8 +883,8 @@ def _definitions_html(d: dict) -> str:
            + ", ".join(f"<code>{html.escape(n)}</code>" for n in defs["own_tools"]) if defs["own_tools"] else "")
     rows = "".join(f"<tr><td><code>{html.escape(x['name'])}</code></td><td>{_num(x['tokens'])}</td></tr>"
                    for x in defs["never_called"])
-    table = (f"<details><summary>{_t('defs_list')} · {len(defs['never_called'])}</summary><table><thead><tr>"
-             f"<th>{_t('tool')}</th><th>{_t('tokens')}</th></tr></thead><tbody>{rows}</tbody></table></details>"
+    table = (f"<details><summary>{_t('defs_list')} · {len(defs['never_called'])}</summary><div class=\"scroll\"><table><thead><tr>"
+             f"<th>{_t('tool')}</th><th>{_t('tokens')}</th></tr></thead><tbody>{rows}</tbody></table></div></details>"
              if rows else "")
     return (f'<h2>{_t("definitions")}</h2><div class="tiles">{tiles_html}</div>'
             f'<p class="method">{_t("defs_note")}{own}</p>{table}')
@@ -900,12 +900,12 @@ def _grounding_html(d: dict) -> str:
                          for k, v in tiles)
     rows = "".join(
         f"<tr><td><code>{html.escape(r['run'])}</code></td>"
-        f"<td>{', '.join((f'<b><code>{html.escape(v)}</code></b>' if v in r.get('suspect', []) else f'<code>{html.escape(v)}</code>') for v in r['unsupported'])}"
+        f"<td class=\"vals\">{', '.join((f'<b><code>{html.escape(v)}</code></b>' if v in r.get('suspect', []) else f'<code>{html.escape(v)}</code>') for v in r['unsupported'])}"
         f"{' …' if r['count'] > len(r['unsupported']) else ''}</td>"
-        f"<td>{', '.join(f'<code>{html.escape(t)}</code>' for t in r['filtered_tools']) or '—'}</td></tr>"
+        f"<td class=\"vals\">{', '.join(f'<code>{html.escape(t)}</code>' for t in r['filtered_tools']) or '—'}</td></tr>"
         for r in g["runs"])
-    body = (f"<table><thead><tr><th>{_t('gr_run')}</th><th>{_t('gr_found')}</th><th>{_t('gr_filtered')}</th></tr>"
-            f"</thead><tbody>{rows}</tbody></table>" if rows else f"<p>{_t('gr_none')}</p>")
+    body = (f"<div class=\"scroll\"><table class=\"gr\"><thead><tr><th>{_t('gr_run')}</th><th>{_t('gr_found')}</th>"
+            f"<th>{_t('gr_filtered')}</th></tr></thead><tbody>{rows}</tbody></table></div>" if rows else f"<p>{_t('gr_none')}</p>")
     return f'<h2>{_t("grounding")}</h2><div class="tiles">{tiles_html}</div><p class="method">{_t("gr_note")}</p>{body}'
 
 
@@ -1111,6 +1111,8 @@ tbody tr:hover td { background:var(--surface-2); }
 tr.dropped td { color:var(--muted); } tr.unjudged td:nth-child(5) { color:#a86f00; }
 tr.promoted td:nth-child(5) { color:var(--violet-ink); }
 td.fb { text-align:left; }
+td.vals { white-space:normal; text-align:left; line-height:1.9; min-width:220px; }
+table.gr th { text-align:left; }
 details { background:var(--surface); border:1px solid var(--ring); border-radius:12px; margin:10px 0; box-shadow:var(--shadow); }
 details > summary { cursor:pointer; padding:12px 16px; list-style:none; display:flex; align-items:center; gap:8px; font-weight:500; }
 details > summary::-webkit-details-marker { display:none; }

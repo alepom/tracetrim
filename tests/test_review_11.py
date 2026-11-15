@@ -393,3 +393,20 @@ def test_sigterm_stops_the_upstream_servers(tmp_path):
     finally:
         if proxy.poll() is None:
             proxy.kill()
+
+
+def test_every_table_scrolls_inside_its_card_and_long_lists_wrap(tmp_path):
+    """Found after 1.1.0: the table of values no tool returned sat outside the scroll container and kept every
+    value on one line, so ten identifiers widened the whole page. Every table is now inside `.scroll`."""
+    import re
+    from tracetrim.cli import main
+    ids = " ".join(f"W43912345{n:02d}" for n in range(12))
+    for i in range(3):
+        lines = [{"kind": "call", "tool": billing.TOOL, "arguments": billing.arguments(i), "output": billing.output(i)},
+                 {"kind": "message", "text": billing.answer(i) + (f" Sources: {ids}." if i == 2 else "")}]
+        (tmp_path / f"r{i}.jsonl").write_text("\n".join(json.dumps(x) for x in lines) + "\n")
+    out = tmp_path / "report.html"
+    main(["report", *map(str, sorted(tmp_path.glob("r*.jsonl"))), "-o", str(out)])
+    page = out.read_text()
+    assert page.count("<table") == len(re.findall(r'<div class="scroll"><table', page)) > 0
+    assert '<td class="vals">' in page and "td.vals { white-space:normal" in page

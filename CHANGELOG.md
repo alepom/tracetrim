@@ -6,6 +6,10 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## Unreleased
 
+- Report: the table of values no tool returned, and the list of tools never called, sat outside the box that
+  scrolls, and the values stayed on one line: with ten identifiers the whole page grew wider than the window.
+  Both tables now scroll inside their card, and the values wrap (`tests/test_review_11.py`).
+- Report, Italian: "esecuzione" everywhere, where seven texts still said "run".
 - The proxy's log line for a single value of the answer that no tool returned is in the singular ("1 value … appears").
 
 ## 1.1.0
