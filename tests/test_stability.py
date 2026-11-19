@@ -129,7 +129,7 @@ COMMANDS = {
     "proxy": ["--servers", "--upstream-cmd", "--upstream-url", "--header", "--config", "--record", "--http", "--token",
               "--allowed-host", "--quiet", "--auto", "--min-runs", "--structural", "--skill-strategy", "--no-skill",
               "--no-compact", "--no-breakdown", "--log-client", "--promote", "--promote-runs", "--sample-rate",
-              "--sample-max-share", "--sample-seed", "--switch-off-runs"],
+              "--sample-max-share", "--sample-seed", "--switch-off-runs", "--no-keep-positions"],
 }
 
 

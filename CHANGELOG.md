@@ -4,6 +4,26 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.1.2
+
+A fix to `expand`. **What the model receives changes only where a list element is left with no field** (*Changed
+behaviour*, below; `--no-keep-positions` restores 1.1.1); everything else listed in STABILITY.md holds. The paper and
+every measure are unchanged: the studies and the experiments measure without it, and their results regenerate
+identical. Not archived on Zenodo: the archive of 1.1.0 (DOI 10.5281/zenodo.24263018) stays the version to cite.
+
+### Changed behaviour
+
+- **A list element left with no field keeps its place**, as an empty object (`{}`; `[]` for a list, `null` for a
+  value), as long as something else in the list is left. Up to 1.1.1 the element was dropped, so the positions
+  after it shifted, while `expand` reads positions on the original list: `items[1].memo`, asked for the second
+  record the model saw, could bring back the memo of another record, with no error. Nested lists too
+  (`orders[1].lines[2].note`). A list with nothing left still goes away. On the study's recorded runs, served
+  as at run time and with each run left out of learning, it happens in 8 of the 222 calls to a trimmed tool in
+  the literature case (the `affiliations` of an author) and in none of the other two cases. To restore 1.1.1:
+  `--no-keep-positions` on the proxy, `"keep_positions": false` in a config,
+  `AutoTrim(keep_positions=False)` or `Engine(keep_positions=False)`. The report measures what run time serves.
+  Found by an independent technical review (`tests/test_positions.py`).
+
 ## 1.1.1
 
 Fixes only. **Nothing changes in what the model receives.** Not archived on Zenodo: the archive of 1.1.0

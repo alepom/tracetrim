@@ -549,8 +549,10 @@ class Learner:
         for tool in sorted(t for t in after.keep if after.keep[t] != before.keep[t]):
             outs = [c.output for calls in usages for c in calls if c.tool == tool and c.structured]
             effect[tool] = {"calls": len(outs), "raw": sum(count(o) for o in outs),
-                            "without_promotions": sum(count(before.apply(tool, o, keep_empty=True)) for o in outs),
-                            "with_promotions": sum(count(after.apply(tool, o, keep_empty=True)) for o in outs)}
+                            "without_promotions": sum(count(before.apply(tool, o, keep_empty=True, keep_positions=True))
+                                                      for o in outs),
+                            "with_promotions": sum(count(after.apply(tool, o, keep_empty=True, keep_positions=True))
+                                                   for o in outs)}
         promotions = []
         for p in data["promotions"]:
             f = d["tools"].get(p["tool"], {}).get("fields", {}).get(p["field"])
@@ -659,10 +661,11 @@ class AutoTrim:
 
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
                  strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
-                 breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1"):
+                 breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1",
+                 keep_positions: bool = True):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
                                      compact=compact), structural=structural,
-                             compact=compact, breakdown=breakdown)
+                             compact=compact, breakdown=breakdown, keep_positions=keep_positions)
         self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
                             "parameters": EXPAND["inputSchema"]}

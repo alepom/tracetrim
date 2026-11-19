@@ -209,6 +209,7 @@ def cmd_proxy(a):
                 quiet=a.quiet, structural=a.structural, auto_dir=a.auto, min_runs=a.min_runs,
                 skill=not a.no_skill, skill_strategy=a.skill_strategy,
                 compact=False if a.no_compact else None,
+                keep_positions=False if a.no_keep_positions else None,
                 breakdown=not a.no_breakdown, log_client=a.log_client,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
                 switch_off_runs=a.switch_off_runs, protect_ids=a.protect_ids, learning=a.learning,
@@ -424,6 +425,9 @@ def main(argv=None):
     s.add_argument("--no-compact", action="store_true",
                    help="keep the spaces after ',' and ':' when re-writing JSON (the behaviour up to 0.3.5); "
                         "by default --auto writes compact JSON from the first call, and --config as the config says")
+    s.add_argument("--no-keep-positions", action="store_true",
+                   help="drop a list element left with no field, instead of keeping an empty one in its place "
+                        "(the behaviour up to 1.1.1, when a position after it could point expand at another element)")
     s.add_argument("--no-breakdown", action="store_true",
                    help="do not count, call by call, what re-serialising saves apart from what removing fields "
                         "saves (the log's 'format' and 'fields', the report's section on where the saving comes from)")

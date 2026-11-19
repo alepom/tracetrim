@@ -67,9 +67,10 @@ def removes(p, tool: str, path: str) -> bool:
 
 def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full",
                   unseen="keep", protect_ids: bool | str = True, compact: bool = False,
-                  keep_empty: bool = False) -> list[Row]:
-    """`compact`, `keep_empty`: apply the projections as run time does (since 1.1, from the report of automatic
-    mode and of `tracetrim report`); the studies measured without either, and so does the default."""
+                  keep_empty: bool = False, keep_positions: bool = False) -> list[Row]:
+    """`compact`, `keep_empty`, `keep_positions`: apply the projections as run time does (since 1.1, from the
+    report of automatic mode and of `tracetrim report`; positions since 1.1.2); the studies measured without
+    them, and so does the default."""
     count = tokenizer()
     rows = []
     for i, (name, calls) in enumerate(zip(names, usages)):
@@ -79,8 +80,10 @@ def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full"
         r = Row(name)
         for c in calls:
             raw = count(c.output)
-            pr = count(prudent.apply(c.tool, c.output, keep_empty=keep_empty, compact=compact))
-            ag = count(aggressive.apply(c.tool, c.output, keep_empty=keep_empty, compact=compact))
+            pr = count(prudent.apply(c.tool, c.output, keep_empty=keep_empty, compact=compact,
+                                     keep_positions=keep_positions))
+            ag = count(aggressive.apply(c.tool, c.output, keep_empty=keep_empty, compact=compact,
+                                        keep_positions=keep_positions))
             trimmed = c.structured and c.tool in aggressive.keep
             missed = {f for f in c.used if removes(aggressive, c.tool, f)} if trimmed else set()
             r.raw += raw

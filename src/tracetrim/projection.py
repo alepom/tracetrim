@@ -131,13 +131,17 @@ class Projection:
         seen = {t: keep[t] | set(d.get("dropped", {}).get(t, [])) for t in keep}
         return cls(d["mode"], d["source"], keep, seen, d.get("unseen", "keep"))
 
-    def apply(self, tool: str, output: str, keep_empty: bool = False, compact: bool = False) -> str:
+    def apply(self, tool: str, output: str, keep_empty: bool = False, compact: bool = False,
+              keep_positions: bool = False) -> str:
         """The trimmed output.
 
         `keep_empty`: keep lists and objects that were already empty in the
         output, so that "no results" does not look like "hidden". Used at run
         time (proxy, AutoTrim) since 0.3.4; the studies measured without it.
         `compact`: no spaces after separators (see `dumps`); the studies
+        measured without it.
+        `keep_positions`: an element of a list left with no field keeps its
+        place (see `project`). Used at run time since 1.1.2; the studies
         measured without it.
 
         Anything that parses as JSON is at least re-serialised without ASCII
@@ -150,30 +154,43 @@ class Projection:
         if not isinstance(payload, (dict, list)) or tool not in self.keep:
             return dumps(payload, compact)
         drop = (self.seen.get(tool, set()) - self.keep[tool]) if self.unseen == "keep" else None
-        p = project(payload, self.keep[tool], drop=drop, keep_empty=keep_empty)
+        p = project(payload, self.keep[tool], drop=drop, keep_empty=keep_empty, keep_positions=keep_positions)
         # Everything removed: an empty container of the same kind (a list stays a list).
         return dumps(([] if isinstance(payload, list) else {}) if p is _EMPTY else p, compact)
 
 
-def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_empty: bool = False):
+def project(node, keep: set[str], path="", drop: set[str] | None = None, keep_empty: bool = False,
+            keep_positions: bool = False):
     """Keep the leaves in `keep`. With `drop` given, keep every leaf NOT in
     `drop` instead: fields never seen while learning survive. `keep_empty`:
-    containers that were empty to begin with are kept as they are."""
+    containers that were empty to begin with are kept as they are.
+    `keep_positions`: an element of a list left with no field stays in its
+    place, as an empty object (or list, or null), as long as something else in
+    the list is left; without it the element goes, and the positions after it
+    shift. `expand` reads positions on the original list, so run time keeps
+    them (since 1.1.2); the studies measured without."""
     if keep_empty and isinstance(node, (dict, list)) and not node:
         return node
     if isinstance(node, dict):
         out = {}
         for k, v in node.items():
-            r = project(v, keep, f"{path}.{k}" if path else k, drop, keep_empty)
+            r = project(v, keep, f"{path}.{k}" if path else k, drop, keep_empty, keep_positions)
             if r is not _EMPTY:
                 out[k] = r
         return out or _EMPTY
     if isinstance(node, list):
-        out = [r for v in node if (r := project(v, keep, path + "[]", drop, keep_empty)) is not _EMPTY]
-        return out or _EMPTY
+        out = [project(v, keep, path + "[]", drop, keep_empty, keep_positions) for v in node]
+        if not keep_positions or all(r is _EMPTY for r in out):
+            return [r for r in out if r is not _EMPTY] or _EMPTY
+        return [r if r is not _EMPTY else _placeholder(v) for r, v in zip(out, node)]
     if drop is not None:
         return _EMPTY if path in drop else node
     return node if path in keep else _EMPTY
+
+
+def _placeholder(value):
+    """What stands in the place of an element left with no field: an empty container of its kind."""
+    return {} if isinstance(value, dict) else [] if isinstance(value, list) else None
 
 
 def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="keep",

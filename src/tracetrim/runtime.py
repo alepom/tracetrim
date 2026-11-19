@@ -26,6 +26,10 @@ class Policy:
         # Compact JSON, no spaces after separators: lossless. Off when the key is
         # missing, so that a config written before 0.4 serves what it served.
         self.compact = bool(config.get("compact", False))
+        # A list element left with no field keeps its place, so that a position
+        # the model reads is the one `expand` reads. On when the key is missing:
+        # a fix (1.1.2); `"keep_positions": false` restores the earlier behaviour.
+        self.keep_positions = bool(config.get("keep_positions", True))
         # Optional, after the projection: "toon" (lossless re-encoding) or
         # "headroom" (experimental). The study found that a denser format can
         # change how the model reads a payload: validate before relying on it.
@@ -54,7 +58,8 @@ class Policy:
     def _project(self, tool: str, output: str, project: bool = True) -> str:
         spec = self.tools.get(tool, {})
         if project and self.projection and spec.get("trim", "off") != "off":
-            return self.projection.apply(tool, output, keep_empty=True, compact=self.compact)
+            return self.projection.apply(tool, output, keep_empty=True, compact=self.compact,
+                                         keep_positions=self.keep_positions)
         if self.unescape or self.compact:
             payload = parse_output(output)
             if payload is not None:

@@ -158,6 +158,7 @@ class Options:
     log_client: str | None = None    # a file for one line per client request (tracetrim.clientlog); off by default
     protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
     learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
+    keep_positions: bool | None = None  # a list element left with no field keeps its place; None: as the config says (on)
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -329,7 +330,7 @@ def _server(o: Options):
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
-                    compact=o.compact, breakdown=o.breakdown)
+                    compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)

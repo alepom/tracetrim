@@ -237,11 +237,15 @@ class Engine:
     the call_ids of results it holds. `breakdown`: count every call three times
     (`contract.Sizes`), to tell what re-serialising saves from what removing
     fields saves; a measure, which changes neither the traces nor what the model
-    receives."""
+    receives. `keep_positions`: whether a list element left with no field keeps
+    its place, whatever the config says; None leaves it to the config, where it
+    is on unless `"keep_positions": false` (see `Policy`)."""
 
     def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
-                 shared: bool = False, compact: bool | None = None, breakdown: bool = True):
+                 shared: bool = False, compact: bool | None = None, breakdown: bool = True,
+                 keep_positions: bool | None = None):
         self.learner = learner
+        self.keep_positions = keep_positions
         self.structural = structural
         self.breakdown = breakdown
         # Lossless, so in automatic mode it does not wait for anything to be learned.
@@ -261,6 +265,8 @@ class Engine:
             policy.structural = self.structural
         if policy is not None and self.compact is not None:
             policy.compact = self.compact
+        if policy is not None and self.keep_positions is not None:
+            policy.keep_positions = self.keep_positions
         return policy
 
     @property

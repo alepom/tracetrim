@@ -52,14 +52,14 @@ def _is_error(c) -> bool:
 
 def compute(names, usages, unseen="keep", protect_ids=True, runtime: bool = False, compact: bool = True) -> dict:
     """`runtime` (learning 1.1): measure the projections as run time writes them (compact JSON, empty containers
-    kept), which is what the generated config deploys. Up to 1.0 they were measured with the spaces of
+    kept, list positions kept since 1.1.2), which is what the generated config deploys. Up to 1.0 they were measured with the spaces of
     `json.dumps`: on outputs that were already compact the saving came out negative, and a tool could stay
     untrimmed for it. `compact=False` measures run time with `--no-compact`."""
     count = measure.tokenizer()
     deployed_p = learn(usages, "prudent", unseen=unseen, protect_ids=protect_ids)
     deployed_a = learn(usages, "aggressive", unseen=unseen, protect_ids=protect_ids)
     rows = measure.leave_one_out(names, usages, unseen=unseen, protect_ids=protect_ids,
-                                 compact=runtime and compact, keep_empty=runtime)
+                                 compact=runtime and compact, keep_empty=runtime, keep_positions=runtime)
     seps = (",", ":") if runtime and compact else None
 
     tools = defaultdict(lambda: {
