@@ -4,6 +4,29 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.1.4
+
+Fixes only. **Nothing changes in what the model receives.** The config, the report and the measure of rows now
+follow the settings the engine serves with. The paper and every measure are unchanged: their numbers, figures
+and results files regenerate identical. Not archived on Zenodo: the archive of 1.1.0 (DOI
+10.5281/zenodo.24263018) stays the version to cite.
+
+- **The config written in automatic mode records what the engine serves.** `AutoTrim(keep_positions=False)` and
+  `--no-keep-positions` reached the engine but not the learner: `report.config.json` said nothing of them, so the
+  same config read back (`proxy --config`, `tracetrim apply`) kept the positions the engine dropped, and the
+  report measured with them. The same held for `compact=False` (`--no-compact`): the config always said
+  `"compact": true`. The config now writes `compact` as served and `"keep_positions": false` when it is off (at
+  the defaults the file is the one 1.1.3 writes); the report's leave-one-out measure and the measure of
+  promotions follow both, and `tracetrim promotions` relearns with them.
+- **Rows and fields agree on reuse.** The report measured the list elements an agent reuses with the rules of
+  1.0 while fields followed those of learning: a negative number (`-847`) or a long text quoted in part made a
+  field used and its row not reused. One test of reuse, `usage.written_after`, now serves both, and the report
+  (automatic mode and `tracetrim report`) passes the rules of learning to `lists.element_usage`. Without them,
+  `element_usage` keeps the historical rules, those of the studies and of `docs/rows.md`.
+
+Both found by the second pass of the independent technical review (`tests/test_positions.py`,
+`tests/test_lists.py`).
+
 ## 1.1.3
 
 The fix of 1.1.2, with TOON too. **What the model receives changes only with `--structural toon`** (*Changed

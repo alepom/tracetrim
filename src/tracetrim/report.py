@@ -50,16 +50,19 @@ def _is_error(c) -> bool:
     return isinstance(c.payload, dict) and c.payload.get("error") not in (None, False, "", [], {})
 
 
-def compute(names, usages, unseen="keep", protect_ids=True, runtime: bool = False, compact: bool = True) -> dict:
+def compute(names, usages, unseen="keep", protect_ids=True, runtime: bool = False, compact: bool = True,
+            keep_positions: bool = True) -> dict:
     """`runtime` (learning 1.1): measure the projections as run time writes them (compact JSON, empty containers
     kept, list positions kept since 1.1.2), which is what the generated config deploys. Up to 1.0 they were measured with the spaces of
     `json.dumps`: on outputs that were already compact the saving came out negative, and a tool could stay
-    untrimmed for it. `compact=False` measures run time with `--no-compact`."""
+    untrimmed for it. `compact=False` measures run time with `--no-compact`, `keep_positions=False` with
+    `--no-keep-positions`."""
     count = measure.tokenizer()
     deployed_p = learn(usages, "prudent", unseen=unseen, protect_ids=protect_ids)
     deployed_a = learn(usages, "aggressive", unseen=unseen, protect_ids=protect_ids)
     rows = measure.leave_one_out(names, usages, unseen=unseen, protect_ids=protect_ids,
-                                 compact=runtime and compact, keep_empty=runtime, keep_positions=runtime)
+                                 compact=runtime and compact, keep_empty=runtime,
+                                 keep_positions=runtime and keep_positions)
     seps = (",", ":") if runtime and compact else None
 
     tools = defaultdict(lambda: {

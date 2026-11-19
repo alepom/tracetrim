@@ -205,6 +205,19 @@ def learning_flags(learning: str = "1.1") -> dict:
     return dict(LEARNING[learning])
 
 
+def written_after(value, keys, firsts: dict, at: int, prose_any: bool = False) -> bool:
+    """Was `value` written after position `at`, in one of its forms `keys`? A value written before the call is
+    not reuse of its output: every form must be new. Prose is quoted in pieces, and one piece may well be in the
+    request: with `prose_any` (learning 1.1), any piece of a long text written only afterwards. The one test of
+    reuse, shared by fields (`analyse`) and list elements (`lists.element_usage`)."""
+    seen = [firsts[x] for x in keys if x in firsts]
+    if not seen:
+        return False
+    if prose_any and isinstance(value, str) and len(words(value)) > N_MAX:
+        return any(t > at for t in seen)
+    return min(seen) > at
+
+
 def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True, unsigned: bool = False,
             prose_any: bool = False) -> list[CallUsage]:
     """`normalize`: also look for transformed forms of each value (dates,
@@ -231,14 +244,9 @@ def analyse(trace: Trace, normalize: bool = True, comma_grouping: bool = True, u
                 k = k + transformed_keys(value, path)
             if any(x in own for x in k):
                 u.echo.add(path)
-            # A value written before the call is not reuse of its output: every form must be new. Prose is
-            # quoted in pieces, and one piece may well be in the request: any piece written only afterwards.
-            later = any if (prose_any and isinstance(value, str) and len(words(value)) > N_MAX) else None
-            seen = [first_in_calls[x] for x in k if x in first_in_calls]
-            if seen and (later(t > pos[i] for t in seen) if later else min(seen) > pos[i]):
+            if written_after(value, k, first_in_calls, pos[i], prose_any):
                 u.used_by_calls.add(path)
-            seen = [first[x] for x in k if x in first]
-            if seen and (later(t > pos[i] for t in seen) if later else min(seen) > pos[i]):
+            if written_after(value, k, first, pos[i], prose_any):
                 u.used.add(path)
                 # Bucketed numbers (search volumes: 1,600, 2,400...) can match
                 # by coincidence. A string cannot.

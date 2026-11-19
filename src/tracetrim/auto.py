@@ -86,7 +86,7 @@ def over_expanded(filtered: int, expanded: int, runs: int, needed: int = 0) -> b
 class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None,
                  adaptive: Adaptive | None = None, protect_ids: str = "all", learning: str = "1.1",
-                 compact: bool = True):
+                 compact: bool = True, keep_positions: bool = True):
         """`idle_seconds`: the pause after which the integration closes a run
         by itself (the proxy does; a function-calling loop closes its own
         runs, and passes None). Only used to count runs that an answer closed
@@ -95,12 +95,14 @@ class Learner:
         `protect_ids`: which identifying fields learning keeps whatever the usage, "all" (the default) or
         "record" (tracetrim.projection.PROTECT_IDS; since 1.1).
         `learning`: the rules of usage detection and of the report's measure, "1.1" (the default) or "1.0"
-        (tracetrim.usage.LEARNING). `compact`: whether run time writes compact JSON, for the measure."""
+        (tracetrim.usage.LEARNING). `compact`, `keep_positions`: whether run time writes compact JSON and keeps the
+        places of list elements left with no field; the measure follows them, and the config records them."""
         from .projection import protect_mode
         from .usage import learning_flags
         self.learning = learning
         self._flags = learning_flags(learning)
         self.compact = compact
+        self.keep_positions = keep_positions
         self.protect_ids = protect_mode(protect_ids)
         if self.protect_ids == "none":
             raise ValueError('protect_ids: "all" or "record" in automatic mode')
@@ -449,7 +451,7 @@ class Learner:
         # The default keeps the report's value as before 1.1 (true); "record" is written as such.
         d = rp.compute([t.name for t in traces], usages,
                        protect_ids=True if self.protect_ids == "all" else self.protect_ids,
-                       runtime=self.learning != "1.0", compact=self.compact)
+                       runtime=self.learning != "1.0", compact=self.compact, keep_positions=self.keep_positions)
         d["turns"] = turns.summarise(traces)
         # Values of the answers that no tool output of their run contains (since 1.1): runs with an answer only,
         # which are the traces just loaded when there are any. A measure: the report goes without it if it fails.
@@ -465,7 +467,12 @@ class Learner:
             d["definitions"]["unit"] = self._unit()
         sugg = rp.suggestions(d)
         config, projection = rp.build_config(d, sugg, usages, "report.projection.json")
-        d["lists"] = lists.summarise([lists.element_usage(t) for t in traces])
+        # What the engine serves, so that the config read back elsewhere (`proxy --config`, `tracetrim apply`)
+        # serves the same; keep_positions only when off, so that a config at the defaults is the file of 1.1.3.
+        config["compact"] = self.compact
+        if not self.keep_positions:
+            config["keep_positions"] = False
+        d["lists"] = lists.summarise([lists.element_usage(t, **self._flags) for t in traces])
         d["arguments"] = arguments.cardinality(traces)
         ready = len(complete) >= self.min_runs
 
@@ -549,9 +556,11 @@ class Learner:
         for tool in sorted(t for t in after.keep if after.keep[t] != before.keep[t]):
             outs = [c.output for calls in usages for c in calls if c.tool == tool and c.structured]
             effect[tool] = {"calls": len(outs), "raw": sum(count(o) for o in outs),
-                            "without_promotions": sum(count(before.apply(tool, o, keep_empty=True, keep_positions=True))
+                            "without_promotions": sum(count(before.apply(tool, o, keep_empty=True,
+                                                                         keep_positions=self.keep_positions))
                                                       for o in outs),
-                            "with_promotions": sum(count(after.apply(tool, o, keep_empty=True, keep_positions=True))
+                            "with_promotions": sum(count(after.apply(tool, o, keep_empty=True,
+                                                                     keep_positions=self.keep_positions))
                                                    for o in outs)}
         promotions = []
         for p in data["promotions"]:
@@ -664,7 +673,7 @@ class AutoTrim:
                  breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1",
                  keep_positions: bool = True):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
-                                     compact=compact), structural=structural,
+                                     compact=compact, keep_positions=keep_positions), structural=structural,
                              compact=compact, breakdown=breakdown, keep_positions=keep_positions)
         self.strategy = strategy
         self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],

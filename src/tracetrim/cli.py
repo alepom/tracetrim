@@ -165,7 +165,10 @@ def cmd_report(a):
     cfg_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     d["suggestions"], d["config"], d["config_file"] = sugg, config, cfg_path.name
     from . import arguments, lists
-    d["lists"] = lists.summarise([lists.element_usage(t, normalize=not a.v01, comma_grouping=not a.v01) for t in traces])
+    from .usage import learning_flags
+    rules = learning_flags("1.0" if a.v01 else a.learning)
+    d["lists"] = lists.summarise([lists.element_usage(t, normalize=not a.v01, comma_grouping=not a.v01, **rules)
+                                  for t in traces])
     d["arguments"] = arguments.cardinality(traces)
     out.write_text(rp.render_html(d, sugg), encoding="utf-8")
     out.with_suffix(".json").write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -250,7 +253,8 @@ def cmd_promotions(a):
         Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive,
                 protect_ids=config.get("auto", {}).get("protect_ids", "all"),
                 learning=config.get("auto", {}).get("learning", "1.1"),
-                compact=config.get("compact", True) is not False).relearn()
+                compact=config.get("compact", True) is not False,
+                keep_positions=config.get("keep_positions", True) is not False).relearn()
     for p in data["promotions"]:
         mark = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"

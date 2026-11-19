@@ -3,6 +3,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 from tracetrim import Event, Trace, analyse
 from tracetrim.arguments import cardinality
 from tracetrim.auto import AutoTrim
@@ -126,3 +128,50 @@ def test_the_offline_report_has_both_measures(tmp_path):
     assert d["lists"]["search"]["lists"]["items[]"]["calls_with_reuse"] == 2
     assert d["arguments"]["search"]["arguments"]["query"] == {"calls": 2, "distinct": 1}
     assert "adaptive" not in d and "Arguments: distinct values observed" in (tmp_path / "report.html").read_text()
+
+
+# -- rows and fields agree under the same rules (1.1.4) --------------------------------------------------------
+# element_usage() measured rows with the rules of 1.0 while fields followed 1.1: a negative number or a long text
+# quoted in part made a field used and its row not reused.
+
+def _one(prompt, payload, answer):
+    return Trace("t", [Event("prompt", text=prompt),
+                       Event("call", tool="list", text="{}", output=json.dumps(payload)),
+                       Event("message", text=answer)])
+
+
+ROW_CASES = {
+    "negative": _one("What changed?", {"items": [{"delta": -847}]}, "delta -847"),
+    "partial quote": _one("alpha bravo charlie delta",
+                          {"items": [{"text": "alpha bravo charlie delta echo foxtrot golf hotel"}]},
+                          "echo foxtrot golf hotel"),
+    "positive": _one("What changed?", {"items": [{"delta": 847}]}, "delta 847"),
+    "whole quote": _one("Summarise.", {"items": [{"text": "alpha bravo charlie delta echo foxtrot golf hotel"}]},
+                        "echo foxtrot golf hotel"),
+}
+
+
+@pytest.mark.parametrize("learning", ["1.1", "1.0"])
+@pytest.mark.parametrize("case", sorted(ROW_CASES))
+def test_rows_and_fields_agree_under_the_same_rules(case, learning):
+    from tracetrim.usage import learning_flags
+    t = ROW_CASES[case]
+    flags = learning_flags(learning)
+    field_used = bool(set().union(*[c.used for c in analyse(t, **flags)]))
+    [rows] = element_usage(t, **flags)
+    assert (rows["lists"]["items[]"]["reused"] == [0]) == field_used
+
+
+def test_rows_keep_the_rules_of_the_studies_by_default():
+    # experiments.rows (docs/rows.md) calls element_usage() without rules: the historical ones.
+    assert element_usage(ROW_CASES["negative"])[0]["lists"]["items[]"]["reused"] == []
+    assert element_usage(ROW_CASES["positive"])[0]["lists"]["items[]"]["reused"] == [0]
+
+
+def test_the_report_counts_rows_with_the_rules_of_learning(tmp_path):
+    from tracetrim.auto import AutoTrim
+    tt = AutoTrim(tmp_path, min_runs=5)
+    tt.output("list", {}, json.dumps({"items": [{"delta": -847}]}))
+    tt.done("delta -847")
+    lists = json.loads((tmp_path / "report.json").read_text())["lists"]
+    assert lists["list"]["lists"]["items[]"]["calls_with_reuse"] == 1

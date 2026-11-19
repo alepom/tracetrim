@@ -325,7 +325,8 @@ def _server(o: Options):
                         switch_off_runs=o.switch_off_runs,
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
     learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive,
-                       protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False)
+                       protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False,
+                       keep_positions=o.keep_positions is not False)
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).

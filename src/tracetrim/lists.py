@@ -12,8 +12,10 @@ and, from the call's arguments, the ones that fix the size of the result.
 Nothing here changes what the model receives: rows are never cut. The numbers
 are there to decide later whether cutting rows would be worth studying.
 
-Element reuse is detected exactly as field reuse is (see `usage`): textual
-reuse after the call, with the same blind spots.
+Element reuse is detected exactly as field reuse is (`usage.written_after`):
+textual reuse after the call, with the same blind spots and, since 1.1.4,
+the same rules of learning when they are passed (the report passes them;
+the defaults are the historical rules, those of the studies and of rows.md).
 """
 from __future__ import annotations
 
@@ -22,7 +24,7 @@ import re
 from statistics import median
 
 from .traces import Trace
-from .usage import first_written, keys_of, leaves, parse_output, transformed_keys
+from .usage import first_written, keys_of, leaves, parse_output, transformed_keys, written_after
 
 # Arguments that usually fix how many elements come back. A heuristic on the
 # NAME, at any depth of the arguments: it knows nothing of what a given tool
@@ -65,9 +67,11 @@ def outer_lists(payload) -> dict[str, list]:
     return found
 
 
-def element_usage(trace: Trace, normalize: bool = True, comma_grouping: bool = True) -> list[dict]:
+def element_usage(trace: Trace, normalize: bool = True, comma_grouping: bool = True, unsigned: bool = False,
+                  prose_any: bool = False) -> list[dict]:
     """One record per call with a structured output:
-    `{"tool", "size_arguments", "lists": {path: {"received": n, "reused": [positions]}}}`."""
+    `{"tool", "size_arguments", "lists": {path: {"received": n, "reused": [positions]}}}`.
+    `unsigned`, `prose_any`: the rules of learning (`usage.learning_flags`), as `analyse` takes them."""
     pos, first, _ = first_written(trace)
     result = []
     for i, e in enumerate(trace.events):
@@ -85,9 +89,8 @@ def element_usage(trace: Trace, normalize: bool = True, comma_grouping: bool = T
             reused = []
             for n, item in enumerate(items):
                 for leaf, value in leaves(item, path):
-                    k = keys_of(value, comma_grouping) + (transformed_keys(value, leaf) if normalize else [])
-                    seen = [first[x] for x in k if x in first]
-                    if seen and min(seen) > pos[i]:
+                    k = keys_of(value, comma_grouping, unsigned) + (transformed_keys(value, leaf) if normalize else [])
+                    if written_after(value, k, first, pos[i], prose_any):
                         reused.append(n)
                         break
             lists[path] = {"received": len(items), "reused": reused}

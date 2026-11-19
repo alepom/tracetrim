@@ -5,7 +5,7 @@ Identifiers stay None until they exist, and None is never shown. The DOIs
 below are published on Zenodo and resolve.
 """
 NAME = "tracetrim"
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 DESCRIPTION = "Learn which fields of tool outputs an agent visibly reuses, from its traces, and trim the rest."
 
 AUTHOR = "Alessio Pomaro"
@@ -15,7 +15,7 @@ WEBSITE = "https://www.alessiopomaro.it/"
 
 REPOSITORY = "https://github.com/alepom/tracetrim"
 PAPER_DOI = "10.5281/zenodo.24189959"            # version 2; version 1: 10.5281/zenodo.23953934
-SOFTWARE_DOI = "10.5281/zenodo.24263018"         # 1.1.0 (1.1.1 to 1.1.3, fixes only, are not archived); 1.0.0: 10.5281/zenodo.24190053; 0.3.4: 10.5281/zenodo.23954125
+SOFTWARE_DOI = "10.5281/zenodo.24263018"         # 1.1.0 (1.1.1 to 1.1.4, fixes only, are not archived); 1.0.0: 10.5281/zenodo.24190053; 0.3.4: 10.5281/zenodo.23954125
 LICENSE = "MIT"
 
 

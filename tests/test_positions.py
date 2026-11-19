@@ -208,3 +208,53 @@ def test_the_studies_encode_toon_as_they_did():
     payload = {"items": [None, {}, {"id": "b"}], "tags": ["x", "", None]}
     assert clean(payload) == {"items": [{"id": "b"}], "tags": ["x"]}
     assert structural(json.dumps(payload)) == "items[1]{id}:\n  b\ntags[1]: x"
+
+
+# -- the exported config follows the engine (1.1.4) ------------------------------------------------------------
+# `AutoTrim(keep_positions=False)` and `--no-keep-positions` reached the engine but not the learner: the
+# report.config.json it wrote said nothing of them, and the report measured with positions kept. The same held
+# for `compact=False` (`--no-compact`): the config always said `"compact": true`.
+
+def learned(tmp_path, **settings):
+    raw = json.dumps({"items": [{"body": memo("first")}, {"title": "Gamma thermal baths", "body": memo("second")}]})
+    tt = AutoTrim(tmp_path, min_runs=2, **settings)
+    for _ in range(2):
+        tt.output("search", {"q": "spa"}, raw)
+        tt.done("Gamma thermal baths")
+    served = tt.output("search", {"q": "spa"}, raw).split("\n[trimmed]")[0]
+    reloaded = Policy.load(tmp_path / "report.config.json").apply("search", raw)
+    return served, reloaded, json.loads((tmp_path / "report.config.json").read_text())
+
+
+@pytest.mark.parametrize("settings", [{}, {"keep_positions": False}, {"compact": False},
+                                      {"keep_positions": False, "compact": False}])
+def test_the_exported_config_serves_what_the_engine_serves(tmp_path, settings):
+    served, reloaded, _ = learned(tmp_path, **settings)
+    assert served == reloaded
+
+
+def test_the_config_says_keep_positions_only_when_it_is_off(tmp_path):
+    # At the defaults the file stays the one 1.1.3 writes.
+    assert "keep_positions" not in learned(tmp_path / "on")[2]
+    config = learned(tmp_path / "off", keep_positions=False)[2]
+    assert config["keep_positions"] is False and config["compact"] is True
+    assert learned(tmp_path / "loose", compact=False)[2]["compact"] is False
+
+
+def test_the_report_measures_what_the_engine_serves(tmp_path):
+    learned(tmp_path / "on")
+    learned(tmp_path / "off", keep_positions=False)
+    on, off = (json.loads((tmp_path / d / "report.json").read_text()) for d in ("on", "off"))
+    # The placeholder `{}` costs tokens: measured with it when it is served, without it when it is not.
+    assert on["tools"]["search"]["loo_prudent"] > off["tools"]["search"]["loo_prudent"]
+
+
+def test_promotions_relearn_with_the_settings_of_the_work_directory(tmp_path):
+    from tracetrim.auto import Learner
+    learned(tmp_path, keep_positions=False, compact=False)
+    config = json.loads((tmp_path / "report.config.json").read_text())
+    lr = Learner(tmp_path, 2, keep_positions=config.get("keep_positions", True) is not False,
+                 compact=config.get("compact", True) is not False)
+    lr.relearn()
+    again = json.loads((tmp_path / "report.config.json").read_text())
+    assert again["keep_positions"] is False and again["compact"] is False
