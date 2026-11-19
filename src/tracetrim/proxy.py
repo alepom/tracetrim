@@ -386,8 +386,23 @@ def _server(o: Options):
             log(f"upstream: {', '.join(sessions)}")
             yield {"sessions": sessions}
 
+    async def all_tools(session):
+        """Every tool of one upstream: a server may list them in pages (`nextCursor`), and up to 1.1.4 only the
+        first page was read. A cursor seen twice ends the listing, so that a faulty server cannot loop it."""
+        tools, cursor, seen = [], None, set()
+        while True:
+            page = await session.list_tools(params=types.PaginatedRequestParams(cursor=cursor) if cursor else None)
+            tools.extend(page.tools)
+            cursor = page.next_cursor
+            if not cursor or cursor in seen:
+                return tools
+            seen.add(cursor)
+
     async def upstream_tools(sessions):
-        listed = {name: (await s.list_tools()).tools for name, s in sessions.items()}
+        # The servers are asked together; the names come out in the order of the servers file, whichever
+        # answers first, so that the routing never depends on timing.
+        pages = await asyncio.gather(*(all_tools(s) for s in sessions.values()))
+        listed = dict(zip(sessions, pages))
         routes.clear()
         routes.update(route_names({n: [t.name for t in ts] for n, ts in listed.items()}))
         exposed = {v: k for k, v in routes.items()}

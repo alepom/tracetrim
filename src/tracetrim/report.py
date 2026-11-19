@@ -118,14 +118,12 @@ def compute(names, usages, unseen="keep", protect_ids=True, runtime: bool = Fals
             t["loo_trimmed_calls"] += tr
             t["loo_misses"] += ms
 
-    # Which fields a held-out run used and the projection removed, by name.
-    for i, calls in enumerate(usages):
-        agg = learn(usages[:i] + usages[i + 1:], "aggressive", unseen=unseen, protect_ids=protect_ids)
-        for c in calls:
-            if c.structured and c.tool in agg.keep:
-                for f in c.used:
-                    if measure.removes(agg, c.tool, f):
-                        missed_fields[c.tool][f] += 1
+    # Which fields a held-out run used and the projection removed, by name: counted by the leave-one-out measure
+    # with the projection it learned without that run (up to 1.1.4 learned a second time here).
+    for r in rows:
+        for tool, fields in r.missed_fields.items():
+            for f, n in fields.items():
+                missed_fields[tool][f] += n
 
     for tool, fields in field_stats.items():
         for path, f in fields.items():

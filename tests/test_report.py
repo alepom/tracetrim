@@ -94,3 +94,30 @@ def test_with_one_run_the_headline_does_not_claim_held_out_savings():
     page = rp.render_html(d, rp.suggestions(d))
     assert "at least two runs" in page and "on runs it never saw" not in page
     assert "Only 1 trace:" in page
+
+
+def test_the_misses_by_name_come_from_the_leave_one_out_measure(traces):
+    # Since 1.1.5 compute() reads the missed fields from the leave-one-out measure instead of learning every
+    # aggressive projection a second time: the counts must be the ones that second learning gave.
+    from collections import defaultdict
+    from tracetrim import analyse
+    from tracetrim import report as rp
+    from tracetrim.measure import removes
+    from tracetrim.projection import learn
+    from tracetrim.traces import load
+    from tracetrim.usage import learning_flags
+    for case in ("C4", "C5"):
+        loaded = [load(traces / case / f"A{i}.jsonl") for i in range(1, 7)]
+        usages = [analyse(t, **learning_flags("1.1")) for t in loaded]
+        d = rp.compute([t.name for t in loaded], usages, runtime=True)
+        expected = defaultdict(lambda: defaultdict(int))
+        for i, calls in enumerate(usages):
+            agg = learn(usages[:i] + usages[i + 1:], "aggressive")
+            for c in calls:
+                if c.structured and c.tool in agg.keep:
+                    for f in c.used:
+                        if removes(agg, c.tool, f):
+                            expected[c.tool][f] += 1
+        got = {(t, f): v["missed"] for t, tool in d["tools"].items() for f, v in tool["fields"].items() if v["missed"]}
+        assert got == {(t, f): n for t, fs in expected.items() for f, n in fs.items()}
+        assert got, case

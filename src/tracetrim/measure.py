@@ -55,6 +55,9 @@ class Row:
     misses_text: int = 0
     misses_prudent: int = 0
     per_tool: dict = field(default_factory=lambda: defaultdict(lambda: [0, 0, 0, 0, 0, 0]))
+    # The used fields the aggressive projection removed, by tool and path: the misses by name, collected while the
+    # projection learned without this run is at hand (since 1.1.5 the report reads them here, not learning again).
+    missed_fields: dict = field(default_factory=lambda: defaultdict(lambda: defaultdict(int)))
 
 
 def removes(p, tool: str, path: str) -> bool:
@@ -86,6 +89,8 @@ def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full"
                                         keep_positions=keep_positions))
             trimmed = c.structured and c.tool in aggressive.keep
             missed = {f for f in c.used if removes(aggressive, c.tool, f)} if trimmed else set()
+            for f in missed:
+                r.missed_fields[c.tool][f] += 1
             r.raw += raw
             r.prudent += pr
             r.aggressive += ag

@@ -4,6 +4,25 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.1.5
+
+A fix to the proxy, and a faster report. **What the model receives changes only where an upstream lists its
+tools in pages**: the tools after the first page are now offered too. The paper and every measure are unchanged.
+Not archived on Zenodo: the archive of 1.1.0 (DOI 10.5281/zenodo.24263018) stays the version to cite.
+
+- **The whole tool catalogue of every upstream.** The proxy asked each MCP server for one page of tools: a
+  server that lists them in pages (`nextCursor`) lost every tool after the first, which the client never saw
+  and could not call ("unknown tool"). Every page is now read, a cursor seen twice ends the listing, and the
+  servers are asked together; the exposed names follow the servers file, whichever server answers first
+  (`tests/test_catalog.py`, with a paging server in `tests/fixtures/paged_server.py`).
+- **The report learns each held-out projection once.** To name the fields the aggressive projection missed,
+  `report.compute` learned every leave-one-out projection a second time; it now reads them from the
+  leave-one-out measure, which already holds them (`Row.missed_fields`). Same report, field by field, on the
+  recorded runs; on runs A1–A8 of the billing and CI cases, 19% and 11% less CPU for `report.compute`, so for
+  every closing in automatic mode.
+
+Both from the independent technical review.
+
 ## 1.1.4
 
 Fixes only. **Nothing changes in what the model receives.** The config, the report and the measure of rows now
