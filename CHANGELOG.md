@@ -4,6 +4,24 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.1.3
+
+The fix of 1.1.2, with TOON too. **What the model receives changes only with `--structural toon`** (*Changed
+behaviour*, below); with the default options nothing changes. The paper and every measure are unchanged: the
+studies encode TOON as before, and the structural arm of the replay counts the same tokens on all four cases.
+Not archived on Zenodo: the archive of 1.1.0 (DOI 10.5281/zenodo.24263018) stays the version to cite.
+
+### Changed behaviour
+
+- **With TOON, a list element keeps its place.** Before the encoding, `structural.clean()` dropped the empty and
+  null elements of every list, the `{}` that 1.1.2 leaves in place of an element with no field included: the
+  rows the model read shifted again, while `expand` reads the original, so `items[0].memo` could bring back
+  another record's memo. At run time an empty element is now written as a bare `-` and a null one as `- null`,
+  nested lists too; a list with nothing left still goes away. A list holding an empty element is written as a
+  list, not as a table, and outputs sent whole keep their null elements as well. `--no-keep-positions` (or
+  `"keep_positions": false`) restores 1.1.2 and earlier for TOON too. Found by the second pass of the independent
+  technical review (`tests/test_positions.py`).
+
 ## 1.1.2
 
 A fix to `expand`. **What the model receives changes only where a list element is left with no field** (*Changed

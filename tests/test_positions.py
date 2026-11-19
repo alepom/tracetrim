@@ -125,3 +125,86 @@ def test_the_studies_measure_as_they_did():
     assert project(payload, {"items[].id"}) == {"items": [{"id": "b"}]}
     p = Projection("prudent", "full", {"t": {"items[].id"}}, {"t": {"items[].id", "items[].memo"}})
     assert json.loads(p.apply("t", json.dumps(payload), keep_empty=True, compact=True)) == {"items": [{"id": "b"}]}
+
+
+# -- with TOON (1.1.3) -----------------------------------------------------------------------------------------
+# `structural.clean()` dropped the empty and null elements of every list before the TOON encoding, the `{}` left
+# by the projection included: the rows the model read shifted again, while `expand` reads the original.
+
+def toon_rows(text):
+    """The rows of the TOON list the model reads: what follows `- `, or `-` alone for an empty element."""
+    return [line.strip() for line in text.split("\n[trimmed]")[0].splitlines()[1:]]
+
+
+def toon_policy(keep, seen, tool="list", **config):
+    return policy(keep, seen, tool, structural="toon", **config)
+
+
+def test_with_toon_the_visible_row_expands_to_its_own_record():
+    # docs/REPORT_TECNICO_CLAUDE_IT.md, section 1a: in 1.1.2 the model saw the single row `second`, and
+    # items[0].memo brought back the memo of "first".
+    t = Trimmer(toon_policy({"items[].id"}, {"items[].id", "items[].memo"}))
+    raw = {"items": [{"memo": "first " * 100}, {"id": "second", "memo": "second " * 100}]}
+    obs = t.observe("list", json.dumps(raw))
+    assert toon_rows(obs.text) == ["-", "- id: second"]
+    reply = json.loads(t.expand(obs.call_id, ["items[1].memo"]))
+    assert [r["memo"].split()[0] for r in reply["items"] if r] == ["second"]
+
+
+@pytest.mark.parametrize("missing", [{0}, {2}, {1, 2}, {4}])
+def test_with_toon_every_visible_record_expands_to_its_own_value(missing):
+    ids = ["a", "b", "c", "d", "e"]
+    t = Trimmer(toon_policy({"items[].id"}, {"items[].id", "items[].memo"}))
+    obs = t.observe("list", json.dumps({"items": records(ids, missing)}))
+    rows = toon_rows(obs.text)
+    assert rows == ["-" if n in missing else f"- id: {i}" for n, i in enumerate(ids)]
+    for n in range(len(ids)):
+        if n in missing:
+            continue
+        reply = json.loads(t.expand(obs.call_id, [f"items[{n}].memo"]))
+        assert [r for r in reply["items"] if r] == [{"memo": memo(ids[n])}]
+
+
+def test_with_toon_a_null_element_of_the_original_keeps_its_place():
+    t = Trimmer(toon_policy({"items[].id"}, {"items[].id", "items[].memo"}))
+    obs = t.observe("list", json.dumps({"items": [None, {"id": "b", "memo": memo("b")}, {"id": "c", "memo": memo("c")}]}))
+    assert toon_rows(obs.text) == ["- null", "- id: b", "- id: c"]
+    reply = json.loads(t.expand(obs.call_id, ["items[2].memo"]))
+    assert [r for r in reply["items"] if r] == [{"memo": memo("c")}]
+
+
+def test_with_toon_nested_lists_keep_their_places():
+    keep = {"orders[].id", "orders[].lines[].sku"}
+    t = Trimmer(toon_policy(keep, keep | {"orders[].lines[].note"}, tool="orders"))
+    orders = [{"id": "o1", "lines": [{"note": memo("x")}, {"sku": "S2", "note": memo("s2")}]}]
+    obs = t.observe("orders", json.dumps({"orders": orders}))
+    assert obs.text.split("\n[trimmed]")[0] == "orders[1]:\n  - id: o1\n    lines[2]:\n      -\n      - sku: S2"
+    reply = json.loads(t.expand(obs.call_id, ["orders[0].lines[1].note"]))
+    assert reply["orders"][0]["lines"][-1] == {"note": memo("s2")}
+
+
+def test_with_toon_the_automatic_path_keeps_the_places(tmp_path):
+    tt = AutoTrim(tmp_path, min_runs=2, structural="toon")
+    items = [{"body": memo("alpha")}, {"title": "Gamma thermal baths", "body": memo("gamma")}]
+    for _ in range(2):
+        tt.output("search", {"q": "spa"}, json.dumps({"items": items}))
+        tt.done("Gamma thermal baths")
+    out = tt.output("search", {"q": "spa"}, json.dumps({"items": items}))
+    assert toon_rows(out) == ["-", "- title: Gamma thermal baths"]
+    call_id = out.split("\n[trimmed] ")[1].split()[0].removeprefix("call_id=")
+    reply = json.loads(tt.expand({"call_id": call_id, "fields": ["items[1].body"]}))
+    assert [r for r in reply["items"] if r] == [{"body": memo("gamma")}]
+
+
+def test_with_toon_the_previous_behaviour_comes_back_with_the_same_option():
+    t = Trimmer(toon_policy({"items[].id"}, {"items[].id", "items[].memo"}, keep_positions=False))
+    obs = t.observe("list", json.dumps({"items": records(["a", "b"], {0})}))
+    assert obs.text.split("\n[trimmed]")[0] == "items[1]{id}:\n  b"
+
+
+def test_the_studies_encode_toon_as_they_did():
+    # experiments/replay.py calls structural() directly: it keeps dropping empty and null elements.
+    from tracetrim.structural import clean, structural
+    payload = {"items": [None, {}, {"id": "b"}], "tags": ["x", "", None]}
+    assert clean(payload) == {"items": [{"id": "b"}], "tags": ["x"]}
+    assert structural(json.dumps(payload)) == "items[1]{id}:\n  b\ntags[1]: x"

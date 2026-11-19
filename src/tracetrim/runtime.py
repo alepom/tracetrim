@@ -69,7 +69,7 @@ class Policy:
     def _structural(self, tool: str, output: str) -> str:
         if self.structural == "toon":
             from .structural import structural
-            return structural(output)
+            return structural(output, keep_positions=self.keep_positions)
         if self.structural == "headroom":
             from .structural import headroom
             return headroom(output, tool)

@@ -63,8 +63,8 @@ When the run closes this becomes evidence, per field and per kind, as the set of
   still mean every element. As evidence an index counts as `[]`: asking for a field of one element is
   asking for that field. Slices (`items[10:]`) are not paths: `expand` gives back what was removed from a
   result, never more rows than the tool returned ([rows.md](rows.md)). Positions are those of the list the model
-  saw: an element left with no field keeps its place as an empty object (since 1.1.2), so `data[2]` is the third
-  element the model saw and the third of the original.
+  saw: an element left with no field keeps its place as an empty object (since 1.1.2; with TOON as a bare `-`,
+  since 1.1.3), so `data[2]` is the third element the model saw and the third of the original.
 - **An unknown `call_id`** gets a reply that says so and recalls that only a result ending with a
   `[trimmed]` line can be expanded. With one agent (stdio, function calling) it also names the three most
   recent valid ids with their tools. The HTTP proxy never names them: several clients can reach it, and a

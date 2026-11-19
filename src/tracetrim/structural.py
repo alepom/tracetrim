@@ -5,7 +5,9 @@ write it:
 
   clean   drop null, empty strings, empty lists and empty objects. Near
           lossless: "absent" and "null" become the same thing, which is how
-          most APIs already treat optional fields.
+          most APIs already treat optional fields. At run time (since 1.1.3)
+          the elements of a list keep their places, empty or null, because
+          `expand` reads positions on the original list.
   TOON    Token-Oriented Object Notation: objects as indented `key: value`
           lines, arrays of uniform flat objects as a table whose field names
           are written once. Arrays that are not uniform fall back to a list.
@@ -24,12 +26,17 @@ _EMPTY = (None, "", [], {})
 _SAFE = re.compile(r"^[^,:\n\"\[\]{}#-][^,:\n\"\[\]{}]*$")
 
 
-def clean(v):
+def clean(v, keep_positions: bool = False):
+    """`keep_positions`: an empty or null element of a list stays in its place,
+    unless the whole list is empty, so that the n-th row the model reads is the
+    n-th of the original. Without it (the studies) such elements are dropped."""
     if isinstance(v, dict):
-        out = {k: clean(x) for k, x in v.items()}
+        out = {k: clean(x, keep_positions) for k, x in v.items()}
         return {k: x for k, x in out.items() if x not in _EMPTY}
     if isinstance(v, list):
-        out = [clean(x) for x in v]
+        out = [clean(x, keep_positions) for x in v]
+        if keep_positions and any(x not in _EMPTY for x in out):
+            return out
         return [x for x in out if x not in _EMPTY]
     return v
 
@@ -86,7 +93,8 @@ def _encode(v, key: str | None, ind: int, out: list[str]) -> None:
             sub: list[str] = []
             _encode(x, None, 0, sub)
             first, *rest = sub or [""]
-            out.append("  " * (ind + 1) + "- " + first)
+            # An empty element, kept for its place: a bare dash, without trailing space.
+            out.append("  " * (ind + 1) + ("- " + first if first else "-"))
             out.extend("  " * (ind + 2) + line for line in rest)
         return
     out.append(f"{pad}{label}: {_scalar(v)}" if key is not None else f"{pad}{_scalar(v)}")
@@ -98,12 +106,13 @@ def to_toon(v) -> str:
     return "\n".join(out)
 
 
-def structural(output: str) -> str:
-    """Clean and TOON-encode a JSON output; anything else is returned as is."""
+def structural(output: str, keep_positions: bool = False) -> str:
+    """Clean and TOON-encode a JSON output; anything else is returned as is.
+    `keep_positions`: see `clean`; on at run time, off for the studies."""
     payload = parse_output(output)
     if not isinstance(payload, (dict, list)):
         return output
-    return to_toon(clean(payload))
+    return to_toon(clean(payload, keep_positions))
 
 
 def headroom(output: str, tool: str = "tool") -> str:
