@@ -4,6 +4,29 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.2.0
+
+Sessions of the HTTP proxy. **With the default options, what the model receives does not change**; the proxy
+only warns when a run mixes sessions. The paper and every measure are unchanged: their numbers, figures and
+results files regenerate identical. Not archived on Zenodo: the archive of 1.1.0 (DOI 10.5281/zenodo.24263018)
+stays the version to cite.
+
+- **Diagnostics.** In automatic mode over HTTP, several clients can share one proxy, and up to 1.1.5 their calls
+  could land in one run, closed by one client's answer: learning then read the calls of one conversation against
+  the answer of another. When a closed run contains calls from more than one identifiable session, the proxy now
+  says so on stderr (even with `--quiet`), and the report counts the runs affected and the sessions in them. A
+  connection without a transport session id counts only from its second call, so clients of the protocol without
+  sessions (2026-07-28), where every request is a new connection, raise no false warning.
+- **`--isolate-sessions`** (`proxy --http --auto`, off by default, **experimental**: not yet checked on a real
+  host). Each identifiable transport session records and closes its own run, with its own events, counts and
+  recoverable tool results (`expand` answers only the session that owns the result); the learned policy stays
+  shared. Isolated runs also close when idle with no new request, and on shutdown. Requests without a transport
+  session id share one separate context, with one warning per process. `AutoTrim` is unchanged: in function
+  calling the calling program sets the runs.
+
+Developed by Astra under the coordination of the main session (`tests/test_isolated_runs.py`,
+`tests/test_session_warning.py`, `tests/test_clientlog.py`).
+
 ## 1.1.5
 
 A fix to the proxy, and a faster report. **What the model receives changes only where an upstream lists its
