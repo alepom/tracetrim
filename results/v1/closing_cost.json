@@ -1,0 +1,2037 @@
+{
+  "format": "closing-cost@1",
+  "python": "3.13.5",
+  "platform": "linux",
+  "architecture": "x86_64",
+  "tracetrim": "1.3.0",
+  "tiktoken": "0.14.0",
+  "unit": "seconds",
+  "repetitions": 3,
+  "tokenizer": "o200k_base",
+  "rule": "Median wall >1 s at 100, or CPU/run grows >15% at both 50->100 and 100->200, on any workload.",
+  "sources": {
+    "synthetic": [
+      {
+        "name": "synthetic.jsonl",
+        "sha256": "7703389138f3ccac14854e9191b9dea3bdbed30eda68658bc83668ef2f0032b8",
+        "calls": 1,
+        "file_bytes": 9894,
+        "output_bytes": 9050
+      }
+    ],
+    "C4": [
+      {
+        "name": "A1.jsonl",
+        "sha256": "9ac815c809d2a012a171724ed4fb6f512d12544e41b6be8f4940c67401032e21",
+        "calls": 10,
+        "file_bytes": 93273,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A2.jsonl",
+        "sha256": "f2126c0f91af2a744f98b377a82c12a55530e0e623120bc45b1a11eb6a564faa",
+        "calls": 10,
+        "file_bytes": 93470,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A3.jsonl",
+        "sha256": "df4ae7ebc898e44dd614224fe6622216586fa0505eea3b49a51075a0493df213",
+        "calls": 11,
+        "file_bytes": 85484,
+        "output_bytes": 68121
+      },
+      {
+        "name": "A4.jsonl",
+        "sha256": "4590f7830a994f9cc885c840dafe4a6049f26f901efcad5a1b6d70537704f22b",
+        "calls": 10,
+        "file_bytes": 93224,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A5.jsonl",
+        "sha256": "22ec11f5fb027c3880cad57e2319a225f4ee4e96ab5b078c8d6a47337c1efd18",
+        "calls": 10,
+        "file_bytes": 93554,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A6.jsonl",
+        "sha256": "2f7628e609210663b7ea581556326ec378c44a773061e5d3d553dcf1fafb0808",
+        "calls": 11,
+        "file_bytes": 103233,
+        "output_bytes": 84234
+      },
+      {
+        "name": "A7.jsonl",
+        "sha256": "6faf18ec17ee116370b6f6e5f1d69eeb3b643b32b3d0f14af21cf0a2c551c78f",
+        "calls": 10,
+        "file_bytes": 93395,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A8.jsonl",
+        "sha256": "9c3ee1f944c82dd2b2043bd5f1e22a25110f0474dcd97ebc95c566f424c1a4ad",
+        "calls": 12,
+        "file_bytes": 118009,
+        "output_bytes": 97683
+      }
+    ],
+    "C5": [
+      {
+        "name": "A1.jsonl",
+        "sha256": "c0bade0bf97d67c7b6d180fb4f0a68b3ec3e6c711deeb702b73b199ea31806f5",
+        "calls": 13,
+        "file_bytes": 280847,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A2.jsonl",
+        "sha256": "8918dd92b7f548bbf642b71e3f142297078237fc9d858488f3148ed71b8c25c8",
+        "calls": 13,
+        "file_bytes": 280982,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A3.jsonl",
+        "sha256": "9d62c73e0be3723f64a440f3bbf06ba14d1e1e01ddeeb2bd6b57bbd7a7069014",
+        "calls": 13,
+        "file_bytes": 281086,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A4.jsonl",
+        "sha256": "7bc78329249b85b2d9e38764c94cda14b7f0207949d4d102e1a5b9b0d8d157d3",
+        "calls": 13,
+        "file_bytes": 280958,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A5.jsonl",
+        "sha256": "07268ffceb14771b7454a59ae99c3c4d640686ff15f584deffb8e0967f42f7c9",
+        "calls": 13,
+        "file_bytes": 280951,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A6.jsonl",
+        "sha256": "776f30a79f41a417f6bccb9780b5bc1fe688dace2634f79b26c61eb5fb86c167",
+        "calls": 13,
+        "file_bytes": 280784,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A7.jsonl",
+        "sha256": "e2aa85cf53277e212ca9f823d1e11e9ec2acc8f7e1c868f5b7caa58a6e5ac506",
+        "calls": 13,
+        "file_bytes": 280793,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A8.jsonl",
+        "sha256": "378ad0e0afa6fc8989be3bacfadcc89b8ad085b6bed19847517ebb803c3d40e0",
+        "calls": 13,
+        "file_bytes": 280959,
+        "output_bytes": 254345
+      }
+    ]
+  },
+  "results": {
+    "synthetic": [
+      {
+        "runs": 5,
+        "calls": 5,
+        "median": {
+          "cpu": {
+            "total": 0.031215045,
+            "read": 0.000463641,
+            "analyse": 0.003129431,
+            "loo_fit": 0.001602423,
+            "loo_evaluate": 0.003311394,
+            "report_fit": 0.000416496,
+            "report_other": 0.009584809,
+            "list_usage": 0.002184756,
+            "grounding": 0.003429714,
+            "render_html": 0.001369125,
+            "write_products": 0.001098783,
+            "other": 0.003427656
+          },
+          "wall": {
+            "total": 0.043043631,
+            "read": 0.000462239,
+            "analyse": 0.003130345,
+            "loo_fit": 0.001600993,
+            "loo_evaluate": 0.003312543,
+            "report_fit": 0.000416478,
+            "report_other": 0.009584427,
+            "list_usage": 0.002184793,
+            "grounding": 0.003429949,
+            "render_html": 0.001369746,
+            "write_products": 0.007423321,
+            "other": 0.009056339
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 0.031215045,
+              "read": 0.000463641,
+              "analyse": 0.003129431,
+              "loo_fit": 0.001602423,
+              "loo_evaluate": 0.003311394,
+              "report_fit": 0.000416496,
+              "report_other": 0.009584809,
+              "list_usage": 0.002201209,
+              "grounding": 0.003429714,
+              "render_html": 0.001449661,
+              "write_products": 0.001281144,
+              "other": 0.004345123
+            },
+            "wall": {
+              "total": 0.043043631,
+              "read": 0.000462239,
+              "analyse": 0.003130345,
+              "loo_fit": 0.001600993,
+              "loo_evaluate": 0.003312543,
+              "report_fit": 0.000416478,
+              "report_other": 0.009584427,
+              "list_usage": 0.002201169,
+              "grounding": 0.003429949,
+              "render_html": 0.001450513,
+              "write_products": 0.007423321,
+              "other": 0.010031654
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.032384076,
+              "read": 0.000665533,
+              "analyse": 0.00485807,
+              "loo_fit": 0.001860352,
+              "loo_evaluate": 0.003458062,
+              "report_fit": 0.000573948,
+              "report_other": 0.010382694,
+              "list_usage": 0.002184756,
+              "grounding": 0.003451008,
+              "render_html": 0.000710126,
+              "write_products": 0.000811871,
+              "other": 0.003427656
+            },
+            "wall": {
+              "total": 0.043650134,
+              "read": 0.00066527,
+              "analyse": 0.004860314,
+              "loo_fit": 0.001859419,
+              "loo_evaluate": 0.003458618,
+              "report_fit": 0.000574019,
+              "report_other": 0.010382272,
+              "list_usage": 0.002184793,
+              "grounding": 0.003451108,
+              "render_html": 0.000710461,
+              "write_products": 0.006802373,
+              "other": 0.008701487
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.025615952,
+              "read": 0.000413815,
+              "analyse": 0.002654102,
+              "loo_fit": 0.001586947,
+              "loo_evaluate": 0.003035148,
+              "report_fit": 0.000409893,
+              "report_other": 0.006404384,
+              "list_usage": 0.002145429,
+              "grounding": 0.003308609,
+              "render_html": 0.001369125,
+              "write_products": 0.001098783,
+              "other": 0.003189717
+            },
+            "wall": {
+              "total": 0.038790134,
+              "read": 0.000412897,
+              "analyse": 0.002654393,
+              "loo_fit": 0.001586682,
+              "loo_evaluate": 0.003035208,
+              "report_fit": 0.000409966,
+              "report_other": 0.006403838,
+              "list_usage": 0.002145384,
+              "grounding": 0.003308518,
+              "render_html": 0.001369746,
+              "write_products": 0.008407163,
+              "other": 0.009056339
+            }
+          }
+        ]
+      },
+      {
+        "runs": 20,
+        "calls": 20,
+        "median": {
+          "cpu": {
+            "total": 0.121526182,
+            "read": 0.000958518,
+            "analyse": 0.012045304,
+            "loo_fit": 0.031775618,
+            "loo_evaluate": 0.012825355,
+            "report_fit": 0.001544805,
+            "report_other": 0.026330347,
+            "list_usage": 0.010647267,
+            "grounding": 0.014308394,
+            "render_html": 0.00073069,
+            "write_products": 0.001046614,
+            "other": 0.004334815
+          },
+          "wall": {
+            "total": 0.134091249,
+            "read": 0.000958246,
+            "analyse": 0.012047532,
+            "loo_fit": 0.031777128,
+            "loo_evaluate": 0.012824039,
+            "report_fit": 0.001552278,
+            "report_other": 0.026327167,
+            "list_usage": 0.010650473,
+            "grounding": 0.014307693,
+            "render_html": 0.000731622,
+            "write_products": 0.008714181,
+            "other": 0.009300321
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 0.121526182,
+              "read": 0.001800418,
+              "analyse": 0.010563241,
+              "loo_fit": 0.036489623,
+              "loo_evaluate": 0.016595381,
+              "report_fit": 0.001501018,
+              "report_other": 0.026909546,
+              "list_usage": 0.008443521,
+              "grounding": 0.013174826,
+              "render_html": 0.000667179,
+              "write_products": 0.001046614,
+              "other": 0.004334815
+            },
+            "wall": {
+              "total": 0.134091249,
+              "read": 0.001801812,
+              "analyse": 0.010564368,
+              "loo_fit": 0.036493995,
+              "loo_evaluate": 0.016591412,
+              "report_fit": 0.00150105,
+              "report_other": 0.02690722,
+              "list_usage": 0.008443856,
+              "grounding": 0.013173978,
+              "render_html": 0.000667245,
+              "write_products": 0.008645992,
+              "other": 0.009300321
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.116520642,
+              "read": 0.000833649,
+              "analyse": 0.012045304,
+              "loo_fit": 0.031775618,
+              "loo_evaluate": 0.012269566,
+              "report_fit": 0.001544805,
+              "report_other": 0.026330347,
+              "list_usage": 0.012400855,
+              "grounding": 0.014308394,
+              "render_html": 0.00073069,
+              "write_products": 0.001030446,
+              "other": 0.003250968
+            },
+            "wall": {
+              "total": 0.129400932,
+              "read": 0.000833684,
+              "analyse": 0.012047532,
+              "loo_fit": 0.031777128,
+              "loo_evaluate": 0.012265057,
+              "report_fit": 0.001552278,
+              "report_other": 0.026327167,
+              "list_usage": 0.012404079,
+              "grounding": 0.014307693,
+              "render_html": 0.000731622,
+              "write_products": 0.008714181,
+              "other": 0.008440511
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.125962692,
+              "read": 0.000958518,
+              "analyse": 0.017676789,
+              "loo_fit": 0.029138399,
+              "loo_evaluate": 0.012825355,
+              "report_fit": 0.002151163,
+              "report_other": 0.025824482,
+              "list_usage": 0.010647267,
+              "grounding": 0.018424035,
+              "render_html": 0.001593952,
+              "write_products": 0.001338534,
+              "other": 0.005384198
+            },
+            "wall": {
+              "total": 0.139379989,
+              "read": 0.000958246,
+              "analyse": 0.017699559,
+              "loo_fit": 0.029135744,
+              "loo_evaluate": 0.012824039,
+              "report_fit": 0.002151724,
+              "report_other": 0.025821573,
+              "list_usage": 0.010650473,
+              "grounding": 0.018424284,
+              "render_html": 0.001593891,
+              "write_products": 0.008751939,
+              "other": 0.011368517
+            }
+          }
+        ]
+      },
+      {
+        "runs": 50,
+        "calls": 50,
+        "median": {
+          "cpu": {
+            "total": 0.415642279,
+            "read": 0.002240402,
+            "analyse": 0.027190214,
+            "loo_fit": 0.209664085,
+            "loo_evaluate": 0.03486448,
+            "report_fit": 0.003828742,
+            "report_other": 0.068164319,
+            "list_usage": 0.02206605,
+            "grounding": 0.037038586,
+            "render_html": 0.001471644,
+            "write_products": 0.001396462,
+            "other": 0.006766934
+          },
+          "wall": {
+            "total": 0.430177948,
+            "read": 0.002242554,
+            "analyse": 0.027209022,
+            "loo_fit": 0.209689301,
+            "loo_evaluate": 0.034823973,
+            "report_fit": 0.003829684,
+            "report_other": 0.068163477,
+            "list_usage": 0.022071444,
+            "grounding": 0.037036785,
+            "render_html": 0.001472222,
+            "write_products": 0.007737123,
+            "other": 0.011798181
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 0.415642279,
+              "read": 0.002036093,
+              "analyse": 0.027190214,
+              "loo_fit": 0.209664085,
+              "loo_evaluate": 0.03486448,
+              "report_fit": 0.003828742,
+              "report_other": 0.06462,
+              "list_usage": 0.021627014,
+              "grounding": 0.043025585,
+              "render_html": 0.00072097,
+              "write_products": 0.001298162,
+              "other": 0.006766934
+            },
+            "wall": {
+              "total": 0.430177948,
+              "read": 0.002037874,
+              "analyse": 0.027209022,
+              "loo_fit": 0.209689301,
+              "loo_evaluate": 0.034823973,
+              "report_fit": 0.003829684,
+              "report_other": 0.064613219,
+              "list_usage": 0.021630741,
+              "grounding": 0.043023453,
+              "render_html": 0.000721258,
+              "write_products": 0.00996701,
+              "other": 0.012632413
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.408890191,
+              "read": 0.002240402,
+              "analyse": 0.026598027,
+              "loo_fit": 0.19294813,
+              "loo_evaluate": 0.032535394,
+              "report_fit": 0.00377239,
+              "report_other": 0.083320943,
+              "list_usage": 0.02206605,
+              "grounding": 0.037038586,
+              "render_html": 0.001471644,
+              "write_products": 0.001396462,
+              "other": 0.005502163
+            },
+            "wall": {
+              "total": 0.421160203,
+              "read": 0.002242554,
+              "analyse": 0.026662399,
+              "loo_fit": 0.192961496,
+              "loo_evaluate": 0.032500035,
+              "report_fit": 0.003772455,
+              "report_other": 0.083313614,
+              "list_usage": 0.022071444,
+              "grounding": 0.037036785,
+              "render_html": 0.001472222,
+              "write_products": 0.007737123,
+              "other": 0.011390076
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.445077715,
+              "read": 0.00230457,
+              "analyse": 0.033835146,
+              "loo_fit": 0.217727945,
+              "loo_evaluate": 0.047327363,
+              "report_fit": 0.004194168,
+              "report_other": 0.068164319,
+              "list_usage": 0.027039875,
+              "grounding": 0.034020483,
+              "render_html": 0.001799158,
+              "write_products": 0.001791114,
+              "other": 0.006873574
+            },
+            "wall": {
+              "total": 0.455851461,
+              "read": 0.002307142,
+              "analyse": 0.033891266,
+              "loo_fit": 0.217785105,
+              "loo_evaluate": 0.047244719,
+              "report_fit": 0.004194527,
+              "report_other": 0.068163477,
+              "list_usage": 0.02705833,
+              "grounding": 0.034018737,
+              "render_html": 0.001801165,
+              "write_products": 0.007588812,
+              "other": 0.011798181
+            }
+          }
+        ]
+      },
+      {
+        "runs": 100,
+        "calls": 100,
+        "median": {
+          "cpu": {
+            "total": 1.305251123,
+            "read": 0.004107404,
+            "analyse": 0.065333654,
+            "loo_fit": 0.877387211,
+            "loo_evaluate": 0.078862975,
+            "report_fit": 0.010432658,
+            "report_other": 0.146735944,
+            "list_usage": 0.045881616,
+            "grounding": 0.071731522,
+            "render_html": 0.0006904,
+            "write_products": 0.001107486,
+            "other": 0.010012247
+          },
+          "wall": {
+            "total": 1.322017158,
+            "read": 0.004111991,
+            "analyse": 0.065468775,
+            "loo_fit": 0.877430149,
+            "loo_evaluate": 0.078739468,
+            "report_fit": 0.01043522,
+            "report_other": 0.146721001,
+            "list_usage": 0.045892908,
+            "grounding": 0.071734213,
+            "render_html": 0.00069061,
+            "write_products": 0.009216465,
+            "other": 0.018013811
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 1.269620008,
+              "read": 0.0044869,
+              "analyse": 0.065333654,
+              "loo_fit": 0.840299048,
+              "loo_evaluate": 0.076400066,
+              "report_fit": 0.008345843,
+              "report_other": 0.146735944,
+              "list_usage": 0.045287715,
+              "grounding": 0.069787851,
+              "render_html": 0.000809171,
+              "write_products": 0.001292037,
+              "other": 0.010841779
+            },
+            "wall": {
+              "total": 1.282898943,
+              "read": 0.00449222,
+              "analyse": 0.065468775,
+              "loo_fit": 0.840420157,
+              "loo_evaluate": 0.076196009,
+              "report_fit": 0.008346144,
+              "report_other": 0.146721001,
+              "list_usage": 0.045302792,
+              "grounding": 0.06978232,
+              "render_html": 0.000810171,
+              "write_products": 0.007345543,
+              "other": 0.018013811
+            }
+          },
+          {
+            "cpu": {
+              "total": 1.356689438,
+              "read": 0.003902712,
+              "analyse": 0.069467501,
+              "loo_fit": 0.889362606,
+              "loo_evaluate": 0.087370147,
+              "report_fit": 0.022950251,
+              "report_other": 0.150298515,
+              "list_usage": 0.045881616,
+              "grounding": 0.076609988,
+              "render_html": 0.0006904,
+              "write_products": 0.001031296,
+              "other": 0.009124406
+            },
+            "wall": {
+              "total": 1.370132377,
+              "read": 0.003908779,
+              "analyse": 0.069526622,
+              "loo_fit": 0.889407349,
+              "loo_evaluate": 0.087229715,
+              "report_fit": 0.022948909,
+              "report_other": 0.150284504,
+              "list_usage": 0.045892908,
+              "grounding": 0.076603996,
+              "render_html": 0.00069061,
+              "write_products": 0.009216465,
+              "other": 0.01442252
+            }
+          },
+          {
+            "cpu": {
+              "total": 1.305251123,
+              "read": 0.004107404,
+              "analyse": 0.058711933,
+              "loo_fit": 0.877387211,
+              "loo_evaluate": 0.078862975,
+              "report_fit": 0.010432658,
+              "report_other": 0.145366993,
+              "list_usage": 0.046851395,
+              "grounding": 0.071731522,
+              "render_html": 0.000679299,
+              "write_products": 0.001107486,
+              "other": 0.010012247
+            },
+            "wall": {
+              "total": 1.322017158,
+              "read": 0.004111991,
+              "analyse": 0.058831729,
+              "loo_fit": 0.877430149,
+              "loo_evaluate": 0.078739468,
+              "report_fit": 0.01043522,
+              "report_other": 0.145350234,
+              "list_usage": 0.046862532,
+              "grounding": 0.071734213,
+              "render_html": 0.000679637,
+              "write_products": 0.009571785,
+              "other": 0.0182702
+            }
+          }
+        ]
+      },
+      {
+        "runs": 200,
+        "calls": 200,
+        "median": {
+          "cpu": {
+            "total": 4.505034886,
+            "read": 0.007716846,
+            "analyse": 0.12122388,
+            "loo_fit": 3.564862802,
+            "loo_evaluate": 0.182314026,
+            "report_fit": 0.016830178,
+            "report_other": 0.306695055,
+            "list_usage": 0.10040893,
+            "grounding": 0.152109177,
+            "render_html": 0.001159489,
+            "write_products": 0.001509872,
+            "other": 0.017002971
+          },
+          "wall": {
+            "total": 4.518350573,
+            "read": 0.007742043,
+            "analyse": 0.121312375,
+            "loo_fit": 3.565030772,
+            "loo_evaluate": 0.181802211,
+            "report_fit": 0.016830905,
+            "report_other": 0.306663664,
+            "list_usage": 0.100449302,
+            "grounding": 0.152096477,
+            "render_html": 0.001160163,
+            "write_products": 0.009585185,
+            "other": 0.022370862
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 4.307277086,
+              "read": 0.007597616,
+              "analyse": 0.110603798,
+              "loo_fit": 3.453157614,
+              "loo_evaluate": 0.173160857,
+              "report_fit": 0.016830178,
+              "report_other": 0.286400785,
+              "list_usage": 0.09485943,
+              "grounding": 0.145035783,
+              "render_html": 0.001118182,
+              "write_products": 0.001509872,
+              "other": 0.017002971
+            },
+            "wall": {
+              "total": 4.320556766,
+              "read": 0.007611855,
+              "analyse": 0.110717242,
+              "loo_fit": 3.453288739,
+              "loo_evaluate": 0.172745621,
+              "report_fit": 0.016830905,
+              "report_other": 0.286377973,
+              "list_usage": 0.094884841,
+              "grounding": 0.145025118,
+              "render_html": 0.001118425,
+              "write_products": 0.009585185,
+              "other": 0.022370862
+            }
+          },
+          {
+            "cpu": {
+              "total": 4.53279178,
+              "read": 0.007716846,
+              "analyse": 0.12122388,
+              "loo_fit": 3.564862802,
+              "loo_evaluate": 0.187502347,
+              "report_fit": 0.015924064,
+              "report_other": 0.336823765,
+              "list_usage": 0.10040893,
+              "grounding": 0.178278732,
+              "render_html": 0.0017427,
+              "write_products": 0.001278084,
+              "other": 0.01702963
+            },
+            "wall": {
+              "total": 4.548988034,
+              "read": 0.007742043,
+              "analyse": 0.121312375,
+              "loo_fit": 3.565030772,
+              "loo_evaluate": 0.186997864,
+              "report_fit": 0.015925224,
+              "report_other": 0.336789817,
+              "list_usage": 0.100449302,
+              "grounding": 0.178263333,
+              "render_html": 0.00174342,
+              "write_products": 0.009049899,
+              "other": 0.025683985
+            }
+          },
+          {
+            "cpu": {
+              "total": 4.505034886,
+              "read": 0.008475085,
+              "analyse": 0.125074632,
+              "loo_fit": 3.58214956,
+              "loo_evaluate": 0.182314026,
+              "report_fit": 0.022881357,
+              "report_other": 0.306695055,
+              "list_usage": 0.105591327,
+              "grounding": 0.152109177,
+              "render_html": 0.001159489,
+              "write_products": 0.002646852,
+              "other": 0.015938326
+            },
+            "wall": {
+              "total": 4.518350573,
+              "read": 0.008637739,
+              "analyse": 0.125140221,
+              "loo_fit": 3.582317544,
+              "loo_evaluate": 0.181802211,
+              "report_fit": 0.022882087,
+              "report_other": 0.306663664,
+              "list_usage": 0.105613627,
+              "grounding": 0.152096477,
+              "render_html": 0.001160163,
+              "write_products": 0.010170995,
+              "other": 0.021865845
+            }
+          }
+        ]
+      }
+    ],
+    "C4": [
+      {
+        "runs": 5,
+        "calls": 51,
+        "median": {
+          "cpu": {
+            "total": 0.217880825,
+            "read": 0.002268303,
+            "analyse": 0.02914381,
+            "loo_fit": 0.023598147,
+            "loo_evaluate": 0.043671211,
+            "report_fit": 0.006223951,
+            "report_other": 0.063481231,
+            "list_usage": 0.008660262,
+            "grounding": 0.025803688,
+            "render_html": 0.004257942,
+            "write_products": 0.001885933,
+            "other": 0.010246264
+          },
+          "wall": {
+            "total": 0.232945914,
+            "read": 0.002268476,
+            "analyse": 0.029144663,
+            "loo_fit": 0.023599177,
+            "loo_evaluate": 0.043665401,
+            "report_fit": 0.006224149,
+            "report_other": 0.063474948,
+            "list_usage": 0.008661874,
+            "grounding": 0.02580215,
+            "render_html": 0.004258022,
+            "write_products": 0.010772121,
+            "other": 0.016807151
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 0.216180812,
+              "read": 0.002268303,
+              "analyse": 0.02813643,
+              "loo_fit": 0.023598147,
+              "loo_evaluate": 0.042579194,
+              "report_fit": 0.006223951,
+              "report_other": 0.064485115,
+              "list_usage": 0.008660262,
+              "grounding": 0.023839271,
+              "render_html": 0.004257942,
+              "write_products": 0.001885933,
+              "other": 0.010246264
+            },
+            "wall": {
+              "total": 0.229635537,
+              "read": 0.002268476,
+              "analyse": 0.028222594,
+              "loo_fit": 0.023599177,
+              "loo_evaluate": 0.042572679,
+              "report_fit": 0.006224149,
+              "report_other": 0.064478191,
+              "list_usage": 0.008661874,
+              "grounding": 0.023838051,
+              "render_html": 0.004258022,
+              "write_products": 0.009349299,
+              "other": 0.016163025
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.234106957,
+              "read": 0.003264692,
+              "analyse": 0.029615322,
+              "loo_fit": 0.027704783,
+              "loo_evaluate": 0.043671211,
+              "report_fit": 0.011131321,
+              "report_other": 0.061767765,
+              "list_usage": 0.008692867,
+              "grounding": 0.025803688,
+              "render_html": 0.00476094,
+              "write_products": 0.00186128,
+              "other": 0.015833088
+            },
+            "wall": {
+              "total": 0.249382268,
+              "read": 0.00326778,
+              "analyse": 0.029618001,
+              "loo_fit": 0.027704334,
+              "loo_evaluate": 0.043665401,
+              "report_fit": 0.011131372,
+              "report_other": 0.061760274,
+              "list_usage": 0.008694454,
+              "grounding": 0.02580215,
+              "render_html": 0.004761379,
+              "write_products": 0.011389046,
+              "other": 0.021588077
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.217880825,
+              "read": 0.002084232,
+              "analyse": 0.02914381,
+              "loo_fit": 0.02208768,
+              "loo_evaluate": 0.045101577,
+              "report_fit": 0.005248764,
+              "report_other": 0.063481231,
+              "list_usage": 0.008509494,
+              "grounding": 0.025953724,
+              "render_html": 0.003765482,
+              "write_products": 0.00251782,
+              "other": 0.009987011
+            },
+            "wall": {
+              "total": 0.232945914,
+              "read": 0.002084819,
+              "analyse": 0.029144663,
+              "loo_fit": 0.022087352,
+              "loo_evaluate": 0.04509594,
+              "report_fit": 0.005248999,
+              "report_other": 0.063474948,
+              "list_usage": 0.008511711,
+              "grounding": 0.025952116,
+              "render_html": 0.003766094,
+              "write_products": 0.010772121,
+              "other": 0.016807151
+            }
+          }
+        ]
+      },
+      {
+        "runs": 20,
+        "calls": 209,
+        "median": {
+          "cpu": {
+            "total": 1.229555164,
+            "read": 0.0081135,
+            "analyse": 0.134076195,
+            "loo_fit": 0.421173037,
+            "loo_evaluate": 0.171259235,
+            "report_fit": 0.027847004,
+            "report_other": 0.283409614,
+            "list_usage": 0.03514295,
+            "grounding": 0.10784729,
+            "render_html": 0.004608869,
+            "write_products": 0.001865635,
+            "other": 0.021893716
+          },
+          "wall": {
+            "total": 1.245233838,
+            "read": 0.00813042,
+            "analyse": 0.134089646,
+            "loo_fit": 0.421146191,
+            "loo_evaluate": 0.171223133,
+            "report_fit": 0.027845506,
+            "report_other": 0.283381362,
+            "list_usage": 0.03515169,
+            "grounding": 0.107838422,
+            "render_html": 0.004609453,
+            "write_products": 0.010420625,
+            "other": 0.02780098
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 1.2251086,
+              "read": 0.008770997,
+              "analyse": 0.129786533,
+              "loo_fit": 0.426328085,
+              "loo_evaluate": 0.17037161,
+              "report_fit": 0.028308666,
+              "report_other": 0.290519199,
+              "list_usage": 0.03514295,
+              "grounding": 0.10784729,
+              "render_html": 0.004608869,
+              "write_products": 0.002895735,
+              "other": 0.020528666
+            },
+            "wall": {
+              "total": 1.239407498,
+              "read": 0.008777152,
+              "analyse": 0.129796108,
+              "loo_fit": 0.42631568,
+              "loo_evaluate": 0.17032611,
+              "report_fit": 0.028308464,
+              "report_other": 0.290489556,
+              "list_usage": 0.03515169,
+              "grounding": 0.107838422,
+              "render_html": 0.004609453,
+              "write_products": 0.010420625,
+              "other": 0.027374238
+            }
+          },
+          {
+            "cpu": {
+              "total": 1.236095028,
+              "read": 0.0081135,
+              "analyse": 0.134076195,
+              "loo_fit": 0.41910878,
+              "loo_evaluate": 0.171259235,
+              "report_fit": 0.027847004,
+              "report_other": 0.283409614,
+              "list_usage": 0.034806181,
+              "grounding": 0.118808018,
+              "render_html": 0.007696321,
+              "write_products": 0.001720002,
+              "other": 0.029250178
+            },
+            "wall": {
+              "total": 1.248929052,
+              "read": 0.00813042,
+              "analyse": 0.134089646,
+              "loo_fit": 0.419093766,
+              "loo_evaluate": 0.171223133,
+              "report_fit": 0.027845506,
+              "report_other": 0.283381362,
+              "list_usage": 0.034814249,
+              "grounding": 0.118808235,
+              "render_html": 0.007696489,
+              "write_products": 0.009480227,
+              "other": 0.034366019
+            }
+          },
+          {
+            "cpu": {
+              "total": 1.229555164,
+              "read": 0.006563578,
+              "analyse": 0.143193764,
+              "loo_fit": 0.421173037,
+              "loo_evaluate": 0.180155061,
+              "report_fit": 0.026483983,
+              "report_other": 0.282909666,
+              "list_usage": 0.03573027,
+              "grounding": 0.105667901,
+              "render_html": 0.003918553,
+              "write_products": 0.001865635,
+              "other": 0.021893716
+            },
+            "wall": {
+              "total": 1.245233838,
+              "read": 0.00656574,
+              "analyse": 0.143205026,
+              "loo_fit": 0.421146191,
+              "loo_evaluate": 0.180123492,
+              "report_fit": 0.026483756,
+              "report_other": 0.282880456,
+              "list_usage": 0.03574304,
+              "grounding": 0.105660279,
+              "render_html": 0.00391899,
+              "write_products": 0.011705888,
+              "other": 0.02780098
+            }
+          }
+        ]
+      },
+      {
+        "runs": 50,
+        "calls": 524,
+        "median": {
+          "cpu": {
+            "total": 5.222059067,
+            "read": 0.017432359,
+            "analyse": 0.354252218,
+            "loo_fit": 3.005315329,
+            "loo_evaluate": 0.491784737,
+            "report_fit": 0.069292699,
+            "report_other": 0.795516067,
+            "list_usage": 0.107228119,
+            "grounding": 0.309398895,
+            "render_html": 0.004887802,
+            "write_products": 0.002416786,
+            "other": 0.049023133
+          },
+          "wall": {
+            "total": 5.240760085,
+            "read": 0.017466956,
+            "analyse": 0.354275667,
+            "loo_fit": 3.006014251,
+            "loo_evaluate": 0.491557244,
+            "report_fit": 0.069297152,
+            "report_other": 0.795434286,
+            "list_usage": 0.107272651,
+            "grounding": 0.309380412,
+            "render_html": 0.004888368,
+            "write_products": 0.013837691,
+            "other": 0.056612414
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 5.153399243,
+              "read": 0.015460683,
+              "analyse": 0.345712061,
+              "loo_fit": 2.944791549,
+              "loo_evaluate": 0.491784737,
+              "report_fit": 0.052993229,
+              "report_other": 0.831795458,
+              "list_usage": 0.102287197,
+              "grounding": 0.309398895,
+              "render_html": 0.006020101,
+              "write_products": 0.001882416,
+              "other": 0.051272917
+            },
+            "wall": {
+              "total": 5.167741567,
+              "read": 0.015492703,
+              "analyse": 0.345732298,
+              "loo_fit": 2.944828425,
+              "loo_evaluate": 0.491557244,
+              "report_fit": 0.052993076,
+              "report_other": 0.831741326,
+              "list_usage": 0.102322015,
+              "grounding": 0.309380412,
+              "render_html": 0.006020952,
+              "write_products": 0.010662392,
+              "other": 0.057010724
+            }
+          },
+          {
+            "cpu": {
+              "total": 5.254123456,
+              "read": 0.018405532,
+              "analyse": 0.354252218,
+              "loo_fit": 3.017002993,
+              "loo_evaluate": 0.520606352,
+              "report_fit": 0.069292699,
+              "report_other": 0.793367107,
+              "list_usage": 0.109515946,
+              "grounding": 0.315145225,
+              "render_html": 0.004887802,
+              "write_products": 0.002624449,
+              "other": 0.049023133
+            },
+            "wall": {
+              "total": 5.290956233,
+              "read": 0.01841452,
+              "analyse": 0.354275667,
+              "loo_fit": 3.016959583,
+              "loo_evaluate": 0.521027302,
+              "report_fit": 0.069297152,
+              "report_other": 0.793285755,
+              "list_usage": 0.109562866,
+              "grounding": 0.315124601,
+              "render_html": 0.004888368,
+              "write_products": 0.031508005,
+              "other": 0.056612414
+            }
+          },
+          {
+            "cpu": {
+              "total": 5.222059067,
+              "read": 0.017432359,
+              "analyse": 0.381569665,
+              "loo_fit": 3.005315329,
+              "loo_evaluate": 0.487695778,
+              "report_fit": 0.074096643,
+              "report_other": 0.795516067,
+              "list_usage": 0.107228119,
+              "grounding": 0.297964366,
+              "render_html": 0.004338018,
+              "write_products": 0.002416786,
+              "other": 0.048485937
+            },
+            "wall": {
+              "total": 5.240760085,
+              "read": 0.017466956,
+              "analyse": 0.38162247,
+              "loo_fit": 3.006014251,
+              "loo_evaluate": 0.487522934,
+              "report_fit": 0.074094033,
+              "report_other": 0.795434286,
+              "list_usage": 0.107272651,
+              "grounding": 0.297946146,
+              "render_html": 0.004338557,
+              "write_products": 0.013837691,
+              "other": 0.05521011
+            }
+          }
+        ]
+      },
+      {
+        "runs": 100,
+        "calls": 1049,
+        "median": {
+          "cpu": {
+            "total": 15.332629776,
+            "read": 0.033619456,
+            "analyse": 0.685869891,
+            "loo_fit": 11.221936639,
+            "loo_evaluate": 0.947609125,
+            "report_fit": 0.112608165,
+            "report_other": 1.486353074,
+            "list_usage": 0.199431592,
+            "grounding": 0.589245689,
+            "render_html": 0.004899226,
+            "write_products": 0.002776612,
+            "other": 0.078643929
+          },
+          "wall": {
+            "total": 15.349652708,
+            "read": 0.033692583,
+            "analyse": 0.685938812,
+            "loo_fit": 11.221930653,
+            "loo_evaluate": 0.947277145,
+            "report_fit": 0.112602507,
+            "report_other": 1.48621794,
+            "list_usage": 0.199497361,
+            "grounding": 0.58920093,
+            "render_html": 0.004900066,
+            "write_products": 0.011632301,
+            "other": 0.087245863
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 15.220155184,
+              "read": 0.033619456,
+              "analyse": 0.726317919,
+              "loo_fit": 11.117992606,
+              "loo_evaluate": 0.943649441,
+              "report_fit": 0.123787774,
+              "report_other": 1.432469096,
+              "list_usage": 0.199431592,
+              "grounding": 0.559175878,
+              "render_html": 0.004899226,
+              "write_products": 0.002862592,
+              "other": 0.075949604
+            },
+            "wall": {
+              "total": 15.239364607,
+              "read": 0.033692583,
+              "analyse": 0.726388011,
+              "loo_fit": 11.117131336,
+              "loo_evaluate": 0.943400559,
+              "report_fit": 0.123779069,
+              "report_other": 1.432349459,
+              "list_usage": 0.199497361,
+              "grounding": 0.55912242,
+              "render_html": 0.004900066,
+              "write_products": 0.015300429,
+              "other": 0.083803314
+            }
+          },
+          {
+            "cpu": {
+              "total": 15.332629776,
+              "read": 0.034122734,
+              "analyse": 0.653301275,
+              "loo_fit": 11.221936639,
+              "loo_evaluate": 0.947609125,
+              "report_fit": 0.112288754,
+              "report_other": 1.486353074,
+              "list_usage": 0.199723336,
+              "grounding": 0.589245689,
+              "render_html": 0.007170137,
+              "write_products": 0.002235084,
+              "other": 0.078643929
+            },
+            "wall": {
+              "total": 15.349652708,
+              "read": 0.034138311,
+              "analyse": 0.653336569,
+              "loo_fit": 11.221930653,
+              "loo_evaluate": 0.947277145,
+              "report_fit": 0.112288018,
+              "report_other": 1.48621794,
+              "list_usage": 0.19980173,
+              "grounding": 0.58920093,
+              "render_html": 0.007170885,
+              "write_products": 0.011044664,
+              "other": 0.087245863
+            }
+          },
+          {
+            "cpu": {
+              "total": 16.118680479,
+              "read": 0.033107029,
+              "analyse": 0.685869891,
+              "loo_fit": 11.829576489,
+              "loo_evaluate": 1.060747416,
+              "report_fit": 0.112608165,
+              "report_other": 1.518962359,
+              "list_usage": 0.19862777,
+              "grounding": 0.590178222,
+              "render_html": 0.004239277,
+              "write_products": 0.002776612,
+              "other": 0.081987249
+            },
+            "wall": {
+              "total": 16.133121551,
+              "read": 0.033123915,
+              "analyse": 0.685938812,
+              "loo_fit": 11.828842239,
+              "loo_evaluate": 1.060301856,
+              "report_fit": 0.112602507,
+              "report_other": 1.518807559,
+              "list_usage": 0.198715097,
+              "grounding": 0.590135386,
+              "render_html": 0.004239926,
+              "write_products": 0.011632301,
+              "other": 0.088781953
+            }
+          }
+        ]
+      },
+      {
+        "runs": 200,
+        "calls": 2100,
+        "median": {
+          "cpu": {
+            "total": 54.439029292,
+            "read": 0.067976793,
+            "analyse": 1.362153234,
+            "loo_fit": 46.100089643,
+            "loo_evaluate": 1.949577345,
+            "report_fit": 0.232269096,
+            "report_other": 2.953366021,
+            "list_usage": 0.454915718,
+            "grounding": 1.171741075,
+            "render_html": 0.004170378,
+            "write_products": 0.002078277,
+            "other": 0.156641751
+          },
+          "wall": {
+            "total": 54.449658811,
+            "read": 0.06804294,
+            "analyse": 1.362292352,
+            "loo_fit": 46.096996605,
+            "loo_evaluate": 1.948733474,
+            "report_fit": 0.232251784,
+            "report_other": 2.953199446,
+            "list_usage": 0.455167423,
+            "grounding": 1.171948336,
+            "render_html": 0.004171522,
+            "write_products": 0.009892404,
+            "other": 0.163141437
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 54.081636381,
+              "read": 0.065679519,
+              "analyse": 1.437974727,
+              "loo_fit": 45.662883014,
+              "loo_evaluate": 1.980964293,
+              "report_fit": 0.241025751,
+              "report_other": 2.921411278,
+              "list_usage": 0.450045135,
+              "grounding": 1.162050839,
+              "render_html": 0.004669863,
+              "write_products": 0.002078277,
+              "other": 0.152853685
+            },
+            "wall": {
+              "total": 54.091690831,
+              "read": 0.065711633,
+              "analyse": 1.438302297,
+              "loo_fit": 45.660329734,
+              "loo_evaluate": 1.980031316,
+              "report_fit": 0.24100633,
+              "report_other": 2.921157615,
+              "list_usage": 0.450187456,
+              "grounding": 1.161939246,
+              "render_html": 0.004670277,
+              "write_products": 0.009892404,
+              "other": 0.158462523
+            }
+          },
+          {
+            "cpu": {
+              "total": 54.439029292,
+              "read": 0.067976793,
+              "analyse": 1.362153234,
+              "loo_fit": 46.100089643,
+              "loo_evaluate": 1.923829018,
+              "report_fit": 0.232269096,
+              "report_other": 2.953366021,
+              "list_usage": 0.465182759,
+              "grounding": 1.171741075,
+              "render_html": 0.004008258,
+              "write_products": 0.001771644,
+              "other": 0.156641751
+            },
+            "wall": {
+              "total": 54.449658811,
+              "read": 0.06804294,
+              "analyse": 1.362292352,
+              "loo_fit": 46.096996605,
+              "loo_evaluate": 1.922879596,
+              "report_fit": 0.232251784,
+              "report_other": 2.953199446,
+              "list_usage": 0.465353688,
+              "grounding": 1.171948336,
+              "render_html": 0.004008676,
+              "write_products": 0.009543951,
+              "other": 0.163141437
+            }
+          },
+          {
+            "cpu": {
+              "total": 54.576440771,
+              "read": 0.06942144,
+              "analyse": 1.345017423,
+              "loo_fit": 46.225006974,
+              "loo_evaluate": 1.949577345,
+              "report_fit": 0.223098106,
+              "report_other": 2.961064944,
+              "list_usage": 0.454915718,
+              "grounding": 1.174613759,
+              "render_html": 0.004170378,
+              "write_products": 0.002347556,
+              "other": 0.167207128
+            },
+            "wall": {
+              "total": 54.590328568,
+              "read": 0.069460902,
+              "analyse": 1.345112094,
+              "loo_fit": 46.221471157,
+              "loo_evaluate": 1.948733474,
+              "report_fit": 0.223080247,
+              "report_other": 2.960785871,
+              "list_usage": 0.455167423,
+              "grounding": 1.174508645,
+              "render_html": 0.004171522,
+              "write_products": 0.013897496,
+              "other": 0.173939737
+            }
+          }
+        ]
+      }
+    ],
+    "C5": [
+      {
+        "runs": 5,
+        "calls": 65,
+        "median": {
+          "cpu": {
+            "total": 0.693807545,
+            "read": 0.007472603,
+            "analyse": 0.08715369,
+            "loo_fit": 0.046069581,
+            "loo_evaluate": 0.128043003,
+            "report_fit": 0.011049115,
+            "report_other": 0.221091503,
+            "list_usage": 0.032974403,
+            "grounding": 0.10556699,
+            "render_html": 0.006603093,
+            "write_products": 0.002787383,
+            "other": 0.029755305
+          },
+          "wall": {
+            "total": 0.705967015,
+            "read": 0.007473088,
+            "analyse": 0.087149878,
+            "loo_fit": 0.046066708,
+            "loo_evaluate": 0.128028178,
+            "report_fit": 0.011050178,
+            "report_other": 0.221074105,
+            "list_usage": 0.032977139,
+            "grounding": 0.105558269,
+            "render_html": 0.006604879,
+            "write_products": 0.010547203,
+            "other": 0.038552111
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 0.665904541,
+              "read": 0.004213061,
+              "analyse": 0.08715369,
+              "loo_fit": 0.046069581,
+              "loo_evaluate": 0.119381409,
+              "report_fit": 0.011107068,
+              "report_other": 0.221091503,
+              "list_usage": 0.03319582,
+              "grounding": 0.10556699,
+              "render_html": 0.006040074,
+              "write_products": 0.00233004,
+              "other": 0.029755305
+            },
+            "wall": {
+              "total": 0.682787944,
+              "read": 0.004214429,
+              "analyse": 0.087149878,
+              "loo_fit": 0.046066708,
+              "loo_evaluate": 0.119381286,
+              "report_fit": 0.011107342,
+              "report_other": 0.221074105,
+              "list_usage": 0.033196613,
+              "grounding": 0.105558269,
+              "render_html": 0.006040251,
+              "write_products": 0.010446952,
+              "other": 0.038552111
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.699773278,
+              "read": 0.007472603,
+              "analyse": 0.092982651,
+              "loo_fit": 0.046026693,
+              "loo_evaluate": 0.145424195,
+              "report_fit": 0.011049115,
+              "report_other": 0.217117058,
+              "list_usage": 0.032974403,
+              "grounding": 0.102239563,
+              "render_html": 0.010404095,
+              "write_products": 0.002787383,
+              "other": 0.031295519
+            },
+            "wall": {
+              "total": 0.718420649,
+              "read": 0.007473088,
+              "analyse": 0.092978066,
+              "loo_fit": 0.04602629,
+              "loo_evaluate": 0.145407085,
+              "report_fit": 0.011050178,
+              "report_other": 0.217100535,
+              "list_usage": 0.032977139,
+              "grounding": 0.102230823,
+              "render_html": 0.010406231,
+              "write_products": 0.011052086,
+              "other": 0.041719128
+            }
+          },
+          {
+            "cpu": {
+              "total": 0.693807545,
+              "read": 0.00758896,
+              "analyse": 0.086856672,
+              "loo_fit": 0.048619806,
+              "loo_evaluate": 0.128043003,
+              "report_fit": 0.010884385,
+              "report_other": 0.226332199,
+              "list_usage": 0.03289935,
+              "grounding": 0.114321985,
+              "render_html": 0.006603093,
+              "write_products": 0.00410648,
+              "other": 0.027551612
+            },
+            "wall": {
+              "total": 0.705967015,
+              "read": 0.007590101,
+              "analyse": 0.086855228,
+              "loo_fit": 0.048618108,
+              "loo_evaluate": 0.128028178,
+              "report_fit": 0.010885114,
+              "report_other": 0.226308984,
+              "list_usage": 0.032898995,
+              "grounding": 0.114312382,
+              "render_html": 0.006604879,
+              "write_products": 0.010547203,
+              "other": 0.033317843
+            }
+          }
+        ]
+      },
+      {
+        "runs": 20,
+        "calls": 260,
+        "median": {
+          "cpu": {
+            "total": 3.265173193,
+            "read": 0.014095133,
+            "analyse": 0.343291466,
+            "loo_fit": 0.875258354,
+            "loo_evaluate": 0.501646116,
+            "report_fit": 0.042580878,
+            "report_other": 0.867539905,
+            "list_usage": 0.142933382,
+            "grounding": 0.412392853,
+            "render_html": 0.005594313,
+            "write_products": 0.002388672,
+            "other": 0.053616852
+          },
+          "wall": {
+            "total": 3.281198169,
+            "read": 0.01410117,
+            "analyse": 0.343280589,
+            "loo_fit": 0.875228851,
+            "loo_evaluate": 0.502646472,
+            "report_fit": 0.04257823,
+            "report_other": 0.867455283,
+            "list_usage": 0.142935693,
+            "grounding": 0.412354403,
+            "render_html": 0.005594641,
+            "write_products": 0.01102246,
+            "other": 0.05967839
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 3.265173193,
+              "read": 0.013636878,
+              "analyse": 0.343291466,
+              "loo_fit": 0.875258354,
+              "loo_evaluate": 0.501646116,
+              "report_fit": 0.042580878,
+              "report_other": 0.868346618,
+              "list_usage": 0.142933382,
+              "grounding": 0.412392853,
+              "render_html": 0.010173248,
+              "write_products": 0.003706203,
+              "other": 0.051207197
+            },
+            "wall": {
+              "total": 3.281198169,
+              "read": 0.013642535,
+              "analyse": 0.343280589,
+              "loo_fit": 0.875228851,
+              "loo_evaluate": 0.502646472,
+              "report_fit": 0.04257823,
+              "report_other": 0.868273539,
+              "list_usage": 0.142935693,
+              "grounding": 0.412354403,
+              "render_html": 0.010173752,
+              "write_products": 0.012287423,
+              "other": 0.057796682
+            }
+          },
+          {
+            "cpu": {
+              "total": 3.235252027,
+              "read": 0.014095133,
+              "analyse": 0.347933132,
+              "loo_fit": 0.884428701,
+              "loo_evaluate": 0.494505661,
+              "report_fit": 0.041529301,
+              "report_other": 0.852469843,
+              "list_usage": 0.139243671,
+              "grounding": 0.399446748,
+              "render_html": 0.005594313,
+              "write_products": 0.002388672,
+              "other": 0.053616852
+            },
+            "wall": {
+              "total": 3.250052735,
+              "read": 0.01410117,
+              "analyse": 0.347923961,
+              "loo_fit": 0.884406247,
+              "loo_evaluate": 0.494423007,
+              "report_fit": 0.041527564,
+              "report_other": 0.853196672,
+              "list_usage": 0.13924241,
+              "grounding": 0.399415779,
+              "render_html": 0.005594641,
+              "write_products": 0.010542894,
+              "other": 0.05967839
+            }
+          },
+          {
+            "cpu": {
+              "total": 3.310711206,
+              "read": 0.014474478,
+              "analyse": 0.338495741,
+              "loo_fit": 0.868706718,
+              "loo_evaluate": 0.529662195,
+              "report_fit": 0.043752698,
+              "report_other": 0.867539905,
+              "list_usage": 0.1546908,
+              "grounding": 0.430147731,
+              "render_html": 0.005397297,
+              "write_products": 0.002277099,
+              "other": 0.055566544
+            },
+            "wall": {
+              "total": 3.326487857,
+              "read": 0.014479664,
+              "analyse": 0.338496797,
+              "loo_fit": 0.868654438,
+              "loo_evaluate": 0.529585591,
+              "report_fit": 0.043751564,
+              "report_other": 0.867455283,
+              "list_usage": 0.154688841,
+              "grounding": 0.430107033,
+              "render_html": 0.005398154,
+              "write_products": 0.01102246,
+              "other": 0.062848032
+            }
+          }
+        ]
+      },
+      {
+        "runs": 50,
+        "calls": 650,
+        "median": {
+          "cpu": {
+            "total": 11.626236495,
+            "read": 0.037765397,
+            "analyse": 0.860336416,
+            "loo_fit": 5.628709952,
+            "loo_evaluate": 1.318190427,
+            "report_fit": 0.116615653,
+            "report_other": 2.142618741,
+            "list_usage": 0.36885389,
+            "grounding": 1.043959981,
+            "render_html": 0.005711972,
+            "write_products": 0.002910437,
+            "other": 0.08383855
+          },
+          "wall": {
+            "total": 11.644772159,
+            "read": 0.037781933,
+            "analyse": 0.860310997,
+            "loo_fit": 5.628319036,
+            "loo_evaluate": 1.317951172,
+            "report_fit": 0.116610325,
+            "report_other": 2.142437941,
+            "list_usage": 0.368867567,
+            "grounding": 1.04385856,
+            "render_html": 0.005712208,
+            "write_products": 0.013055878,
+            "other": 0.090440527
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 11.626236495,
+              "read": 0.035518028,
+              "analyse": 0.860336416,
+              "loo_fit": 5.647995888,
+              "loo_evaluate": 1.333530153,
+              "report_fit": 0.121471741,
+              "report_other": 2.142618741,
+              "list_usage": 0.36885389,
+              "grounding": 1.024055915,
+              "render_html": 0.005711972,
+              "write_products": 0.003096054,
+              "other": 0.083047697
+            },
+            "wall": {
+              "total": 11.644772159,
+              "read": 0.035546713,
+              "analyse": 0.860310997,
+              "loo_fit": 5.647622207,
+              "loo_evaluate": 1.333344557,
+              "report_fit": 0.121465092,
+              "report_other": 2.142437941,
+              "list_usage": 0.368867567,
+              "grounding": 1.023956631,
+              "render_html": 0.005712208,
+              "write_products": 0.015669767,
+              "other": 0.089838479
+            }
+          },
+          {
+            "cpu": {
+              "total": 11.575747335,
+              "read": 0.042733043,
+              "analyse": 0.865687532,
+              "loo_fit": 5.619550513,
+              "loo_evaluate": 1.318190427,
+              "report_fit": 0.107598712,
+              "report_other": 2.105710837,
+              "list_usage": 0.362210406,
+              "grounding": 1.043959981,
+              "render_html": 0.012063319,
+              "write_products": 0.002910437,
+              "other": 0.095132128
+            },
+            "wall": {
+              "total": 11.592043296,
+              "read": 0.042755008,
+              "analyse": 0.865665837,
+              "loo_fit": 5.619155068,
+              "loo_evaluate": 1.317951172,
+              "report_fit": 0.107590983,
+              "report_other": 2.105507534,
+              "list_usage": 0.362222709,
+              "grounding": 1.04385856,
+              "render_html": 0.012064076,
+              "write_products": 0.013055878,
+              "other": 0.102216471
+            }
+          },
+          {
+            "cpu": {
+              "total": 11.636647476,
+              "read": 0.037765397,
+              "analyse": 0.849312497,
+              "loo_fit": 5.628709952,
+              "loo_evaluate": 1.310412332,
+              "report_fit": 0.116615653,
+              "report_other": 2.170008674,
+              "list_usage": 0.374676924,
+              "grounding": 1.057494323,
+              "render_html": 0.005579695,
+              "write_products": 0.002233479,
+              "other": 0.08383855
+            },
+            "wall": {
+              "total": 11.650036722,
+              "read": 0.037781933,
+              "analyse": 0.849299202,
+              "loo_fit": 5.628319036,
+              "loo_evaluate": 1.310169257,
+              "report_fit": 0.116610325,
+              "report_other": 2.169810008,
+              "list_usage": 0.374873928,
+              "grounding": 1.057392906,
+              "render_html": 0.005580243,
+              "write_products": 0.009759357,
+              "other": 0.090440527
+            }
+          }
+        ]
+      },
+      {
+        "runs": 100,
+        "calls": 1300,
+        "median": {
+          "cpu": {
+            "total": 36.363205718,
+            "read": 0.07488506,
+            "analyse": 1.829291195,
+            "loo_fit": 23.495619913,
+            "loo_evaluate": 2.766978877,
+            "report_fit": 0.225711117,
+            "report_other": 4.52077947,
+            "list_usage": 0.784007415,
+            "grounding": 2.215735409,
+            "render_html": 0.006800638,
+            "write_products": 0.002921136,
+            "other": 0.169990012
+          },
+          "wall": {
+            "total": 36.375637853,
+            "read": 0.074924134,
+            "analyse": 1.829301107,
+            "loo_fit": 23.493667821,
+            "loo_evaluate": 2.766448341,
+            "report_fit": 0.225694527,
+            "report_other": 4.520371004,
+            "list_usage": 0.784083584,
+            "grounding": 2.215534112,
+            "render_html": 0.006800888,
+            "write_products": 0.011977175,
+            "other": 0.1769494
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 34.436385364,
+              "read": 0.07488506,
+              "analyse": 1.72026901,
+              "loo_fit": 22.244691718,
+              "loo_evaluate": 2.596791734,
+              "report_fit": 0.219164147,
+              "report_other": 4.436549551,
+              "list_usage": 0.784007415,
+              "grounding": 2.171057606,
+              "render_html": 0.006800638,
+              "write_products": 0.002562878,
+              "other": 0.179605607
+            },
+            "wall": {
+              "total": 34.451331817,
+              "read": 0.074924134,
+              "analyse": 1.720241358,
+              "loo_fit": 22.243062352,
+              "loo_evaluate": 2.59626567,
+              "report_fit": 0.219881566,
+              "report_other": 4.436116333,
+              "list_usage": 0.784083584,
+              "grounding": 2.170945243,
+              "render_html": 0.006800888,
+              "write_products": 0.012612296,
+              "other": 0.186398393
+            }
+          },
+          {
+            "cpu": {
+              "total": 36.363205718,
+              "read": 0.067814675,
+              "analyse": 1.829291195,
+              "loo_fit": 23.777044245,
+              "loo_evaluate": 2.773869347,
+              "report_fit": 0.24625903,
+              "report_other": 4.52077947,
+              "list_usage": 0.748796789,
+              "grounding": 2.215735409,
+              "render_html": 0.009799942,
+              "write_products": 0.003825604,
+              "other": 0.169990012
+            },
+            "wall": {
+              "total": 36.375637853,
+              "read": 0.067845386,
+              "analyse": 1.829301107,
+              "loo_fit": 23.775501923,
+              "loo_evaluate": 2.773259273,
+              "report_fit": 0.246240043,
+              "report_other": 4.520371004,
+              "list_usage": 0.748872533,
+              "grounding": 2.215534112,
+              "render_html": 0.009800464,
+              "write_products": 0.011962608,
+              "other": 0.1769494
+            }
+          },
+          {
+            "cpu": {
+              "total": 36.378370395,
+              "read": 0.079186467,
+              "analyse": 1.90107727,
+              "loo_fit": 23.495619913,
+              "loo_evaluate": 2.766978877,
+              "report_fit": 0.225711117,
+              "report_other": 4.689046143,
+              "list_usage": 0.793202269,
+              "grounding": 2.257010365,
+              "render_html": 0.005950709,
+              "write_products": 0.002921136,
+              "other": 0.161666129
+            },
+            "wall": {
+              "total": 36.393140087,
+              "read": 0.079230773,
+              "analyse": 1.901067545,
+              "loo_fit": 23.493667821,
+              "loo_evaluate": 2.766448341,
+              "report_fit": 0.225694527,
+              "report_other": 4.688584049,
+              "list_usage": 0.793263463,
+              "grounding": 2.256800707,
+              "render_html": 0.005951318,
+              "write_products": 0.011977175,
+              "other": 0.170454368
+            }
+          }
+        ]
+      },
+      {
+        "runs": 200,
+        "calls": 2600,
+        "median": {
+          "cpu": {
+            "total": 116.447729202,
+            "read": 0.143390163,
+            "analyse": 3.646346078,
+            "loo_fit": 91.339970307,
+            "loo_evaluate": 5.429303028,
+            "report_fit": 0.461074507,
+            "report_other": 9.291757017,
+            "list_usage": 1.51917161,
+            "grounding": 4.346739147,
+            "render_html": 0.007912554,
+            "write_products": 0.003189062,
+            "other": 0.308316881
+          },
+          "wall": {
+            "total": 116.455913428,
+            "read": 0.143453925,
+            "analyse": 3.648356967,
+            "loo_fit": 91.332567501,
+            "loo_evaluate": 5.428172847,
+            "report_fit": 0.461096117,
+            "report_other": 9.291220346,
+            "list_usage": 1.520048749,
+            "grounding": 4.34671446,
+            "render_html": 0.007923202,
+            "write_products": 0.012579306,
+            "other": 0.317145623
+          }
+        },
+        "repetitions": [
+          {
+            "cpu": {
+              "total": 116.447729202,
+              "read": 0.159265253,
+              "analyse": 3.650728274,
+              "loo_fit": 91.339970307,
+              "loo_evaluate": 5.429303028,
+              "report_fit": 0.468257576,
+              "report_other": 9.427784949,
+              "list_usage": 1.471600623,
+              "grounding": 4.206927384,
+              "render_html": 0.00736738,
+              "write_products": 0.002619791,
+              "other": 0.283904637
+            },
+            "wall": {
+              "total": 116.455913428,
+              "read": 0.159353127,
+              "analyse": 3.651402033,
+              "loo_fit": 91.332567501,
+              "loo_evaluate": 5.428172847,
+              "report_fit": 0.468225508,
+              "report_other": 9.427067043,
+              "list_usage": 1.471663842,
+              "grounding": 4.20657765,
+              "render_html": 0.007367631,
+              "write_products": 0.012448226,
+              "other": 0.29106802
+            }
+          },
+          {
+            "cpu": {
+              "total": 114.211448474,
+              "read": 0.143390163,
+              "analyse": 3.526315791,
+              "loo_fit": 89.621609275,
+              "loo_evaluate": 5.214804464,
+              "report_fit": 0.44367086,
+              "report_other": 9.06527978,
+              "list_usage": 1.51917161,
+              "grounding": 4.346739147,
+              "render_html": 0.010405599,
+              "write_products": 0.003189062,
+              "other": 0.316872723
+            },
+            "wall": {
+              "total": 114.228369733,
+              "read": 0.143453925,
+              "analyse": 3.533852683,
+              "loo_fit": 89.615120428,
+              "loo_evaluate": 5.213645475,
+              "report_fit": 0.443630902,
+              "report_other": 9.065072723,
+              "list_usage": 1.520048749,
+              "grounding": 4.34671446,
+              "render_html": 0.010407507,
+              "write_products": 0.012579306,
+              "other": 0.323843575
+            }
+          },
+          {
+            "cpu": {
+              "total": 119.325919606,
+              "read": 0.143157919,
+              "analyse": 3.646346078,
+              "loo_fit": 93.787027884,
+              "loo_evaluate": 5.46218734,
+              "report_fit": 0.461074507,
+              "report_other": 9.291757017,
+              "list_usage": 1.61647871,
+              "grounding": 4.597441245,
+              "render_html": 0.007912554,
+              "write_products": 0.004219471,
+              "other": 0.308316881
+            },
+            "wall": {
+              "total": 119.340943529,
+              "read": 0.143247821,
+              "analyse": 3.648356967,
+              "loo_fit": 93.782863503,
+              "loo_evaluate": 5.461924593,
+              "report_fit": 0.461096117,
+              "report_other": 9.291220346,
+              "list_usage": 1.616781856,
+              "grounding": 4.59725694,
+              "render_html": 0.007923202,
+              "write_products": 0.013126561,
+              "other": 0.317145623
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
