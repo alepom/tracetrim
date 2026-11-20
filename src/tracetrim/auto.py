@@ -516,7 +516,7 @@ class Learner:
         """Regenerate the report; return a new policy when one should be applied."""
         from . import arguments, lists, measure
         from . import report as rp
-        from .projection import Projection
+        from .projection import FoldTraining, Projection
         from .traces import load
         from .usage import analyse
 
@@ -542,10 +542,12 @@ class Learner:
         learn_from = complete or paths
         traces = [readable[p] for p in learn_from]
         usages = [analyse(t, **self._flags) for t in traces]
+        training = FoldTraining(usages, protect_ids=self.protect_ids)
         # The default keeps the report's value as before 1.1 (true); "record" is written as such.
         d = rp.compute([t.name for t in traces], usages,
                        protect_ids=True if self.protect_ids == "all" else self.protect_ids,
-                       runtime=self.learning != "1.0", compact=self.compact, keep_positions=self.keep_positions)
+                       runtime=self.learning != "1.0", compact=self.compact, keep_positions=self.keep_positions,
+                       training=training)
         d["turns"] = turns.summarise(traces)
         # Values of the answers that no tool output of their run contains (since 1.1): runs with an answer only,
         # which are the traces just loaded when there are any. A measure: the report goes without it if it fails.
@@ -560,7 +562,7 @@ class Learner:
             d["definitions"] = definitions.summarise(published, called, self.count, self.min_runs)
             d["definitions"]["unit"] = self._unit()
         sugg = rp.suggestions(d)
-        config, projection = rp.build_config(d, sugg, usages, "report.projection.json")
+        config, projection = rp.build_config(d, sugg, usages, "report.projection.json", training=training)
         # What the engine serves, so that the config read back elsewhere (`proxy --config`, `tracetrim apply`)
         # serves the same; keep_positions only when off, so that a config at the defaults is the file of 1.1.3.
         config["compact"] = self.compact

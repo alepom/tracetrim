@@ -19,7 +19,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from .projection import learn
+from .projection import FoldTraining, learn as learn  # keep the historical module-level import
 from .usage import CallUsage
 
 
@@ -78,15 +78,17 @@ def folds(usages):
 
 def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full",
                   unseen="keep", protect_ids: bool | str = True, compact: bool = False,
-                  keep_empty: bool = False, keep_positions: bool = False) -> list[Row]:
+                  keep_empty: bool = False, keep_positions: bool = False, *, training=None) -> list[Row]:
     """`compact`, `keep_empty`, `keep_positions`: apply the projections as run time does (since 1.1, from the
     report of automatic mode and of `tracetrim report`; positions since 1.1.2); the studies measured without
     them, and so does the default."""
     count = tokenizer()
     rows = []
-    for name, (calls, others) in zip(names, folds(usages)):
-        prudent = learn(others, "prudent", source, unseen, protect_ids)
-        aggressive = learn(others, "aggressive", source, unseen, protect_ids)
+    if training is None:
+        training = FoldTraining(usages, source, unseen, protect_ids)
+    for i, (name, calls) in enumerate(zip(names, usages)):
+        prudent = training.project("prudent", exclude=i)
+        aggressive = training.project("aggressive", exclude=i)
         r = Row(name)
         for c in calls:
             raw = count(c.output)

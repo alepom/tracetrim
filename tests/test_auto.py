@@ -71,3 +71,70 @@ def test_learning_survives_a_restart(tmp_path):
     again = Learner(tmp_path, min_runs=3)
     assert again.state["complete_runs"] == 3
     assert again.initial_policy() is not None
+
+
+def test_closing_products_match_refitting_after_history_changes(tmp_path, monkeypatch):
+    from datetime import datetime, timezone
+    from unittest.mock import patch
+    from tracetrim import auto, projection, report
+
+    class FixedClock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+    class Refit:
+        def __init__(self, usages, source="full", unseen="keep", protect_ids=True):
+            self.usages = usages
+            self.options = dict(source=source, unseen=unseen, protect_ids=protect_ids)
+
+        def project(self, mode, exclude=None):
+            runs = self.usages
+            if exclude is not None:
+                runs = runs[:exclude] + runs[exclude + 1:]
+            return projection.learn(runs, mode, **self.options)
+
+    monkeypatch.setattr(auto, "datetime", FixedClock)
+    monkeypatch.setattr(report, "datetime", FixedClock)
+    work = tmp_path / "work"
+    learner = Learner(work, min_runs=2)
+    paths = [run(learner), run(learner)]
+
+    def compare_products():
+        files = [work / name for name in ("report.json", "report.config.json", "report.projection.json")]
+        learner.relearn()
+        actual = [p.read_bytes() for p in files]
+        with patch.object(projection, "FoldTraining", Refit):
+            learner.relearn()
+        assert actual == [p.read_bytes() for p in files]
+
+    compare_products()
+    run(learner, "Internal remark number 3 about the record.")
+    compare_products()
+    lines = [json.loads(line) for line in paths[0].read_text().splitlines()]
+    lines[-1]["text"] = "The record has a new final answer."
+    paths[0].write_text("".join(json.dumps(e) + "\n" for e in lines))
+    compare_products()
+    paths[1].unlink()
+    compare_products()
+    for learning, protect in [("1.1", "all"), ("1.0", "all"), ("1.0", "record")]:
+        learner = Learner(work, min_runs=2, learning=learning, protect_ids=protect)
+        compare_products()
+
+
+def test_relearn_reads_each_structured_payload_once_to_fit_all_projections(tmp_path, monkeypatch):
+    from tracetrim import projection
+
+    learner = Learner(tmp_path, min_runs=2)
+    for _ in range(4):
+        run(learner)
+    original = projection.leaves
+    scanned = []
+
+    def observed(payload):
+        scanned.append(payload)
+        return original(payload)
+
+    monkeypatch.setattr(projection, "leaves", observed)
+    assert learner.relearn() is not None
+    assert scanned == [PAYLOAD] * 4

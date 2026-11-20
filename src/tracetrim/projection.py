@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -200,15 +200,62 @@ def learn(usages: list[list[CallUsage]], mode="prudent", source="full", unseen="
     if mode not in MODES or source not in SOURCES or unseen not in UNSEEN:
         raise ValueError(f"mode in {MODES}, source in {SOURCES}, unseen in {UNSEEN}")
     protect = protect_mode(protect_ids)
+    fields = _fields((c for calls in usages for c in calls), source)
+    return _from_fields(mode, source, unseen, protect, *fields)
+
+
+def _fields(calls, source):
     used, judgeable, seen = defaultdict(set), defaultdict(set), defaultdict(set)
-    for calls in usages:
-        for c in calls:
-            if not c.structured:
-                continue
-            used[c.tool] |= (c.used if source == "full" else c.used_by_calls) | c.echo
-            judgeable[c.tool] |= c.judgeable
-            seen[c.tool] |= {p for p, _ in leaves(c.payload)}
-    keep = {t: used[t] | (seen[t] - judgeable[t]) if mode == "prudent" else used[t] for t in seen}
+    for c in calls:
+        if not c.structured:
+            continue
+        used[c.tool] |= (c.used if source == "full" else c.used_by_calls) | c.echo
+        judgeable[c.tool] |= c.judgeable
+        seen[c.tool] |= {p for p, _ in leaves(c.payload)}
+    return used, judgeable, seen
+
+
+def _from_fields(mode, source, unseen, protect, used, judgeable, seen):
+    keep = {t: used[t] | (seen[t] - judgeable[t]) if mode == "prudent" else set(used[t]) for t in seen}
     if protect != "none":
-        keep = {t: k | {p for p in seen[t] if protected(p, protect)} for t, k in keep.items()}
-    return Projection(mode, source, keep, {t: set(v) for t, v in seen.items()}, unseen)
+        for tool, paths in seen.items():
+            keep[tool].update(p for p in paths if protected(p, protect))
+    return Projection(mode, source, keep, dict(seen), unseen)
+
+
+class FoldTraining:
+    """Support for each field in distinct runs, built once per evaluation."""
+    def __init__(self, usages, source="full", unseen="keep", protect_ids=True):
+        if source not in SOURCES or unseen not in UNSEEN:
+            raise ValueError("invalid learning options")
+        self.source = source
+        self.unseen = unseen
+        self.protect = protect_mode(protect_ids)
+        self.runs = []
+        self.tool_counts = Counter()
+        # Parallel to the (used including echoes, judgeable, seen) sets from _fields.
+        self.counts = (defaultdict(Counter), defaultdict(Counter), defaultdict(Counter))
+        for calls in usages:
+            fields = _fields(calls, source)
+            self.runs.append(fields)
+            self.tool_counts.update(fields[2].keys())
+            for support, by_tool in zip(self.counts, fields):
+                for tool, paths in by_tool.items():
+                    support[tool].update(paths)
+
+    def project(self, mode, exclude=None):
+        """Learn on all runs, or all except one, without revisiting their payloads."""
+        if mode not in MODES:
+            raise ValueError("invalid projection mode")
+        omitted = self.runs[exclude] if exclude is not None else ({}, {}, {})
+        # A structured call with no leaves still makes its tool a known tool.
+        tools = [t for t, n in self.tool_counts.items() if n > (t in omitted[2])]
+        fields = []
+        for support, by_tool in zip(self.counts, omitted):
+            remaining = {}
+            for tool in tools:
+                removed = by_tool.get(tool, ())
+                counts = support[tool]
+                remaining[tool] = counts.keys() - {p for p in removed if counts[p] == 1}
+            fields.append(remaining)
+        return _from_fields(mode, self.source, self.unseen, self.protect, *fields)

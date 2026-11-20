@@ -22,7 +22,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from tracetrim import auto, grounding, lists, measure, report, store, traces, usage
-from tracetrim.projection import Projection
+from tracetrim.projection import FoldTraining, Projection
 from tracetrim.about import VERSION
 from .paths import ROOT
 
@@ -100,12 +100,13 @@ class Breakdown:
         for module, name, stage in (
             (traces, "load", "read"), (auto, "load_trace", "read"), (usage, "analyse", "analyse"),
             (report, "compute", "report_other"), (measure, "leave_one_out", "loo_evaluate"),
-            (measure, "learn", "loo_fit"), (lists, "element_usage", "list_usage"),
+            (FoldTraining, "__init__", "loo_fit"), (lists, "element_usage", "list_usage"),
             (grounding, "summarise", "grounding"), (report, "render_html", "render_html"),
             (Projection, "save", "write_products"),
         ):
             self.wrap(stack, module, name, stage)
-        self.wrap(stack, report, "learn", "report_fit", lambda *a, **kw: "report_other" in self.spans)
+        self.wrap(stack, FoldTraining, "project", "loo_fit", lambda *a, **kw: "exclude" in kw)
+        self.wrap(stack, FoldTraining, "project", "report_fit", lambda *a, **kw: "exclude" not in kw)
         self.wrap(stack, store, "write_json", "write_products",
                   lambda path, data: path.name in ("report.json", "report.config.json"))
         self.wrap(stack, store, "write_atomic", "write_products", lambda path, text: path.name == "report.html")
@@ -148,7 +149,7 @@ def trial(work, samples, size, expected_calls):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, default=ROOT / "dataset/traces")
-    parser.add_argument("--output", type=Path, default=ROOT / "results/v1/closing_cost.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "results/v1/closing_cost_folds.json")
     args = parser.parse_args()
     scratch = ROOT / "out"
     scratch.mkdir(exist_ok=True)

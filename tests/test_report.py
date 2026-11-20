@@ -1,6 +1,8 @@
 """The report: same traces, same numbers, same suggestions, in both languages."""
 import json
 
+import pytest
+
 from tracetrim import analyse
 from tracetrim.report import compute, render_html, suggestions
 
@@ -121,3 +123,45 @@ def test_the_misses_by_name_come_from_the_leave_one_out_measure(traces):
         got = {(t, f): v["missed"] for t, tool in d["tools"].items() for f, v in tool["fields"].items() if v["missed"]}
         assert got == {(t, f): n for t, fs in expected.items() for f, n in fs.items()}
         assert got, case
+
+
+def _check_fold_projections(usages, source, unseen, protect_ids):
+    from tracetrim.projection import FoldTraining, learn
+
+    training = FoldTraining(usages, source, unseen, protect_ids)
+    for exclude in [None, *range(len(usages))]:
+        others = usages if exclude is None else usages[:exclude] + usages[exclude + 1:]
+        for mode in ("prudent", "aggressive"):
+            assert training.project(mode, exclude) == learn(others, mode, source, unseen, protect_ids)
+
+
+def test_fold_support_counts_distinct_runs_and_empty_tools():
+    from itertools import product
+    from tracetrim.usage import CallUsage
+
+    def observed(tool, payload, **fields):
+        return CallUsage(tool, json.dumps(payload), payload, **fields)
+
+    rare = observed("tool", {"once": 1234, "owner": {"id": "abc"}, "label": "xyz"},
+                    used={"label"}, used_by_calls={"once"}, echo={"owner.id"}, judgeable={"once", "label"})
+    shared = observed("tool", {"once": 7, "other": True})
+    empty = observed("empty", {})
+    runs = [[rare, rare, empty], [shared, observed("only_empty_list", [])], [shared, empty], [],
+            [observed("text_only", "plain text")]]
+    for source, unseen, protect in product(("full", "calls"), ("keep", "drop"), (False, True, "record")):
+        _check_fold_projections(runs, source, unseen, protect)
+    _check_fold_projections([], "full", "keep", True)
+    _check_fold_projections([runs[0]], "calls", "drop", False)
+
+
+@pytest.mark.parametrize("case", ("C3", "C4", "C5"))
+def test_every_public_phase_a_fold_matches_full_refitting(traces, case):
+    from tracetrim.traces import load
+    from tracetrim.usage import learning_flags
+
+    paths = sorted((traces / case).glob("A*.jsonl"))
+    if len(paths) != 8:
+        pytest.skip(f"eight public Phase A runs required for {case}")
+    usages = [analyse(load(path), **learning_flags("1.1")) for path in paths]
+    _check_fold_projections(usages, "full", "keep", True)
+    _check_fold_projections(usages, "calls", "drop", "record")

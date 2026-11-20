@@ -25,7 +25,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 from . import about, i18n, measure
-from .projection import learn
+from .projection import FoldTraining, learn
 from .usage import leaves
 
 # Thresholds of the rules. Changing one changes which suggestions appear,
@@ -51,18 +51,20 @@ def _is_error(c) -> bool:
 
 
 def compute(names, usages, unseen="keep", protect_ids=True, runtime: bool = False, compact: bool = True,
-            keep_positions: bool = True) -> dict:
+            keep_positions: bool = True, *, training=None) -> dict:
     """`runtime` (learning 1.1): measure the projections as run time writes them (compact JSON, empty containers
     kept, list positions kept since 1.1.2), which is what the generated config deploys. Up to 1.0 they were measured with the spaces of
     `json.dumps`: on outputs that were already compact the saving came out negative, and a tool could stay
     untrimmed for it. `compact=False` measures run time with `--no-compact`, `keep_positions=False` with
     `--no-keep-positions`."""
     count = measure.tokenizer()
-    deployed_p = learn(usages, "prudent", unseen=unseen, protect_ids=protect_ids)
-    deployed_a = learn(usages, "aggressive", unseen=unseen, protect_ids=protect_ids)
+    if training is None:
+        training = FoldTraining(usages, unseen=unseen, protect_ids=protect_ids)
+    deployed_p = training.project("prudent")
+    deployed_a = training.project("aggressive")
     rows = measure.leave_one_out(names, usages, unseen=unseen, protect_ids=protect_ids,
                                  compact=runtime and compact, keep_empty=runtime,
-                                 keep_positions=runtime and keep_positions)
+                                 keep_positions=runtime and keep_positions, training=training)
     seps = (",", ":") if runtime and compact else None
 
     tools = defaultdict(lambda: {
@@ -404,11 +406,12 @@ ACTION_TEXT = {
 }
 
 
-def build_config(d: dict, sugg: list[dict], usages, projection_file: str):
+def build_config(d: dict, sugg: list[dict], usages, projection_file: str, *, training=None):
     """The runtime config and the projection it points to, from `auto` actions only."""
     trim = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "trim"}
     expand = {s["action"]["tool"] for s in sugg if s["action"]["type"] == "expand"} & trim
-    p = learn(usages, "prudent", unseen=d["unseen"], protect_ids=d.get("protect_ids", True))
+    p = (training.project("prudent") if training is not None else
+         learn(usages, "prudent", unseen=d["unseen"], protect_ids=d.get("protect_ids", True)))
     p.keep = {t: v for t, v in p.keep.items() if t in trim}
     p.seen = {t: v for t, v in p.seen.items() if t in trim}
     config = {
