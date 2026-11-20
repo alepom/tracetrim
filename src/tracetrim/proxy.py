@@ -60,7 +60,8 @@ class Live:
     labelled as such: never a token estimate.
     """
 
-    def __init__(self, quiet: bool = False):
+    def __init__(self, quiet: bool = False, *, process: Live | None = None):
+        self.process = process
         self.quiet = quiet
         try:
             import tiktoken
@@ -89,9 +90,12 @@ class Live:
             r, w, s = sizes.raw, sizes.whole, sizes.sent     # already counted by the engine, the same way
         else:
             r, w, s = self.count(raw), None, self.count(sent)
-        self.whole = None if w is None or self.whole is None else self.whole + w
+        totals = self.process or self
+        totals.whole = None if w is None or totals.whole is None else totals.whole + w
         self.run_whole = None if w is None or self.run_whole is None else self.run_whole + w
-        self.raw, self.sent, self.calls = self.raw + r, self.sent + s, self.calls + 1
+        totals.raw += r
+        totals.sent += s
+        totals.calls += 1
         self.run = [self.run[0] + 1, self.run[1] + r, self.run[2] + s, self.run[3]]
         # A tool's own text may hold a line that starts like ours: a log, a trace, an echo. Only count what
         # follows "hidden: " when it is there; this is a log line, never a reason to fail a call.
@@ -102,7 +106,8 @@ class Live:
                     + (f"  hidden: {groups} group{'s' if groups != 1 else ''}" if groups else ""))
 
     def expand(self, call_id: str, fields: list[str], got: str) -> None:
-        self.expands += 1
+        totals = self.process or self
+        totals.expands += 1
         self.run[3] += 1
         self._print(f"{'expand ' + call_id:<34} the agent asked for {', '.join(fields)[:60]}"
                     f" ({self.count(got):,} {self.unit})")
@@ -122,8 +127,10 @@ class Live:
         if self.quiet:
             return
         import sys
-        total = (f"session: {self.calls} calls, {self.raw:,} -> {self.sent:,} "
-                 f"({self._pct(self.sent, self.raw, self.whole)}), {self.expands} expand")
+        totals = self.process or self
+        label = "process" if self.process else "session"
+        total = (f"{label}: {totals.calls} calls, {totals.raw:,} -> {totals.sent:,} "
+                 f"({self._pct(totals.sent, totals.raw, totals.whole)}), {totals.expands} expand")
         if self.per_run:
             c, r, s, e = self.run
             total = f"this run: {c} calls, {r:,} -> {s:,} ({self._pct(s, r, self.run_whole)}), {e} expand · {total}"
@@ -159,6 +166,8 @@ class Options:
     protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
     learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
     keep_positions: bool | None = None  # a list element left with no field keeps its place; None: as the config says (on)
+
+    isolate_sessions: bool = False    # HTTP automatic mode only
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -324,7 +333,7 @@ def _server(o: Options):
     from mcp import ClientSession, types
     from mcp.server.lowlevel import Server
 
-    from .auto import DONE, DONE_REPLY, Learner
+    from .auto import DONE, DONE_REPLY, Learner, Run
     from .clientlog import ClientLog, SessionKeys
     from .evidence import Adaptive
 
@@ -333,7 +342,7 @@ def _server(o: Options):
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
     learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive,
                        protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False,
-                       keep_positions=o.keep_positions is not False)
+                       keep_positions=o.keep_positions is not False, durable_closes=o.isolate_sessions)
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
@@ -356,18 +365,45 @@ def _server(o: Options):
             f" · config {'applied' if engine.trimming else 'not applied yet'}")
 
     closing = asyncio.Lock()
+    isolated = None
+    if o.isolate_sessions:
+        from .sessions import HttpRuns
+        if not (learner and o.shared):
+            raise ValueError("--isolate-sessions requires --http and --auto")
+        isolated = HttpRuns(engine, lambda: Live(o.quiet, process=live), o.idle_seconds,
+                            lambda msg: print(f"[tracetrim] WARNING: {msg}", file=sys.stderr, flush=True))
 
-    async def close_run(answer) -> bool:
+    async def close_run(answer, session=None) -> bool:
         """Close the run, if one is open. One closing at a time: a second
         request waits, then finds nothing left to close."""
         async with closing:
-            if engine.done(answer) is None:
-                return False
+            if isolated and learner.finish_pending():
+                engine.relearn()
+            previous = learner.run.last_number
+            try:
+                if engine.done(answer) is None:
+                    return False
+            finally:
+                # Once the trace is on disk, its original handles must keep
+                # pointing to that closed run even if a secondary write failed.
+                if session and session.run.last_number != previous:
+                    closed = session.run
+                    session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
             _warn_mixed(learner)
-            run_total = live.new_run()
+            run_total = (session.live if session else live).new_run()
             # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
             # the loop never sees the policy change halfway through.
-            engine.install(await asyncio.to_thread(engine.learn_policy))
+            if not isolated:
+                engine.install(await asyncio.to_thread(engine.learn_policy))
+            else:
+                learning = asyncio.create_task(asyncio.to_thread(engine.learn_policy))
+                try:
+                    engine.install(await asyncio.shield(learning))
+                except asyncio.CancelledError:
+                    # The worker keeps writing even after its caller disconnects.
+                    # Finish publication before allowing another writer to enter.
+                    engine.install(await learning)
+                    raise
             st = learner.state
             log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
             log(f"  {st['complete_runs']} complete runs · report updated · "
@@ -393,6 +429,8 @@ def _server(o: Options):
                 await session.initialize()
                 sessions[name] = session
             log(f"upstream: {', '.join(sessions)}")
+            if isolated:
+                await stack.enter_async_context(isolated.lifespan(close_run))
             yield {"sessions": sessions}
 
     async def all_tools(session):
@@ -437,6 +475,24 @@ def _server(o: Options):
         return types.ListToolsResult(tools=tools)
 
     async def call_tool(ctx, params):
+        if isolated:
+            if learner.finish_pending():
+                engine.relearn()
+            connection = getattr(ctx.session, "_connection", None)
+            session = isolated.session(session_keys.transport_key(connection))
+            # The event loop may deliver a request before the expiry task gets
+            # CPU (e.g. while it is publishing another session's report).
+            expired = (bool(session.run.events) and not session.pending
+                       and asyncio.get_running_loop().time() - session.activity >= o.idle_seconds)
+            async with isolated.request(session, closing=expired or params.name == "tracetrim_done"):
+                if expired:
+                    with learner.use_run(session.run):
+                        await close_run(None, session)
+                with learner.use_run(session.run):
+                    return await handle_tool(ctx, params, session, session.live)
+        return await handle_tool(ctx, params, None, live)
+
+    async def handle_tool(ctx, params, session, live):
         args = params.arguments or {}
         if learner and params.name == "tracetrim_done":
             answer = args.get("answer")
@@ -447,19 +503,20 @@ def _server(o: Options):
                 engine.refuse()
                 return types.CallToolResult(isError=True, content=[types.TextContent(
                     type="text", text="Error: tracetrim_done needs your final answer in `answer`. Nothing was recorded.")])
-            if not await close_run(answer):
+            if not await close_run(answer, session):
                 log("tracetrim_done with no tool call since the last closing (a repeat or a retry): nothing to record")
             # The same reply whether the run was closed now or already: it asks for nothing more.
             text = DONE_REPLY
         elif params.name == "expand":
             fields = requested_fields(args.get("fields"))
             cid = str(args.get("call_id", ""))
-            text = engine.expand(cid, fields)
+            text = isolated.expand(session, cid, fields) if isolated else engine.expand(cid, fields)
             live.expand(cid, fields, text)
         else:
-            if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
-                await close_run(None)
-            last_call[0] = time.time()
+            if not isolated:
+                if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
+                    await close_run(None)
+                last_call[0] = time.time()
             sessions = ctx.lifespan_context["sessions"]
             if params.name not in routes:           # a client that calls before listing
                 await upstream_tools(sessions)
@@ -468,7 +525,7 @@ def _server(o: Options):
                                             isError=True)
             server, name = routes[params.name]
             r = await sessions[server].call_tool(name, args)
-            key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys else None
+            key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys and not isolated else None
             call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key)
             content = list(r.content or [])
             # An error, or anything that is not plain text (images, resources),
@@ -496,6 +553,8 @@ def _server(o: Options):
                                      ensure_ascii=False) + "\n")
                 rec.flush()
             obs = engine.observe(call, ToolResult(raw))
+            if isolated:
+                isolated.remember(session, obs.call_id)
             text = obs.text
             live.call(params.name, raw, text, obs.sizes)
             if text == raw:
@@ -705,7 +764,7 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
         # process before any `finally`: the unfinished run is kept here instead.
         async def shutdown(self, sockets=None):
             await super().shutdown(sockets=sockets)
-            if learner and learner.flush() is not None:
+            if learner and not o.isolate_sessions and learner.flush() is not None:
                 _warn_mixed(learner)
 
     await FlushingServer(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()

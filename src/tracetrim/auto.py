@@ -40,12 +40,15 @@ while writing leaves the previous content, never half of a file.
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import re
 import threading
 import time
-from dataclasses import asdict
+from contextlib import contextmanager
+from contextvars import ContextVar
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -83,10 +86,23 @@ def over_expanded(filtered: int, expanded: int, runs: int, needed: int = 0) -> b
     return filtered >= EXPAND_MIN_CALLS and expanded / filtered >= EXPAND_MAX_RATE and runs >= needed
 
 
+@dataclass
+class Run:
+    """Mutable telemetry for one open run. Closed runs can receive late expansions."""
+    events: list[dict] = field(default_factory=list)
+    notes: list[dict] = field(default_factory=list)
+    index_of: dict[str, int] = field(default_factory=dict)
+    sessions: set[str] = field(default_factory=set)
+    sizes: dict[str, list[int]] = field(default_factory=dict)
+    expand_sizes: list[int] = field(default_factory=lambda: [0, 0])
+    last_number: int = 0
+    answered_at: float | None = None
+
+
 class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None,
                  adaptive: Adaptive | None = None, protect_ids: str = "all", learning: str = "1.1",
-                 compact: bool = True, keep_positions: bool = True):
+                 compact: bool = True, keep_positions: bool = True, durable_closes: bool = False):
         """`idle_seconds`: the pause after which the integration closes a run
         by itself (the proxy does; a function-calling loop closes its own
         runs, and passes None). Only used to count runs that an answer closed
@@ -108,6 +124,9 @@ class Learner:
             raise ValueError('protect_ids: "all" or "record" in automatic mode')
         self.dir = Path(workdir)
         (self.dir / "traces").mkdir(parents=True, exist_ok=True)
+        self.durable_closes = durable_closes
+        self.pending_close = False
+        recovered = store.recover_close(self.dir)
         store.clean(self.dir)
         store.clean(self.dir / "traces")
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
@@ -143,24 +162,41 @@ class Learner:
         # One lock for everything the calls and the learning thread share:
         # the state, the open run and the evidence file.
         self.lock = threading.RLock()
-        self._sessions: set[str] = set()            # confirmed HTTP contributors to the open run
-        self.events: list[dict] = []
-        self.notes: list[dict] = []                  # how results were exposed, and expand requests: evidence to be
-        self._index_of: dict[str, int] = {}          # call_id -> position of its call in the open run
+        self._run = ContextVar("tracetrim_run", default=Run(last_number=self.state["runs"]))
         # The filtered results counted in `trimmed` since the tool's counters last started again:
         # only an expansion of one of them counts against the tool (an older result can still be
         # expanded, but its filtering was wiped with the counters).
         self._counted: dict[str, set[str]] = {}
         self._origins: dict[str, dict] = {}          # tool -> {"server", "tool"}, when the integration knows
         self.idle_seconds = idle_seconds
-        self._answered_at: float | None = None       # when an answer last closed a run
         self._count = None
         # The open run, counted (contract.Sizes): tool -> [calls, raw, whole, sent]; expand: [calls, tokens].
         self.savings_path = self.dir / "savings.json"
         self.closed_sessions = 0                     # confirmed session count at the last closing
         self.unsupported: list[str] = []             # the last run closed: values of its answer no output contains
-        self._sizes: dict[str, list[int]] = {}
-        self._expand_sizes = [0, 0]
+
+        if recovered or self.state.get("report_pending"):
+            self.relearn()
+
+    @property
+    def run(self) -> Run:
+        return self._run.get()
+
+    @contextmanager
+    def use_run(self, run: Run):
+        token = self._run.set(run)
+        try:
+            yield
+        finally:
+            self._run.reset(token)
+
+    @property
+    def events(self):
+        return self.run.events
+
+    @property
+    def notes(self):
+        return self.run.notes
 
     def count(self, text: str) -> int:
         """Tokens (o200k_base) when tiktoken is installed, characters otherwise:
@@ -175,25 +211,25 @@ class Learner:
              *, session_key: str | None = None) -> int:
         """Record a call of the open run; return its position in the run."""
         with self.lock:
-            if not self.events and self._answered_at is not None:
+            if not self.events and self.run.answered_at is not None:
                 # The first call after an answer. Within the idle pause it may be
                 # the same task going on (the agent closed too early) or the next
                 # one: the two cannot be told apart, so they are counted, not merged.
-                if self.idle_seconds is not None and time.time() - self._answered_at <= self.idle_seconds:
+                if self.idle_seconds is not None and time.time() - self.run.answered_at <= self.idle_seconds:
                     self.state["answered_runs_followed_by_calls"] += 1
-                self._answered_at = None
+                self.run.answered_at = None
             e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
             if turn is not None:
                 e["turn"] = turn             # calls of one turn do not use each other's outputs
             self.events.append(e)
             if session_key is not None:
-                self._sessions.add(session_key)
+                self.run.sessions.add(session_key)
             return len(self.events) - 1
 
     def measured(self, tool: str, sizes) -> None:
         """The three counts of a call of the open run (contract.Sizes)."""
         with self.lock:
-            t = self._sizes.setdefault(tool, [0, 0, 0, 0])
+            t = self.run.sizes.setdefault(tool, [0, 0, 0, 0])
             for i, v in enumerate((1, sizes.raw, sizes.whole, sizes.sent)):
                 t[i] += v
 
@@ -204,18 +240,18 @@ class Learner:
         note is filed with the next closing, with no index: evidence counts runs
         and fields, not tokens.)"""
         with self.lock:
-            self._expand_sizes[0] += 1
-            self._expand_sizes[1] += size
-            if not self.events and self.state["runs"]:
-                self._save_sizes(f"run-{self.state['runs']:04d}")
+            self.run.expand_sizes[0] += 1
+            self.run.expand_sizes[1] += size
+            if not self.events and self.run.last_number:
+                self._save_sizes(f"run-{self.run.last_number:04d}")
 
     def _save_sizes(self, run: str) -> None:
         """Add the counts gathered since the last save to savings.json, under `run`,
         and start again."""
-        if not self._sizes and not self._expand_sizes[0]:
+        if not self.run.sizes and not self.run.expand_sizes[0]:
             return
         if run == "run-0000":                    # counts with no run to belong to (an expand before any call)
-            self._sizes, self._expand_sizes = {}, [0, 0]
+            self.run.sizes, self.run.expand_sizes = {}, [0, 0]
             return
         data = {"format": "tracetrim/savings@1", "unit": self._unit(), "runs": {}}
         if self.savings_path.exists():
@@ -233,16 +269,16 @@ class Learner:
             data["runs"] = {}                    # an entry of another shape: start again
             self._add_sizes(data, run)
         store.write_json(self.savings_path, data)
-        self._sizes, self._expand_sizes = {}, [0, 0]
+        self.run.sizes, self.run.expand_sizes = {}, [0, 0]
 
     def _add_sizes(self, data: dict, run: str) -> None:
         entry = data["runs"].setdefault(run, {"tools": {}, "expand": {"calls": 0, "tokens": 0}})
-        for tool, (n, raw, whole, sent) in sorted(self._sizes.items()):
+        for tool, (n, raw, whole, sent) in sorted(self.run.sizes.items()):
             t = entry["tools"].setdefault(tool, {"calls": 0, "raw": 0, "whole": 0, "sent": 0})
             for k, v in (("calls", n), ("raw", raw), ("whole", whole), ("sent", sent)):
                 t[k] += v
-        entry["expand"]["calls"] += self._expand_sizes[0]
-        entry["expand"]["tokens"] += self._expand_sizes[1]
+        entry["expand"]["calls"] += self.run.expand_sizes[0]
+        entry["expand"]["tokens"] += self.run.expand_sizes[1]
 
     def record_tools(self, tools: list[dict]) -> bool:
         """The tool list as published to the model, for the report's section on
@@ -289,7 +325,7 @@ class Learner:
             if obs.call_id:
                 self.trimmed(call.tool)
                 self._counted.setdefault(call.tool, set()).add(obs.call_id)
-                self._index_of[obs.call_id] = index
+                self.run.index_of[obs.call_id] = index
             self.notes.append({"kind": "observation", "index": index, "tool": call.tool, "exposure": obs.exposure,
                                "call_id": obs.call_id, "hidden": list(obs.hidden)})
 
@@ -306,15 +342,15 @@ class Learner:
             counts = first and call_id in self._counted.get(tool, set())
             if counts:
                 self.expanded(tool)
-            note = {"kind": "expand", "index": self._index_of.get(call_id), "after": len(self.events),
+            note = {"kind": "expand", "index": self.run.index_of.get(call_id), "after": len(self.events),
                     "tool": tool, "call_id": call_id, "requested": requested, "returned": returned,
                     "recovered": recovered, "targeted": targeted, "broad": broad,
                     "repeat": bool(recovered) and not first, "counts": counts}
-            if not self.events and self.state["runs"]:
+            if not self.events and self.run.last_number:
                 # No run is open: the request is about a result of the run just closed (the agent closed too
                 # early). Its evidence goes there now, as `flush` does; until 1.0 it went to the next run, and
                 # one task could count as two runs for the switch-off and the promotions.
-                self._absorb(f"run-{self.state['runs']:04d}", [], [dict(note, index=None)], None)
+                self._absorb(f"run-{self.run.last_number:04d}", [], [dict(note, index=None)], None)
                 self._save()
             else:
                 self.notes.append(note)
@@ -339,56 +375,102 @@ class Learner:
         """Close the run. Returns the trace written, or None if there was nothing
         to write: closing twice, or retrying a closing, changes nothing."""
         with self.lock:
+            if self.finish_pending():
+                self.relearn()
             if not self.events:
                 return None
-            events, notes = self.events, self.notes
-            number = self._next_run()
-            complete = bool(answer and answer.strip())
-            run = f"run-{number:04d}"
-            path = self.dir / "traces" / f"{run}{'' if complete else '-noanswer'}.jsonl"
-            lines = [json.dumps(e, ensure_ascii=False) for e in events]
-            if complete:
-                msg = {"kind": "message", "text": answer}
-                turns = [e["turn"] for e in events if "turn" in e]
-                if turns and len(turns) == len(events):
-                    msg["turn"] = max(turns) + 1
-                lines.append(json.dumps(msg, ensure_ascii=False))
-            store.write_atomic(path, "\n".join(lines) + "\n")
-            # Only now is the run closed: had the write failed, its calls would
-            # still be pending, and the closing could be tried again.
-            self.events, self.notes, self._index_of = [], [], {}
-            sessions = len(self._sessions)
-            self.closed_sessions = sessions
-            self._sessions.clear()
-            if sessions > 1:
-                totals = self.state.setdefault("mixed_sessions", {"runs": 0, "session_occurrences": 0})
-                totals["runs"] += 1
-                totals["session_occurrences"] += sessions
-            self.state["runs"] = number
-            # From here the run is on disk: its counts and the state are kept whatever fails next (until 1.0 a
-            # failure in the evidence left complete_runs behind for good and moved its sizes to the next run).
-            failed = None
-            try:
-                self._absorb(run, events, notes, answer if complete else None)
-            except Exception as e:           # noqa: BLE001
-                failed = e
-            try:
-                self._save_sizes(run)
-            except Exception as e:           # noqa: BLE001
-                failed = failed or e
-            # What the proxy's log says at this closing (since 1.1): values of the answer no output contains.
-            # A measure: it never stops a closing.
-            try:
-                self.unsupported = grounding.unsupported(load_trace(path))[1] if complete else []
-            except Exception:                # noqa: BLE001
-                self.unsupported = []
-            if complete:
-                self.state["complete_runs"] += 1
-                self._answered_at = time.time()
-            self._save()
-            if failed is not None:
-                raise failed
-            return path
+            if self.durable_closes:
+                return self._durable_done(answer)
+            return self._write_run(answer)
+
+    def finish_pending(self) -> bool:
+        """Finish any interrupted publication before the next workdir write."""
+        with self.lock:
+            if not self.pending_close:
+                return False
+            store.recover_close(self.dir)
+            self.pending_close = False
+            return True
+
+    def _durable_done(self, answer: str | None) -> Path:
+        original = self.run
+        closed = copy.copy(original)
+        closed.sessions = original.sessions.copy()
+        # _write_run replaces the event, note, index and size containers. Its
+        # aggregate state is updated in place, so prepare that on a private copy.
+        previous = self.state
+        self.state = copy.deepcopy(previous)
+        self.state["report_pending"] = True
+        try:
+            with self.use_run(closed), store.collect_close() as files:
+                path = self._write_run(answer)
+            store.write_json(self.dir / store.JOURNAL,
+                             {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})
+        except BaseException:
+            self.state = previous
+            raise
+        # The journal is the commit point. Handles to the original Run must
+        # now see the cleared, numbered run, including if publication fails.
+        vars(original).update(vars(closed))
+        self.pending_close = True
+        self.finish_pending()
+        self._check_grounding(path, bool(answer and answer.strip()))
+        return path
+
+    def _check_grounding(self, path, complete):
+        try:
+            self.unsupported = grounding.unsupported(load_trace(path))[1] if complete else []
+        except Exception:                # noqa: BLE001
+            self.unsupported = []
+
+    def _write_run(self, answer: str | None) -> Path:
+        events, notes = self.events, self.notes
+        number = self._next_run()
+        complete = bool(answer and answer.strip())
+        run = f"run-{number:04d}"
+        path = self.dir / "traces" / f"{run}{'' if complete else '-noanswer'}.jsonl"
+        lines = [json.dumps(e, ensure_ascii=False) for e in events]
+        if complete:
+            msg = {"kind": "message", "text": answer}
+            turns = [e["turn"] for e in events if "turn" in e]
+            if turns and len(turns) == len(events):
+                msg["turn"] = max(turns) + 1
+            lines.append(json.dumps(msg, ensure_ascii=False))
+        store.write_atomic(path, "\n".join(lines) + "\n")
+        # Only now is the run closed: had the write failed, its calls would
+        # still be pending, and the closing could be tried again.
+        self.run.events, self.run.notes, self.run.index_of = [], [], {}
+        sessions = len(self.run.sessions)
+        self.closed_sessions = sessions
+        self.run.sessions.clear()
+        if sessions > 1:
+            totals = self.state.setdefault("mixed_sessions", {"runs": 0, "session_occurrences": 0})
+            totals["runs"] += 1
+            totals["session_occurrences"] += sessions
+        self.run.last_number = number
+        self.state["runs"] = number
+        # From here the run is on disk: its counts and the state are kept whatever fails next (until 1.0 a
+        # failure in the evidence left complete_runs behind for good and moved its sizes to the next run).
+        failed = None
+        try:
+            self._absorb(run, events, notes, answer if complete else None)
+        except Exception as e:           # noqa: BLE001
+            failed = e
+        try:
+            self._save_sizes(run)
+        except Exception as e:           # noqa: BLE001
+            failed = failed or e
+        # What the proxy's log says at this closing (since 1.1): values of the answer no output contains.
+        # A measure: it never stops a closing.
+        if not self.durable_closes:
+            self._check_grounding(path, complete)
+        if complete:
+            self.state["complete_runs"] += 1
+            self.run.answered_at = time.time()
+        self._save()
+        if failed is not None:
+            raise failed
+        return path
 
     def _absorb(self, run: str, events: list[dict], notes: list[dict], answer: str | None) -> None:
         """Turn the notes of a run into evidence, kept in evidence.json; the
@@ -423,9 +505,9 @@ class Learner:
             # are only in memory (until 0.3.5 they were lost here). They are about
             # results of the last run: that is where their evidence goes.
             if self.notes:
-                notes, self.notes = [dict(n, index=None) for n in self.notes], []
-                self._absorb(f"run-{self.state['runs']:04d}", [], notes, None)
-            self._save_sizes(f"run-{self.state['runs']:04d}")
+                notes, self.run.notes = [dict(n, index=None) for n in self.notes], []
+                self._absorb(f"run-{self.run.last_number:04d}", [], notes, None)
+            self._save_sizes(f"run-{self.run.last_number:04d}")
             self._save()
         return None
 
@@ -561,6 +643,7 @@ class Learner:
         with self.lock:
             if ready:
                 self.state["config_from_runs"] = len(complete)
+            self.state.pop("report_pending", None)
             self._save()
         return Policy(config, projection) if ready else None
 

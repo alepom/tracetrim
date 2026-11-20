@@ -106,6 +106,11 @@ class SessionKeys:
                 real = "-"
         return hashlib.sha256(self._salt + real.encode()).hexdigest()[:12]
 
+    def transport_key(self, connection) -> bytes | None:
+        """Full-length private key for routing. None selects the sessionless context."""
+        real = getattr(connection, "session_id", None)
+        return hashlib.sha256(self._salt + real.encode()).digest() if isinstance(real, str) and real else None
+
     def for_call(self, connection) -> str | None:
         """A transport session is explicit. A connection alone counts only
         after it has served a second upstream call. Single-exchange HTTP

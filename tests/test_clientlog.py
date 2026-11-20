@@ -223,7 +223,8 @@ def test_http_warning_counts_only_sessions_that_contributed_calls(tmp_path):
     assert len(calls) == 2 and all(set(c) == {"kind", "tool", "arguments", "output"} for c in calls)
 
 
-def test_sessionless_http_requests_keep_learning_without_a_warning(tmp_path):
+@pytest.mark.parametrize("isolated", [False, True])
+def test_sessionless_http_requests_keep_learning_without_a_warning(tmp_path, isolated):
     async def go(url):
         async with Client(url) as client:
             assert client.protocol_version == "2026-07-28"
@@ -234,7 +235,8 @@ def test_sessionless_http_requests_keep_learning_without_a_warning(tmp_path):
                 assert done.content[0].text == "Recorded."
 
     log = tmp_path / "client.jsonl"
-    with http_proxy(tmp_path, "--min-runs", "2", "--log-client", str(log)) as url:
+    options = ["--isolate-sessions"] if isolated else []
+    with http_proxy(tmp_path, "--min-runs", "2", "--log-client", str(log), *options) as url:
         asyncio.run(go(url))
     calls = [row for row in lines(log) if row.get("tool") == "volumes"]
     assert len(calls) == len({row["session"] for row in calls}) == 6
@@ -244,7 +246,98 @@ def test_sessionless_http_requests_keep_learning_without_a_warning(tmp_path):
     for trace in sorted((work / "traces").glob("run-*.jsonl")):
         assert [e["kind"] for e in lines(trace)] == ["call"] * 3 + ["message"]
     assert "mixed_sessions" not in state and "mixed_sessions" not in json.loads((work / "report.json").read_text())
-    assert "HTTP sessions" not in (tmp_path / "proxy.log").read_text()
+    stderr = (tmp_path / "proxy.log").read_text()
+    assert "HTTP sessions" not in stderr
+    assert stderr.count("without a transport session ID") == int(isolated)
+
+
+@pytest.mark.parametrize("closing", ["reverse", "together", "shutdown"])
+def test_isolated_http_run_boundaries(tmp_path, closing):
+    async def go(url):
+        async with Client(url, mode="legacy") as a, Client(url, mode="legacy") as b:
+            for client, label in ((a, "A"), (b, "B")):
+                assert not (await client.call_tool("volumes", {"keyword": label})).is_error
+            if closing != "shutdown":
+                finish = [client.call_tool("tracetrim_done", {"answer": "answer of " + label})
+                          for client, label in ((b, "B"), (a, "A"))]
+                replies = await asyncio.gather(*finish) if closing == "together" else [await r for r in finish]
+                assert all(r.content[0].text == "Recorded." for r in replies)
+
+    with http_proxy(tmp_path, "--isolate-sessions") as url:
+        asyncio.run(go(url))
+    work = tmp_path / "work"
+    paths = sorted((work / "traces").glob("*.jsonl"))
+    assert len(paths) == 2
+    labels = []
+    savings = json.loads((work / "savings.json").read_text())["runs"]
+    for n, path in enumerate(paths, 1):
+        run = f"run-{n:04d}"
+        events = lines(path)
+        label = events[0]["arguments"]["keyword"]
+        labels.append(label)
+        if closing == "shutdown":
+            assert path.stem == run + "-noanswer" and len(events) == 1
+        else:
+            assert path.stem == run and len(events) == 2 and events[1] == {"kind": "message", "text": "answer of " + label}
+        assert savings[run]["tools"]["volumes"]["calls"] == 1
+    assert sorted(labels) == ["A", "B"]
+    if closing == "reverse":
+        assert labels == ["B", "A"]
+    assert "mixed_sessions" not in json.loads((work / "state.json").read_text())
+    assert "WARNING:" not in (tmp_path / "proxy.log").read_text()
+
+
+def test_http_sessions_share_learning_and_charge_late_expand_to_its_run(tmp_path):
+    async def go(url):
+        async with Client(url, mode="legacy") as trainer, Client(url, mode="legacy") as reader:
+            for _ in range(2):
+                await trainer.call_tool("volumes", {})
+                await trainer.call_tool("tracetrim_done", {"answer": "spa weekend has 1600 searches a month."})
+            sent = (await reader.call_tool("volumes", {})).content[0].text
+            cid = sent.split("[trimmed] call_id=")[1].split()[0]
+            await reader.call_tool("tracetrim_done", {"answer": "1600"})
+            await trainer.call_tool("volumes", {})
+            await trainer.call_tool("tracetrim_done", {"answer": "1600"})
+            recovered = await reader.call_tool("expand", {"call_id": cid, "fields": ["items[].note_0"]})
+            assert "internal remark number 0" in recovered.content[0].text
+
+    with http_proxy(tmp_path, "--min-runs", "2", "--isolate-sessions") as url:
+        asyncio.run(go(url))
+    work = tmp_path / "work"
+    savings = json.loads((work / "savings.json").read_text())["runs"]
+    assert [savings[r]["expand"]["calls"] for r in sorted(savings)] == [0, 0, 1, 0]
+    notes = lines(work / "evidence" / "run-0003.jsonl")
+    assert [note["kind"] for note in notes] == ["observation", "expand"]
+
+
+def test_idle_isolated_run_expires_without_another_request(tmp_path):
+    async def go():
+        server, learner = proxy._server(proxy.Options(upstream_cmd=UPSTREAM, auto_dir=str(tmp_path), quiet=True,
+                                                      shared=True, isolate_sessions=True, idle_seconds=0.1))
+        async with Client(server) as client:
+            assert not (await client.call_tool("volumes", {})).is_error
+            for _ in range(100):
+                if (tmp_path / "report.json").exists():
+                    break
+                await asyncio.sleep(0.05)
+            assert learner.state["runs"] == 1 and (tmp_path / "traces" / "run-0001-noanswer.jsonl").exists()
+            assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 0
+    asyncio.run(go())
+
+
+def test_proxy_help_explains_quiet_session_warnings(capsys):
+    from tracetrim.cli import main
+    with pytest.raises(SystemExit) as exit:
+        main(["proxy", "--help"])
+    assert exit.value.code == 0
+    assert "session warnings are still printed" in " ".join(capsys.readouterr().out.split())
+
+
+@pytest.mark.parametrize("options", [[], ["--auto", "example"], ["--http", "8000"]])
+def test_isolation_requires_automatic_http(options):
+    from tracetrim.cli import main
+    with pytest.raises(SystemExit, match="requires --http PORT and --auto WORKDIR"):
+        main(["proxy", "--upstream-cmd", "true", "--isolate-sessions", *options])
 
 
 @pytest.mark.parametrize("argv", [[], ["--log-client", "client.jsonl"]])

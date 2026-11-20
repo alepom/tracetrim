@@ -84,6 +84,16 @@ Then use the agent as usual.
 In automatic mode, the proxy warns on stderr (even with `--quiet`) when a run contains calls from multiple identifiable HTTP sessions.
 The report counts affected runs and sessions, counting each session once per affected run.
 
+Add `--isolate-sessions` to `proxy --http PORT --auto WORKDIR` to keep calls, answers and
+recoverable originals separate for each HTTP transport session. Each session closes with its own
+`tracetrim_done`, on idle expiry (five minutes by default), or on proxy shutdown. The learned
+policy is shared across sessions. The live HTTP report includes closed runs. This option applies
+only to the automatic HTTP proxy. The function-calling adapter uses its caller's run boundaries.
+
+Requests without a transport session ID use one separate shared context, including for `expand`.
+The proxy warns once on stderr when this happens. To separate those clients, distinguish them
+upstream of the proxy, for example by routing conversations to separate proxy work directories.
+
 ### Hosted agents (OpenAI Playground, Responses API)
 
 There is no `mcpServers` file in the Playground: each MCP server is added in the UI (*Tools → Add →

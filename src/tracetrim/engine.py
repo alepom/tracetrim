@@ -109,6 +109,7 @@ class Trimmer:
         # call_id must not name valid ones, or a client could expand another's
         # results. With one agent (stdio, function calling) naming them helps.
         self.shared = False
+        self.on_forget = None                    # optional cleanup of HTTP ownership metadata
         # (tool, output, tokens of the output written whole) of the last result that
         # was compared with its whole form: the engine's breakdown reuses the count.
         self.last_whole: tuple[str, str, int] | None = None
@@ -169,11 +170,10 @@ class Trimmer:
         # Random ids: over HTTP several clients share one proxy, and a sequential
         # id would let one of them expand another's results.
         cid = "c" + secrets.token_hex(4)
+        while self.on_forget is not None and cid in self.originals:
+            cid = "c" + secrets.token_hex(4)
         while len(self.originals) >= MAX_ORIGINALS:
-            old = next(iter(self.originals))
-            self.originals.pop(old)
-            self.tool_of.pop(old, None)
-            self.hidden.pop(old, None)
+            self.forget(next(iter(self.originals)))
         self.originals[cid] = payload
         self.tool_of[cid] = tool
         self.hidden[cid] = set(hidden)
@@ -185,6 +185,8 @@ class Trimmer:
     def forget(self, call_id: str) -> None:
         for kept in (self.originals, self.tool_of, self.hidden):
             kept.pop(call_id, None)
+        if self.on_forget is not None:
+            self.on_forget(call_id)
 
     def recover(self, call_id: str, wanted: list[str]) -> tuple[str, tuple[str, ...]]:
         """The reply to an `expand` request, and the paths it gave back.
@@ -333,6 +335,12 @@ class Engine:
                 obs = Observation(whole, SAMPLED, None, obs.hidden)
         self.learner.observed(index, call, obs)
         return obs
+
+    def unknown_expand(self, call_id: str) -> str:
+        text = self.trimmer._unknown(call_id)
+        if self.breakdown and self.learner is not None:
+            self.learner.expand_measured(self.trimmer.count(text))
+        return text
 
     def expand(self, call_id: str, fields: list[str]) -> str:
         """Answer an `expand` request from the stored original: the tool is not called again."""
