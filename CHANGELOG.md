@@ -7,8 +7,8 @@ later versions add ways to use the library, and were checked end to end, not eva
 ## 1.3.1
 
 Faster closings. **Nothing changes in what the model receives, in the report, in the configs or in when a new
-policy takes effect.** The paper and every measure are unchanged. Not archived on Zenodo: the archive of 1.1.0
-(DOI 10.5281/zenodo.24263018) stays the version to cite.
+policy takes effect.** The paper and every measure are unchanged. Archived on Zenodo: DOI 10.5281/zenodo.24406362,
+the version to cite (it holds every change since 1.1.0; the paper and the dataset are those of 1.1.0).
 
 - **Leave-one-out from per-run counts.** At every closing in automatic mode, the report learned a projection for
   each held-out run from all the others, so the cost grew with the square of the history. It now reads each

@@ -407,7 +407,7 @@ servers download their pinned OpenAPI descriptions on first use.
 Paper: Alessio Pomaro, *Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces,
 and When They Pay Off*, preprint, version 2, 2026. DOI [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959) (version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934)).
 
-Software, protocols and dataset: DOI [10.5281/zenodo.24263018](https://doi.org/10.5281/zenodo.24263018) (version 1.1.0; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
+Software, protocols and dataset: DOI [10.5281/zenodo.24406362](https://doi.org/10.5281/zenodo.24406362) (version 1.3.1; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
 See `CITATION.cff`.
 
 ## License
