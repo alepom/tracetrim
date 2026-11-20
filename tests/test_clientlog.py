@@ -214,7 +214,7 @@ def test_http_warning_counts_only_sessions_that_contributed_calls(tmp_path):
         asyncio.run(go(url))
     work = tmp_path / "work"
     warnings = [line for line in (tmp_path / "proxy.log").read_text().splitlines() if "contains calls from" in line]
-    assert len(warnings) == 1 and "run-0003 contains calls from 2 HTTP sessions" in warnings[0]
+    assert warnings == ["[tracetrim] WARNING: run-0003 contains calls from 2 HTTP sessions"]
     for file in ("state.json", "report.json"):
         assert json.loads((work / file).read_text())["mixed_sessions"] == {"runs": 1, "session_occurrences": 2}
     assert "runs with calls from several HTTP sessions" in (work / "report.html").read_text()

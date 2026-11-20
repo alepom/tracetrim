@@ -79,6 +79,11 @@ a host that loads MCP skills needs no added line, the others keep it
 ([which hosts do](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md#what-was-verified-host-by-host)).
 Then use the agent as usual.
 
+### HTTP sessions
+
+In automatic mode, the proxy warns on stderr (even with `--quiet`) when a run contains calls from multiple identifiable HTTP sessions.
+The report counts affected runs and sessions, counting each session once per affected run.
+
 ### Hosted agents (OpenAI Playground, Responses API)
 
 There is no `mcpServers` file in the Playground: each MCP server is added in the UI (*Tools → Add →

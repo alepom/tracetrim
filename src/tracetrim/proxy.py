@@ -311,6 +311,12 @@ def publish_skill(server, *, strategy: bool, done: bool) -> dict:
     return entry
 
 
+def _warn_mixed(learner):
+    if learner.closed_sessions > 1:
+        print(f"[tracetrim] WARNING: run-{learner.state['runs']:04d} contains calls from "
+              f"{learner.closed_sessions} HTTP sessions", file=sys.stderr, flush=True)
+
+
 def _server(o: Options):
     import asyncio
     import time
@@ -357,6 +363,7 @@ def _server(o: Options):
         async with closing:
             if engine.done(answer) is None:
                 return False
+            _warn_mixed(learner)
             run_total = live.new_run()
             # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
             # the loop never sees the policy change halfway through.
@@ -698,7 +705,7 @@ async def serve_http(o: Options, *, host: str, port: int, token: str | None, all
         # process before any `finally`: the unfinished run is kept here instead.
         async def shutdown(self, sockets=None):
             await super().shutdown(sockets=sockets)
-            if learner:
-                learner.flush()
+            if learner and learner.flush() is not None:
+                _warn_mixed(learner)
 
     await FlushingServer(uvicorn.Config(guarded, host=host, port=port, log_level="warning")).serve()

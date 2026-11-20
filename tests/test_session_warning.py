@@ -29,7 +29,7 @@ def test_only_a_reused_connection_counts_without_a_transport_id(tmp_path):
         log.close()
 
 
-def test_mixed_session_totals_survive_retry_and_restart(tmp_path, monkeypatch, caplog):
+def test_mixed_session_totals_survive_retry_and_restart(tmp_path, monkeypatch):
     learner = Learner(tmp_path)
     for key in ("same-private-key", "other-private-key", "same-private-key"):
         learner.call("example", {}, "value", session_key=key)
@@ -43,6 +43,7 @@ def test_mixed_session_totals_survive_retry_and_restart(tmp_path, monkeypatch, c
             learner.done("value")
     assert "mixed_sessions" not in learner.state
     learner.done("value")
+    assert learner.closed_sessions == 2
     assert learner.done("value") is None
     learner.call("example", {}, "value", session_key="single-private-key")
     learner.done("value")
@@ -52,6 +53,5 @@ def test_mixed_session_totals_survive_retry_and_restart(tmp_path, monkeypatch, c
     learner.flush()
     for file in ("state.json", "report.json"):
         assert json.loads((tmp_path / file).read_text())["mixed_sessions"] == {"runs": 2, "session_occurrences": 5}
-    assert caplog.text.count("contains calls from") == 2
-    assert "private-key" not in caplog.text
+    assert learner.closed_sessions == 3
     assert all("private-key" not in p.read_text() for p in tmp_path.rglob("*") if p.is_file())

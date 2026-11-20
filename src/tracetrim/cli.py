@@ -418,7 +418,7 @@ def main(argv=None):
                         "(default: $TRACETRIM_TOKEN, which keeps it out of the process list)")
     s.add_argument("--allowed-host", action="append", default=[],
                    help="Host header accepted over HTTP (repeatable), e.g. the tunnel's public host")
-    s.add_argument("--quiet", action="store_true", help="no per-call log on stderr")
+    s.add_argument("--quiet", action="store_true", help="suppress per-call output on stderr; session warnings are still printed")
     s.add_argument("--auto", metavar="WORKDIR",
                    help="automatic mode: record runs, learn, apply safe actions, keep the report (see tracetrim.auto)")
     s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto; at least 2)")

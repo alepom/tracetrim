@@ -42,7 +42,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
 import re
 import threading
 import time
@@ -158,6 +157,7 @@ class Learner:
         self._count = None
         # The open run, counted (contract.Sizes): tool -> [calls, raw, whole, sent]; expand: [calls, tokens].
         self.savings_path = self.dir / "savings.json"
+        self.closed_sessions = 0                     # confirmed session count at the last closing
         self.unsupported: list[str] = []             # the last run closed: values of its answer no output contains
         self._sizes: dict[str, list[int]] = {}
         self._expand_sizes = [0, 0]
@@ -358,13 +358,12 @@ class Learner:
             # still be pending, and the closing could be tried again.
             self.events, self.notes, self._index_of = [], [], {}
             sessions = len(self._sessions)
+            self.closed_sessions = sessions
             self._sessions.clear()
             if sessions > 1:
                 totals = self.state.setdefault("mixed_sessions", {"runs": 0, "session_occurrences": 0})
                 totals["runs"] += 1
                 totals["session_occurrences"] += sessions
-                logging.getLogger(__name__).warning(
-                    "[tracetrim] WARNING: %s contains calls from %d HTTP sessions", run, sessions)
             self.state["runs"] = number
             # From here the run is on disk: its counts and the state are kept whatever fails next (until 1.0 a
             # failure in the evidence left complete_runs behind for good and moved its sizes to the next run).
