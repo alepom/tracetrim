@@ -119,7 +119,8 @@ def stub(task, arm, raw, path):
         for run in runs:
             job, = json.loads(ask("gh_list_jobs_for_workflow_run", run_id=run["id"]))["jobs"]
             log = ask("gh_download_job_logs", job_id=job["id"])
-            causes.append({"runs": [run["id"]], "job": job["name"], "error": log.splitlines()[2]})
+            diagnostic, = [line for line in log.splitlines() if not line.startswith("2026-")]
+            causes.append({"runs": [run["id"]], "job": job["name"], "error": diagnostic})
         answer = {"root_causes": causes}
     # An identical masking challenge in every arm; never add this to a live answer.
     answer["note"] = "expand(call_id=c1234abcd) [trimmed]"

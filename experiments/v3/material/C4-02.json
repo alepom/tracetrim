@@ -7,35 +7,510 @@
         "object": "customer",
         "name": "Ada",
         "email": "ada.1dd12ec5@example.test",
-        "currency": "eur"
+        "currency": "eur",
+        "address": {
+          "line1": "Via Esempio 1",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "balance": 0,
+        "business_name": null,
+        "cash_balance": null,
+        "created": 1794787200,
+        "default_source": null,
+        "delinquent": false,
+        "description": null,
+        "discount": null,
+        "invoice_prefix": "51DBA934",
+        "invoice_settings": {
+          "custom_fields": null,
+          "default_payment_method": null,
+          "footer": null,
+          "rendering_options": null
+        },
+        "livemode": false,
+        "metadata": {},
+        "next_invoice_sequence": 3,
+        "phone": null,
+        "preferred_locales": [
+          "it"
+        ],
+        "shipping": null,
+        "tax_exempt": "none",
+        "test_clock": null,
+        "invoice_credit_balance": {
+          "eur": 0
+        },
+        "individual_name": "Ada",
+        "tax": {
+          "automatic_tax": "not_collecting",
+          "location": {
+            "country": "IT",
+            "state": "BO",
+            "source": "billing_address"
+          }
+        },
+        "tax_ids": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/customers/cus_3b909a51dba934/tax_ids"
+        },
+        "subscriptions": {
+          "object": "list",
+          "data": [
+            {
+              "id": "sub_3b909a51dba934",
+              "object": "subscription",
+              "customer": "cus_3b909a51dba934",
+              "status": "active",
+              "created": 1794787200,
+              "currency": "eur",
+              "livemode": false,
+              "billing_cycle_anchor": 1794873600,
+              "cancel_at": null,
+              "canceled_at": null,
+              "cancel_at_period_end": false,
+              "cancellation_details": {
+                "comment": null,
+                "reason": null
+              },
+              "collection_method": "send_invoice",
+              "days_until_due": 10,
+              "default_source": null,
+              "default_tax_rates": [],
+              "description": null,
+              "discounts": [],
+              "ended_at": null,
+              "latest_invoice": "in_ca1fc3945e92e1",
+              "metadata": {},
+              "pause_collection": null,
+              "payment_settings": {
+                "payment_method_types": null,
+                "save_default_payment_method": "off"
+              },
+              "pending_update": null,
+              "schedule": null,
+              "start_date": 1794787200,
+              "trial_start": null,
+              "trial_end": null,
+              "transfer_data": null
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/customers/cus_3b909a51dba934/subscriptions"
+        }
       },
       {
         "id": "cus_e0557423bdf409",
         "object": "customer",
         "name": "Teo",
         "email": "teo.98a62ead@example.test",
-        "currency": "eur"
+        "currency": "eur",
+        "address": {
+          "line1": "Via Esempio 2",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "balance": 0,
+        "business_name": null,
+        "cash_balance": null,
+        "created": 1794790800,
+        "default_source": null,
+        "delinquent": false,
+        "description": null,
+        "discount": null,
+        "invoice_prefix": "23BDF409",
+        "invoice_settings": {
+          "custom_fields": null,
+          "default_payment_method": null,
+          "footer": null,
+          "rendering_options": null
+        },
+        "livemode": false,
+        "metadata": {},
+        "next_invoice_sequence": 3,
+        "phone": null,
+        "preferred_locales": [
+          "it"
+        ],
+        "shipping": null,
+        "tax_exempt": "none",
+        "test_clock": null,
+        "invoice_credit_balance": {
+          "eur": 0
+        },
+        "individual_name": "Teo",
+        "tax": {
+          "automatic_tax": "not_collecting",
+          "location": {
+            "country": "IT",
+            "state": "BO",
+            "source": "billing_address"
+          }
+        },
+        "tax_ids": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/customers/cus_e0557423bdf409/tax_ids"
+        },
+        "subscriptions": {
+          "object": "list",
+          "data": [
+            {
+              "id": "sub_e0557423bdf409",
+              "object": "subscription",
+              "customer": "cus_e0557423bdf409",
+              "status": "active",
+              "created": 1794790800,
+              "currency": "eur",
+              "livemode": false,
+              "billing_cycle_anchor": 1794877200,
+              "cancel_at": null,
+              "canceled_at": null,
+              "cancel_at_period_end": false,
+              "cancellation_details": {
+                "comment": null,
+                "reason": null
+              },
+              "collection_method": "send_invoice",
+              "days_until_due": 11,
+              "default_source": null,
+              "default_tax_rates": [],
+              "description": null,
+              "discounts": [],
+              "ended_at": null,
+              "latest_invoice": "in_f73c8917f80e06",
+              "metadata": {},
+              "pause_collection": null,
+              "payment_settings": {
+                "payment_method_types": null,
+                "save_default_payment_method": "off"
+              },
+              "pending_update": null,
+              "schedule": null,
+              "start_date": 1794790800,
+              "trial_start": null,
+              "trial_end": null,
+              "transfer_data": null
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/customers/cus_e0557423bdf409/subscriptions"
+        }
       },
       {
         "id": "cus_a40133f1d9391b",
         "object": "customer",
         "name": "Mia",
         "email": "mia.84c07b00@example.test",
-        "currency": "eur"
+        "currency": "eur",
+        "address": {
+          "line1": "Via Esempio 3",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "balance": 0,
+        "business_name": null,
+        "cash_balance": null,
+        "created": 1794794400,
+        "default_source": null,
+        "delinquent": false,
+        "description": null,
+        "discount": null,
+        "invoice_prefix": "F1D9391B",
+        "invoice_settings": {
+          "custom_fields": null,
+          "default_payment_method": null,
+          "footer": null,
+          "rendering_options": null
+        },
+        "livemode": false,
+        "metadata": {},
+        "next_invoice_sequence": 3,
+        "phone": null,
+        "preferred_locales": [
+          "it"
+        ],
+        "shipping": null,
+        "tax_exempt": "none",
+        "test_clock": null,
+        "invoice_credit_balance": {
+          "eur": 0
+        },
+        "individual_name": "Mia",
+        "tax": {
+          "automatic_tax": "not_collecting",
+          "location": {
+            "country": "IT",
+            "state": "BO",
+            "source": "billing_address"
+          }
+        },
+        "tax_ids": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/customers/cus_a40133f1d9391b/tax_ids"
+        },
+        "subscriptions": {
+          "object": "list",
+          "data": [
+            {
+              "id": "sub_a40133f1d9391b",
+              "object": "subscription",
+              "customer": "cus_a40133f1d9391b",
+              "status": "active",
+              "created": 1794794400,
+              "currency": "eur",
+              "livemode": false,
+              "billing_cycle_anchor": 1794880800,
+              "cancel_at": null,
+              "canceled_at": null,
+              "cancel_at_period_end": false,
+              "cancellation_details": {
+                "comment": null,
+                "reason": null
+              },
+              "collection_method": "send_invoice",
+              "days_until_due": 12,
+              "default_source": null,
+              "default_tax_rates": [],
+              "description": null,
+              "discounts": [],
+              "ended_at": null,
+              "latest_invoice": "in_657bbfc4dbdcde",
+              "metadata": {},
+              "pause_collection": null,
+              "payment_settings": {
+                "payment_method_types": null,
+                "save_default_payment_method": "off"
+              },
+              "pending_update": null,
+              "schedule": null,
+              "start_date": 1794794400,
+              "trial_start": null,
+              "trial_end": null,
+              "transfer_data": null
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/customers/cus_a40133f1d9391b/subscriptions"
+        }
       },
       {
         "id": "cus_dd87bbe038f7bf",
         "object": "customer",
         "name": "Leo",
         "email": "leo.ede4bb37@example.test",
-        "currency": "eur"
+        "currency": "eur",
+        "address": {
+          "line1": "Via Esempio 4",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "balance": 0,
+        "business_name": null,
+        "cash_balance": null,
+        "created": 1794798000,
+        "default_source": null,
+        "delinquent": false,
+        "description": null,
+        "discount": null,
+        "invoice_prefix": "E038F7BF",
+        "invoice_settings": {
+          "custom_fields": null,
+          "default_payment_method": null,
+          "footer": null,
+          "rendering_options": null
+        },
+        "livemode": false,
+        "metadata": {},
+        "next_invoice_sequence": 3,
+        "phone": null,
+        "preferred_locales": [
+          "it"
+        ],
+        "shipping": null,
+        "tax_exempt": "none",
+        "test_clock": null,
+        "invoice_credit_balance": {
+          "eur": 0
+        },
+        "individual_name": "Leo",
+        "tax": {
+          "automatic_tax": "not_collecting",
+          "location": {
+            "country": "IT",
+            "state": "BO",
+            "source": "billing_address"
+          }
+        },
+        "tax_ids": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/customers/cus_dd87bbe038f7bf/tax_ids"
+        },
+        "subscriptions": {
+          "object": "list",
+          "data": [
+            {
+              "id": "sub_dd87bbe038f7bf",
+              "object": "subscription",
+              "customer": "cus_dd87bbe038f7bf",
+              "status": "active",
+              "created": 1794798000,
+              "currency": "eur",
+              "livemode": false,
+              "billing_cycle_anchor": 1794884400,
+              "cancel_at": null,
+              "canceled_at": null,
+              "cancel_at_period_end": false,
+              "cancellation_details": {
+                "comment": null,
+                "reason": null
+              },
+              "collection_method": "send_invoice",
+              "days_until_due": 13,
+              "default_source": null,
+              "default_tax_rates": [],
+              "description": null,
+              "discounts": [],
+              "ended_at": null,
+              "latest_invoice": "in_4eaa757642297a",
+              "metadata": {},
+              "pause_collection": null,
+              "payment_settings": {
+                "payment_method_types": null,
+                "save_default_payment_method": "off"
+              },
+              "pending_update": null,
+              "schedule": null,
+              "start_date": 1794798000,
+              "trial_start": null,
+              "trial_end": null,
+              "transfer_data": null
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/customers/cus_dd87bbe038f7bf/subscriptions"
+        }
       },
       {
         "id": "cus_fb6af5e4b05403",
         "object": "customer",
         "name": "Eva",
         "email": "eva.a6f5fa17@example.test",
-        "currency": "eur"
+        "currency": "eur",
+        "address": {
+          "line1": "Via Esempio 5",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "balance": 0,
+        "business_name": null,
+        "cash_balance": null,
+        "created": 1794801600,
+        "default_source": null,
+        "delinquent": false,
+        "description": null,
+        "discount": null,
+        "invoice_prefix": "E4B05403",
+        "invoice_settings": {
+          "custom_fields": null,
+          "default_payment_method": null,
+          "footer": null,
+          "rendering_options": null
+        },
+        "livemode": false,
+        "metadata": {},
+        "next_invoice_sequence": 3,
+        "phone": null,
+        "preferred_locales": [
+          "it"
+        ],
+        "shipping": null,
+        "tax_exempt": "none",
+        "test_clock": null,
+        "invoice_credit_balance": {
+          "eur": 0
+        },
+        "individual_name": "Eva",
+        "tax": {
+          "automatic_tax": "not_collecting",
+          "location": {
+            "country": "IT",
+            "state": "BO",
+            "source": "billing_address"
+          }
+        },
+        "tax_ids": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/customers/cus_fb6af5e4b05403/tax_ids"
+        },
+        "subscriptions": {
+          "object": "list",
+          "data": [
+            {
+              "id": "sub_fb6af5e4b05403",
+              "object": "subscription",
+              "customer": "cus_fb6af5e4b05403",
+              "status": "active",
+              "created": 1794801600,
+              "currency": "eur",
+              "livemode": false,
+              "billing_cycle_anchor": 1794888000,
+              "cancel_at": null,
+              "canceled_at": null,
+              "cancel_at_period_end": false,
+              "cancellation_details": {
+                "comment": null,
+                "reason": null
+              },
+              "collection_method": "send_invoice",
+              "days_until_due": 14,
+              "default_source": null,
+              "default_tax_rates": [],
+              "description": null,
+              "discounts": [],
+              "ended_at": null,
+              "latest_invoice": "in_0008a0817eff55",
+              "metadata": {},
+              "pause_collection": null,
+              "payment_settings": {
+                "payment_method_types": null,
+                "save_default_payment_method": "off"
+              },
+              "pending_update": null,
+              "schedule": null,
+              "start_date": 1794801600,
+              "trial_start": null,
+              "trial_end": null,
+              "transfer_data": null
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/customers/cus_fb6af5e4b05403/subscriptions"
+        }
       }
     ],
     "charges": [
@@ -49,7 +524,44 @@
         "amount": 8800,
         "amount_captured": 8800,
         "created": 1794873720,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "ada.1dd12ec5@example.test",
+          "name": "Ada",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_58fb1ee03396c3",
+        "receipt_email": "ada.1dd12ec5@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_58fb1ee03396c3",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_58fb1ee03396c3/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_d97dcd8d158715",
@@ -61,7 +573,44 @@
         "amount": 9500,
         "amount_captured": 9500,
         "created": 1797292920,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "ada.1dd12ec5@example.test",
+          "name": "Ada",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_d97dcd8d158715",
+        "receipt_email": "ada.1dd12ec5@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_d97dcd8d158715",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_d97dcd8d158715/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_d19dfc69ae389e",
@@ -73,7 +622,44 @@
         "amount": 8000,
         "amount_captured": 8000,
         "created": 1794877320,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "teo.98a62ead@example.test",
+          "name": "Teo",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_d19dfc69ae389e",
+        "receipt_email": "teo.98a62ead@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_d19dfc69ae389e",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_d19dfc69ae389e/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_089879754cd331",
@@ -85,7 +671,44 @@
         "amount": 3500,
         "amount_captured": 3500,
         "created": 1797296520,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "teo.98a62ead@example.test",
+          "name": "Teo",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_089879754cd331",
+        "receipt_email": "teo.98a62ead@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_089879754cd331",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_089879754cd331/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_5e440df90abd38",
@@ -97,7 +720,44 @@
         "amount": 10900,
         "amount_captured": 10900,
         "created": 1794880920,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "mia.84c07b00@example.test",
+          "name": "Mia",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_5e440df90abd38",
+        "receipt_email": "mia.84c07b00@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_5e440df90abd38",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_5e440df90abd38/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_bb38f7aa786dd4",
@@ -109,7 +769,44 @@
         "amount": 9700,
         "amount_captured": 9700,
         "created": 1794884520,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "leo.ede4bb37@example.test",
+          "name": "Leo",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_bb38f7aa786dd4",
+        "receipt_email": "leo.ede4bb37@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_bb38f7aa786dd4",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_bb38f7aa786dd4/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_023a3740f06a47",
@@ -121,7 +818,44 @@
         "amount": 2350,
         "amount_captured": 2350,
         "created": 1797303720,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "leo.ede4bb37@example.test",
+          "name": "Leo",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_023a3740f06a47",
+        "receipt_email": "leo.ede4bb37@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_023a3740f06a47",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_023a3740f06a47/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_d1c476042cee99",
@@ -133,7 +867,44 @@
         "amount": 7600,
         "amount_captured": 7600,
         "created": 1794888120,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "eva.a6f5fa17@example.test",
+          "name": "Eva",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_d1c476042cee99",
+        "receipt_email": "eva.a6f5fa17@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_d1c476042cee99",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_d1c476042cee99/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       },
       {
         "id": "ch_4e13e781d4105f",
@@ -145,7 +916,44 @@
         "amount": 8200,
         "amount_captured": 8200,
         "created": 1797307320,
-        "currency": "eur"
+        "currency": "eur",
+        "amount_refunded": 0,
+        "captured": true,
+        "refunded": false,
+        "disputed": false,
+        "billing_details": {
+          "email": "eva.a6f5fa17@example.test",
+          "name": "Eva",
+          "phone": null,
+          "address": {
+            "country": "IT",
+            "city": null
+          }
+        },
+        "application": null,
+        "application_fee": null,
+        "balance_transaction": "txn_4e13e781d4105f",
+        "receipt_email": "eva.a6f5fa17@example.test",
+        "receipt_url": "https://billing.example.test/receipts/ch_4e13e781d4105f",
+        "failure_code": null,
+        "failure_message": null,
+        "fraud_details": {},
+        "livemode": false,
+        "metadata": {},
+        "outcome": null,
+        "payment_method_details": {
+          "type": "customer_balance",
+          "customer_balance": {}
+        },
+        "receipt_number": null,
+        "refunds": {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/charges/ch_4e13e781d4105f/refunds"
+        },
+        "shipping": null,
+        "transfer_data": null
       }
     ],
     "invoices": [
@@ -168,14 +976,73 @@
               "id": "il_aae45871f0a747",
               "description": "Canone",
               "amount": 8800,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_2fc5d037d108e4",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1792454400,
+                "end": 1794873600
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_2fc5d037d108e4/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1795737600
+        "due_date": 1795737600,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Ada",
+        "customer_address": {
+          "line1": "Via Esempio 1",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_2fc5d037d108e4",
+        "invoice_pdf": "https://billing.example.test/invoices/in_2fc5d037d108e4.pdf",
+        "livemode": false,
+        "number": "51DBA934-0001",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 8800,
+        "total_excluding_tax": 8800,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1792454400,
+        "period_end": 1794873600,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_ca1fc3945e92e1",
@@ -196,21 +1063,91 @@
               "id": "il_c121ec7bb99d6e",
               "description": "Canone",
               "amount": 8800,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_ca1fc3945e92e1",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794873600,
+                "end": 1797292800
+              }
             },
             {
               "id": "il_8e257f24578c07",
               "description": "Conguaglio posti a metà periodo",
               "amount": 700,
               "quantity": 1,
-              "unit_amount": 700
+              "unit_amount": 700,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_ca1fc3945e92e1",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794873600,
+                "end": 1797292800
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_ca1fc3945e92e1/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1798156800
+        "due_date": 1798156800,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Ada",
+        "customer_address": {
+          "line1": "Via Esempio 1",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_ca1fc3945e92e1",
+        "invoice_pdf": "https://billing.example.test/invoices/in_ca1fc3945e92e1.pdf",
+        "livemode": false,
+        "number": "51DBA934-0002",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 9500,
+        "total_excluding_tax": 9500,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1794873600,
+        "period_end": 1797292800,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_dadbacf44bb5fd",
@@ -231,14 +1168,73 @@
               "id": "il_abf68ff485577a",
               "description": "Canone",
               "amount": 8000,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_dadbacf44bb5fd",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1792458000,
+                "end": 1794877200
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_dadbacf44bb5fd/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1795827600
+        "due_date": 1795827600,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Teo",
+        "customer_address": {
+          "line1": "Via Esempio 2",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_dadbacf44bb5fd",
+        "invoice_pdf": "https://billing.example.test/invoices/in_dadbacf44bb5fd.pdf",
+        "livemode": false,
+        "number": "23BDF409-0001",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 8000,
+        "total_excluding_tax": 8000,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1792458000,
+        "period_end": 1794877200,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_f73c8917f80e06",
@@ -259,21 +1255,91 @@
               "id": "il_32d71291dc5917",
               "description": "Canone",
               "amount": 8000,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_f73c8917f80e06",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794877200,
+                "end": 1797296400
+              }
             },
             {
               "id": "il_27e11b12811ba3",
               "description": "Conguaglio posti a metà periodo",
               "amount": -1000,
               "quantity": 2,
-              "unit_amount": -500
+              "unit_amount": -500,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_f73c8917f80e06",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794877200,
+                "end": 1797296400
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_f73c8917f80e06/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1798246800
+        "due_date": 1798246800,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Teo",
+        "customer_address": {
+          "line1": "Via Esempio 2",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_f73c8917f80e06",
+        "invoice_pdf": "https://billing.example.test/invoices/in_f73c8917f80e06.pdf",
+        "livemode": false,
+        "number": "23BDF409-0002",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 7000,
+        "total_excluding_tax": 7000,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1794877200,
+        "period_end": 1797296400,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_6b4329fe78b0a1",
@@ -294,14 +1360,73 @@
               "id": "il_5a65e80f000319",
               "description": "Canone",
               "amount": 10900,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_6b4329fe78b0a1",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1792461600,
+                "end": 1794880800
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_6b4329fe78b0a1/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1795917600
+        "due_date": 1795917600,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Mia",
+        "customer_address": {
+          "line1": "Via Esempio 3",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_6b4329fe78b0a1",
+        "invoice_pdf": "https://billing.example.test/invoices/in_6b4329fe78b0a1.pdf",
+        "livemode": false,
+        "number": "F1D9391B-0001",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 10900,
+        "total_excluding_tax": 10900,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1792461600,
+        "period_end": 1794880800,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_657bbfc4dbdcde",
@@ -322,21 +1447,91 @@
               "id": "il_1581907b7a7ae4",
               "description": "Canone",
               "amount": 10900,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_657bbfc4dbdcde",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794880800,
+                "end": 1797300000
+              }
             },
             {
               "id": "il_5d48a39038bc77",
               "description": "Conguaglio posti a metà periodo",
               "amount": 1200,
               "quantity": 3,
-              "unit_amount": 400
+              "unit_amount": 400,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_657bbfc4dbdcde",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794880800,
+                "end": 1797300000
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_657bbfc4dbdcde/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1798336800
+        "due_date": 1798336800,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Mia",
+        "customer_address": {
+          "line1": "Via Esempio 3",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_657bbfc4dbdcde",
+        "invoice_pdf": "https://billing.example.test/invoices/in_657bbfc4dbdcde.pdf",
+        "livemode": false,
+        "number": "F1D9391B-0002",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 12100,
+        "total_excluding_tax": 12100,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1794880800,
+        "period_end": 1797300000,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_35c2ac78be9f7e",
@@ -357,14 +1552,73 @@
               "id": "il_722ba299f607dd",
               "description": "Canone",
               "amount": 9700,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_35c2ac78be9f7e",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1792465200,
+                "end": 1794884400
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_35c2ac78be9f7e/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1796007600
+        "due_date": 1796007600,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Leo",
+        "customer_address": {
+          "line1": "Via Esempio 4",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_35c2ac78be9f7e",
+        "invoice_pdf": "https://billing.example.test/invoices/in_35c2ac78be9f7e.pdf",
+        "livemode": false,
+        "number": "E038F7BF-0001",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 9700,
+        "total_excluding_tax": 9700,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1792465200,
+        "period_end": 1794884400,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_4eaa757642297a",
@@ -385,21 +1639,91 @@
               "id": "il_9bdb4fe309104a",
               "description": "Canone",
               "amount": 9700,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_4eaa757642297a",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794884400,
+                "end": 1797303600
+              }
             },
             {
               "id": "il_dc7b1fa7bc5aa4",
               "description": "Conguaglio posti a metà periodo",
               "amount": -300,
               "quantity": 1,
-              "unit_amount": -300
+              "unit_amount": -300,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_4eaa757642297a",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794884400,
+                "end": 1797303600
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_4eaa757642297a/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1798426800
+        "due_date": 1798426800,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Leo",
+        "customer_address": {
+          "line1": "Via Esempio 4",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_4eaa757642297a",
+        "invoice_pdf": "https://billing.example.test/invoices/in_4eaa757642297a.pdf",
+        "livemode": false,
+        "number": "E038F7BF-0002",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 9400,
+        "total_excluding_tax": 9400,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1794884400,
+        "period_end": 1797303600,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_a241a168135ebf",
@@ -420,14 +1744,73 @@
               "id": "il_a9c85244b87ee4",
               "description": "Canone",
               "amount": 7600,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_a241a168135ebf",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1792468800,
+                "end": 1794888000
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_a241a168135ebf/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1796097600
+        "due_date": 1796097600,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Eva",
+        "customer_address": {
+          "line1": "Via Esempio 5",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_a241a168135ebf",
+        "invoice_pdf": "https://billing.example.test/invoices/in_a241a168135ebf.pdf",
+        "livemode": false,
+        "number": "E4B05403-0001",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 7600,
+        "total_excluding_tax": 7600,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1792468800,
+        "period_end": 1794888000,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       },
       {
         "id": "in_0008a0817eff55",
@@ -448,25 +1831,281 @@
               "id": "il_42630bf97e6c7d",
               "description": "Canone",
               "amount": 7600,
-              "quantity": 1
+              "quantity": 1,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_0008a0817eff55",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794888000,
+                "end": 1797307200
+              }
             },
             {
               "id": "il_fb71ed84947ca3",
               "description": "Conguaglio posti a metà periodo",
               "amount": 600,
               "quantity": 2,
-              "unit_amount": 300
+              "unit_amount": 300,
+              "object": "line_item",
+              "currency": "eur",
+              "invoice": "in_0008a0817eff55",
+              "livemode": false,
+              "metadata": {},
+              "taxes": [],
+              "discount_amounts": [],
+              "period": {
+                "start": 1794888000,
+                "end": 1797307200
+              }
             }
-          ]
+          ],
+          "object": "list",
+          "has_more": false,
+          "url": "/v1/invoices/in_0008a0817eff55/lines"
         },
         "metadata": {
           "batch": "Cambio posti"
         },
-        "due_date": 1798516800
+        "due_date": 1798516800,
+        "account_country": "IT",
+        "account_name": "Billing Lab",
+        "account_tax_ids": [],
+        "amount_overpaid": 0,
+        "amount_shipping": 0,
+        "automatic_tax": {
+          "enabled": false,
+          "status": null,
+          "liability": null
+        },
+        "collection_method": "send_invoice",
+        "customer_name": "Eva",
+        "customer_address": {
+          "line1": "Via Esempio 5",
+          "line2": null,
+          "city": "Bologna",
+          "state": "BO",
+          "postal_code": "40100",
+          "country": "IT"
+        },
+        "customer_phone": null,
+        "customer_shipping": null,
+        "customer_tax_exempt": "none",
+        "customer_tax_ids": [],
+        "default_payment_method": null,
+        "default_source": null,
+        "default_tax_rates": [],
+        "footer": null,
+        "hosted_invoice_url": "https://billing.example.test/invoices/in_0008a0817eff55",
+        "invoice_pdf": "https://billing.example.test/invoices/in_0008a0817eff55.pdf",
+        "livemode": false,
+        "number": "E4B05403-0002",
+        "receipt_number": null,
+        "shipping_cost": null,
+        "shipping_details": null,
+        "subtotal_excluding_tax": 8200,
+        "total_excluding_tax": 8200,
+        "total_taxes": [],
+        "test_clock": null,
+        "period_start": 1794888000,
+        "period_end": 1797307200,
+        "payment_settings": {
+          "default_mandate": null,
+          "payment_method_types": null
+        }
       }
     ],
     "refunds": [],
-    "subscriptions": []
+    "subscriptions": [
+      {
+        "id": "sub_3b909a51dba934",
+        "object": "subscription",
+        "customer": "cus_3b909a51dba934",
+        "status": "active",
+        "created": 1794787200,
+        "currency": "eur",
+        "livemode": false,
+        "billing_cycle_anchor": 1794873600,
+        "cancel_at": null,
+        "canceled_at": null,
+        "cancel_at_period_end": false,
+        "cancellation_details": {
+          "comment": null,
+          "reason": null
+        },
+        "collection_method": "send_invoice",
+        "days_until_due": 10,
+        "default_source": null,
+        "default_tax_rates": [],
+        "description": null,
+        "discounts": [],
+        "ended_at": null,
+        "latest_invoice": "in_ca1fc3945e92e1",
+        "metadata": {},
+        "pause_collection": null,
+        "payment_settings": {
+          "payment_method_types": null,
+          "save_default_payment_method": "off"
+        },
+        "pending_update": null,
+        "schedule": null,
+        "start_date": 1794787200,
+        "trial_start": null,
+        "trial_end": null,
+        "transfer_data": null
+      },
+      {
+        "id": "sub_e0557423bdf409",
+        "object": "subscription",
+        "customer": "cus_e0557423bdf409",
+        "status": "active",
+        "created": 1794790800,
+        "currency": "eur",
+        "livemode": false,
+        "billing_cycle_anchor": 1794877200,
+        "cancel_at": null,
+        "canceled_at": null,
+        "cancel_at_period_end": false,
+        "cancellation_details": {
+          "comment": null,
+          "reason": null
+        },
+        "collection_method": "send_invoice",
+        "days_until_due": 11,
+        "default_source": null,
+        "default_tax_rates": [],
+        "description": null,
+        "discounts": [],
+        "ended_at": null,
+        "latest_invoice": "in_f73c8917f80e06",
+        "metadata": {},
+        "pause_collection": null,
+        "payment_settings": {
+          "payment_method_types": null,
+          "save_default_payment_method": "off"
+        },
+        "pending_update": null,
+        "schedule": null,
+        "start_date": 1794790800,
+        "trial_start": null,
+        "trial_end": null,
+        "transfer_data": null
+      },
+      {
+        "id": "sub_a40133f1d9391b",
+        "object": "subscription",
+        "customer": "cus_a40133f1d9391b",
+        "status": "active",
+        "created": 1794794400,
+        "currency": "eur",
+        "livemode": false,
+        "billing_cycle_anchor": 1794880800,
+        "cancel_at": null,
+        "canceled_at": null,
+        "cancel_at_period_end": false,
+        "cancellation_details": {
+          "comment": null,
+          "reason": null
+        },
+        "collection_method": "send_invoice",
+        "days_until_due": 12,
+        "default_source": null,
+        "default_tax_rates": [],
+        "description": null,
+        "discounts": [],
+        "ended_at": null,
+        "latest_invoice": "in_657bbfc4dbdcde",
+        "metadata": {},
+        "pause_collection": null,
+        "payment_settings": {
+          "payment_method_types": null,
+          "save_default_payment_method": "off"
+        },
+        "pending_update": null,
+        "schedule": null,
+        "start_date": 1794794400,
+        "trial_start": null,
+        "trial_end": null,
+        "transfer_data": null
+      },
+      {
+        "id": "sub_dd87bbe038f7bf",
+        "object": "subscription",
+        "customer": "cus_dd87bbe038f7bf",
+        "status": "active",
+        "created": 1794798000,
+        "currency": "eur",
+        "livemode": false,
+        "billing_cycle_anchor": 1794884400,
+        "cancel_at": null,
+        "canceled_at": null,
+        "cancel_at_period_end": false,
+        "cancellation_details": {
+          "comment": null,
+          "reason": null
+        },
+        "collection_method": "send_invoice",
+        "days_until_due": 13,
+        "default_source": null,
+        "default_tax_rates": [],
+        "description": null,
+        "discounts": [],
+        "ended_at": null,
+        "latest_invoice": "in_4eaa757642297a",
+        "metadata": {},
+        "pause_collection": null,
+        "payment_settings": {
+          "payment_method_types": null,
+          "save_default_payment_method": "off"
+        },
+        "pending_update": null,
+        "schedule": null,
+        "start_date": 1794798000,
+        "trial_start": null,
+        "trial_end": null,
+        "transfer_data": null
+      },
+      {
+        "id": "sub_fb6af5e4b05403",
+        "object": "subscription",
+        "customer": "cus_fb6af5e4b05403",
+        "status": "active",
+        "created": 1794801600,
+        "currency": "eur",
+        "livemode": false,
+        "billing_cycle_anchor": 1794888000,
+        "cancel_at": null,
+        "canceled_at": null,
+        "cancel_at_period_end": false,
+        "cancellation_details": {
+          "comment": null,
+          "reason": null
+        },
+        "collection_method": "send_invoice",
+        "days_until_due": 14,
+        "default_source": null,
+        "default_tax_rates": [],
+        "description": null,
+        "discounts": [],
+        "ended_at": null,
+        "latest_invoice": "in_0008a0817eff55",
+        "metadata": {},
+        "pause_collection": null,
+        "payment_settings": {
+          "payment_method_types": null,
+          "save_default_payment_method": "off"
+        },
+        "pending_update": null,
+        "schedule": null,
+        "start_date": 1794801600,
+        "trial_start": null,
+        "trial_end": null,
+        "transfer_data": null
+      }
+    ]
   },
   "key": {
     "ticket": [

@@ -5,6 +5,7 @@ from itertools import permutations
 import random
 
 from experiments.paths import ROOT
+from .api_records import billing_records, ci_records
 
 DATA = ROOT / "experiments/v3/material"
 SEED = 120311
@@ -119,6 +120,7 @@ def billing(index, rng):
                                  {"oggetto": ids[1], "fatto": diagnosis}],
                     "risposta_al_cliente": f"{diagnosis} {action}", "azioni_interne": [action]})
         tickets.append(f"T{j+1} — {email}: {question}")
+    billing_records(world)
     prompt = f"Coda assistenza «{title}». Riconcilia le fatture con i pagamenti per ciascun cliente. " \
              "Spiega quali documenti confronti e quale azione serve.\n" + "\n".join(tickets)
     return {"prompt": prompt, "world": world, "key": {"ticket": key}}
@@ -161,6 +163,7 @@ def ci(index, rng):
                    head_commit={"id": run["head_sha"], "message": "Update release bundle"},
                    repository={"id": base-100, "name": repo, "full_name": f"lab/{repo}"})
     world["runs"].sort(key=lambda r: r["created_at"])
+    ci_records(world, repo, index)
     prompt = (f"Repository: lab/{repo}. The release owner needs a handoff for 14–20 December 2026. "
               f"Investigate the {first[0]} and {second[0]} checks on main. Group repeated failures, "
               "quote the decisive log lines, and distinguish the fix already under review from work still to open.")

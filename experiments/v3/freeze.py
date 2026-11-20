@@ -11,7 +11,9 @@ def manifest():
             "experiments/prompts/c4-system.md", "experiments/prompts/c5-system.md",
             "experiments/caps.py", "experiments/paths.py", "experiments/checks.py",
             "experiments/tools.py", "experiments/v04.py", "experiments/v04_preconditions.py",
-            "experiments/simulated/server_c4.py", "experiments/simulated/server_c5.py"]
+            "experiments/simulated/server_c4.py", "experiments/simulated/server_c5.py",
+            "experiments/simulated/worlds.py", "experiments/simulated/synth.py",
+            "experiments/v3_exposure.py"]
     paths = {ROOT / name for name in deps}
     paths.update((ROOT / "src/tracetrim").rglob("*.py"))
     paths.update((ROOT / "experiments/v3").glob("*.py"))

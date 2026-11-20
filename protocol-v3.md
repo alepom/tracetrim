@@ -52,3 +52,22 @@ python -m experiments.v3.dry --dry-run out/new-v3-rehearsal
 ```
 
 Worlds and ordering can be rebuilt with `python -m experiments.v3.worlds`, policies and overlap audit with `python -m experiments.v3.prepare --e2-traces PATH`, and canonical tool evidence with `python -m experiments.v3.dry --reference-only` in a scratch checkout. Compare their hashes to the manifest. For the later campaign the coordinator consumes trace JSONL at `out/v3/traces/TASK/REPETITION/ARM.jsonl` with final message and original tool returns. Use `python -m experiments.v3.coordinator pack` then `adjudicate` after the two blind scores are locked. The coordinator records documented infrastructure losses or unstarted slots separately in private `missing.json` (slot to reason). It requires a trace for every other slot. After adjudication, `finish` verifies the first two score-sheet fingerprints, combines the disputed dimensions and computes agreement. Release the mapping only after all ratings are locked. Publishable records contain synthetic data. Absolute spend, provider credentials and local financial controls stay private.
+
+## Pre-campaign amendment · 20 November 2026
+
+Before collecting answers, an offline replay on the first frozen worlds found frequent full responses
+because the original record was shorter than the annotated projection. The revised worlds expose the
+billing profiles, embedded subscriptions, invoice and payment metadata of the simulated API, and CI
+repository links, job metadata, unrelated backlog and ordinary setup/test log lines. Each task retains
+its literal prompt and reference answer. The policies, training split, allocation, scoring and blind
+mapping are the ones sealed previously. The dry-run CI stub identifies the diagnostic in the longer log.
+No quality outcome was used to make these changes.
+
+The exposure check (`python -m experiments.v3_exposure --output out/v3-exposure/replay.json`) replays
+all eight Phase A request sequences on each task, passing each original tool result through the frozen
+R, P and I engines. It also applies those engines to the historical responses. Count delivered
+`o200k_base` tokens including annotations with a fixed-length, standardized handle. For each case, P
+must save at least 30% relative to R and the share classified `full_cheaper` (the whole-result
+fallback counted by `tracetrim compare`) must be at most 25%. Report ordinary full calls separately,
+including all plain-text job logs, and disclose the share of all calls without field removal. This
+technical gate checks exposure; only the approved live campaign can evaluate answer quality.
