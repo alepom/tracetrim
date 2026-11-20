@@ -4,6 +4,22 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.3.1
+
+Faster closings. **Nothing changes in what the model receives, in the report, in the configs or in when a new
+policy takes effect.** The paper and every measure are unchanged. Not archived on Zenodo: the archive of 1.1.0
+(DOI 10.5281/zenodo.24263018) stays the version to cite.
+
+- **Leave-one-out from per-run counts.** At every closing in automatic mode, the report learned a projection for
+  each held-out run from all the others, so the cost grew with the square of the history. It now reads each
+  trace once, counts how many runs support each field, and gets every held-out projection by taking one run's
+  share away; the projections are the ones `projection.learn` gives (`tests/test_auto.py`,
+  `tests/test_report.py`). On copies of the public runs, a closing at 100 runs went from 15.4 to 5.1 s on the
+  billing case and from 36.4 to 14.9 s on the CI case; at 200 runs, from 116 to 31 s
+  (`experiments/closing_cost.py`, `results/v1/closing_cost*.json`).
+
+Developed by Astra under the coordination of the main session.
+
 ## 1.3.0
 
 A new command. **Nothing changes in what the model receives, in the report or in the configs.** The paper and
