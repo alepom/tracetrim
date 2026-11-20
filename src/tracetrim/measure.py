@@ -23,13 +23,15 @@ from .projection import learn
 from .usage import CallUsage
 
 
-def tokenizer():
+def tokenizer(*, ordinary_text=False):
+    """Use ordinary BPE for tool text that may literally quote a special-token marker."""
     try:
         import tiktoken
     except ImportError:
         raise SystemExit("measuring needs a real tokenizer: pip install 'tracetrim[measure]'")
     enc = tiktoken.get_encoding("o200k_base")
-    return lambda s: len(enc.encode(s or ""))
+    encode = enc.encode_ordinary if ordinary_text else enc.encode
+    return lambda s: len(encode(s or ""))
 
 
 def counter():
@@ -68,6 +70,12 @@ def removes(p, tool: str, path: str) -> bool:
     return p.unseen == "drop" or path in p.seen[tool]
 
 
+def folds(usages):
+    """Yield the held-out run and its training runs, in input order."""
+    for i, calls in enumerate(usages):
+        yield calls, usages[:i] + usages[i + 1:]
+
+
 def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full",
                   unseen="keep", protect_ids: bool | str = True, compact: bool = False,
                   keep_empty: bool = False, keep_positions: bool = False) -> list[Row]:
@@ -76,8 +84,7 @@ def leave_one_out(names: list[str], usages: list[list[CallUsage]], source="full"
     them, and so does the default."""
     count = tokenizer()
     rows = []
-    for i, (name, calls) in enumerate(zip(names, usages)):
-        others = usages[:i] + usages[i + 1:]
+    for name, (calls, others) in zip(names, folds(usages)):
         prudent = learn(others, "prudent", source, unseen, protect_ids)
         aggressive = learn(others, "aggressive", source, unseen, protect_ids)
         r = Row(name)

@@ -3,6 +3,7 @@
   tracetrim learn   traces/*.jsonl -o projection.json [--mode prudent|aggressive] [--source full|calls]
   tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
+  tracetrim compare traces/*.jsonl --a protect_ids=all --b protect_ids=record [--json]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
   tracetrim login   --servers mcp.json                 (once, for servers that use OAuth)
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
@@ -381,6 +382,19 @@ def main(argv=None):
     s.add_argument("--learning", choices=("1.1", "1.0"), default="1.1",
                    help="the learning rules: 1.1 (the default) or 1.0, the rules of tracetrim 1.0 (negative numbers never found, a long text cancelled by one piece written before the call, the report measured without compact JSON)")
     s.set_defaults(func=cmd_measure)
+
+    from . import compare
+    s = sub.add_parser("compare", help="compare two recipes on held-out runs offline",
+                       description="Compare two prudent recipes on original tool outputs (leave-one-out). "
+                                   "Replay uses deterministic annotation IDs. Random IDs in production can "
+                                   "change the token count by a few tokens per annotation.")
+    s.add_argument("traces", nargs="+", help="distinct runs of the same task (.jsonl or .py)")
+    for side in ("a", "b"):
+        s.add_argument("--" + side, type=compare.recipe, required=True, metavar="KEY=VALUE,...",
+                       help="protect_ids=all|record, learning=1.1|1.0, keep_positions=true|false, "
+                            "unseen=keep|drop, compact=true|false (defaults listed first)")
+    s.add_argument("--json", action="store_true", help="write tracetrim/compare@1 JSON to stdout")
+    s.set_defaults(func=compare.command)
 
     s = sub.add_parser("report", help="telemetry report in five languages (HTML + JSON)")
     s.add_argument("traces", nargs="+")

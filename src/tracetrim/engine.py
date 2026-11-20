@@ -124,7 +124,7 @@ class Trimmer:
     def output(self, tool: str, out: str) -> str:
         return self.observe(tool, out).text
 
-    def observe(self, tool: str, out: str) -> Observation:
+    def observe(self, tool: str, out: str, *, count_tokens=None) -> Observation:
         if self.policy is None:
             return Observation(out)
         trimmed = self.policy.apply(tool, out)
@@ -161,9 +161,10 @@ class Trimmer:
         # random one, so that the same result is treated the same everywhere.)
         whole = self.policy.apply(tool, out, project=False)
         candidate = f"{trimmed}{MARK}call_id=c00000000 hidden: {listed}" if annotate else trimmed
-        whole_size = self.count(whole)
+        count = count_tokens or self.count
+        whole_size = count(whole)
         self.last_whole = (tool, out, whole_size)
-        if self.count(candidate) >= whole_size:
+        if count(candidate) >= whole_size:
             return Observation(whole, FULL_CHEAPER, hidden=tuple(hidden))
         if not annotate:
             return Observation(trimmed, FILTERED, hidden=tuple(hidden))

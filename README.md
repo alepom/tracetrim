@@ -196,6 +196,33 @@ paper.
 `tracetrim-data/traces/`. If your servers return confidential data, treat that directory as you
 treat the data: local, not shared, not committed.
 
+## Compare two configurations offline
+
+Run the same recorded task under two recipes before choosing how to trim its outputs.
+With the public dataset unpacked at the repository root, compare identifier protection on C4:
+
+```bash
+tracetrim compare dataset/traces/C4/A*.jsonl --a protect_ids=all --b protect_ids=record
+```
+
+Each side starts with `protect_ids=all,learning=1.1,keep_positions=true,unseen=keep,compact=true`.
+Override one or more settings with comma-separated pairs, for example
+`--b protect_ids=record,keep_positions=false`. See `tracetrim compare --help` for accepted values.
+Supply distinct runs with the original tool outputs and a final answer. At least two eligible runs
+are required. Two to four produce a small-sample warning.
+
+Each side learns from the other runs and filters the held-out run with the prudent projection.
+Both sides judge later field reuse with the 1.1 rules. The replay enables recovery for all learned
+tools and runs without activation thresholds, promotions or sampling. The table compares served tokens
+(including the `[trimmed]` line), calls hiding a visibly reused field, and calls served whole because the
+annotated version costs at least as much. It lists the missed fields by name and shows examples of fields
+visible on only one side. Production uses random annotation IDs, so token counts can vary slightly.
+
+Add `--json` for a `tracetrim/compare@1` document on stdout. Deltas are B minus A. Warnings go to stderr.
+Explicit `expand` calls in the supplied trace events are counted separately. A proxy can keep recovery
+requests in separate evidence files. Replay cannot predict whether the model would have requested a
+hidden field or changed its answer.
+
 ## Servers that need credentials
 
 Two separate links, two separate credentials: **agent → tracetrim** is protected by the token you
