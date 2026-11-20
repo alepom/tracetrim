@@ -458,6 +458,10 @@ L = {
                      "il filtro è attivo, con le azioni automatiche qui sotto"),
     "auto_learning": ("learning: complete runs", "in apprendimento: esecuzioni complete"),
     "auto_off": ("switched off after too many expand requests", "spenti dopo troppe richieste di expand"),
+    "mixed_runs": ("warning: runs with calls from several HTTP sessions",
+                   "avviso: esecuzioni con chiamate da più sessioni HTTP"),
+    "mixed_occurrences": ("HTTP sessions counted across those runs (once per session per run)",
+                          "sessioni HTTP in quelle esecuzioni (una volta per sessione ed esecuzione)"),
     "auto_refused": ("closings refused for lack of an answer (the run stayed open)",
                      "chiusure rifiutate perché senza risposta (l'esecuzione è rimasta aperta)"),
     "auto_followed": ("runs closed by an answer and followed by calls within the idle pause (see the note below)",
@@ -1359,6 +1363,9 @@ def _status(d: dict) -> str:
     rows += [(_t(key), str(auto[field])) for key, field in (("auto_refused", "refused_closings"),
                                                            ("auto_followed", "answered_runs_followed_by_calls"))
              if auto.get(field)]
+    if mixed := d.get("mixed_sessions"):
+        rows.extend([(_t("mixed_runs"), _num(mixed["runs"])),
+                     (_t("mixed_occurrences"), _num(mixed["session_occurrences"]))])
     kv = "".join(f"<div><span>{k}</span><span>{v}</span></div>" for k, v in rows)
     return (f'<div class="card status"><div class="label">{_t("auto_title")}</div>{head}'
             f'<div class="kv">{kv}</div></div>')

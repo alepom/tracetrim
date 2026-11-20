@@ -43,6 +43,7 @@ class ToolCall:
     # front of several servers does, a function-calling loop leaves both empty.
     server: str | None = None
     upstream_tool: str | None = None
+    session_key: str | None = None  # anonymous, in-memory provenance for the HTTP run warning
 
 
 @dataclass(frozen=True)

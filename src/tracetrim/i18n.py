@@ -65,6 +65,8 @@ LABELS: dict[str, dict] = {
         "auto_learning": "aprendiendo: ejecuciones completas",
         "auto_off": "desactivadas tras demasiadas solicitudes de expand",
         "auto_refused": "cierres rechazados por falta de respuesta (la ejecución quedó abierta)",
+        "mixed_runs": "advertencia: ejecuciones con llamadas de varias sesiones HTTP",
+        "mixed_occurrences": "sesiones HTTP en esas ejecuciones (una vez por sesión y ejecución)",
         "auto_followed": "ejecuciones cerradas con una respuesta y seguidas de llamadas dentro de la pausa de inactividad "
                          "(ver la nota de abajo)",
         "savings": "De dónde viene el ahorro",
@@ -189,6 +191,8 @@ LABELS: dict[str, dict] = {
         "auto_learning": "apprentissage : exécutions complètes",
         "auto_off": "désactivés après trop de demandes d'expand",
         "auto_refused": "clôtures refusées faute de réponse (l'exécution est restée ouverte)",
+        "mixed_runs": "avertissement : exécutions avec des appels de plusieurs sessions HTTP",
+        "mixed_occurrences": "sessions HTTP dans ces exécutions (une fois par session et par exécution)",
         "auto_followed": "exécutions closes par une réponse et suivies d'appels dans la pause d'inactivité (voir la note "
                          "ci-dessous)",
         "savings": "D'où vient l'économie",
@@ -311,6 +315,8 @@ LABELS: dict[str, dict] = {
         "auto_learning": "学习中：完整运行",
         "auto_off": "因 expand 请求过多而关闭",
         "auto_refused": "因缺少回答而被拒绝的关闭（运行仍保持打开）",
+        "mixed_runs": "警告：包含多个 HTTP 会话调用的运行次数",
+        "mixed_occurrences": "这些运行中的 HTTP 会话数（每次运行中每个会话计一次）",
         "auto_followed": "以回答结束、并在空闲间隔内又出现调用的运行（见下方说明）",
         "savings": "节省从何而来",
         "savings_sub": "在运行时逐次调用统计：工具发送的内容与模型收到的内容之比。重新序列化是把同样的数据写成紧凑 JSON "

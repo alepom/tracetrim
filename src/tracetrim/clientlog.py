@@ -85,12 +85,11 @@ def entry(method: str, params) -> dict:
     return out
 
 
-class ClientLog:
-    def __init__(self, path: str):
-        # O_APPEND, and one write per line: lines from several clients, or from
-        # several proxies given the same file, do not mix.
-        self.fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
-        self.lock = threading.Lock()
+class SessionKeys:
+    """Anonymous keys shared by the request log and the HTTP run diagnostic."""
+
+    def __init__(self):
+        self._called: weakref.WeakSet = weakref.WeakSet()
         self._salt = secrets.token_bytes(16)
         self._tokens: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 
@@ -106,6 +105,32 @@ class ClientLog:
             except TypeError:                    # no connection to tell apart
                 real = "-"
         return hashlib.sha256(self._salt + real.encode()).hexdigest()[:12]
+
+    def for_call(self, connection) -> str | None:
+        """A transport session is explicit. A connection alone counts only
+        after it has served a second upstream call. Single-exchange HTTP
+        creates a fresh connection for each request."""
+        real = getattr(connection, "session_id", None)
+        if not isinstance(real, str) or not real:
+            try:
+                if connection not in self._called:
+                    self._called.add(connection)
+                    return None
+            except TypeError:
+                return None
+        return self.session(connection)
+
+
+class ClientLog:
+    def __init__(self, path: str, keys: SessionKeys | None = None):
+        # O_APPEND, and one write per line: lines from several clients, or from
+        # several proxies given the same file, do not mix.
+        self.fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
+        self.lock = threading.Lock()
+        self.keys = keys or SessionKeys()
+
+    def session(self, connection) -> str:
+        return self.keys.session(connection)
 
     def record(self, connection, method: str, params) -> None:
         line = {"time": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),

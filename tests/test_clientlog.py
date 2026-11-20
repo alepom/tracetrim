@@ -6,6 +6,7 @@ import socket
 import subprocess
 import sys
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
@@ -136,19 +137,38 @@ def test_over_stdio_the_log_follows_a_whole_session(tmp_path):
     assert SECRET_ARGUMENT in (tmp_path / "work" / "traces" / "run-0001-noanswer.jsonl").read_text()
 
 
-def test_over_http_several_clients_write_whole_lines_and_no_secret(tmp_path):
-    log = tmp_path / "client.jsonl"
+@contextmanager
+def http_proxy(tmp_path, *options):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-    proc = subprocess.Popen([sys.executable, "-m", "tracetrim.cli", "proxy", "--upstream-cmd", UPSTREAM, "--quiet",
-                             "--auto", str(tmp_path / "work"), "--http", str(port), "--token", SECRET_TOKEN,
-                             "--log-client", str(log)], cwd=str(ROOT), stderr=subprocess.DEVNULL)
+    with (tmp_path / "proxy.log").open("w") as err:
+        proc = subprocess.Popen([sys.executable, "-m", "tracetrim.cli", "proxy", "--upstream-cmd", UPSTREAM, "--quiet",
+                                 "--auto", str(tmp_path / "work"), "--http", str(port), *options], cwd=ROOT, stderr=err)
+        try:
+            for _ in range(100):
+                try:
+                    socket.create_connection(("127.0.0.1", port), timeout=0.2).close()
+                    break
+                except OSError:
+                    if proc.poll() is not None:
+                        pytest.fail("proxy exited during startup")
+                    time.sleep(0.1)
+            else:
+                pytest.fail("proxy did not start listening")
+            yield f"http://127.0.0.1:{port}/mcp"
+        finally:
+            proc.terminate()
+            proc.wait(timeout=30)
+
+
+def test_over_http_several_clients_write_whole_lines_and_no_secret(tmp_path):
+    log = tmp_path / "client.jsonl"
     clients, calls = 6, 8
 
     async def one(n):
         http = create_mcp_http_client(headers={"Authorization": f"Bearer {SECRET_TOKEN}", "X-Client": f"client-{n}"})
-        async with http, streamable_http_client(f"http://127.0.0.1:{port}/mcp", http_client=http) as (r, w, *_):
+        async with http, streamable_http_client(url, http_client=http) as (r, w, *_):
             async with ClientSession(r, w) as s:
                 await s.initialize()
                 await s.read_resource(skill.URI)
@@ -157,17 +177,8 @@ def test_over_http_several_clients_write_whole_lines_and_no_secret(tmp_path):
     async def go():
         await asyncio.gather(*(one(n) for n in range(clients)))
 
-    try:
-        for _ in range(100):
-            try:
-                socket.create_connection(("127.0.0.1", port), timeout=0.2).close()
-                break
-            except OSError:
-                time.sleep(0.1)
+    with http_proxy(tmp_path, "--token", SECRET_TOKEN, "--log-client", str(log)) as url:
         asyncio.run(go())
-    finally:
-        proc.terminate()
-        proc.wait(timeout=30)
 
     text = log.read_text()
     got = lines(log)                                                  # every line is whole JSON
@@ -182,6 +193,58 @@ def test_over_http_several_clients_write_whole_lines_and_no_secret(tmp_path):
         assert sorted(m for m in methods if m != "tools/list") == sorted(["initialize", "resources/read"] + ["tools/call"] * calls)
     for secret in (SECRET_ARGUMENT, SECRET_TOKEN, "Bearer", "Authorization", "client-0", "127.0.0.1", "meta_server"):
         assert secret.lower() not in text.lower(), secret
+
+
+def test_http_warning_counts_only_sessions_that_contributed_calls(tmp_path):
+    async def go(url):
+        async with Client(url, mode="legacy") as first, Client(url, mode="legacy") as second:
+            async with Client(url, mode="legacy") as observer:
+                await observer.list_tools()
+            # Two open connections alone must not taint either client's completed task.
+            for client in (second, first):
+                assert not (await client.call_tool("volumes", {})).is_error
+                done = await client.call_tool("tracetrim_done", {"answer": "1600"})
+                assert done.content[0].text == "Recorded."
+            for client in (first, second):
+                result = await client.call_tool("volumes", {})
+                assert not result.is_error and result.structured_content["items"][0]["search_volume"] == 1600
+
+    # Both clients disconnect in reverse order. Shutdown closes their outstanding telemetry.
+    with http_proxy(tmp_path) as url:
+        asyncio.run(go(url))
+    work = tmp_path / "work"
+    warnings = [line for line in (tmp_path / "proxy.log").read_text().splitlines() if "contains calls from" in line]
+    assert len(warnings) == 1 and "run-0003 contains calls from 2 HTTP sessions" in warnings[0]
+    for file in ("state.json", "report.json"):
+        assert json.loads((work / file).read_text())["mixed_sessions"] == {"runs": 1, "session_occurrences": 2}
+    assert "runs with calls from several HTTP sessions" in (work / "report.html").read_text()
+    assert "mixed_sessions" not in (work / "report.config.json").read_text()
+    calls = lines(work / "traces" / "run-0003-noanswer.jsonl")
+    assert len(calls) == 2 and all(set(c) == {"kind", "tool", "arguments", "output"} for c in calls)
+
+
+def test_sessionless_http_requests_keep_learning_without_a_warning(tmp_path):
+    async def go(url):
+        async with Client(url) as client:
+            assert client.protocol_version == "2026-07-28"
+            for _ in range(2):
+                for _ in range(3):
+                    assert not (await client.call_tool("volumes", {})).is_error
+                done = await client.call_tool("tracetrim_done", {"answer": "1600"})
+                assert done.content[0].text == "Recorded."
+
+    log = tmp_path / "client.jsonl"
+    with http_proxy(tmp_path, "--min-runs", "2", "--log-client", str(log)) as url:
+        asyncio.run(go(url))
+    calls = [row for row in lines(log) if row.get("tool") == "volumes"]
+    assert len(calls) == len({row["session"] for row in calls}) == 6
+    work = tmp_path / "work"
+    state = json.loads((work / "state.json").read_text())
+    assert state["complete_runs"] == state["config_from_runs"] == 2
+    for trace in sorted((work / "traces").glob("run-*.jsonl")):
+        assert [e["kind"] for e in lines(trace)] == ["call"] * 3 + ["message"]
+    assert "mixed_sessions" not in state and "mixed_sessions" not in json.loads((work / "report.json").read_text())
+    assert "HTTP sessions" not in (tmp_path / "proxy.log").read_text()
 
 
 @pytest.mark.parametrize("argv", [[], ["--log-client", "client.jsonl"]])

@@ -316,7 +316,7 @@ class Engine:
     def _observe(self, call: ToolCall, result: ToolResult) -> Observation:
         if self.learner is None:
             return Observation(result.output) if result.verbatim else self.trimmer.observe(call.tool, result.output)
-        index = self.learner.call(call.tool, call.arguments, result.output, call.turn)
+        index = self.learner.call(call.tool, call.arguments, result.output, call.turn, session_key=call.session_key)
         if result.verbatim:
             return Observation(result.output)
         obs = self.trimmer.observe(call.tool, result.output)

@@ -319,6 +319,7 @@ def _server(o: Options):
     from mcp.server.lowlevel import Server
 
     from .auto import DONE, DONE_REPLY, Learner
+    from .clientlog import ClientLog, SessionKeys
     from .evidence import Adaptive
 
     adaptive = Adaptive(promote=o.promote, promote_requested_runs=o.promote_runs, sample_rate=o.sample_rate,
@@ -337,6 +338,7 @@ def _server(o: Options):
     live = Live(o.quiet)
     live.per_run = bool(learner)
     last_call = [0.0]
+    session_keys = SessionKeys() if o.shared and learner else None
 
     def log(line):
         if not o.quiet:
@@ -458,8 +460,9 @@ def _server(o: Options):
                 return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
                                             isError=True)
             server, name = routes[params.name]
-            call = ToolCall(params.name, args, server=server, upstream_tool=name)
             r = await sessions[server].call_tool(name, args)
+            key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys else None
+            call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key)
             content = list(r.content or [])
             # An error, or anything that is not plain text (images, resources),
             # goes back exactly as the server sent it: nothing to learn or trim.
@@ -513,8 +516,7 @@ def _server(o: Options):
                     # One sentence, for hosts that show a server's instructions and do not load skills.
                     instructions=skill.pointer(done=learner is not None) if publish else None)
     if o.log_client:
-        from .clientlog import ClientLog
-        client_log = ClientLog(o.log_client)
+        client_log = ClientLog(o.log_client, session_keys)
 
         async def log_request(ctx, call_next):
             # Requests only (a notification has no id), written before they are served:

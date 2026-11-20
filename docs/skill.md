@@ -181,6 +181,13 @@ and nothing else (`tracetrim.clientlog` has the list of what is written, per met
 sessions are told apart by the id; on the protocol without sessions (2026-07-28) each request is its
 own connection and gets its own id.
 
+In automatic mode the HTTP proxy warns on stderr when a closed run contains upstream tool calls
+from several identifiable sessions. The report shows how many runs were affected and the sum of
+their session counts. A session contributing to two affected runs counts once in each. Only these
+counts are saved. Transport session IDs qualify on the first call. Without one, a connection
+qualifies after its second upstream call, so a fresh connection per request produces no warning.
+The warning also covers runs closed without an answer. It does not change the tool replies or learning.
+
 ## Closing a run
 
 - `tracetrim_done` takes the final answer and nothing else. The proxy already has the calls and their
