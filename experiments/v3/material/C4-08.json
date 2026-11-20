@@ -1,0 +1,535 @@
+{
+  "prompt": "Coda assistenza «Rata finale». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.810aaa35@example.test: Per chiudere la rata devo versare tutto l'importo originario oppure solo un residuo? Qual è la data di scadenza della rata finale?\nT2 — teo.bfe25126@example.test: Per chiudere la rata devo versare tutto l'importo originario oppure solo un residuo? Qual è la data di scadenza della rata finale?\nT3 — mia.ca58bb86@example.test: Per chiudere la rata devo versare tutto l'importo originario oppure solo un residuo? Qual è la data di scadenza della rata finale?\nT4 — leo.f88a7b46@example.test: Per chiudere la rata devo versare tutto l'importo originario oppure solo un residuo? Qual è la data di scadenza della rata finale?\nT5 — eva.85d0e4b0@example.test: Per chiudere la rata devo versare tutto l'importo originario oppure solo un residuo? Qual è la data di scadenza della rata finale?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_04830c1163ff59",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.810aaa35@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_02b0e171f5c598",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.bfe25126@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_93816ed314e4db",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.ca58bb86@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_e05da32a716f64",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.f88a7b46@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_6da7f0b36257d4",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.85d0e4b0@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_e1a02cd0896869",
+        "object": "charge",
+        "customer": "cus_04830c1163ff59",
+        "invoice": "in_f39f2ebcb82529",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3500,
+        "amount_captured": 3500,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_c002e1bed244c1",
+        "object": "charge",
+        "customer": "cus_04830c1163ff59",
+        "invoice": "in_835462c0c134ac",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3500,
+        "amount_captured": 3500,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_2a9139813e3e48",
+        "object": "charge",
+        "customer": "cus_02b0e171f5c598",
+        "invoice": "in_a146ff2ee1d17d",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7700,
+        "amount_captured": 7700,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_d4e292e65af452",
+        "object": "charge",
+        "customer": "cus_02b0e171f5c598",
+        "invoice": "in_7a147fb1a6a4a7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3850,
+        "amount_captured": 3850,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_28f7f574a6a990",
+        "object": "charge",
+        "customer": "cus_93816ed314e4db",
+        "invoice": "in_d7624ab1411955",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4600,
+        "amount_captured": 4600,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_39ffab4b8340df",
+        "object": "charge",
+        "customer": "cus_e05da32a716f64",
+        "invoice": "in_ed4f719e189058",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 10400,
+        "amount_captured": 10400,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_4f0997e019db35",
+        "object": "charge",
+        "customer": "cus_e05da32a716f64",
+        "invoice": "in_49f3eb9c8a302c",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 2600,
+        "amount_captured": 2600,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_8bea4d4634b611",
+        "object": "charge",
+        "customer": "cus_6da7f0b36257d4",
+        "invoice": "in_fee4c197aa8829",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 5800,
+        "amount_captured": 5800,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_c8da9e461fa68e",
+        "object": "charge",
+        "customer": "cus_6da7f0b36257d4",
+        "invoice": "in_3285b44674657b",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 5800,
+        "amount_captured": 5800,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_f39f2ebcb82529",
+        "object": "invoice",
+        "customer": "cus_04830c1163ff59",
+        "customer_email": "ada.810aaa35@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 3500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_d018cdce106d10",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_835462c0c134ac",
+        "object": "invoice",
+        "customer": "cus_04830c1163ff59",
+        "customer_email": "ada.810aaa35@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 3500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_07a3e89acea3ff",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_a146ff2ee1d17d",
+        "object": "invoice",
+        "customer": "cus_02b0e171f5c598",
+        "customer_email": "teo.bfe25126@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7700,
+        "total": 7700,
+        "amount_due": 7700,
+        "amount_paid": 7700,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_9a58b7fcafa89d",
+              "description": "Canone",
+              "amount": 7700,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_7a147fb1a6a4a7",
+        "object": "invoice",
+        "customer": "cus_02b0e171f5c598",
+        "customer_email": "teo.bfe25126@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7700,
+        "total": 7700,
+        "amount_due": 7700,
+        "amount_paid": 3850,
+        "amount_remaining": 3850,
+        "lines": {
+          "data": [
+            {
+              "id": "il_5b79a6918a3591",
+              "description": "Canone",
+              "amount": 7700,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_d7624ab1411955",
+        "object": "invoice",
+        "customer": "cus_93816ed314e4db",
+        "customer_email": "mia.ca58bb86@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4600,
+        "total": 4600,
+        "amount_due": 4600,
+        "amount_paid": 4600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_4f03b15f7a6657",
+              "description": "Canone",
+              "amount": 4600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_c06abe62cec91f",
+        "object": "invoice",
+        "customer": "cus_93816ed314e4db",
+        "customer_email": "mia.ca58bb86@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 4600,
+        "total": 4600,
+        "amount_due": 4600,
+        "amount_paid": 0,
+        "amount_remaining": 4600,
+        "lines": {
+          "data": [
+            {
+              "id": "il_b2952f030a7508",
+              "description": "Canone",
+              "amount": 4600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_ed4f719e189058",
+        "object": "invoice",
+        "customer": "cus_e05da32a716f64",
+        "customer_email": "leo.f88a7b46@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 10400,
+        "total": 10400,
+        "amount_due": 10400,
+        "amount_paid": 10400,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_96a410c3ad8520",
+              "description": "Canone",
+              "amount": 10400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_49f3eb9c8a302c",
+        "object": "invoice",
+        "customer": "cus_e05da32a716f64",
+        "customer_email": "leo.f88a7b46@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 10400,
+        "total": 10400,
+        "amount_due": 10400,
+        "amount_paid": 2600,
+        "amount_remaining": 7800,
+        "lines": {
+          "data": [
+            {
+              "id": "il_773fdd6892cd01",
+              "description": "Canone",
+              "amount": 10400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_fee4c197aa8829",
+        "object": "invoice",
+        "customer": "cus_6da7f0b36257d4",
+        "customer_email": "eva.85d0e4b0@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 5800,
+        "total": 5800,
+        "amount_due": 5800,
+        "amount_paid": 5800,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_b9dd5941cbdf4b",
+              "description": "Canone",
+              "amount": 5800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_3285b44674657b",
+        "object": "invoice",
+        "customer": "cus_6da7f0b36257d4",
+        "customer_email": "eva.85d0e4b0@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 5800,
+        "total": 5800,
+        "amount_due": 5800,
+        "amount_paid": 5800,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_afc7910fe7c7fa",
+              "description": "Canone",
+              "amount": 5800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rata finale"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_04830c1163ff59",
+        "diagnosi": "Pagamento ricevuto: 35,00 EUR. Scadenza 2026-12-25. Canone 35,00 EUR, totale 35,00 EUR, pagato 35,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_f39f2ebcb82529",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_835462c0c134ac",
+            "fatto": "Pagamento ricevuto: 35,00 EUR. Scadenza 2026-12-25. Canone 35,00 EUR, totale 35,00 EUR, pagato 35,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Pagamento ricevuto: 35,00 EUR. Scadenza 2026-12-25. Canone 35,00 EUR, totale 35,00 EUR, pagato 35,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_02b0e171f5c598",
+        "diagnosi": "Pagamento ricevuto: 38,50 EUR. Scadenza 2026-12-26. Canone 77,00 EUR, totale 77,00 EUR, pagato 38,50 EUR, residuo 38,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_a146ff2ee1d17d",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_7a147fb1a6a4a7",
+            "fatto": "Pagamento ricevuto: 38,50 EUR. Scadenza 2026-12-26. Canone 77,00 EUR, totale 77,00 EUR, pagato 38,50 EUR, residuo 38,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Pagamento ricevuto: 38,50 EUR. Scadenza 2026-12-26. Canone 77,00 EUR, totale 77,00 EUR, pagato 38,50 EUR, residuo 38,50 EUR. Versare solo il residuo di 38,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 38,50 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_93816ed314e4db",
+        "diagnosi": "Pagamento ricevuto: 0,00 EUR. Scadenza 2026-12-27. Canone 46,00 EUR, totale 46,00 EUR, pagato 0,00 EUR, residuo 46,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_d7624ab1411955",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_c06abe62cec91f",
+            "fatto": "Pagamento ricevuto: 0,00 EUR. Scadenza 2026-12-27. Canone 46,00 EUR, totale 46,00 EUR, pagato 0,00 EUR, residuo 46,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Pagamento ricevuto: 0,00 EUR. Scadenza 2026-12-27. Canone 46,00 EUR, totale 46,00 EUR, pagato 0,00 EUR, residuo 46,00 EUR. Versare solo il residuo di 46,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 46,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_e05da32a716f64",
+        "diagnosi": "Pagamento ricevuto: 26,00 EUR. Scadenza 2026-12-28. Canone 104,00 EUR, totale 104,00 EUR, pagato 26,00 EUR, residuo 78,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_ed4f719e189058",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_49f3eb9c8a302c",
+            "fatto": "Pagamento ricevuto: 26,00 EUR. Scadenza 2026-12-28. Canone 104,00 EUR, totale 104,00 EUR, pagato 26,00 EUR, residuo 78,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Pagamento ricevuto: 26,00 EUR. Scadenza 2026-12-28. Canone 104,00 EUR, totale 104,00 EUR, pagato 26,00 EUR, residuo 78,00 EUR. Versare solo il residuo di 78,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 78,00 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_6da7f0b36257d4",
+        "diagnosi": "Pagamento ricevuto: 58,00 EUR. Scadenza 2026-12-29. Canone 58,00 EUR, totale 58,00 EUR, pagato 58,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_fee4c197aa8829",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_3285b44674657b",
+            "fatto": "Pagamento ricevuto: 58,00 EUR. Scadenza 2026-12-29. Canone 58,00 EUR, totale 58,00 EUR, pagato 58,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Pagamento ricevuto: 58,00 EUR. Scadenza 2026-12-29. Canone 58,00 EUR, totale 58,00 EUR, pagato 58,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

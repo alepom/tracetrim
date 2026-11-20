@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/timetable. The release owner needs a handoff for 14–20 December 2026. Investigate the service and display checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700080427,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "4a4fefff89d9a184fa68e81843af1cab9aa06f17",
+        "html_url": "https://ci.example.test/timetable/actions/runs/700080427",
+        "jobs_url": "https://ci.example.test/timetable/actions/runs/700080427/jobs",
+        "logs_url": "https://ci.example.test/timetable/actions/runs/700080427/logs",
+        "artifacts_url": "https://ci.example.test/timetable/actions/runs/700080427/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "4a4fefff89d9a184fa68e81843af1cab9aa06f17",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700080327,
+          "name": "timetable",
+          "full_name": "lab/timetable"
+        }
+      },
+      {
+        "id": 700080428,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "0d655fe269cc61ce0f5b871271541889f473e85e",
+        "html_url": "https://ci.example.test/timetable/actions/runs/700080428",
+        "jobs_url": "https://ci.example.test/timetable/actions/runs/700080428/jobs",
+        "logs_url": "https://ci.example.test/timetable/actions/runs/700080428/logs",
+        "artifacts_url": "https://ci.example.test/timetable/actions/runs/700080428/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "0d655fe269cc61ce0f5b871271541889f473e85e",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700080327,
+          "name": "timetable",
+          "full_name": "lab/timetable"
+        }
+      },
+      {
+        "id": 700080437,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "34ddf18c65ee94d0225f762e782ab65cdc4e254a",
+        "html_url": "https://ci.example.test/timetable/actions/runs/700080437",
+        "jobs_url": "https://ci.example.test/timetable/actions/runs/700080437/jobs",
+        "logs_url": "https://ci.example.test/timetable/actions/runs/700080437/logs",
+        "artifacts_url": "https://ci.example.test/timetable/actions/runs/700080437/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "34ddf18c65ee94d0225f762e782ab65cdc4e254a",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700080327,
+          "name": "timetable",
+          "full_name": "lab/timetable"
+        }
+      }
+    ],
+    "jobs": {
+      "700080427": [
+        {
+          "id": 700082427,
+          "run_id": 700080427,
+          "name": "service",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load holidays",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700080428": [
+        {
+          "id": 700082428,
+          "run_id": 700080428,
+          "name": "service",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load holidays",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700080437": [
+        {
+          "id": 700082437,
+          "run_id": 700080437,
+          "name": "display",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Group platforms",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700082427": "Checkout complete\nStarting Load holidays\nHoliday timetable missing Tuesday service\nJob ended.",
+      "700082428": "Checkout complete\nStarting Load holidays\nHoliday timetable missing Tuesday service\nJob ended.",
+      "700082437": "Checkout complete\nStarting Group platforms\nPlatform B grouped with C\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10320,
+        "title": "Holiday timetable missing Tuesday service",
+        "body": "Add the holiday service",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10321,
+        "title": "Platform B grouped with C",
+        "body": "Fix platform grouping",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10341,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10332,
+        "title": "Add the holiday service",
+        "body": "Resolves #10320",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Holiday timetable missing Tuesday service",
+        "workflow": "Build",
+        "runs": [
+          700080427,
+          700080428
+        ],
+        "job": "service",
+        "step": "Load holidays",
+        "error": "Holiday timetable missing Tuesday service",
+        "related_issues": [
+          10320
+        ],
+        "related_pull_requests": [
+          10332
+        ],
+        "next_action": "Add the holiday service"
+      },
+      {
+        "summary": "Platform B grouped with C",
+        "workflow": "Build",
+        "runs": [
+          700080437
+        ],
+        "job": "display",
+        "step": "Group platforms",
+        "error": "Platform B grouped with C",
+        "related_issues": [
+          10321
+        ],
+        "related_pull_requests": [],
+        "next_action": "Fix platform grouping"
+      }
+    ],
+    "summary": "Review the service fix and prepare a change for display."
+  }
+}

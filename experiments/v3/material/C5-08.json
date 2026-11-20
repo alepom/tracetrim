@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/handbook. The release owner needs a handoff for 14–20 December 2026. Investigate the links and contents checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700070034,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "a34bb50b5fc0d42abab3ba0412593bfb6ec09637",
+        "html_url": "https://ci.example.test/handbook/actions/runs/700070034",
+        "jobs_url": "https://ci.example.test/handbook/actions/runs/700070034/jobs",
+        "logs_url": "https://ci.example.test/handbook/actions/runs/700070034/logs",
+        "artifacts_url": "https://ci.example.test/handbook/actions/runs/700070034/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "a34bb50b5fc0d42abab3ba0412593bfb6ec09637",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700069934,
+          "name": "handbook",
+          "full_name": "lab/handbook"
+        }
+      },
+      {
+        "id": 700070044,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "4821bcbaa5ae61ef64cbb560263ab26c009d501c",
+        "html_url": "https://ci.example.test/handbook/actions/runs/700070044",
+        "jobs_url": "https://ci.example.test/handbook/actions/runs/700070044/jobs",
+        "logs_url": "https://ci.example.test/handbook/actions/runs/700070044/logs",
+        "artifacts_url": "https://ci.example.test/handbook/actions/runs/700070044/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "4821bcbaa5ae61ef64cbb560263ab26c009d501c",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700069934,
+          "name": "handbook",
+          "full_name": "lab/handbook"
+        }
+      },
+      {
+        "id": 700070045,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-18T00:00:00+00:00",
+        "run_number": 12,
+        "head_sha": "2c991c58403ebe0ae91b154fd25cf7429c57f7cc",
+        "html_url": "https://ci.example.test/handbook/actions/runs/700070045",
+        "jobs_url": "https://ci.example.test/handbook/actions/runs/700070045/jobs",
+        "logs_url": "https://ci.example.test/handbook/actions/runs/700070045/logs",
+        "artifacts_url": "https://ci.example.test/handbook/actions/runs/700070045/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "2c991c58403ebe0ae91b154fd25cf7429c57f7cc",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700069934,
+          "name": "handbook",
+          "full_name": "lab/handbook"
+        }
+      }
+    ],
+    "jobs": {
+      "700070034": [
+        {
+          "id": 700072034,
+          "run_id": 700070034,
+          "name": "links",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify chapters",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700070044": [
+        {
+          "id": 700072044,
+          "run_id": 700070044,
+          "name": "contents",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build index",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700070045": [
+        {
+          "id": 700072045,
+          "run_id": 700070045,
+          "name": "contents",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build index",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700072034": "Checkout complete\nStarting Verify chapters\nChapter anchor forest-floor unresolved\nJob ended.",
+      "700072044": "Checkout complete\nStarting Build index\nGenerated contents lacks appendix Q\nJob ended.",
+      "700072045": "Checkout complete\nStarting Build index\nGenerated contents lacks appendix Q\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10280,
+        "title": "Chapter anchor forest-floor unresolved",
+        "body": "Update the chapter anchor",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10281,
+        "title": "Generated contents lacks appendix Q",
+        "body": "Regenerate the contents index",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10301,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10293,
+        "title": "Regenerate the contents index",
+        "body": "Resolves #10281",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Chapter anchor forest-floor unresolved",
+        "workflow": "Build",
+        "runs": [
+          700070034
+        ],
+        "job": "links",
+        "step": "Verify chapters",
+        "error": "Chapter anchor forest-floor unresolved",
+        "related_issues": [
+          10280
+        ],
+        "related_pull_requests": [],
+        "next_action": "Update the chapter anchor"
+      },
+      {
+        "summary": "Generated contents lacks appendix Q",
+        "workflow": "Build",
+        "runs": [
+          700070044,
+          700070045
+        ],
+        "job": "contents",
+        "step": "Build index",
+        "error": "Generated contents lacks appendix Q",
+        "related_issues": [
+          10281
+        ],
+        "related_pull_requests": [
+          10293
+        ],
+        "next_action": "Regenerate the contents index"
+      }
+    ],
+    "summary": "Review the contents fix and prepare a change for links."
+  }
+}

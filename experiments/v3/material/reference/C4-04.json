@@ -1,0 +1,338 @@
+[
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_06b1c4b91171f8"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_60b6930ac93c0e\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_06b1c4b91171f8\",\n      \"invoice\": \"in_649bcc9aac680d\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 900,\n      \"amount_captured\": 900,\n      \"created\": 1797303720,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_f185801d3ee3b9\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_06b1c4b91171f8\",\n      \"invoice\": \"in_2c0d1da13002a7\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4200,\n      \"amount_captured\": 4200,\n      \"created\": 1794884520,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_1d2e97dada7d56"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_16f2f6d6ba7a7b\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_1d2e97dada7d56\",\n      \"invoice\": \"in_930804098f2ada\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 7500,\n      \"amount_captured\": 7500,\n      \"created\": 1797307320,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_c848392299a514\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_1d2e97dada7d56\",\n      \"invoice\": \"in_acdd145032d04b\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 7200,\n      \"amount_captured\": 7200,\n      \"created\": 1794888120,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_2c8557fd76daee"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_f736b87ed83eff\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2c8557fd76daee\",\n      \"invoice\": \"in_03baf96a1505f2\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4900,\n      \"amount_captured\": 4900,\n      \"created\": 1797292920,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_0943376fc7fa18\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2c8557fd76daee\",\n      \"invoice\": \"in_61d23e88cb01d9\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4300,\n      \"amount_captured\": 4300,\n      \"created\": 1794873720,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_5e5b4a846aadfe"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_3e678b794f7d8a\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_5e5b4a846aadfe\",\n      \"invoice\": \"in_9f7a638fb29cdc\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 6000,\n      \"amount_captured\": 6000,\n      \"created\": 1794880920,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_6450e923dac959"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_e6461895fb4a25\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_6450e923dac959\",\n      \"invoice\": \"in_2b242374d6aad4\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 3900,\n      \"amount_captured\": 3900,\n      \"created\": 1797296520,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_5d8e134a98c529\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_6450e923dac959\",\n      \"invoice\": \"in_6c562a0dbc1be7\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8500,\n      \"amount_captured\": 8500,\n      \"created\": 1794877320,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_06b1c4b91171f8"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_649bcc9aac680d\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_06b1c4b91171f8\",\n      \"customer_email\": \"leo.c40c3994@example.test\",\n      \"created\": 1797303600,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 3600,\n      \"total\": 3600,\n      \"amount_due\": 3600,\n      \"amount_paid\": 900,\n      \"amount_remaining\": 2700,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_1393019cba6fdd\",\n            \"description\": \"Canone\",\n            \"amount\": 4200,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_0893d8e0135c36\",\n            \"description\": \"Rettifica lettura consumi\",\n            \"amount\": -600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1798426800\n    },\n    {\n      \"id\": \"in_2c0d1da13002a7\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_06b1c4b91171f8\",\n      \"customer_email\": \"leo.c40c3994@example.test\",\n      \"created\": 1794884400,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4200,\n      \"total\": 4200,\n      \"amount_due\": 4200,\n      \"amount_paid\": 4200,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_f83aeaffeaeb15\",\n            \"description\": \"Canone\",\n            \"amount\": 4200,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1796007600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_1d2e97dada7d56"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_930804098f2ada\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_1d2e97dada7d56\",\n      \"customer_email\": \"eva.ae30f112@example.test\",\n      \"created\": 1797307200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 7500,\n      \"total\": 7500,\n      \"amount_due\": 7500,\n      \"amount_paid\": 7500,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_b32b950f6406ab\",\n            \"description\": \"Canone\",\n            \"amount\": 7200,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_2c57945a30ee2f\",\n            \"description\": \"Rettifica lettura consumi\",\n            \"amount\": 300,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1798516800\n    },\n    {\n      \"id\": \"in_acdd145032d04b\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_1d2e97dada7d56\",\n      \"customer_email\": \"eva.ae30f112@example.test\",\n      \"created\": 1794888000,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 7200,\n      \"total\": 7200,\n      \"amount_due\": 7200,\n      \"amount_paid\": 7200,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_7f2daa95cb3f4c\",\n            \"description\": \"Canone\",\n            \"amount\": 7200,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1796097600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_2c8557fd76daee"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_03baf96a1505f2\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2c8557fd76daee\",\n      \"customer_email\": \"ada.b42a4057@example.test\",\n      \"created\": 1797292800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4900,\n      \"total\": 4900,\n      \"amount_due\": 4900,\n      \"amount_paid\": 4900,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_429d04a52102a2\",\n            \"description\": \"Canone\",\n            \"amount\": 4300,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_703645924815ec\",\n            \"description\": \"Rettifica lettura consumi\",\n            \"amount\": 600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1798156800\n    },\n    {\n      \"id\": \"in_61d23e88cb01d9\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2c8557fd76daee\",\n      \"customer_email\": \"ada.b42a4057@example.test\",\n      \"created\": 1794873600,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4300,\n      \"total\": 4300,\n      \"amount_due\": 4300,\n      \"amount_paid\": 4300,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_ef8d162ebab5e1\",\n            \"description\": \"Canone\",\n            \"amount\": 4300,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1795737600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_5e5b4a846aadfe"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_f7c2e987f7b3b1\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_5e5b4a846aadfe\",\n      \"customer_email\": \"mia.908a353a@example.test\",\n      \"created\": 1797300000,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 6900,\n      \"total\": 6900,\n      \"amount_due\": 6900,\n      \"amount_paid\": 0,\n      \"amount_remaining\": 6900,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_375179e5e3c0c0\",\n            \"description\": \"Canone\",\n            \"amount\": 6000,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_ab22ab62c232e4\",\n            \"description\": \"Rettifica lettura consumi\",\n            \"amount\": 900,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1798336800\n    },\n    {\n      \"id\": \"in_9f7a638fb29cdc\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_5e5b4a846aadfe\",\n      \"customer_email\": \"mia.908a353a@example.test\",\n      \"created\": 1794880800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 6000,\n      \"total\": 6000,\n      \"amount_due\": 6000,\n      \"amount_paid\": 6000,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_a32c0675f4b255\",\n            \"description\": \"Canone\",\n            \"amount\": 6000,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1795917600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_6450e923dac959"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_2b242374d6aad4\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_6450e923dac959\",\n      \"customer_email\": \"teo.0f0f45dc@example.test\",\n      \"created\": 1797296400,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 7800,\n      \"total\": 7800,\n      \"amount_due\": 7800,\n      \"amount_paid\": 3900,\n      \"amount_remaining\": 3900,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_4e2a364d707f80\",\n            \"description\": \"Canone\",\n            \"amount\": 8500,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_98c08be0c36cd9\",\n            \"description\": \"Rettifica lettura consumi\",\n            \"amount\": -700,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1798246800\n    },\n    {\n      \"id\": \"in_6c562a0dbc1be7\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_6450e923dac959\",\n      \"customer_email\": \"teo.0f0f45dc@example.test\",\n      \"created\": 1794877200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8500,\n      \"total\": 8500,\n      \"amount_due\": 8500,\n      \"amount_paid\": 8500,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_82c7c0ec8a74e3\",\n            \"description\": \"Canone\",\n            \"amount\": 8500,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Rettifica consumi\"\n      },\n      \"due_date\": 1795827600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_0943376fc7fa18"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_16f2f6d6ba7a7b"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_3e678b794f7d8a"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_5d8e134a98c529"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_60b6930ac93c0e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_c848392299a514"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_e6461895fb4a25"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_f185801d3ee3b9"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_f736b87ed83eff"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_06b1c4b91171f8"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_1d2e97dada7d56"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_2c8557fd76daee"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_5e5b4a846aadfe"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_6450e923dac959"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_0943376fc7fa18"
+    },
+    "output": "{\n  \"id\": \"ch_0943376fc7fa18\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2c8557fd76daee\",\n  \"invoice\": \"in_61d23e88cb01d9\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4300,\n  \"amount_captured\": 4300,\n  \"created\": 1794873720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_16f2f6d6ba7a7b"
+    },
+    "output": "{\n  \"id\": \"ch_16f2f6d6ba7a7b\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_1d2e97dada7d56\",\n  \"invoice\": \"in_930804098f2ada\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 7500,\n  \"amount_captured\": 7500,\n  \"created\": 1797307320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_3e678b794f7d8a"
+    },
+    "output": "{\n  \"id\": \"ch_3e678b794f7d8a\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_5e5b4a846aadfe\",\n  \"invoice\": \"in_9f7a638fb29cdc\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 6000,\n  \"amount_captured\": 6000,\n  \"created\": 1794880920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_5d8e134a98c529"
+    },
+    "output": "{\n  \"id\": \"ch_5d8e134a98c529\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_6450e923dac959\",\n  \"invoice\": \"in_6c562a0dbc1be7\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8500,\n  \"amount_captured\": 8500,\n  \"created\": 1794877320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_60b6930ac93c0e"
+    },
+    "output": "{\n  \"id\": \"ch_60b6930ac93c0e\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_06b1c4b91171f8\",\n  \"invoice\": \"in_649bcc9aac680d\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 900,\n  \"amount_captured\": 900,\n  \"created\": 1797303720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_c848392299a514"
+    },
+    "output": "{\n  \"id\": \"ch_c848392299a514\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_1d2e97dada7d56\",\n  \"invoice\": \"in_acdd145032d04b\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 7200,\n  \"amount_captured\": 7200,\n  \"created\": 1794888120,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_e6461895fb4a25"
+    },
+    "output": "{\n  \"id\": \"ch_e6461895fb4a25\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_6450e923dac959\",\n  \"invoice\": \"in_2b242374d6aad4\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 3900,\n  \"amount_captured\": 3900,\n  \"created\": 1797296520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_f185801d3ee3b9"
+    },
+    "output": "{\n  \"id\": \"ch_f185801d3ee3b9\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_06b1c4b91171f8\",\n  \"invoice\": \"in_2c0d1da13002a7\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4200,\n  \"amount_captured\": 4200,\n  \"created\": 1794884520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_f736b87ed83eff"
+    },
+    "output": "{\n  \"id\": \"ch_f736b87ed83eff\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2c8557fd76daee\",\n  \"invoice\": \"in_03baf96a1505f2\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4900,\n  \"amount_captured\": 4900,\n  \"created\": 1797292920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_03baf96a1505f2"
+    },
+    "output": "{\n  \"id\": \"in_03baf96a1505f2\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2c8557fd76daee\",\n  \"customer_email\": \"ada.b42a4057@example.test\",\n  \"created\": 1797292800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4900,\n  \"total\": 4900,\n  \"amount_due\": 4900,\n  \"amount_paid\": 4900,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_429d04a52102a2\",\n        \"description\": \"Canone\",\n        \"amount\": 4300,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_703645924815ec\",\n        \"description\": \"Rettifica lettura consumi\",\n        \"amount\": 600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1798156800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_2b242374d6aad4"
+    },
+    "output": "{\n  \"id\": \"in_2b242374d6aad4\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_6450e923dac959\",\n  \"customer_email\": \"teo.0f0f45dc@example.test\",\n  \"created\": 1797296400,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 7800,\n  \"total\": 7800,\n  \"amount_due\": 7800,\n  \"amount_paid\": 3900,\n  \"amount_remaining\": 3900,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_4e2a364d707f80\",\n        \"description\": \"Canone\",\n        \"amount\": 8500,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_98c08be0c36cd9\",\n        \"description\": \"Rettifica lettura consumi\",\n        \"amount\": -700,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1798246800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_2c0d1da13002a7"
+    },
+    "output": "{\n  \"id\": \"in_2c0d1da13002a7\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_06b1c4b91171f8\",\n  \"customer_email\": \"leo.c40c3994@example.test\",\n  \"created\": 1794884400,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4200,\n  \"total\": 4200,\n  \"amount_due\": 4200,\n  \"amount_paid\": 4200,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_f83aeaffeaeb15\",\n        \"description\": \"Canone\",\n        \"amount\": 4200,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1796007600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_61d23e88cb01d9"
+    },
+    "output": "{\n  \"id\": \"in_61d23e88cb01d9\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2c8557fd76daee\",\n  \"customer_email\": \"ada.b42a4057@example.test\",\n  \"created\": 1794873600,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4300,\n  \"total\": 4300,\n  \"amount_due\": 4300,\n  \"amount_paid\": 4300,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_ef8d162ebab5e1\",\n        \"description\": \"Canone\",\n        \"amount\": 4300,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1795737600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_649bcc9aac680d"
+    },
+    "output": "{\n  \"id\": \"in_649bcc9aac680d\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_06b1c4b91171f8\",\n  \"customer_email\": \"leo.c40c3994@example.test\",\n  \"created\": 1797303600,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 3600,\n  \"total\": 3600,\n  \"amount_due\": 3600,\n  \"amount_paid\": 900,\n  \"amount_remaining\": 2700,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_1393019cba6fdd\",\n        \"description\": \"Canone\",\n        \"amount\": 4200,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_0893d8e0135c36\",\n        \"description\": \"Rettifica lettura consumi\",\n        \"amount\": -600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1798426800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_6c562a0dbc1be7"
+    },
+    "output": "{\n  \"id\": \"in_6c562a0dbc1be7\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_6450e923dac959\",\n  \"customer_email\": \"teo.0f0f45dc@example.test\",\n  \"created\": 1794877200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8500,\n  \"total\": 8500,\n  \"amount_due\": 8500,\n  \"amount_paid\": 8500,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_82c7c0ec8a74e3\",\n        \"description\": \"Canone\",\n        \"amount\": 8500,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1795827600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_930804098f2ada"
+    },
+    "output": "{\n  \"id\": \"in_930804098f2ada\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_1d2e97dada7d56\",\n  \"customer_email\": \"eva.ae30f112@example.test\",\n  \"created\": 1797307200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 7500,\n  \"total\": 7500,\n  \"amount_due\": 7500,\n  \"amount_paid\": 7500,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_b32b950f6406ab\",\n        \"description\": \"Canone\",\n        \"amount\": 7200,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_2c57945a30ee2f\",\n        \"description\": \"Rettifica lettura consumi\",\n        \"amount\": 300,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1798516800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_9f7a638fb29cdc"
+    },
+    "output": "{\n  \"id\": \"in_9f7a638fb29cdc\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_5e5b4a846aadfe\",\n  \"customer_email\": \"mia.908a353a@example.test\",\n  \"created\": 1794880800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 6000,\n  \"total\": 6000,\n  \"amount_due\": 6000,\n  \"amount_paid\": 6000,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_a32c0675f4b255\",\n        \"description\": \"Canone\",\n        \"amount\": 6000,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1795917600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_acdd145032d04b"
+    },
+    "output": "{\n  \"id\": \"in_acdd145032d04b\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_1d2e97dada7d56\",\n  \"customer_email\": \"eva.ae30f112@example.test\",\n  \"created\": 1794888000,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 7200,\n  \"total\": 7200,\n  \"amount_due\": 7200,\n  \"amount_paid\": 7200,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_7f2daa95cb3f4c\",\n        \"description\": \"Canone\",\n        \"amount\": 7200,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1796097600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_f7c2e987f7b3b1"
+    },
+    "output": "{\n  \"id\": \"in_f7c2e987f7b3b1\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_5e5b4a846aadfe\",\n  \"customer_email\": \"mia.908a353a@example.test\",\n  \"created\": 1797300000,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 6900,\n  \"total\": 6900,\n  \"amount_due\": 6900,\n  \"amount_paid\": 0,\n  \"amount_remaining\": 6900,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_375179e5e3c0c0\",\n        \"description\": \"Canone\",\n        \"amount\": 6000,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_ab22ab62c232e4\",\n        \"description\": \"Rettifica lettura consumi\",\n        \"amount\": 900,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Rettifica consumi\"\n  },\n  \"due_date\": 1798336800\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "ada.b42a4057@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_2c8557fd76daee\",\n      \"object\": \"customer\",\n      \"name\": \"Ada\",\n      \"email\": \"ada.b42a4057@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "eva.ae30f112@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_1d2e97dada7d56\",\n      \"object\": \"customer\",\n      \"name\": \"Eva\",\n      \"email\": \"eva.ae30f112@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "leo.c40c3994@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_06b1c4b91171f8\",\n      \"object\": \"customer\",\n      \"name\": \"Leo\",\n      \"email\": \"leo.c40c3994@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "mia.908a353a@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_5e5b4a846aadfe\",\n      \"object\": \"customer\",\n      \"name\": \"Mia\",\n      \"email\": \"mia.908a353a@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "teo.0f0f45dc@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_6450e923dac959\",\n      \"object\": \"customer\",\n      \"name\": \"Teo\",\n      \"email\": \"teo.0f0f45dc@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  }
+]

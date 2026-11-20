@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/gallery. The release owner needs a handoff for 14–20 December 2026. Investigate the preview and index checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700010963,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "e8928a1c69d39e5217f99cb9deb004cd4f03b0c6",
+        "html_url": "https://ci.example.test/gallery/actions/runs/700010963",
+        "jobs_url": "https://ci.example.test/gallery/actions/runs/700010963/jobs",
+        "logs_url": "https://ci.example.test/gallery/actions/runs/700010963/logs",
+        "artifacts_url": "https://ci.example.test/gallery/actions/runs/700010963/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "e8928a1c69d39e5217f99cb9deb004cd4f03b0c6",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700010863,
+          "name": "gallery",
+          "full_name": "lab/gallery"
+        }
+      },
+      {
+        "id": 700010964,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "d0a8794df8af0cd33a1d4e4771ffcaa778677b92",
+        "html_url": "https://ci.example.test/gallery/actions/runs/700010964",
+        "jobs_url": "https://ci.example.test/gallery/actions/runs/700010964/jobs",
+        "logs_url": "https://ci.example.test/gallery/actions/runs/700010964/logs",
+        "artifacts_url": "https://ci.example.test/gallery/actions/runs/700010964/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "d0a8794df8af0cd33a1d4e4771ffcaa778677b92",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700010863,
+          "name": "gallery",
+          "full_name": "lab/gallery"
+        }
+      },
+      {
+        "id": 700010973,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "b3661dab7a45cc4e75fdf98fe04acf12b566e59f",
+        "html_url": "https://ci.example.test/gallery/actions/runs/700010973",
+        "jobs_url": "https://ci.example.test/gallery/actions/runs/700010973/jobs",
+        "logs_url": "https://ci.example.test/gallery/actions/runs/700010973/logs",
+        "artifacts_url": "https://ci.example.test/gallery/actions/runs/700010973/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "b3661dab7a45cc4e75fdf98fe04acf12b566e59f",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700010863,
+          "name": "gallery",
+          "full_name": "lab/gallery"
+        }
+      }
+    ],
+    "jobs": {
+      "700010963": [
+        {
+          "id": 700012963,
+          "run_id": 700010963,
+          "name": "preview",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build thumbnails",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700010964": [
+        {
+          "id": 700012964,
+          "run_id": 700010964,
+          "name": "preview",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build thumbnails",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700010973": [
+        {
+          "id": 700012973,
+          "run_id": 700010973,
+          "name": "index",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Sort captions",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700012963": "Checkout complete\nStarting Build thumbnails\nThumbnail width 321 exceeds 320\nJob ended.",
+      "700012964": "Checkout complete\nStarting Build thumbnails\nThumbnail width 321 exceeds 320\nJob ended.",
+      "700012973": "Checkout complete\nStarting Sort captions\nCaption order differs at entry 8\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10040,
+        "title": "Thumbnail width 321 exceeds 320",
+        "body": "Restore thumbnail width",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10041,
+        "title": "Caption order differs at entry 8",
+        "body": "Sort captions by display order",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10061,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10053,
+        "title": "Sort captions by display order",
+        "body": "Resolves #10041",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Thumbnail width 321 exceeds 320",
+        "workflow": "Build",
+        "runs": [
+          700010963,
+          700010964
+        ],
+        "job": "preview",
+        "step": "Build thumbnails",
+        "error": "Thumbnail width 321 exceeds 320",
+        "related_issues": [
+          10040
+        ],
+        "related_pull_requests": [],
+        "next_action": "Restore thumbnail width"
+      },
+      {
+        "summary": "Caption order differs at entry 8",
+        "workflow": "Build",
+        "runs": [
+          700010973
+        ],
+        "job": "index",
+        "step": "Sort captions",
+        "error": "Caption order differs at entry 8",
+        "related_issues": [
+          10041
+        ],
+        "related_pull_requests": [
+          10053
+        ],
+        "next_action": "Sort captions by display order"
+      }
+    ],
+    "summary": "Review the index fix and prepare a change for preview."
+  }
+}

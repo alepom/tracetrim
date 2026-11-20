@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/museum. The release owner needs a handoff for 14–20 December 2026. Investigate the kiosk and tour checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700050424,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "e9f33c818d283020a0dbd2775fa9b121b4e8226c",
+        "html_url": "https://ci.example.test/museum/actions/runs/700050424",
+        "jobs_url": "https://ci.example.test/museum/actions/runs/700050424/jobs",
+        "logs_url": "https://ci.example.test/museum/actions/runs/700050424/logs",
+        "artifacts_url": "https://ci.example.test/museum/actions/runs/700050424/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "e9f33c818d283020a0dbd2775fa9b121b4e8226c",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700050324,
+          "name": "museum",
+          "full_name": "lab/museum"
+        }
+      },
+      {
+        "id": 700050425,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "5cb411e24d3845a532fe836fc49d4a8f4f05947b",
+        "html_url": "https://ci.example.test/museum/actions/runs/700050425",
+        "jobs_url": "https://ci.example.test/museum/actions/runs/700050425/jobs",
+        "logs_url": "https://ci.example.test/museum/actions/runs/700050425/logs",
+        "artifacts_url": "https://ci.example.test/museum/actions/runs/700050425/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "5cb411e24d3845a532fe836fc49d4a8f4f05947b",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700050324,
+          "name": "museum",
+          "full_name": "lab/museum"
+        }
+      },
+      {
+        "id": 700050434,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "3257aec592abdb3ddd2357d2416f24ed7288334d",
+        "html_url": "https://ci.example.test/museum/actions/runs/700050434",
+        "jobs_url": "https://ci.example.test/museum/actions/runs/700050434/jobs",
+        "logs_url": "https://ci.example.test/museum/actions/runs/700050434/logs",
+        "artifacts_url": "https://ci.example.test/museum/actions/runs/700050434/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "3257aec592abdb3ddd2357d2416f24ed7288334d",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700050324,
+          "name": "museum",
+          "full_name": "lab/museum"
+        }
+      }
+    ],
+    "jobs": {
+      "700050424": [
+        {
+          "id": 700052424,
+          "run_id": 700050424,
+          "name": "kiosk",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load exhibits",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700050425": [
+        {
+          "id": 700052425,
+          "run_id": 700050425,
+          "name": "kiosk",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load exhibits",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700050434": [
+        {
+          "id": 700052434,
+          "run_id": 700050434,
+          "name": "tour",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check duration",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700052424": "Checkout complete\nStarting Load exhibits\nExhibit thumbnail missing for fern\nJob ended.",
+      "700052425": "Checkout complete\nStarting Load exhibits\nExhibit thumbnail missing for fern\nJob ended.",
+      "700052434": "Checkout complete\nStarting Check duration\nWalk duration exceeds route limit\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10200,
+        "title": "Exhibit thumbnail missing for fern",
+        "body": "Include the fern thumbnail",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10201,
+        "title": "Walk duration exceeds route limit",
+        "body": "Correct route segment duration",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10221,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10213,
+        "title": "Correct route segment duration",
+        "body": "Resolves #10201",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Exhibit thumbnail missing for fern",
+        "workflow": "Build",
+        "runs": [
+          700050424,
+          700050425
+        ],
+        "job": "kiosk",
+        "step": "Load exhibits",
+        "error": "Exhibit thumbnail missing for fern",
+        "related_issues": [
+          10200
+        ],
+        "related_pull_requests": [],
+        "next_action": "Include the fern thumbnail"
+      },
+      {
+        "summary": "Walk duration exceeds route limit",
+        "workflow": "Build",
+        "runs": [
+          700050434
+        ],
+        "job": "tour",
+        "step": "Check duration",
+        "error": "Walk duration exceeds route limit",
+        "related_issues": [
+          10201
+        ],
+        "related_pull_requests": [
+          10213
+        ],
+        "next_action": "Correct route segment duration"
+      }
+    ],
+    "summary": "Review the tour fix and prepare a change for kiosk."
+  }
+}

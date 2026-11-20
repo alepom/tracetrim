@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700002006
+    },
+    "output": "Checkout complete\nStarting Load fonts\nFont family Marula missing\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700002007
+    },
+    "output": "Checkout complete\nStarting Load fonts\nFont family Marula missing\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700002016
+    },
+    "output": "Checkout complete\nStarting Render date\nExpected lunedi, got Monday\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10000
+    },
+    "output": "{\n  \"number\": 10000,\n  \"title\": \"Font family Marula missing\",\n  \"body\": \"Bundle the Marula font\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10001
+    },
+    "output": "{\n  \"number\": 10001,\n  \"title\": \"Expected lunedi, got Monday\",\n  \"body\": \"Pin the renderer locale\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10021
+    },
+    "output": "{\n  \"number\": 10021,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10000,\n    \"title\": \"Font family Marula missing\",\n    \"body\": \"Bundle the Marula font\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10001,\n    \"title\": \"Expected lunedi, got Monday\",\n    \"body\": \"Pin the renderer locale\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10021,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700000006
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700002006,\n      \"run_id\": 700000006,\n      \"name\": \"pdf\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load fonts\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700000007
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700002007,\n      \"run_id\": 700000007,\n      \"name\": \"pdf\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load fonts\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700000016
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700002016,\n      \"run_id\": 700000016,\n      \"name\": \"calendar\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Render date\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10012,\n    \"title\": \"Bundle the Marula font\",\n    \"body\": \"Resolves #10000\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700000016,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"048d87cdce07405eede23019ad81dd9d2a32c39d\",\n      \"html_url\": \"https://ci.example.test/typesetter/actions/runs/700000016\",\n      \"jobs_url\": \"https://ci.example.test/typesetter/actions/runs/700000016/jobs\",\n      \"logs_url\": \"https://ci.example.test/typesetter/actions/runs/700000016/logs\",\n      \"artifacts_url\": \"https://ci.example.test/typesetter/actions/runs/700000016/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"048d87cdce07405eede23019ad81dd9d2a32c39d\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 699999906,\n        \"name\": \"typesetter\",\n        \"full_name\": \"lab/typesetter\"\n      }\n    },\n    {\n      \"id\": 700000007,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"1045e2d33c391c543d8d325368cc88ab2e9b3dd0\",\n      \"html_url\": \"https://ci.example.test/typesetter/actions/runs/700000007\",\n      \"jobs_url\": \"https://ci.example.test/typesetter/actions/runs/700000007/jobs\",\n      \"logs_url\": \"https://ci.example.test/typesetter/actions/runs/700000007/logs\",\n      \"artifacts_url\": \"https://ci.example.test/typesetter/actions/runs/700000007/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"1045e2d33c391c543d8d325368cc88ab2e9b3dd0\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 699999906,\n        \"name\": \"typesetter\",\n        \"full_name\": \"lab/typesetter\"\n      }\n    },\n    {\n      \"id\": 700000006,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"d86d062d59f67c3a18755dd43ab8dc8d5ea785cb\",\n      \"html_url\": \"https://ci.example.test/typesetter/actions/runs/700000006\",\n      \"jobs_url\": \"https://ci.example.test/typesetter/actions/runs/700000006/jobs\",\n      \"logs_url\": \"https://ci.example.test/typesetter/actions/runs/700000006/logs\",\n      \"artifacts_url\": \"https://ci.example.test/typesetter/actions/runs/700000006/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"d86d062d59f67c3a18755dd43ab8dc8d5ea785cb\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 699999906,\n        \"name\": \"typesetter\",\n        \"full_name\": \"lab/typesetter\"\n      }\n    }\n  ]\n}"
+  }
+]

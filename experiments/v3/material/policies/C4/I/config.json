@@ -1,0 +1,24 @@
+{
+  "format": "tracetrim/config@1",
+  "projection": "report.projection.json",
+  "unescape": true,
+  "compact": true,
+  "tools": {
+    "stripe_list_charges": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "stripe_list_invoices": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "stripe_list_subscriptions": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "stripe_search_customers": {
+      "trim": "prudent",
+      "expand": true
+    }
+  }
+}

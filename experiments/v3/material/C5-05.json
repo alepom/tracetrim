@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/bookshop. The release owner needs a handoff for 14–20 December 2026. Investigate the catalog and sort checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700040619,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "18277dbfaa115cb700a4b01c1906e7a2928dfbd4",
+        "html_url": "https://ci.example.test/bookshop/actions/runs/700040619",
+        "jobs_url": "https://ci.example.test/bookshop/actions/runs/700040619/jobs",
+        "logs_url": "https://ci.example.test/bookshop/actions/runs/700040619/logs",
+        "artifacts_url": "https://ci.example.test/bookshop/actions/runs/700040619/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "18277dbfaa115cb700a4b01c1906e7a2928dfbd4",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700040519,
+          "name": "bookshop",
+          "full_name": "lab/bookshop"
+        }
+      },
+      {
+        "id": 700040620,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "70ff91ed6ff8465c2706faab117b5d1709b62fa1",
+        "html_url": "https://ci.example.test/bookshop/actions/runs/700040620",
+        "jobs_url": "https://ci.example.test/bookshop/actions/runs/700040620/jobs",
+        "logs_url": "https://ci.example.test/bookshop/actions/runs/700040620/logs",
+        "artifacts_url": "https://ci.example.test/bookshop/actions/runs/700040620/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "70ff91ed6ff8465c2706faab117b5d1709b62fa1",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700040519,
+          "name": "bookshop",
+          "full_name": "lab/bookshop"
+        }
+      },
+      {
+        "id": 700040629,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "d31d18a89a17fd54c65295d7a9d6bab3e7ef30a6",
+        "html_url": "https://ci.example.test/bookshop/actions/runs/700040629",
+        "jobs_url": "https://ci.example.test/bookshop/actions/runs/700040629/jobs",
+        "logs_url": "https://ci.example.test/bookshop/actions/runs/700040629/logs",
+        "artifacts_url": "https://ci.example.test/bookshop/actions/runs/700040629/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "d31d18a89a17fd54c65295d7a9d6bab3e7ef30a6",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700040519,
+          "name": "bookshop",
+          "full_name": "lab/bookshop"
+        }
+      }
+    ],
+    "jobs": {
+      "700040619": [
+        {
+          "id": 700042619,
+          "run_id": 700040619,
+          "name": "catalog",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Import editions",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700040620": [
+        {
+          "id": 700042620,
+          "run_id": 700040620,
+          "name": "catalog",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Import editions",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700040629": [
+        {
+          "id": 700042629,
+          "run_id": 700040629,
+          "name": "sort",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Order authors",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700042619": "Checkout complete\nStarting Import editions\nEdition ISBN column absent\nJob ended.",
+      "700042620": "Checkout complete\nStarting Import editions\nEdition ISBN column absent\nJob ended.",
+      "700042629": "Checkout complete\nStarting Order authors\nAccent collation differs at row 7\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10160,
+        "title": "Edition ISBN column absent",
+        "body": "Restore the edition column",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10161,
+        "title": "Accent collation differs at row 7",
+        "body": "Use the reference collation",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10181,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10172,
+        "title": "Restore the edition column",
+        "body": "Resolves #10160",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Edition ISBN column absent",
+        "workflow": "Build",
+        "runs": [
+          700040619,
+          700040620
+        ],
+        "job": "catalog",
+        "step": "Import editions",
+        "error": "Edition ISBN column absent",
+        "related_issues": [
+          10160
+        ],
+        "related_pull_requests": [
+          10172
+        ],
+        "next_action": "Restore the edition column"
+      },
+      {
+        "summary": "Accent collation differs at row 7",
+        "workflow": "Build",
+        "runs": [
+          700040629
+        ],
+        "job": "sort",
+        "step": "Order authors",
+        "error": "Accent collation differs at row 7",
+        "related_issues": [
+          10161
+        ],
+        "related_pull_requests": [],
+        "next_action": "Use the reference collation"
+      }
+    ],
+    "summary": "Review the catalog fix and prepare a change for sort."
+  }
+}

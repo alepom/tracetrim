@@ -1,0 +1,553 @@
+{
+  "prompt": "Coda assistenza «Sconto fedeltà». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.58757504@example.test: È stato applicato lo sconto fedeltà promesso? Indicate l'effetto sul totale.\nT2 — teo.3cdfb7bf@example.test: È stato applicato lo sconto fedeltà promesso? Indicate l'effetto sul totale.\nT3 — mia.037be33d@example.test: È stato applicato lo sconto fedeltà promesso? Indicate l'effetto sul totale.\nT4 — leo.b9b3a375@example.test: È stato applicato lo sconto fedeltà promesso? Indicate l'effetto sul totale.\nT5 — eva.5a68ab03@example.test: È stato applicato lo sconto fedeltà promesso? Indicate l'effetto sul totale.",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_260af59677bc19",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.58757504@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_2c1f45737379ea",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.3cdfb7bf@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_fc2f4c10b67ac9",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.037be33d@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_14779bd6c59a27",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.b9b3a375@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_4b77315a3897e5",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.5a68ab03@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_6c344e098c747c",
+        "object": "charge",
+        "customer": "cus_260af59677bc19",
+        "invoice": "in_271e20258c7925",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7300,
+        "amount_captured": 7300,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_e5a5d4ede32508",
+        "object": "charge",
+        "customer": "cus_260af59677bc19",
+        "invoice": "in_121004910f37c1",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6800,
+        "amount_captured": 6800,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_9df69067543519",
+        "object": "charge",
+        "customer": "cus_2c1f45737379ea",
+        "invoice": "in_9d27e1bc3a252b",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8800,
+        "amount_captured": 8800,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_5c15b927ccb128",
+        "object": "charge",
+        "customer": "cus_2c1f45737379ea",
+        "invoice": "in_d967383929ba5c",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4400,
+        "amount_captured": 4400,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_3cb0eb4fe12b78",
+        "object": "charge",
+        "customer": "cus_fc2f4c10b67ac9",
+        "invoice": "in_42ae37f8282df7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9500,
+        "amount_captured": 9500,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_08b0c551ff6432",
+        "object": "charge",
+        "customer": "cus_14779bd6c59a27",
+        "invoice": "in_a31fb93a7fa7ac",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4600,
+        "amount_captured": 4600,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_c14e56477a59da",
+        "object": "charge",
+        "customer": "cus_14779bd6c59a27",
+        "invoice": "in_59aeb1e3b26949",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 1150,
+        "amount_captured": 1150,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_7f6ca536697b64",
+        "object": "charge",
+        "customer": "cus_4b77315a3897e5",
+        "invoice": "in_82e4a0a126eedc",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3500,
+        "amount_captured": 3500,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_39591444edd0c8",
+        "object": "charge",
+        "customer": "cus_4b77315a3897e5",
+        "invoice": "in_b56828165af603",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 2900,
+        "amount_captured": 2900,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_271e20258c7925",
+        "object": "invoice",
+        "customer": "cus_260af59677bc19",
+        "customer_email": "ada.58757504@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7300,
+        "total": 7300,
+        "amount_due": 7300,
+        "amount_paid": 7300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_4ea15a62001a29",
+              "description": "Canone",
+              "amount": 7300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_121004910f37c1",
+        "object": "invoice",
+        "customer": "cus_260af59677bc19",
+        "customer_email": "ada.58757504@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6800,
+        "total": 6800,
+        "amount_due": 6800,
+        "amount_paid": 6800,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_242e4edda031d1",
+              "description": "Canone",
+              "amount": 7300,
+              "quantity": 1
+            },
+            {
+              "id": "il_8fb2264ede2f5c",
+              "description": "Sconto fedeltà",
+              "amount": -500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_9d27e1bc3a252b",
+        "object": "invoice",
+        "customer": "cus_2c1f45737379ea",
+        "customer_email": "teo.3cdfb7bf@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8800,
+        "total": 8800,
+        "amount_due": 8800,
+        "amount_paid": 8800,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_9f3aed58c8daae",
+              "description": "Canone",
+              "amount": 8800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_d967383929ba5c",
+        "object": "invoice",
+        "customer": "cus_2c1f45737379ea",
+        "customer_email": "teo.3cdfb7bf@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 8800,
+        "total": 8800,
+        "amount_due": 8800,
+        "amount_paid": 4400,
+        "amount_remaining": 4400,
+        "lines": {
+          "data": [
+            {
+              "id": "il_d2d08bfaa0cebd",
+              "description": "Canone",
+              "amount": 8800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_42ae37f8282df7",
+        "object": "invoice",
+        "customer": "cus_fc2f4c10b67ac9",
+        "customer_email": "mia.037be33d@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9500,
+        "total": 9500,
+        "amount_due": 9500,
+        "amount_paid": 9500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_2bbd057d3816ff",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_ebf052b5c10276",
+        "object": "invoice",
+        "customer": "cus_fc2f4c10b67ac9",
+        "customer_email": "mia.037be33d@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 9100,
+        "total": 9100,
+        "amount_due": 9100,
+        "amount_paid": 0,
+        "amount_remaining": 9100,
+        "lines": {
+          "data": [
+            {
+              "id": "il_03e14d97fb1f2a",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            },
+            {
+              "id": "il_b798cc9c15dee0",
+              "description": "Sconto fedeltà",
+              "amount": -400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_a31fb93a7fa7ac",
+        "object": "invoice",
+        "customer": "cus_14779bd6c59a27",
+        "customer_email": "leo.b9b3a375@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4600,
+        "total": 4600,
+        "amount_due": 4600,
+        "amount_paid": 4600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_694b611ec35afd",
+              "description": "Canone",
+              "amount": 4600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_59aeb1e3b26949",
+        "object": "invoice",
+        "customer": "cus_14779bd6c59a27",
+        "customer_email": "leo.b9b3a375@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 4600,
+        "total": 4600,
+        "amount_due": 4600,
+        "amount_paid": 1150,
+        "amount_remaining": 3450,
+        "lines": {
+          "data": [
+            {
+              "id": "il_a2491f5e778c13",
+              "description": "Canone",
+              "amount": 4600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_82e4a0a126eedc",
+        "object": "invoice",
+        "customer": "cus_4b77315a3897e5",
+        "customer_email": "eva.5a68ab03@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 3500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_e36c3fdd329b5a",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_b56828165af603",
+        "object": "invoice",
+        "customer": "cus_4b77315a3897e5",
+        "customer_email": "eva.5a68ab03@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 2900,
+        "total": 2900,
+        "amount_due": 2900,
+        "amount_paid": 2900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_4af80e80e8ffcf",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            },
+            {
+              "id": "il_79a3f814ca6478",
+              "description": "Sconto fedeltà",
+              "amount": -600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Sconto fedeltà"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_260af59677bc19",
+        "diagnosi": "Sconto fedeltà: -5.00 EUR. Canone 73,00 EUR, totale 68,00 EUR, pagato 68,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_271e20258c7925",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_121004910f37c1",
+            "fatto": "Sconto fedeltà: -5.00 EUR. Canone 73,00 EUR, totale 68,00 EUR, pagato 68,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Sconto fedeltà: -5.00 EUR. Canone 73,00 EUR, totale 68,00 EUR, pagato 68,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_2c1f45737379ea",
+        "diagnosi": "Sconto fedeltà: +0.00 EUR. Canone 88,00 EUR, totale 88,00 EUR, pagato 44,00 EUR, residuo 44,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_9d27e1bc3a252b",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_d967383929ba5c",
+            "fatto": "Sconto fedeltà: +0.00 EUR. Canone 88,00 EUR, totale 88,00 EUR, pagato 44,00 EUR, residuo 44,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Sconto fedeltà: +0.00 EUR. Canone 88,00 EUR, totale 88,00 EUR, pagato 44,00 EUR, residuo 44,00 EUR. Versare solo il residuo di 44,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 44,00 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_fc2f4c10b67ac9",
+        "diagnosi": "Sconto fedeltà: -4.00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 0,00 EUR, residuo 91,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_42ae37f8282df7",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_ebf052b5c10276",
+            "fatto": "Sconto fedeltà: -4.00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 0,00 EUR, residuo 91,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Sconto fedeltà: -4.00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 0,00 EUR, residuo 91,00 EUR. Versare solo il residuo di 91,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 91,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_14779bd6c59a27",
+        "diagnosi": "Sconto fedeltà: +0.00 EUR. Canone 46,00 EUR, totale 46,00 EUR, pagato 11,50 EUR, residuo 34,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_a31fb93a7fa7ac",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_59aeb1e3b26949",
+            "fatto": "Sconto fedeltà: +0.00 EUR. Canone 46,00 EUR, totale 46,00 EUR, pagato 11,50 EUR, residuo 34,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Sconto fedeltà: +0.00 EUR. Canone 46,00 EUR, totale 46,00 EUR, pagato 11,50 EUR, residuo 34,50 EUR. Versare solo il residuo di 34,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 34,50 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_4b77315a3897e5",
+        "diagnosi": "Sconto fedeltà: -6.00 EUR. Canone 35,00 EUR, totale 29,00 EUR, pagato 29,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_82e4a0a126eedc",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_b56828165af603",
+            "fatto": "Sconto fedeltà: -6.00 EUR. Canone 35,00 EUR, totale 29,00 EUR, pagato 29,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Sconto fedeltà: -6.00 EUR. Canone 35,00 EUR, totale 29,00 EUR, pagato 29,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

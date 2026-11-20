@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700012963
+    },
+    "output": "Checkout complete\nStarting Build thumbnails\nThumbnail width 321 exceeds 320\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700012964
+    },
+    "output": "Checkout complete\nStarting Build thumbnails\nThumbnail width 321 exceeds 320\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700012973
+    },
+    "output": "Checkout complete\nStarting Sort captions\nCaption order differs at entry 8\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10040
+    },
+    "output": "{\n  \"number\": 10040,\n  \"title\": \"Thumbnail width 321 exceeds 320\",\n  \"body\": \"Restore thumbnail width\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10041
+    },
+    "output": "{\n  \"number\": 10041,\n  \"title\": \"Caption order differs at entry 8\",\n  \"body\": \"Sort captions by display order\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10061
+    },
+    "output": "{\n  \"number\": 10061,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10040,\n    \"title\": \"Thumbnail width 321 exceeds 320\",\n    \"body\": \"Restore thumbnail width\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10041,\n    \"title\": \"Caption order differs at entry 8\",\n    \"body\": \"Sort captions by display order\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10061,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700010963
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700012963,\n      \"run_id\": 700010963,\n      \"name\": \"preview\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Build thumbnails\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700010964
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700012964,\n      \"run_id\": 700010964,\n      \"name\": \"preview\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Build thumbnails\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700010973
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700012973,\n      \"run_id\": 700010973,\n      \"name\": \"index\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Sort captions\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10053,\n    \"title\": \"Sort captions by display order\",\n    \"body\": \"Resolves #10041\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700010973,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"b3661dab7a45cc4e75fdf98fe04acf12b566e59f\",\n      \"html_url\": \"https://ci.example.test/gallery/actions/runs/700010973\",\n      \"jobs_url\": \"https://ci.example.test/gallery/actions/runs/700010973/jobs\",\n      \"logs_url\": \"https://ci.example.test/gallery/actions/runs/700010973/logs\",\n      \"artifacts_url\": \"https://ci.example.test/gallery/actions/runs/700010973/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"b3661dab7a45cc4e75fdf98fe04acf12b566e59f\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700010863,\n        \"name\": \"gallery\",\n        \"full_name\": \"lab/gallery\"\n      }\n    },\n    {\n      \"id\": 700010964,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"d0a8794df8af0cd33a1d4e4771ffcaa778677b92\",\n      \"html_url\": \"https://ci.example.test/gallery/actions/runs/700010964\",\n      \"jobs_url\": \"https://ci.example.test/gallery/actions/runs/700010964/jobs\",\n      \"logs_url\": \"https://ci.example.test/gallery/actions/runs/700010964/logs\",\n      \"artifacts_url\": \"https://ci.example.test/gallery/actions/runs/700010964/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"d0a8794df8af0cd33a1d4e4771ffcaa778677b92\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700010863,\n        \"name\": \"gallery\",\n        \"full_name\": \"lab/gallery\"\n      }\n    },\n    {\n      \"id\": 700010963,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"e8928a1c69d39e5217f99cb9deb004cd4f03b0c6\",\n      \"html_url\": \"https://ci.example.test/gallery/actions/runs/700010963\",\n      \"jobs_url\": \"https://ci.example.test/gallery/actions/runs/700010963/jobs\",\n      \"logs_url\": \"https://ci.example.test/gallery/actions/runs/700010963/logs\",\n      \"artifacts_url\": \"https://ci.example.test/gallery/actions/runs/700010963/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"e8928a1c69d39e5217f99cb9deb004cd4f03b0c6\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700010863,\n        \"name\": \"gallery\",\n        \"full_name\": \"lab/gallery\"\n      }\n    }\n  ]\n}"
+  }
+]

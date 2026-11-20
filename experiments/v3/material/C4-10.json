@@ -1,0 +1,525 @@
+{
+  "prompt": "Coda assistenza «Fattura sostitutiva». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.efa3864d@example.test: Quale fattura sostituisce il documento annullato e quanto devo ancora pagare?\nT2 — teo.ce5cb89d@example.test: Quale fattura sostituisce il documento annullato e quanto devo ancora pagare?\nT3 — mia.d771e198@example.test: Quale fattura sostituisce il documento annullato e quanto devo ancora pagare?\nT4 — leo.e5513ce3@example.test: Quale fattura sostituisce il documento annullato e quanto devo ancora pagare?\nT5 — eva.713dc483@example.test: Quale fattura sostituisce il documento annullato e quanto devo ancora pagare?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_f69cace7e32d42",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.efa3864d@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_bb492fd356bea8",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.ce5cb89d@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_ec1368b54a529a",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.d771e198@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_319179eaec222a",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.e5513ce3@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_1bca7509bafd60",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.713dc483@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_fe7e278f8a285d",
+        "object": "charge",
+        "customer": "cus_f69cace7e32d42",
+        "invoice": "in_aa78bafa94c442",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9900,
+        "amount_captured": 9900,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_a857c693eb4901",
+        "object": "charge",
+        "customer": "cus_bb492fd356bea8",
+        "invoice": "in_e226bac5c09155",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3750,
+        "amount_captured": 3750,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_853419ca677e82",
+        "object": "charge",
+        "customer": "cus_319179eaec222a",
+        "invoice": "in_b5e005854c4bc7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 1925,
+        "amount_captured": 1925,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_8412c7a6d7ad25",
+        "object": "charge",
+        "customer": "cus_1bca7509bafd60",
+        "invoice": "in_8c9ca862ffc855",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9600,
+        "amount_captured": 9600,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_b0253d90eabf36",
+        "object": "invoice",
+        "customer": "cus_f69cace7e32d42",
+        "customer_email": "ada.efa3864d@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "void",
+        "subtotal": 9300,
+        "total": 9300,
+        "amount_due": 9300,
+        "amount_paid": 0,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_77953e9d955c4b",
+              "description": "Canone",
+              "amount": 9300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_aa78bafa94c442",
+        "object": "invoice",
+        "customer": "cus_f69cace7e32d42",
+        "customer_email": "ada.efa3864d@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9900,
+        "total": 9900,
+        "amount_due": 9900,
+        "amount_paid": 9900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_3a76da8b223b1d",
+              "description": "Canone",
+              "amount": 9300,
+              "quantity": 1
+            },
+            {
+              "id": "il_54fb753383fc17",
+              "description": "Ricalcolo fattura sostitutiva",
+              "amount": 600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1798156800,
+        "from_invoice": {
+          "invoice": "in_b0253d90eabf36",
+          "action": "revision"
+        }
+      },
+      {
+        "id": "in_e55c6d10489428",
+        "object": "invoice",
+        "customer": "cus_bb492fd356bea8",
+        "customer_email": "teo.ce5cb89d@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "void",
+        "subtotal": 6700,
+        "total": 6700,
+        "amount_due": 6700,
+        "amount_paid": 0,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_704ea87146d495",
+              "description": "Canone",
+              "amount": 6700,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_e226bac5c09155",
+        "object": "invoice",
+        "customer": "cus_bb492fd356bea8",
+        "customer_email": "teo.ce5cb89d@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7500,
+        "total": 7500,
+        "amount_due": 7500,
+        "amount_paid": 3750,
+        "amount_remaining": 3750,
+        "lines": {
+          "data": [
+            {
+              "id": "il_8608eae1c102a6",
+              "description": "Canone",
+              "amount": 6700,
+              "quantity": 1
+            },
+            {
+              "id": "il_a36debf24feb6d",
+              "description": "Ricalcolo fattura sostitutiva",
+              "amount": 800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1798246800,
+        "from_invoice": {
+          "invoice": "in_e55c6d10489428",
+          "action": "revision"
+        }
+      },
+      {
+        "id": "in_6b1f813f3617c5",
+        "object": "invoice",
+        "customer": "cus_ec1368b54a529a",
+        "customer_email": "mia.d771e198@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "void",
+        "subtotal": 10000,
+        "total": 10000,
+        "amount_due": 10000,
+        "amount_paid": 0,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_45874c924ca1b5",
+              "description": "Canone",
+              "amount": 10000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_3511d422e988f0",
+        "object": "invoice",
+        "customer": "cus_ec1368b54a529a",
+        "customer_email": "mia.d771e198@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 10900,
+        "total": 10900,
+        "amount_due": 10900,
+        "amount_paid": 0,
+        "amount_remaining": 10900,
+        "lines": {
+          "data": [
+            {
+              "id": "il_88bcae41463ae0",
+              "description": "Canone",
+              "amount": 10000,
+              "quantity": 1
+            },
+            {
+              "id": "il_55575d8b8b35a0",
+              "description": "Ricalcolo fattura sostitutiva",
+              "amount": 900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1798336800,
+        "from_invoice": {
+          "invoice": "in_6b1f813f3617c5",
+          "action": "revision"
+        }
+      },
+      {
+        "id": "in_aa4be7f335bf2b",
+        "object": "invoice",
+        "customer": "cus_319179eaec222a",
+        "customer_email": "leo.e5513ce3@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "void",
+        "subtotal": 7200,
+        "total": 7200,
+        "amount_due": 7200,
+        "amount_paid": 0,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_7196bfe1cbb6d5",
+              "description": "Canone",
+              "amount": 7200,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_b5e005854c4bc7",
+        "object": "invoice",
+        "customer": "cus_319179eaec222a",
+        "customer_email": "leo.e5513ce3@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7700,
+        "total": 7700,
+        "amount_due": 7700,
+        "amount_paid": 1925,
+        "amount_remaining": 5775,
+        "lines": {
+          "data": [
+            {
+              "id": "il_217c0168503623",
+              "description": "Canone",
+              "amount": 7200,
+              "quantity": 1
+            },
+            {
+              "id": "il_29c004864f5394",
+              "description": "Ricalcolo fattura sostitutiva",
+              "amount": 500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1798426800,
+        "from_invoice": {
+          "invoice": "in_aa4be7f335bf2b",
+          "action": "revision"
+        }
+      },
+      {
+        "id": "in_0b7db4acbca6c8",
+        "object": "invoice",
+        "customer": "cus_1bca7509bafd60",
+        "customer_email": "eva.713dc483@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "void",
+        "subtotal": 9200,
+        "total": 9200,
+        "amount_due": 9200,
+        "amount_paid": 0,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_55ef7ddff600c9",
+              "description": "Canone",
+              "amount": 9200,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_8c9ca862ffc855",
+        "object": "invoice",
+        "customer": "cus_1bca7509bafd60",
+        "customer_email": "eva.713dc483@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9600,
+        "total": 9600,
+        "amount_due": 9600,
+        "amount_paid": 9600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_94eadfd9485dcf",
+              "description": "Canone",
+              "amount": 9200,
+              "quantity": 1
+            },
+            {
+              "id": "il_20bac150865102",
+              "description": "Ricalcolo fattura sostitutiva",
+              "amount": 400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Fattura sostitutiva"
+        },
+        "due_date": 1798516800,
+        "from_invoice": {
+          "invoice": "in_0b7db4acbca6c8",
+          "action": "revision"
+        }
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_f69cace7e32d42",
+        "diagnosi": "Ricalcolo fattura sostitutiva: +6.00 EUR. Precedente annullata. Canone 93,00 EUR, totale 99,00 EUR, pagato 99,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_b0253d90eabf36",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_aa78bafa94c442",
+            "fatto": "Ricalcolo fattura sostitutiva: +6.00 EUR. Precedente annullata. Canone 93,00 EUR, totale 99,00 EUR, pagato 99,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Ricalcolo fattura sostitutiva: +6.00 EUR. Precedente annullata. Canone 93,00 EUR, totale 99,00 EUR, pagato 99,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_bb492fd356bea8",
+        "diagnosi": "Ricalcolo fattura sostitutiva: +8.00 EUR. Precedente annullata. Canone 67,00 EUR, totale 75,00 EUR, pagato 37,50 EUR, residuo 37,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_e55c6d10489428",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_e226bac5c09155",
+            "fatto": "Ricalcolo fattura sostitutiva: +8.00 EUR. Precedente annullata. Canone 67,00 EUR, totale 75,00 EUR, pagato 37,50 EUR, residuo 37,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Ricalcolo fattura sostitutiva: +8.00 EUR. Precedente annullata. Canone 67,00 EUR, totale 75,00 EUR, pagato 37,50 EUR, residuo 37,50 EUR. Versare solo il residuo di 37,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 37,50 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_ec1368b54a529a",
+        "diagnosi": "Ricalcolo fattura sostitutiva: +9.00 EUR. Precedente annullata. Canone 100,00 EUR, totale 109,00 EUR, pagato 0,00 EUR, residuo 109,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_6b1f813f3617c5",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_3511d422e988f0",
+            "fatto": "Ricalcolo fattura sostitutiva: +9.00 EUR. Precedente annullata. Canone 100,00 EUR, totale 109,00 EUR, pagato 0,00 EUR, residuo 109,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Ricalcolo fattura sostitutiva: +9.00 EUR. Precedente annullata. Canone 100,00 EUR, totale 109,00 EUR, pagato 0,00 EUR, residuo 109,00 EUR. Versare solo il residuo di 109,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 109,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_319179eaec222a",
+        "diagnosi": "Ricalcolo fattura sostitutiva: +5.00 EUR. Precedente annullata. Canone 72,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_aa4be7f335bf2b",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_b5e005854c4bc7",
+            "fatto": "Ricalcolo fattura sostitutiva: +5.00 EUR. Precedente annullata. Canone 72,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Ricalcolo fattura sostitutiva: +5.00 EUR. Precedente annullata. Canone 72,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR. Versare solo il residuo di 57,75 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 57,75 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_1bca7509bafd60",
+        "diagnosi": "Ricalcolo fattura sostitutiva: +4.00 EUR. Precedente annullata. Canone 92,00 EUR, totale 96,00 EUR, pagato 96,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_0b7db4acbca6c8",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_8c9ca862ffc855",
+            "fatto": "Ricalcolo fattura sostitutiva: +4.00 EUR. Precedente annullata. Canone 92,00 EUR, totale 96,00 EUR, pagato 96,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Ricalcolo fattura sostitutiva: +4.00 EUR. Precedente annullata. Canone 92,00 EUR, totale 96,00 EUR, pagato 96,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

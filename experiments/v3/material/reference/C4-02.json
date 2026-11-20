@@ -1,0 +1,338 @@
+[
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_3b909a51dba934"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_d97dcd8d158715\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_3b909a51dba934\",\n      \"invoice\": \"in_ca1fc3945e92e1\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 9500,\n      \"amount_captured\": 9500,\n      \"created\": 1797292920,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_58fb1ee03396c3\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_3b909a51dba934\",\n      \"invoice\": \"in_2fc5d037d108e4\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8800,\n      \"amount_captured\": 8800,\n      \"created\": 1794873720,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_a40133f1d9391b"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_5e440df90abd38\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_a40133f1d9391b\",\n      \"invoice\": \"in_6b4329fe78b0a1\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 10900,\n      \"amount_captured\": 10900,\n      \"created\": 1794880920,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_dd87bbe038f7bf"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_023a3740f06a47\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_dd87bbe038f7bf\",\n      \"invoice\": \"in_4eaa757642297a\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 2350,\n      \"amount_captured\": 2350,\n      \"created\": 1797303720,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_bb38f7aa786dd4\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_dd87bbe038f7bf\",\n      \"invoice\": \"in_35c2ac78be9f7e\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 9700,\n      \"amount_captured\": 9700,\n      \"created\": 1794884520,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_e0557423bdf409"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_089879754cd331\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_e0557423bdf409\",\n      \"invoice\": \"in_f73c8917f80e06\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 3500,\n      \"amount_captured\": 3500,\n      \"created\": 1797296520,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_d19dfc69ae389e\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_e0557423bdf409\",\n      \"invoice\": \"in_dadbacf44bb5fd\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8000,\n      \"amount_captured\": 8000,\n      \"created\": 1794877320,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_fb6af5e4b05403"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_4e13e781d4105f\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_fb6af5e4b05403\",\n      \"invoice\": \"in_0008a0817eff55\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8200,\n      \"amount_captured\": 8200,\n      \"created\": 1797307320,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_d1c476042cee99\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_fb6af5e4b05403\",\n      \"invoice\": \"in_a241a168135ebf\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 7600,\n      \"amount_captured\": 7600,\n      \"created\": 1794888120,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_3b909a51dba934"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_ca1fc3945e92e1\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_3b909a51dba934\",\n      \"customer_email\": \"ada.1dd12ec5@example.test\",\n      \"created\": 1797292800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 9500,\n      \"total\": 9500,\n      \"amount_due\": 9500,\n      \"amount_paid\": 9500,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_c121ec7bb99d6e\",\n            \"description\": \"Canone\",\n            \"amount\": 8800,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_8e257f24578c07\",\n            \"description\": \"Conguaglio posti a metà periodo\",\n            \"amount\": 700,\n            \"quantity\": 1,\n            \"unit_amount\": 700\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1798156800\n    },\n    {\n      \"id\": \"in_2fc5d037d108e4\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_3b909a51dba934\",\n      \"customer_email\": \"ada.1dd12ec5@example.test\",\n      \"created\": 1794873600,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8800,\n      \"total\": 8800,\n      \"amount_due\": 8800,\n      \"amount_paid\": 8800,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_aae45871f0a747\",\n            \"description\": \"Canone\",\n            \"amount\": 8800,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1795737600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_a40133f1d9391b"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_657bbfc4dbdcde\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_a40133f1d9391b\",\n      \"customer_email\": \"mia.84c07b00@example.test\",\n      \"created\": 1797300000,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 12100,\n      \"total\": 12100,\n      \"amount_due\": 12100,\n      \"amount_paid\": 0,\n      \"amount_remaining\": 12100,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_1581907b7a7ae4\",\n            \"description\": \"Canone\",\n            \"amount\": 10900,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_5d48a39038bc77\",\n            \"description\": \"Conguaglio posti a metà periodo\",\n            \"amount\": 1200,\n            \"quantity\": 3,\n            \"unit_amount\": 400\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1798336800\n    },\n    {\n      \"id\": \"in_6b4329fe78b0a1\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_a40133f1d9391b\",\n      \"customer_email\": \"mia.84c07b00@example.test\",\n      \"created\": 1794880800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 10900,\n      \"total\": 10900,\n      \"amount_due\": 10900,\n      \"amount_paid\": 10900,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_5a65e80f000319\",\n            \"description\": \"Canone\",\n            \"amount\": 10900,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1795917600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_dd87bbe038f7bf"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_4eaa757642297a\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_dd87bbe038f7bf\",\n      \"customer_email\": \"leo.ede4bb37@example.test\",\n      \"created\": 1797303600,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 9400,\n      \"total\": 9400,\n      \"amount_due\": 9400,\n      \"amount_paid\": 2350,\n      \"amount_remaining\": 7050,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_9bdb4fe309104a\",\n            \"description\": \"Canone\",\n            \"amount\": 9700,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_dc7b1fa7bc5aa4\",\n            \"description\": \"Conguaglio posti a metà periodo\",\n            \"amount\": -300,\n            \"quantity\": 1,\n            \"unit_amount\": -300\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1798426800\n    },\n    {\n      \"id\": \"in_35c2ac78be9f7e\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_dd87bbe038f7bf\",\n      \"customer_email\": \"leo.ede4bb37@example.test\",\n      \"created\": 1794884400,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 9700,\n      \"total\": 9700,\n      \"amount_due\": 9700,\n      \"amount_paid\": 9700,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_722ba299f607dd\",\n            \"description\": \"Canone\",\n            \"amount\": 9700,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1796007600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_e0557423bdf409"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_f73c8917f80e06\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_e0557423bdf409\",\n      \"customer_email\": \"teo.98a62ead@example.test\",\n      \"created\": 1797296400,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 7000,\n      \"total\": 7000,\n      \"amount_due\": 7000,\n      \"amount_paid\": 3500,\n      \"amount_remaining\": 3500,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_32d71291dc5917\",\n            \"description\": \"Canone\",\n            \"amount\": 8000,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_27e11b12811ba3\",\n            \"description\": \"Conguaglio posti a metà periodo\",\n            \"amount\": -1000,\n            \"quantity\": 2,\n            \"unit_amount\": -500\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1798246800\n    },\n    {\n      \"id\": \"in_dadbacf44bb5fd\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_e0557423bdf409\",\n      \"customer_email\": \"teo.98a62ead@example.test\",\n      \"created\": 1794877200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8000,\n      \"total\": 8000,\n      \"amount_due\": 8000,\n      \"amount_paid\": 8000,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_abf68ff485577a\",\n            \"description\": \"Canone\",\n            \"amount\": 8000,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1795827600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_fb6af5e4b05403"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_0008a0817eff55\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_fb6af5e4b05403\",\n      \"customer_email\": \"eva.a6f5fa17@example.test\",\n      \"created\": 1797307200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8200,\n      \"total\": 8200,\n      \"amount_due\": 8200,\n      \"amount_paid\": 8200,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_42630bf97e6c7d\",\n            \"description\": \"Canone\",\n            \"amount\": 7600,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_fb71ed84947ca3\",\n            \"description\": \"Conguaglio posti a metà periodo\",\n            \"amount\": 600,\n            \"quantity\": 2,\n            \"unit_amount\": 300\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1798516800\n    },\n    {\n      \"id\": \"in_a241a168135ebf\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_fb6af5e4b05403\",\n      \"customer_email\": \"eva.a6f5fa17@example.test\",\n      \"created\": 1794888000,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 7600,\n      \"total\": 7600,\n      \"amount_due\": 7600,\n      \"amount_paid\": 7600,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_a9c85244b87ee4\",\n            \"description\": \"Canone\",\n            \"amount\": 7600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Cambio posti\"\n      },\n      \"due_date\": 1796097600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_023a3740f06a47"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_089879754cd331"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_4e13e781d4105f"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_58fb1ee03396c3"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_5e440df90abd38"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_bb38f7aa786dd4"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_d19dfc69ae389e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_d1c476042cee99"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_d97dcd8d158715"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_3b909a51dba934"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_a40133f1d9391b"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_dd87bbe038f7bf"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_e0557423bdf409"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_fb6af5e4b05403"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_023a3740f06a47"
+    },
+    "output": "{\n  \"id\": \"ch_023a3740f06a47\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_dd87bbe038f7bf\",\n  \"invoice\": \"in_4eaa757642297a\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 2350,\n  \"amount_captured\": 2350,\n  \"created\": 1797303720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_089879754cd331"
+    },
+    "output": "{\n  \"id\": \"ch_089879754cd331\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_e0557423bdf409\",\n  \"invoice\": \"in_f73c8917f80e06\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 3500,\n  \"amount_captured\": 3500,\n  \"created\": 1797296520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_4e13e781d4105f"
+    },
+    "output": "{\n  \"id\": \"ch_4e13e781d4105f\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_fb6af5e4b05403\",\n  \"invoice\": \"in_0008a0817eff55\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8200,\n  \"amount_captured\": 8200,\n  \"created\": 1797307320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_58fb1ee03396c3"
+    },
+    "output": "{\n  \"id\": \"ch_58fb1ee03396c3\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_3b909a51dba934\",\n  \"invoice\": \"in_2fc5d037d108e4\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8800,\n  \"amount_captured\": 8800,\n  \"created\": 1794873720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_5e440df90abd38"
+    },
+    "output": "{\n  \"id\": \"ch_5e440df90abd38\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_a40133f1d9391b\",\n  \"invoice\": \"in_6b4329fe78b0a1\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 10900,\n  \"amount_captured\": 10900,\n  \"created\": 1794880920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_bb38f7aa786dd4"
+    },
+    "output": "{\n  \"id\": \"ch_bb38f7aa786dd4\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_dd87bbe038f7bf\",\n  \"invoice\": \"in_35c2ac78be9f7e\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 9700,\n  \"amount_captured\": 9700,\n  \"created\": 1794884520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_d19dfc69ae389e"
+    },
+    "output": "{\n  \"id\": \"ch_d19dfc69ae389e\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_e0557423bdf409\",\n  \"invoice\": \"in_dadbacf44bb5fd\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8000,\n  \"amount_captured\": 8000,\n  \"created\": 1794877320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_d1c476042cee99"
+    },
+    "output": "{\n  \"id\": \"ch_d1c476042cee99\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_fb6af5e4b05403\",\n  \"invoice\": \"in_a241a168135ebf\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 7600,\n  \"amount_captured\": 7600,\n  \"created\": 1794888120,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_d97dcd8d158715"
+    },
+    "output": "{\n  \"id\": \"ch_d97dcd8d158715\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_3b909a51dba934\",\n  \"invoice\": \"in_ca1fc3945e92e1\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 9500,\n  \"amount_captured\": 9500,\n  \"created\": 1797292920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_0008a0817eff55"
+    },
+    "output": "{\n  \"id\": \"in_0008a0817eff55\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_fb6af5e4b05403\",\n  \"customer_email\": \"eva.a6f5fa17@example.test\",\n  \"created\": 1797307200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8200,\n  \"total\": 8200,\n  \"amount_due\": 8200,\n  \"amount_paid\": 8200,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_42630bf97e6c7d\",\n        \"description\": \"Canone\",\n        \"amount\": 7600,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_fb71ed84947ca3\",\n        \"description\": \"Conguaglio posti a metà periodo\",\n        \"amount\": 600,\n        \"quantity\": 2,\n        \"unit_amount\": 300\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1798516800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_2fc5d037d108e4"
+    },
+    "output": "{\n  \"id\": \"in_2fc5d037d108e4\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_3b909a51dba934\",\n  \"customer_email\": \"ada.1dd12ec5@example.test\",\n  \"created\": 1794873600,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8800,\n  \"total\": 8800,\n  \"amount_due\": 8800,\n  \"amount_paid\": 8800,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_aae45871f0a747\",\n        \"description\": \"Canone\",\n        \"amount\": 8800,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1795737600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_35c2ac78be9f7e"
+    },
+    "output": "{\n  \"id\": \"in_35c2ac78be9f7e\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_dd87bbe038f7bf\",\n  \"customer_email\": \"leo.ede4bb37@example.test\",\n  \"created\": 1794884400,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 9700,\n  \"total\": 9700,\n  \"amount_due\": 9700,\n  \"amount_paid\": 9700,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_722ba299f607dd\",\n        \"description\": \"Canone\",\n        \"amount\": 9700,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1796007600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_4eaa757642297a"
+    },
+    "output": "{\n  \"id\": \"in_4eaa757642297a\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_dd87bbe038f7bf\",\n  \"customer_email\": \"leo.ede4bb37@example.test\",\n  \"created\": 1797303600,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 9400,\n  \"total\": 9400,\n  \"amount_due\": 9400,\n  \"amount_paid\": 2350,\n  \"amount_remaining\": 7050,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_9bdb4fe309104a\",\n        \"description\": \"Canone\",\n        \"amount\": 9700,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_dc7b1fa7bc5aa4\",\n        \"description\": \"Conguaglio posti a metà periodo\",\n        \"amount\": -300,\n        \"quantity\": 1,\n        \"unit_amount\": -300\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1798426800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_657bbfc4dbdcde"
+    },
+    "output": "{\n  \"id\": \"in_657bbfc4dbdcde\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_a40133f1d9391b\",\n  \"customer_email\": \"mia.84c07b00@example.test\",\n  \"created\": 1797300000,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 12100,\n  \"total\": 12100,\n  \"amount_due\": 12100,\n  \"amount_paid\": 0,\n  \"amount_remaining\": 12100,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_1581907b7a7ae4\",\n        \"description\": \"Canone\",\n        \"amount\": 10900,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_5d48a39038bc77\",\n        \"description\": \"Conguaglio posti a metà periodo\",\n        \"amount\": 1200,\n        \"quantity\": 3,\n        \"unit_amount\": 400\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1798336800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_6b4329fe78b0a1"
+    },
+    "output": "{\n  \"id\": \"in_6b4329fe78b0a1\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_a40133f1d9391b\",\n  \"customer_email\": \"mia.84c07b00@example.test\",\n  \"created\": 1794880800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 10900,\n  \"total\": 10900,\n  \"amount_due\": 10900,\n  \"amount_paid\": 10900,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_5a65e80f000319\",\n        \"description\": \"Canone\",\n        \"amount\": 10900,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1795917600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_a241a168135ebf"
+    },
+    "output": "{\n  \"id\": \"in_a241a168135ebf\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_fb6af5e4b05403\",\n  \"customer_email\": \"eva.a6f5fa17@example.test\",\n  \"created\": 1794888000,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 7600,\n  \"total\": 7600,\n  \"amount_due\": 7600,\n  \"amount_paid\": 7600,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_a9c85244b87ee4\",\n        \"description\": \"Canone\",\n        \"amount\": 7600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1796097600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_ca1fc3945e92e1"
+    },
+    "output": "{\n  \"id\": \"in_ca1fc3945e92e1\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_3b909a51dba934\",\n  \"customer_email\": \"ada.1dd12ec5@example.test\",\n  \"created\": 1797292800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 9500,\n  \"total\": 9500,\n  \"amount_due\": 9500,\n  \"amount_paid\": 9500,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_c121ec7bb99d6e\",\n        \"description\": \"Canone\",\n        \"amount\": 8800,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_8e257f24578c07\",\n        \"description\": \"Conguaglio posti a metà periodo\",\n        \"amount\": 700,\n        \"quantity\": 1,\n        \"unit_amount\": 700\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1798156800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_dadbacf44bb5fd"
+    },
+    "output": "{\n  \"id\": \"in_dadbacf44bb5fd\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_e0557423bdf409\",\n  \"customer_email\": \"teo.98a62ead@example.test\",\n  \"created\": 1794877200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8000,\n  \"total\": 8000,\n  \"amount_due\": 8000,\n  \"amount_paid\": 8000,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_abf68ff485577a\",\n        \"description\": \"Canone\",\n        \"amount\": 8000,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1795827600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_f73c8917f80e06"
+    },
+    "output": "{\n  \"id\": \"in_f73c8917f80e06\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_e0557423bdf409\",\n  \"customer_email\": \"teo.98a62ead@example.test\",\n  \"created\": 1797296400,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 7000,\n  \"total\": 7000,\n  \"amount_due\": 7000,\n  \"amount_paid\": 3500,\n  \"amount_remaining\": 3500,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_32d71291dc5917\",\n        \"description\": \"Canone\",\n        \"amount\": 8000,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_27e11b12811ba3\",\n        \"description\": \"Conguaglio posti a metà periodo\",\n        \"amount\": -1000,\n        \"quantity\": 2,\n        \"unit_amount\": -500\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Cambio posti\"\n  },\n  \"due_date\": 1798246800\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "ada.1dd12ec5@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_3b909a51dba934\",\n      \"object\": \"customer\",\n      \"name\": \"Ada\",\n      \"email\": \"ada.1dd12ec5@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "eva.a6f5fa17@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_fb6af5e4b05403\",\n      \"object\": \"customer\",\n      \"name\": \"Eva\",\n      \"email\": \"eva.a6f5fa17@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "leo.ede4bb37@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_dd87bbe038f7bf\",\n      \"object\": \"customer\",\n      \"name\": \"Leo\",\n      \"email\": \"leo.ede4bb37@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "mia.84c07b00@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_a40133f1d9391b\",\n      \"object\": \"customer\",\n      \"name\": \"Mia\",\n      \"email\": \"mia.84c07b00@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "teo.98a62ead@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_e0557423bdf409\",\n      \"object\": \"customer\",\n      \"name\": \"Teo\",\n      \"email\": \"teo.98a62ead@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  }
+]

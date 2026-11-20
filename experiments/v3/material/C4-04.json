@@ -1,0 +1,565 @@
+{
+  "prompt": "Coda assistenza «Rettifica consumi». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.b42a4057@example.test: Quale rettifica dei consumi spiega la differenza rispetto alla fattura precedente?\nT2 — teo.0f0f45dc@example.test: Quale rettifica dei consumi spiega la differenza rispetto alla fattura precedente?\nT3 — mia.908a353a@example.test: Quale rettifica dei consumi spiega la differenza rispetto alla fattura precedente?\nT4 — leo.c40c3994@example.test: Quale rettifica dei consumi spiega la differenza rispetto alla fattura precedente?\nT5 — eva.ae30f112@example.test: Quale rettifica dei consumi spiega la differenza rispetto alla fattura precedente?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_2c8557fd76daee",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.b42a4057@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_6450e923dac959",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.0f0f45dc@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_5e5b4a846aadfe",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.908a353a@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_06b1c4b91171f8",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.c40c3994@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_1d2e97dada7d56",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.ae30f112@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_0943376fc7fa18",
+        "object": "charge",
+        "customer": "cus_2c8557fd76daee",
+        "invoice": "in_61d23e88cb01d9",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4300,
+        "amount_captured": 4300,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_f736b87ed83eff",
+        "object": "charge",
+        "customer": "cus_2c8557fd76daee",
+        "invoice": "in_03baf96a1505f2",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4900,
+        "amount_captured": 4900,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_5d8e134a98c529",
+        "object": "charge",
+        "customer": "cus_6450e923dac959",
+        "invoice": "in_6c562a0dbc1be7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8500,
+        "amount_captured": 8500,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_e6461895fb4a25",
+        "object": "charge",
+        "customer": "cus_6450e923dac959",
+        "invoice": "in_2b242374d6aad4",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3900,
+        "amount_captured": 3900,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_3e678b794f7d8a",
+        "object": "charge",
+        "customer": "cus_5e5b4a846aadfe",
+        "invoice": "in_9f7a638fb29cdc",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6000,
+        "amount_captured": 6000,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_f185801d3ee3b9",
+        "object": "charge",
+        "customer": "cus_06b1c4b91171f8",
+        "invoice": "in_2c0d1da13002a7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4200,
+        "amount_captured": 4200,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_60b6930ac93c0e",
+        "object": "charge",
+        "customer": "cus_06b1c4b91171f8",
+        "invoice": "in_649bcc9aac680d",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 900,
+        "amount_captured": 900,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_c848392299a514",
+        "object": "charge",
+        "customer": "cus_1d2e97dada7d56",
+        "invoice": "in_acdd145032d04b",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7200,
+        "amount_captured": 7200,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_16f2f6d6ba7a7b",
+        "object": "charge",
+        "customer": "cus_1d2e97dada7d56",
+        "invoice": "in_930804098f2ada",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7500,
+        "amount_captured": 7500,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_61d23e88cb01d9",
+        "object": "invoice",
+        "customer": "cus_2c8557fd76daee",
+        "customer_email": "ada.b42a4057@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4300,
+        "total": 4300,
+        "amount_due": 4300,
+        "amount_paid": 4300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_ef8d162ebab5e1",
+              "description": "Canone",
+              "amount": 4300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_03baf96a1505f2",
+        "object": "invoice",
+        "customer": "cus_2c8557fd76daee",
+        "customer_email": "ada.b42a4057@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4900,
+        "total": 4900,
+        "amount_due": 4900,
+        "amount_paid": 4900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_429d04a52102a2",
+              "description": "Canone",
+              "amount": 4300,
+              "quantity": 1
+            },
+            {
+              "id": "il_703645924815ec",
+              "description": "Rettifica lettura consumi",
+              "amount": 600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_6c562a0dbc1be7",
+        "object": "invoice",
+        "customer": "cus_6450e923dac959",
+        "customer_email": "teo.0f0f45dc@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8500,
+        "total": 8500,
+        "amount_due": 8500,
+        "amount_paid": 8500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_82c7c0ec8a74e3",
+              "description": "Canone",
+              "amount": 8500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_2b242374d6aad4",
+        "object": "invoice",
+        "customer": "cus_6450e923dac959",
+        "customer_email": "teo.0f0f45dc@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7800,
+        "total": 7800,
+        "amount_due": 7800,
+        "amount_paid": 3900,
+        "amount_remaining": 3900,
+        "lines": {
+          "data": [
+            {
+              "id": "il_4e2a364d707f80",
+              "description": "Canone",
+              "amount": 8500,
+              "quantity": 1
+            },
+            {
+              "id": "il_98c08be0c36cd9",
+              "description": "Rettifica lettura consumi",
+              "amount": -700,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_9f7a638fb29cdc",
+        "object": "invoice",
+        "customer": "cus_5e5b4a846aadfe",
+        "customer_email": "mia.908a353a@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6000,
+        "total": 6000,
+        "amount_due": 6000,
+        "amount_paid": 6000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_a32c0675f4b255",
+              "description": "Canone",
+              "amount": 6000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_f7c2e987f7b3b1",
+        "object": "invoice",
+        "customer": "cus_5e5b4a846aadfe",
+        "customer_email": "mia.908a353a@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 6900,
+        "total": 6900,
+        "amount_due": 6900,
+        "amount_paid": 0,
+        "amount_remaining": 6900,
+        "lines": {
+          "data": [
+            {
+              "id": "il_375179e5e3c0c0",
+              "description": "Canone",
+              "amount": 6000,
+              "quantity": 1
+            },
+            {
+              "id": "il_ab22ab62c232e4",
+              "description": "Rettifica lettura consumi",
+              "amount": 900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_2c0d1da13002a7",
+        "object": "invoice",
+        "customer": "cus_06b1c4b91171f8",
+        "customer_email": "leo.c40c3994@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4200,
+        "total": 4200,
+        "amount_due": 4200,
+        "amount_paid": 4200,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_f83aeaffeaeb15",
+              "description": "Canone",
+              "amount": 4200,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_649bcc9aac680d",
+        "object": "invoice",
+        "customer": "cus_06b1c4b91171f8",
+        "customer_email": "leo.c40c3994@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 3600,
+        "total": 3600,
+        "amount_due": 3600,
+        "amount_paid": 900,
+        "amount_remaining": 2700,
+        "lines": {
+          "data": [
+            {
+              "id": "il_1393019cba6fdd",
+              "description": "Canone",
+              "amount": 4200,
+              "quantity": 1
+            },
+            {
+              "id": "il_0893d8e0135c36",
+              "description": "Rettifica lettura consumi",
+              "amount": -600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_acdd145032d04b",
+        "object": "invoice",
+        "customer": "cus_1d2e97dada7d56",
+        "customer_email": "eva.ae30f112@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7200,
+        "total": 7200,
+        "amount_due": 7200,
+        "amount_paid": 7200,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_7f2daa95cb3f4c",
+              "description": "Canone",
+              "amount": 7200,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_930804098f2ada",
+        "object": "invoice",
+        "customer": "cus_1d2e97dada7d56",
+        "customer_email": "eva.ae30f112@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7500,
+        "total": 7500,
+        "amount_due": 7500,
+        "amount_paid": 7500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_b32b950f6406ab",
+              "description": "Canone",
+              "amount": 7200,
+              "quantity": 1
+            },
+            {
+              "id": "il_2c57945a30ee2f",
+              "description": "Rettifica lettura consumi",
+              "amount": 300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Rettifica consumi"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_2c8557fd76daee",
+        "diagnosi": "Rettifica lettura consumi: +6.00 EUR. Canone 43,00 EUR, totale 49,00 EUR, pagato 49,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_61d23e88cb01d9",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_03baf96a1505f2",
+            "fatto": "Rettifica lettura consumi: +6.00 EUR. Canone 43,00 EUR, totale 49,00 EUR, pagato 49,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Rettifica lettura consumi: +6.00 EUR. Canone 43,00 EUR, totale 49,00 EUR, pagato 49,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_6450e923dac959",
+        "diagnosi": "Rettifica lettura consumi: -7.00 EUR. Canone 85,00 EUR, totale 78,00 EUR, pagato 39,00 EUR, residuo 39,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_6c562a0dbc1be7",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_2b242374d6aad4",
+            "fatto": "Rettifica lettura consumi: -7.00 EUR. Canone 85,00 EUR, totale 78,00 EUR, pagato 39,00 EUR, residuo 39,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Rettifica lettura consumi: -7.00 EUR. Canone 85,00 EUR, totale 78,00 EUR, pagato 39,00 EUR, residuo 39,00 EUR. Versare solo il residuo di 39,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 39,00 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_5e5b4a846aadfe",
+        "diagnosi": "Rettifica lettura consumi: +9.00 EUR. Canone 60,00 EUR, totale 69,00 EUR, pagato 0,00 EUR, residuo 69,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_9f7a638fb29cdc",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_f7c2e987f7b3b1",
+            "fatto": "Rettifica lettura consumi: +9.00 EUR. Canone 60,00 EUR, totale 69,00 EUR, pagato 0,00 EUR, residuo 69,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Rettifica lettura consumi: +9.00 EUR. Canone 60,00 EUR, totale 69,00 EUR, pagato 0,00 EUR, residuo 69,00 EUR. Versare solo il residuo di 69,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 69,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_06b1c4b91171f8",
+        "diagnosi": "Rettifica lettura consumi: -6.00 EUR. Canone 42,00 EUR, totale 36,00 EUR, pagato 9,00 EUR, residuo 27,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_2c0d1da13002a7",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_649bcc9aac680d",
+            "fatto": "Rettifica lettura consumi: -6.00 EUR. Canone 42,00 EUR, totale 36,00 EUR, pagato 9,00 EUR, residuo 27,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Rettifica lettura consumi: -6.00 EUR. Canone 42,00 EUR, totale 36,00 EUR, pagato 9,00 EUR, residuo 27,00 EUR. Versare solo il residuo di 27,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 27,00 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_1d2e97dada7d56",
+        "diagnosi": "Rettifica lettura consumi: +3.00 EUR. Canone 72,00 EUR, totale 75,00 EUR, pagato 75,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_acdd145032d04b",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_930804098f2ada",
+            "fatto": "Rettifica lettura consumi: +3.00 EUR. Canone 72,00 EUR, totale 75,00 EUR, pagato 75,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Rettifica lettura consumi: +3.00 EUR. Canone 72,00 EUR, totale 75,00 EUR, pagato 75,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

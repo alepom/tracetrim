@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700052424
+    },
+    "output": "Checkout complete\nStarting Load exhibits\nExhibit thumbnail missing for fern\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700052425
+    },
+    "output": "Checkout complete\nStarting Load exhibits\nExhibit thumbnail missing for fern\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700052434
+    },
+    "output": "Checkout complete\nStarting Check duration\nWalk duration exceeds route limit\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10200
+    },
+    "output": "{\n  \"number\": 10200,\n  \"title\": \"Exhibit thumbnail missing for fern\",\n  \"body\": \"Include the fern thumbnail\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10201
+    },
+    "output": "{\n  \"number\": 10201,\n  \"title\": \"Walk duration exceeds route limit\",\n  \"body\": \"Correct route segment duration\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10221
+    },
+    "output": "{\n  \"number\": 10221,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10200,\n    \"title\": \"Exhibit thumbnail missing for fern\",\n    \"body\": \"Include the fern thumbnail\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10201,\n    \"title\": \"Walk duration exceeds route limit\",\n    \"body\": \"Correct route segment duration\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10221,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700050424
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700052424,\n      \"run_id\": 700050424,\n      \"name\": \"kiosk\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load exhibits\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700050425
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700052425,\n      \"run_id\": 700050425,\n      \"name\": \"kiosk\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load exhibits\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700050434
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700052434,\n      \"run_id\": 700050434,\n      \"name\": \"tour\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Check duration\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10213,\n    \"title\": \"Correct route segment duration\",\n    \"body\": \"Resolves #10201\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700050434,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"3257aec592abdb3ddd2357d2416f24ed7288334d\",\n      \"html_url\": \"https://ci.example.test/museum/actions/runs/700050434\",\n      \"jobs_url\": \"https://ci.example.test/museum/actions/runs/700050434/jobs\",\n      \"logs_url\": \"https://ci.example.test/museum/actions/runs/700050434/logs\",\n      \"artifacts_url\": \"https://ci.example.test/museum/actions/runs/700050434/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"3257aec592abdb3ddd2357d2416f24ed7288334d\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700050324,\n        \"name\": \"museum\",\n        \"full_name\": \"lab/museum\"\n      }\n    },\n    {\n      \"id\": 700050425,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"5cb411e24d3845a532fe836fc49d4a8f4f05947b\",\n      \"html_url\": \"https://ci.example.test/museum/actions/runs/700050425\",\n      \"jobs_url\": \"https://ci.example.test/museum/actions/runs/700050425/jobs\",\n      \"logs_url\": \"https://ci.example.test/museum/actions/runs/700050425/logs\",\n      \"artifacts_url\": \"https://ci.example.test/museum/actions/runs/700050425/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"5cb411e24d3845a532fe836fc49d4a8f4f05947b\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700050324,\n        \"name\": \"museum\",\n        \"full_name\": \"lab/museum\"\n      }\n    },\n    {\n      \"id\": 700050424,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"e9f33c818d283020a0dbd2775fa9b121b4e8226c\",\n      \"html_url\": \"https://ci.example.test/museum/actions/runs/700050424\",\n      \"jobs_url\": \"https://ci.example.test/museum/actions/runs/700050424/jobs\",\n      \"logs_url\": \"https://ci.example.test/museum/actions/runs/700050424/logs\",\n      \"artifacts_url\": \"https://ci.example.test/museum/actions/runs/700050424/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"e9f33c818d283020a0dbd2775fa9b121b4e8226c\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700050324,\n        \"name\": \"museum\",\n        \"full_name\": \"lab/museum\"\n      }\n    }\n  ]\n}"
+  }
+]

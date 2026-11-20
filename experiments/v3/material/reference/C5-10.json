@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700092262
+    },
+    "output": "Checkout complete\nStarting Validate pages\nPage sequence skips folio seven\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700092263
+    },
+    "output": "Checkout complete\nStarting Validate pages\nPage sequence skips folio seven\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700092272
+    },
+    "output": "Checkout complete\nStarting Write manifest\nManifest lists obsolete cover sheet\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10360
+    },
+    "output": "{\n  \"number\": 10360,\n  \"title\": \"Page sequence skips folio seven\",\n  \"body\": \"Restore the missing folio\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10361
+    },
+    "output": "{\n  \"number\": 10361,\n  \"title\": \"Manifest lists obsolete cover sheet\",\n  \"body\": \"Remove the obsolete cover entry\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10381
+    },
+    "output": "{\n  \"number\": 10381,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10360,\n    \"title\": \"Page sequence skips folio seven\",\n    \"body\": \"Restore the missing folio\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10361,\n    \"title\": \"Manifest lists obsolete cover sheet\",\n    \"body\": \"Remove the obsolete cover entry\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10381,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700090262
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700092262,\n      \"run_id\": 700090262,\n      \"name\": \"scan\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Validate pages\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700090263
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700092263,\n      \"run_id\": 700090263,\n      \"name\": \"scan\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Validate pages\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700090272
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700092272,\n      \"run_id\": 700090272,\n      \"name\": \"export\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Write manifest\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10373,\n    \"title\": \"Remove the obsolete cover entry\",\n    \"body\": \"Resolves #10361\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700090272,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"ee7d652115a09458ed54074a0b6e0dbe9e02aa47\",\n      \"html_url\": \"https://ci.example.test/archive/actions/runs/700090272\",\n      \"jobs_url\": \"https://ci.example.test/archive/actions/runs/700090272/jobs\",\n      \"logs_url\": \"https://ci.example.test/archive/actions/runs/700090272/logs\",\n      \"artifacts_url\": \"https://ci.example.test/archive/actions/runs/700090272/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"ee7d652115a09458ed54074a0b6e0dbe9e02aa47\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700090162,\n        \"name\": \"archive\",\n        \"full_name\": \"lab/archive\"\n      }\n    },\n    {\n      \"id\": 700090263,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"1da6156537eacba238112c8a92c1d58336a7aee3\",\n      \"html_url\": \"https://ci.example.test/archive/actions/runs/700090263\",\n      \"jobs_url\": \"https://ci.example.test/archive/actions/runs/700090263/jobs\",\n      \"logs_url\": \"https://ci.example.test/archive/actions/runs/700090263/logs\",\n      \"artifacts_url\": \"https://ci.example.test/archive/actions/runs/700090263/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"1da6156537eacba238112c8a92c1d58336a7aee3\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700090162,\n        \"name\": \"archive\",\n        \"full_name\": \"lab/archive\"\n      }\n    },\n    {\n      \"id\": 700090262,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"3677f78e4268184be9fe06ee4d93eee6881f13a1\",\n      \"html_url\": \"https://ci.example.test/archive/actions/runs/700090262\",\n      \"jobs_url\": \"https://ci.example.test/archive/actions/runs/700090262/jobs\",\n      \"logs_url\": \"https://ci.example.test/archive/actions/runs/700090262/logs\",\n      \"artifacts_url\": \"https://ci.example.test/archive/actions/runs/700090262/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"3677f78e4268184be9fe06ee4d93eee6881f13a1\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700090162,\n        \"name\": \"archive\",\n        \"full_name\": \"lab/archive\"\n      }\n    }\n  ]\n}"
+  }
+]

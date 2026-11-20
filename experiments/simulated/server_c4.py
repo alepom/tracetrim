@@ -4,13 +4,18 @@ Responses are serialised with 2-space indentation, as the Stripe API returns
 them. List endpoints use Stripe's list envelope.
 """
 import json
+import sys
 
 from mcp.server.mcpserver import MCPServer
 
 from experiments.simulated.worlds import stripe_world
 
 app = MCPServer("stripe-billing-sim")
-W = stripe_world()
+if __name__ == "__main__" and sys.argv[1:2] == ["--v3-task"]:
+    from experiments.v3.tools import load_world
+    W = load_world("C4", sys.argv[2])
+else:
+    W = stripe_world()
 
 
 def out(obj) -> str:

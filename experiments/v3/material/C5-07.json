@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/weatherboard. The release owner needs a handoff for 14–20 December 2026. Investigate the units and chart checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700060477,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "8f50e6a6cd14be020b4be8c8683fa41301b9b2bd",
+        "html_url": "https://ci.example.test/weatherboard/actions/runs/700060477",
+        "jobs_url": "https://ci.example.test/weatherboard/actions/runs/700060477/jobs",
+        "logs_url": "https://ci.example.test/weatherboard/actions/runs/700060477/logs",
+        "artifacts_url": "https://ci.example.test/weatherboard/actions/runs/700060477/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "8f50e6a6cd14be020b4be8c8683fa41301b9b2bd",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700060377,
+          "name": "weatherboard",
+          "full_name": "lab/weatherboard"
+        }
+      },
+      {
+        "id": 700060487,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "5fa2d09cc7e9c4f78517b0b5685d21861d040d02",
+        "html_url": "https://ci.example.test/weatherboard/actions/runs/700060487",
+        "jobs_url": "https://ci.example.test/weatherboard/actions/runs/700060487/jobs",
+        "logs_url": "https://ci.example.test/weatherboard/actions/runs/700060487/logs",
+        "artifacts_url": "https://ci.example.test/weatherboard/actions/runs/700060487/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "5fa2d09cc7e9c4f78517b0b5685d21861d040d02",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700060377,
+          "name": "weatherboard",
+          "full_name": "lab/weatherboard"
+        }
+      },
+      {
+        "id": 700060488,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-18T00:00:00+00:00",
+        "run_number": 12,
+        "head_sha": "ba1c805f0ad4ceab09011c205884ab22b9a98769",
+        "html_url": "https://ci.example.test/weatherboard/actions/runs/700060488",
+        "jobs_url": "https://ci.example.test/weatherboard/actions/runs/700060488/jobs",
+        "logs_url": "https://ci.example.test/weatherboard/actions/runs/700060488/logs",
+        "artifacts_url": "https://ci.example.test/weatherboard/actions/runs/700060488/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "ba1c805f0ad4ceab09011c205884ab22b9a98769",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700060377,
+          "name": "weatherboard",
+          "full_name": "lab/weatherboard"
+        }
+      }
+    ],
+    "jobs": {
+      "700060477": [
+        {
+          "id": 700062477,
+          "run_id": 700060477,
+          "name": "units",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Convert wind",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700060487": [
+        {
+          "id": 700062487,
+          "run_id": 700060487,
+          "name": "chart",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Format ticks",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700060488": [
+        {
+          "id": 700062488,
+          "run_id": 700060488,
+          "name": "chart",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Format ticks",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700062477": "Checkout complete\nStarting Convert wind\nWind unit knots unexpectedly rendered as mph\nJob ended.",
+      "700062487": "Checkout complete\nStarting Format ticks\nMidnight tick rendered twice\nJob ended.",
+      "700062488": "Checkout complete\nStarting Format ticks\nMidnight tick rendered twice\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10240,
+        "title": "Wind unit knots unexpectedly rendered as mph",
+        "body": "Apply the knots conversion",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10241,
+        "title": "Midnight tick rendered twice",
+        "body": "Deduplicate midnight ticks",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10261,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10252,
+        "title": "Apply the knots conversion",
+        "body": "Resolves #10240",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Wind unit knots unexpectedly rendered as mph",
+        "workflow": "Build",
+        "runs": [
+          700060477
+        ],
+        "job": "units",
+        "step": "Convert wind",
+        "error": "Wind unit knots unexpectedly rendered as mph",
+        "related_issues": [
+          10240
+        ],
+        "related_pull_requests": [
+          10252
+        ],
+        "next_action": "Apply the knots conversion"
+      },
+      {
+        "summary": "Midnight tick rendered twice",
+        "workflow": "Build",
+        "runs": [
+          700060487,
+          700060488
+        ],
+        "job": "chart",
+        "step": "Format ticks",
+        "error": "Midnight tick rendered twice",
+        "related_issues": [
+          10241
+        ],
+        "related_pull_requests": [],
+        "next_action": "Deduplicate midnight ticks"
+      }
+    ],
+    "summary": "Review the units fix and prepare a change for chart."
+  }
+}

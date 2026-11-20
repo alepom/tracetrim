@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700082427
+    },
+    "output": "Checkout complete\nStarting Load holidays\nHoliday timetable missing Tuesday service\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700082428
+    },
+    "output": "Checkout complete\nStarting Load holidays\nHoliday timetable missing Tuesday service\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700082437
+    },
+    "output": "Checkout complete\nStarting Group platforms\nPlatform B grouped with C\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10320
+    },
+    "output": "{\n  \"number\": 10320,\n  \"title\": \"Holiday timetable missing Tuesday service\",\n  \"body\": \"Add the holiday service\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10321
+    },
+    "output": "{\n  \"number\": 10321,\n  \"title\": \"Platform B grouped with C\",\n  \"body\": \"Fix platform grouping\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10341
+    },
+    "output": "{\n  \"number\": 10341,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10320,\n    \"title\": \"Holiday timetable missing Tuesday service\",\n    \"body\": \"Add the holiday service\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10321,\n    \"title\": \"Platform B grouped with C\",\n    \"body\": \"Fix platform grouping\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10341,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700080427
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700082427,\n      \"run_id\": 700080427,\n      \"name\": \"service\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load holidays\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700080428
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700082428,\n      \"run_id\": 700080428,\n      \"name\": \"service\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Load holidays\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700080437
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700082437,\n      \"run_id\": 700080437,\n      \"name\": \"display\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Group platforms\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10332,\n    \"title\": \"Add the holiday service\",\n    \"body\": \"Resolves #10320\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700080437,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"34ddf18c65ee94d0225f762e782ab65cdc4e254a\",\n      \"html_url\": \"https://ci.example.test/timetable/actions/runs/700080437\",\n      \"jobs_url\": \"https://ci.example.test/timetable/actions/runs/700080437/jobs\",\n      \"logs_url\": \"https://ci.example.test/timetable/actions/runs/700080437/logs\",\n      \"artifacts_url\": \"https://ci.example.test/timetable/actions/runs/700080437/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"34ddf18c65ee94d0225f762e782ab65cdc4e254a\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700080327,\n        \"name\": \"timetable\",\n        \"full_name\": \"lab/timetable\"\n      }\n    },\n    {\n      \"id\": 700080428,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"0d655fe269cc61ce0f5b871271541889f473e85e\",\n      \"html_url\": \"https://ci.example.test/timetable/actions/runs/700080428\",\n      \"jobs_url\": \"https://ci.example.test/timetable/actions/runs/700080428/jobs\",\n      \"logs_url\": \"https://ci.example.test/timetable/actions/runs/700080428/logs\",\n      \"artifacts_url\": \"https://ci.example.test/timetable/actions/runs/700080428/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"0d655fe269cc61ce0f5b871271541889f473e85e\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700080327,\n        \"name\": \"timetable\",\n        \"full_name\": \"lab/timetable\"\n      }\n    },\n    {\n      \"id\": 700080427,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"4a4fefff89d9a184fa68e81843af1cab9aa06f17\",\n      \"html_url\": \"https://ci.example.test/timetable/actions/runs/700080427\",\n      \"jobs_url\": \"https://ci.example.test/timetable/actions/runs/700080427/jobs\",\n      \"logs_url\": \"https://ci.example.test/timetable/actions/runs/700080427/logs\",\n      \"artifacts_url\": \"https://ci.example.test/timetable/actions/runs/700080427/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"4a4fefff89d9a184fa68e81843af1cab9aa06f17\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700080327,\n        \"name\": \"timetable\",\n        \"full_name\": \"lab/timetable\"\n      }\n    }\n  ]\n}"
+  }
+]

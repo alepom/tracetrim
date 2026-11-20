@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/atlas. The release owner needs a handoff for 14–20 December 2026. Investigate the maps and legend checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700020739,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "723b8bc8c6c8870aa42a39d579b008fc1ee67a9c",
+        "html_url": "https://ci.example.test/atlas/actions/runs/700020739",
+        "jobs_url": "https://ci.example.test/atlas/actions/runs/700020739/jobs",
+        "logs_url": "https://ci.example.test/atlas/actions/runs/700020739/logs",
+        "artifacts_url": "https://ci.example.test/atlas/actions/runs/700020739/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "723b8bc8c6c8870aa42a39d579b008fc1ee67a9c",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700020639,
+          "name": "atlas",
+          "full_name": "lab/atlas"
+        }
+      },
+      {
+        "id": 700020749,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "822236d553217b9965d747eeb3a061ead07a8ee6",
+        "html_url": "https://ci.example.test/atlas/actions/runs/700020749",
+        "jobs_url": "https://ci.example.test/atlas/actions/runs/700020749/jobs",
+        "logs_url": "https://ci.example.test/atlas/actions/runs/700020749/logs",
+        "artifacts_url": "https://ci.example.test/atlas/actions/runs/700020749/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "822236d553217b9965d747eeb3a061ead07a8ee6",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700020639,
+          "name": "atlas",
+          "full_name": "lab/atlas"
+        }
+      },
+      {
+        "id": 700020750,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-18T00:00:00+00:00",
+        "run_number": 12,
+        "head_sha": "f77c23b5e40121d15403e0a63117ab389d8962bd",
+        "html_url": "https://ci.example.test/atlas/actions/runs/700020750",
+        "jobs_url": "https://ci.example.test/atlas/actions/runs/700020750/jobs",
+        "logs_url": "https://ci.example.test/atlas/actions/runs/700020750/logs",
+        "artifacts_url": "https://ci.example.test/atlas/actions/runs/700020750/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "f77c23b5e40121d15403e0a63117ab389d8962bd",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700020639,
+          "name": "atlas",
+          "full_name": "lab/atlas"
+        }
+      }
+    ],
+    "jobs": {
+      "700020739": [
+        {
+          "id": 700022739,
+          "run_id": 700020739,
+          "name": "maps",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Read coordinates",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700020749": [
+        {
+          "id": 700022749,
+          "run_id": 700020749,
+          "name": "legend",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Draw scale",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700020750": [
+        {
+          "id": 700022750,
+          "run_id": 700020750,
+          "name": "legend",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Draw scale",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700022739": "Checkout complete\nStarting Read coordinates\nAxis order north-east is invalid\nJob ended.",
+      "700022749": "Checkout complete\nStarting Draw scale\nMissing unit label nautical-mile\nJob ended.",
+      "700022750": "Checkout complete\nStarting Draw scale\nMissing unit label nautical-mile\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10080,
+        "title": "Axis order north-east is invalid",
+        "body": "Restore east-first axes",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10081,
+        "title": "Missing unit label nautical-mile",
+        "body": "Add the distance unit label",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10101,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10092,
+        "title": "Restore east-first axes",
+        "body": "Resolves #10080",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Axis order north-east is invalid",
+        "workflow": "Build",
+        "runs": [
+          700020739
+        ],
+        "job": "maps",
+        "step": "Read coordinates",
+        "error": "Axis order north-east is invalid",
+        "related_issues": [
+          10080
+        ],
+        "related_pull_requests": [
+          10092
+        ],
+        "next_action": "Restore east-first axes"
+      },
+      {
+        "summary": "Missing unit label nautical-mile",
+        "workflow": "Build",
+        "runs": [
+          700020749,
+          700020750
+        ],
+        "job": "legend",
+        "step": "Draw scale",
+        "error": "Missing unit label nautical-mile",
+        "related_issues": [
+          10081
+        ],
+        "related_pull_requests": [],
+        "next_action": "Add the distance unit label"
+      }
+    ],
+    "summary": "Review the maps fix and prepare a change for legend."
+  }
+}

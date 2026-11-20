@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700042619
+    },
+    "output": "Checkout complete\nStarting Import editions\nEdition ISBN column absent\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700042620
+    },
+    "output": "Checkout complete\nStarting Import editions\nEdition ISBN column absent\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700042629
+    },
+    "output": "Checkout complete\nStarting Order authors\nAccent collation differs at row 7\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10160
+    },
+    "output": "{\n  \"number\": 10160,\n  \"title\": \"Edition ISBN column absent\",\n  \"body\": \"Restore the edition column\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10161
+    },
+    "output": "{\n  \"number\": 10161,\n  \"title\": \"Accent collation differs at row 7\",\n  \"body\": \"Use the reference collation\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10181
+    },
+    "output": "{\n  \"number\": 10181,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10160,\n    \"title\": \"Edition ISBN column absent\",\n    \"body\": \"Restore the edition column\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10161,\n    \"title\": \"Accent collation differs at row 7\",\n    \"body\": \"Use the reference collation\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10181,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700040619
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700042619,\n      \"run_id\": 700040619,\n      \"name\": \"catalog\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Import editions\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700040620
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700042620,\n      \"run_id\": 700040620,\n      \"name\": \"catalog\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Import editions\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700040629
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700042629,\n      \"run_id\": 700040629,\n      \"name\": \"sort\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Order authors\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10172,\n    \"title\": \"Restore the edition column\",\n    \"body\": \"Resolves #10160\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700040629,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"d31d18a89a17fd54c65295d7a9d6bab3e7ef30a6\",\n      \"html_url\": \"https://ci.example.test/bookshop/actions/runs/700040629\",\n      \"jobs_url\": \"https://ci.example.test/bookshop/actions/runs/700040629/jobs\",\n      \"logs_url\": \"https://ci.example.test/bookshop/actions/runs/700040629/logs\",\n      \"artifacts_url\": \"https://ci.example.test/bookshop/actions/runs/700040629/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"d31d18a89a17fd54c65295d7a9d6bab3e7ef30a6\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700040519,\n        \"name\": \"bookshop\",\n        \"full_name\": \"lab/bookshop\"\n      }\n    },\n    {\n      \"id\": 700040620,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-16T00:00:00+00:00\",\n      \"run_number\": 2,\n      \"head_sha\": \"70ff91ed6ff8465c2706faab117b5d1709b62fa1\",\n      \"html_url\": \"https://ci.example.test/bookshop/actions/runs/700040620\",\n      \"jobs_url\": \"https://ci.example.test/bookshop/actions/runs/700040620/jobs\",\n      \"logs_url\": \"https://ci.example.test/bookshop/actions/runs/700040620/logs\",\n      \"artifacts_url\": \"https://ci.example.test/bookshop/actions/runs/700040620/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"70ff91ed6ff8465c2706faab117b5d1709b62fa1\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700040519,\n        \"name\": \"bookshop\",\n        \"full_name\": \"lab/bookshop\"\n      }\n    },\n    {\n      \"id\": 700040619,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"18277dbfaa115cb700a4b01c1906e7a2928dfbd4\",\n      \"html_url\": \"https://ci.example.test/bookshop/actions/runs/700040619\",\n      \"jobs_url\": \"https://ci.example.test/bookshop/actions/runs/700040619/jobs\",\n      \"logs_url\": \"https://ci.example.test/bookshop/actions/runs/700040619/logs\",\n      \"artifacts_url\": \"https://ci.example.test/bookshop/actions/runs/700040619/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"18277dbfaa115cb700a4b01c1906e7a2928dfbd4\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700040519,\n        \"name\": \"bookshop\",\n        \"full_name\": \"lab/bookshop\"\n      }\n    }\n  ]\n}"
+  }
+]

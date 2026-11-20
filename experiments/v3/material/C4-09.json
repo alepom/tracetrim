@@ -1,0 +1,553 @@
+{
+  "prompt": "Coda assistenza «Migrazione». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.dc34e266@example.test: La migrazione ha comportato un supplemento nella fattura corrente? Se sì, quanto?\nT2 — teo.6796b8f3@example.test: La migrazione ha comportato un supplemento nella fattura corrente? Se sì, quanto?\nT3 — mia.30503b9d@example.test: La migrazione ha comportato un supplemento nella fattura corrente? Se sì, quanto?\nT4 — leo.ce08a896@example.test: La migrazione ha comportato un supplemento nella fattura corrente? Se sì, quanto?\nT5 — eva.18999506@example.test: La migrazione ha comportato un supplemento nella fattura corrente? Se sì, quanto?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_43f569089dd08c",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.dc34e266@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_e9fae6ff996dff",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.6796b8f3@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_44a406acf1c78f",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.30503b9d@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_7280da7bf657f4",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.ce08a896@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_fa659a8db2fb85",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.18999506@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_382c8d7265b4b3",
+        "object": "charge",
+        "customer": "cus_43f569089dd08c",
+        "invoice": "in_4417fdb7a8dc6c",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6600,
+        "amount_captured": 6600,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_34104f58e85a9c",
+        "object": "charge",
+        "customer": "cus_43f569089dd08c",
+        "invoice": "in_e78f5f70333a51",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6300,
+        "amount_captured": 6300,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_52f17f52c2ccfc",
+        "object": "charge",
+        "customer": "cus_e9fae6ff996dff",
+        "invoice": "in_2d2a14862e0f5a",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8900,
+        "amount_captured": 8900,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_6c5d9ae1478cd4",
+        "object": "charge",
+        "customer": "cus_e9fae6ff996dff",
+        "invoice": "in_77f25b47b2dd2f",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4450,
+        "amount_captured": 4450,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_ccbfb489a8afeb",
+        "object": "charge",
+        "customer": "cus_44a406acf1c78f",
+        "invoice": "in_479aab3e78e6ea",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 10100,
+        "amount_captured": 10100,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_a0988ee44dbb80",
+        "object": "charge",
+        "customer": "cus_7280da7bf657f4",
+        "invoice": "in_3d4a29ca732fe0",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3500,
+        "amount_captured": 3500,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_7f78a66fa75df3",
+        "object": "charge",
+        "customer": "cus_7280da7bf657f4",
+        "invoice": "in_5baaef541f4766",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 875,
+        "amount_captured": 875,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_23cdece348c466",
+        "object": "charge",
+        "customer": "cus_fa659a8db2fb85",
+        "invoice": "in_b7f0ad525b0eb3",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6600,
+        "amount_captured": 6600,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_e5c3cc36f80fa4",
+        "object": "charge",
+        "customer": "cus_fa659a8db2fb85",
+        "invoice": "in_60127a90c8084f",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 5700,
+        "amount_captured": 5700,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_4417fdb7a8dc6c",
+        "object": "invoice",
+        "customer": "cus_43f569089dd08c",
+        "customer_email": "ada.dc34e266@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6600,
+        "total": 6600,
+        "amount_due": 6600,
+        "amount_paid": 6600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_54922773171e65",
+              "description": "Canone",
+              "amount": 6600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_e78f5f70333a51",
+        "object": "invoice",
+        "customer": "cus_43f569089dd08c",
+        "customer_email": "ada.dc34e266@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6300,
+        "total": 6300,
+        "amount_due": 6300,
+        "amount_paid": 6300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_534773edbbd5ee",
+              "description": "Canone",
+              "amount": 6600,
+              "quantity": 1
+            },
+            {
+              "id": "il_09563433ba5091",
+              "description": "Supplemento migrazione",
+              "amount": -300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_2d2a14862e0f5a",
+        "object": "invoice",
+        "customer": "cus_e9fae6ff996dff",
+        "customer_email": "teo.6796b8f3@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8900,
+        "total": 8900,
+        "amount_due": 8900,
+        "amount_paid": 8900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_b6bee0f0c39ec3",
+              "description": "Canone",
+              "amount": 8900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_77f25b47b2dd2f",
+        "object": "invoice",
+        "customer": "cus_e9fae6ff996dff",
+        "customer_email": "teo.6796b8f3@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 8900,
+        "total": 8900,
+        "amount_due": 8900,
+        "amount_paid": 4450,
+        "amount_remaining": 4450,
+        "lines": {
+          "data": [
+            {
+              "id": "il_36758f6af8727d",
+              "description": "Canone",
+              "amount": 8900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_479aab3e78e6ea",
+        "object": "invoice",
+        "customer": "cus_44a406acf1c78f",
+        "customer_email": "mia.30503b9d@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 10100,
+        "total": 10100,
+        "amount_due": 10100,
+        "amount_paid": 10100,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_1eff6494269151",
+              "description": "Canone",
+              "amount": 10100,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_2ed811ca34e91d",
+        "object": "invoice",
+        "customer": "cus_44a406acf1c78f",
+        "customer_email": "mia.30503b9d@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 9300,
+        "total": 9300,
+        "amount_due": 9300,
+        "amount_paid": 0,
+        "amount_remaining": 9300,
+        "lines": {
+          "data": [
+            {
+              "id": "il_988c60a36b65ee",
+              "description": "Canone",
+              "amount": 10100,
+              "quantity": 1
+            },
+            {
+              "id": "il_a7eb0ce6ccdae9",
+              "description": "Supplemento migrazione",
+              "amount": -800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_3d4a29ca732fe0",
+        "object": "invoice",
+        "customer": "cus_7280da7bf657f4",
+        "customer_email": "leo.ce08a896@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 3500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_d1858615819c57",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_5baaef541f4766",
+        "object": "invoice",
+        "customer": "cus_7280da7bf657f4",
+        "customer_email": "leo.ce08a896@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 875,
+        "amount_remaining": 2625,
+        "lines": {
+          "data": [
+            {
+              "id": "il_105edc64d39238",
+              "description": "Canone",
+              "amount": 3500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_b7f0ad525b0eb3",
+        "object": "invoice",
+        "customer": "cus_fa659a8db2fb85",
+        "customer_email": "eva.18999506@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6600,
+        "total": 6600,
+        "amount_due": 6600,
+        "amount_paid": 6600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_a039888e69eff2",
+              "description": "Canone",
+              "amount": 6600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_60127a90c8084f",
+        "object": "invoice",
+        "customer": "cus_fa659a8db2fb85",
+        "customer_email": "eva.18999506@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 5700,
+        "total": 5700,
+        "amount_due": 5700,
+        "amount_paid": 5700,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_793f6e96bd235e",
+              "description": "Canone",
+              "amount": 6600,
+              "quantity": 1
+            },
+            {
+              "id": "il_7ef44c12c2b8b2",
+              "description": "Supplemento migrazione",
+              "amount": -900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Migrazione"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_43f569089dd08c",
+        "diagnosi": "Supplemento migrazione: -3.00 EUR. Canone 66,00 EUR, totale 63,00 EUR, pagato 63,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_4417fdb7a8dc6c",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_e78f5f70333a51",
+            "fatto": "Supplemento migrazione: -3.00 EUR. Canone 66,00 EUR, totale 63,00 EUR, pagato 63,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Supplemento migrazione: -3.00 EUR. Canone 66,00 EUR, totale 63,00 EUR, pagato 63,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_e9fae6ff996dff",
+        "diagnosi": "Supplemento migrazione: +0.00 EUR. Canone 89,00 EUR, totale 89,00 EUR, pagato 44,50 EUR, residuo 44,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_2d2a14862e0f5a",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_77f25b47b2dd2f",
+            "fatto": "Supplemento migrazione: +0.00 EUR. Canone 89,00 EUR, totale 89,00 EUR, pagato 44,50 EUR, residuo 44,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Supplemento migrazione: +0.00 EUR. Canone 89,00 EUR, totale 89,00 EUR, pagato 44,50 EUR, residuo 44,50 EUR. Versare solo il residuo di 44,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 44,50 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_44a406acf1c78f",
+        "diagnosi": "Supplemento migrazione: -8.00 EUR. Canone 101,00 EUR, totale 93,00 EUR, pagato 0,00 EUR, residuo 93,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_479aab3e78e6ea",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_2ed811ca34e91d",
+            "fatto": "Supplemento migrazione: -8.00 EUR. Canone 101,00 EUR, totale 93,00 EUR, pagato 0,00 EUR, residuo 93,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Supplemento migrazione: -8.00 EUR. Canone 101,00 EUR, totale 93,00 EUR, pagato 0,00 EUR, residuo 93,00 EUR. Versare solo il residuo di 93,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 93,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_7280da7bf657f4",
+        "diagnosi": "Supplemento migrazione: +0.00 EUR. Canone 35,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_3d4a29ca732fe0",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_5baaef541f4766",
+            "fatto": "Supplemento migrazione: +0.00 EUR. Canone 35,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Supplemento migrazione: +0.00 EUR. Canone 35,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR. Versare solo il residuo di 26,25 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 26,25 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_fa659a8db2fb85",
+        "diagnosi": "Supplemento migrazione: -9.00 EUR. Canone 66,00 EUR, totale 57,00 EUR, pagato 57,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_b7f0ad525b0eb3",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_60127a90c8084f",
+            "fatto": "Supplemento migrazione: -9.00 EUR. Canone 66,00 EUR, totale 57,00 EUR, pagato 57,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Supplemento migrazione: -9.00 EUR. Canone 66,00 EUR, totale 57,00 EUR, pagato 57,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

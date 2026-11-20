@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700032984
+    },
+    "output": "Checkout complete\nStarting Mix tracks\nSample rate 44100 differs from session\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700032994
+    },
+    "output": "Checkout complete\nStarting Render score\nClef glyph unavailable\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700032995
+    },
+    "output": "Checkout complete\nStarting Render score\nClef glyph unavailable\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10120
+    },
+    "output": "{\n  \"number\": 10120,\n  \"title\": \"Sample rate 44100 differs from session\",\n  \"body\": \"Resample imported tracks\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10121
+    },
+    "output": "{\n  \"number\": 10121,\n  \"title\": \"Clef glyph unavailable\",\n  \"body\": \"Install score glyphs\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10141
+    },
+    "output": "{\n  \"number\": 10141,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10120,\n    \"title\": \"Sample rate 44100 differs from session\",\n    \"body\": \"Resample imported tracks\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10121,\n    \"title\": \"Clef glyph unavailable\",\n    \"body\": \"Install score glyphs\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10141,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700030984
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700032984,\n      \"run_id\": 700030984,\n      \"name\": \"audio\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Mix tracks\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700030994
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700032994,\n      \"run_id\": 700030994,\n      \"name\": \"scores\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Render score\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700030995
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700032995,\n      \"run_id\": 700030995,\n      \"name\": \"scores\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Render score\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10133,\n    \"title\": \"Install score glyphs\",\n    \"body\": \"Resolves #10121\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700030995,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-18T00:00:00+00:00\",\n      \"run_number\": 12,\n      \"head_sha\": \"805c20d223a5a10b82ca7524a297a10a12c99f06\",\n      \"html_url\": \"https://ci.example.test/songbook/actions/runs/700030995\",\n      \"jobs_url\": \"https://ci.example.test/songbook/actions/runs/700030995/jobs\",\n      \"logs_url\": \"https://ci.example.test/songbook/actions/runs/700030995/logs\",\n      \"artifacts_url\": \"https://ci.example.test/songbook/actions/runs/700030995/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"805c20d223a5a10b82ca7524a297a10a12c99f06\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700030884,\n        \"name\": \"songbook\",\n        \"full_name\": \"lab/songbook\"\n      }\n    },\n    {\n      \"id\": 700030994,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"7743c68f0f02190bb3b8f36c42034627bb71e263\",\n      \"html_url\": \"https://ci.example.test/songbook/actions/runs/700030994\",\n      \"jobs_url\": \"https://ci.example.test/songbook/actions/runs/700030994/jobs\",\n      \"logs_url\": \"https://ci.example.test/songbook/actions/runs/700030994/logs\",\n      \"artifacts_url\": \"https://ci.example.test/songbook/actions/runs/700030994/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"7743c68f0f02190bb3b8f36c42034627bb71e263\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700030884,\n        \"name\": \"songbook\",\n        \"full_name\": \"lab/songbook\"\n      }\n    },\n    {\n      \"id\": 700030984,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"e73045120fe9f5fe58470961596060f1b67bf160\",\n      \"html_url\": \"https://ci.example.test/songbook/actions/runs/700030984\",\n      \"jobs_url\": \"https://ci.example.test/songbook/actions/runs/700030984/jobs\",\n      \"logs_url\": \"https://ci.example.test/songbook/actions/runs/700030984/logs\",\n      \"artifacts_url\": \"https://ci.example.test/songbook/actions/runs/700030984/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"e73045120fe9f5fe58470961596060f1b67bf160\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700030884,\n        \"name\": \"songbook\",\n        \"full_name\": \"lab/songbook\"\n      }\n    }\n  ]\n}"
+  }
+]

@@ -1,0 +1,575 @@
+{
+  "prompt": "Coda assistenza «Credito prepagato». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.950a7a78@example.test: Quanto del credito prepagato è stato scalato dal rinnovo e quanto del credito iniziale rimane disponibile dopo il rinnovo?\nT2 — teo.8fe17f28@example.test: Quanto del credito prepagato è stato scalato dal rinnovo e quanto del credito iniziale rimane disponibile dopo il rinnovo?\nT3 — mia.386c9604@example.test: Quanto del credito prepagato è stato scalato dal rinnovo e quanto del credito iniziale rimane disponibile dopo il rinnovo?\nT4 — leo.032501dc@example.test: Quanto del credito prepagato è stato scalato dal rinnovo e quanto del credito iniziale rimane disponibile dopo il rinnovo?\nT5 — eva.e4b81777@example.test: Quanto del credito prepagato è stato scalato dal rinnovo e quanto del credito iniziale rimane disponibile dopo il rinnovo?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_2fcd902e755bcc",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.950a7a78@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_002c3cf32da93e",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.8fe17f28@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_8bb95e7d0974c5",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.386c9604@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_a10ac9e8498687",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.032501dc@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_adb9946cc70f5a",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.e4b81777@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_8a167fcd4228ab",
+        "object": "charge",
+        "customer": "cus_2fcd902e755bcc",
+        "invoice": "in_58628b6f7a5e13",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4900,
+        "amount_captured": 4900,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_c9f49452c2f776",
+        "object": "charge",
+        "customer": "cus_2fcd902e755bcc",
+        "invoice": "in_f05535ba8aacbc",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4300,
+        "amount_captured": 4300,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_1711499e404f45",
+        "object": "charge",
+        "customer": "cus_002c3cf32da93e",
+        "invoice": "in_5dcc1f1beb880d",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7600,
+        "amount_captured": 7600,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_99238dbac758b5",
+        "object": "charge",
+        "customer": "cus_002c3cf32da93e",
+        "invoice": "in_1e40f561b2e58a",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3350,
+        "amount_captured": 3350,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_188e733e6f77ca",
+        "object": "charge",
+        "customer": "cus_8bb95e7d0974c5",
+        "invoice": "in_2fa47a7c2d8666",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8000,
+        "amount_captured": 8000,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_8f5f891e4da177",
+        "object": "charge",
+        "customer": "cus_a10ac9e8498687",
+        "invoice": "in_fca6ac73a42a2d",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4000,
+        "amount_captured": 4000,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_3a46787d92786e",
+        "object": "charge",
+        "customer": "cus_a10ac9e8498687",
+        "invoice": "in_1bf9d1761a14c1",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 875,
+        "amount_captured": 875,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_63e96f693dea76",
+        "object": "charge",
+        "customer": "cus_adb9946cc70f5a",
+        "invoice": "in_a9543b23602969",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 6300,
+        "amount_captured": 6300,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_150851db4f77f6",
+        "object": "charge",
+        "customer": "cus_adb9946cc70f5a",
+        "invoice": "in_70c0a1f1e6b54d",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 5900,
+        "amount_captured": 5900,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_58628b6f7a5e13",
+        "object": "invoice",
+        "customer": "cus_2fcd902e755bcc",
+        "customer_email": "ada.950a7a78@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4900,
+        "total": 4900,
+        "amount_due": 4900,
+        "amount_paid": 4900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_90980fe065bc6f",
+              "description": "Canone",
+              "amount": 4900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_f05535ba8aacbc",
+        "object": "invoice",
+        "customer": "cus_2fcd902e755bcc",
+        "customer_email": "ada.950a7a78@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4300,
+        "total": 4300,
+        "amount_due": 4300,
+        "amount_paid": 4300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_5ee791fca9abe6",
+              "description": "Canone",
+              "amount": 4900,
+              "quantity": 1
+            },
+            {
+              "id": "il_15e8af635ad086",
+              "description": "Utilizzo credito prepagato",
+              "amount": -600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato",
+          "opening_credit": 1400,
+          "closing_credit": 800
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_5dcc1f1beb880d",
+        "object": "invoice",
+        "customer": "cus_002c3cf32da93e",
+        "customer_email": "teo.8fe17f28@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7600,
+        "total": 7600,
+        "amount_due": 7600,
+        "amount_paid": 7600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_0cbd769013bd40",
+              "description": "Canone",
+              "amount": 7600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_1e40f561b2e58a",
+        "object": "invoice",
+        "customer": "cus_002c3cf32da93e",
+        "customer_email": "teo.8fe17f28@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 6700,
+        "total": 6700,
+        "amount_due": 6700,
+        "amount_paid": 3350,
+        "amount_remaining": 3350,
+        "lines": {
+          "data": [
+            {
+              "id": "il_70a29591fadc7a",
+              "description": "Canone",
+              "amount": 7600,
+              "quantity": 1
+            },
+            {
+              "id": "il_312e8b851eba1f",
+              "description": "Utilizzo credito prepagato",
+              "amount": -900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato",
+          "opening_credit": 1500,
+          "closing_credit": 600
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_2fa47a7c2d8666",
+        "object": "invoice",
+        "customer": "cus_8bb95e7d0974c5",
+        "customer_email": "mia.386c9604@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8000,
+        "total": 8000,
+        "amount_due": 8000,
+        "amount_paid": 8000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_647906340413fe",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_2df47ff62b9435",
+        "object": "invoice",
+        "customer": "cus_8bb95e7d0974c5",
+        "customer_email": "mia.386c9604@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7400,
+        "total": 7400,
+        "amount_due": 7400,
+        "amount_paid": 0,
+        "amount_remaining": 7400,
+        "lines": {
+          "data": [
+            {
+              "id": "il_debfa23e7083f9",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            },
+            {
+              "id": "il_82362deb8956b1",
+              "description": "Utilizzo credito prepagato",
+              "amount": -600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato",
+          "opening_credit": 800,
+          "closing_credit": 200
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_fca6ac73a42a2d",
+        "object": "invoice",
+        "customer": "cus_a10ac9e8498687",
+        "customer_email": "leo.032501dc@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4000,
+        "total": 4000,
+        "amount_due": 4000,
+        "amount_paid": 4000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_4274ff1cd8b90e",
+              "description": "Canone",
+              "amount": 4000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_1bf9d1761a14c1",
+        "object": "invoice",
+        "customer": "cus_a10ac9e8498687",
+        "customer_email": "leo.032501dc@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 3500,
+        "total": 3500,
+        "amount_due": 3500,
+        "amount_paid": 875,
+        "amount_remaining": 2625,
+        "lines": {
+          "data": [
+            {
+              "id": "il_45c6f859a081fc",
+              "description": "Canone",
+              "amount": 4000,
+              "quantity": 1
+            },
+            {
+              "id": "il_a26559d1437356",
+              "description": "Utilizzo credito prepagato",
+              "amount": -500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato",
+          "opening_credit": 900,
+          "closing_credit": 400
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_a9543b23602969",
+        "object": "invoice",
+        "customer": "cus_adb9946cc70f5a",
+        "customer_email": "eva.e4b81777@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 6300,
+        "total": 6300,
+        "amount_due": 6300,
+        "amount_paid": 6300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_ad2b29b2abfc75",
+              "description": "Canone",
+              "amount": 6300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_70c0a1f1e6b54d",
+        "object": "invoice",
+        "customer": "cus_adb9946cc70f5a",
+        "customer_email": "eva.e4b81777@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 5900,
+        "total": 5900,
+        "amount_due": 5900,
+        "amount_paid": 5900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_fb96f0a7134e4e",
+              "description": "Canone",
+              "amount": 6300,
+              "quantity": 1
+            },
+            {
+              "id": "il_bb3edaa6aa1e93",
+              "description": "Utilizzo credito prepagato",
+              "amount": -400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Credito prepagato",
+          "opening_credit": 1300,
+          "closing_credit": 900
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_2fcd902e755bcc",
+        "diagnosi": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 14,00 EUR, disponibile 8,00 EUR. Canone 49,00 EUR, totale 43,00 EUR, pagato 43,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_58628b6f7a5e13",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_f05535ba8aacbc",
+            "fatto": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 14,00 EUR, disponibile 8,00 EUR. Canone 49,00 EUR, totale 43,00 EUR, pagato 43,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 14,00 EUR, disponibile 8,00 EUR. Canone 49,00 EUR, totale 43,00 EUR, pagato 43,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_002c3cf32da93e",
+        "diagnosi": "Utilizzo credito prepagato: -9.00 EUR. Credito iniziale 15,00 EUR, disponibile 6,00 EUR. Canone 76,00 EUR, totale 67,00 EUR, pagato 33,50 EUR, residuo 33,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_5dcc1f1beb880d",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_1e40f561b2e58a",
+            "fatto": "Utilizzo credito prepagato: -9.00 EUR. Credito iniziale 15,00 EUR, disponibile 6,00 EUR. Canone 76,00 EUR, totale 67,00 EUR, pagato 33,50 EUR, residuo 33,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Utilizzo credito prepagato: -9.00 EUR. Credito iniziale 15,00 EUR, disponibile 6,00 EUR. Canone 76,00 EUR, totale 67,00 EUR, pagato 33,50 EUR, residuo 33,50 EUR. Versare solo il residuo di 33,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 33,50 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_8bb95e7d0974c5",
+        "diagnosi": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 8,00 EUR, disponibile 2,00 EUR. Canone 80,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_2fa47a7c2d8666",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_2df47ff62b9435",
+            "fatto": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 8,00 EUR, disponibile 2,00 EUR. Canone 80,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Utilizzo credito prepagato: -6.00 EUR. Credito iniziale 8,00 EUR, disponibile 2,00 EUR. Canone 80,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR. Versare solo il residuo di 74,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 74,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_a10ac9e8498687",
+        "diagnosi": "Utilizzo credito prepagato: -5.00 EUR. Credito iniziale 9,00 EUR, disponibile 4,00 EUR. Canone 40,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_fca6ac73a42a2d",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_1bf9d1761a14c1",
+            "fatto": "Utilizzo credito prepagato: -5.00 EUR. Credito iniziale 9,00 EUR, disponibile 4,00 EUR. Canone 40,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Utilizzo credito prepagato: -5.00 EUR. Credito iniziale 9,00 EUR, disponibile 4,00 EUR. Canone 40,00 EUR, totale 35,00 EUR, pagato 8,75 EUR, residuo 26,25 EUR. Versare solo il residuo di 26,25 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 26,25 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_adb9946cc70f5a",
+        "diagnosi": "Utilizzo credito prepagato: -4.00 EUR. Credito iniziale 13,00 EUR, disponibile 9,00 EUR. Canone 63,00 EUR, totale 59,00 EUR, pagato 59,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_a9543b23602969",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_70c0a1f1e6b54d",
+            "fatto": "Utilizzo credito prepagato: -4.00 EUR. Credito iniziale 13,00 EUR, disponibile 9,00 EUR. Canone 63,00 EUR, totale 59,00 EUR, pagato 59,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Utilizzo credito prepagato: -4.00 EUR. Credito iniziale 13,00 EUR, disponibile 9,00 EUR. Canone 63,00 EUR, totale 59,00 EUR, pagato 59,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

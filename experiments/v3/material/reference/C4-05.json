@@ -1,0 +1,338 @@
+[
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_14779bd6c59a27"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_c14e56477a59da\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_14779bd6c59a27\",\n      \"invoice\": \"in_59aeb1e3b26949\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 1150,\n      \"amount_captured\": 1150,\n      \"created\": 1797303720,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_08b0c551ff6432\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_14779bd6c59a27\",\n      \"invoice\": \"in_a31fb93a7fa7ac\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4600,\n      \"amount_captured\": 4600,\n      \"created\": 1794884520,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_260af59677bc19"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_e5a5d4ede32508\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_260af59677bc19\",\n      \"invoice\": \"in_121004910f37c1\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 6800,\n      \"amount_captured\": 6800,\n      \"created\": 1797292920,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_6c344e098c747c\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_260af59677bc19\",\n      \"invoice\": \"in_271e20258c7925\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 7300,\n      \"amount_captured\": 7300,\n      \"created\": 1794873720,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_2c1f45737379ea"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_5c15b927ccb128\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2c1f45737379ea\",\n      \"invoice\": \"in_d967383929ba5c\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4400,\n      \"amount_captured\": 4400,\n      \"created\": 1797296520,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_9df69067543519\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2c1f45737379ea\",\n      \"invoice\": \"in_9d27e1bc3a252b\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8800,\n      \"amount_captured\": 8800,\n      \"created\": 1794877320,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_4b77315a3897e5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_39591444edd0c8\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_4b77315a3897e5\",\n      \"invoice\": \"in_b56828165af603\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 2900,\n      \"amount_captured\": 2900,\n      \"created\": 1797307320,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_7f6ca536697b64\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_4b77315a3897e5\",\n      \"invoice\": \"in_82e4a0a126eedc\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 3500,\n      \"amount_captured\": 3500,\n      \"created\": 1794888120,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_fc2f4c10b67ac9"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_3cb0eb4fe12b78\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_fc2f4c10b67ac9\",\n      \"invoice\": \"in_42ae37f8282df7\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 9500,\n      \"amount_captured\": 9500,\n      \"created\": 1794880920,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_14779bd6c59a27"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_59aeb1e3b26949\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_14779bd6c59a27\",\n      \"customer_email\": \"leo.b9b3a375@example.test\",\n      \"created\": 1797303600,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 4600,\n      \"total\": 4600,\n      \"amount_due\": 4600,\n      \"amount_paid\": 1150,\n      \"amount_remaining\": 3450,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_a2491f5e778c13\",\n            \"description\": \"Canone\",\n            \"amount\": 4600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1798426800\n    },\n    {\n      \"id\": \"in_a31fb93a7fa7ac\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_14779bd6c59a27\",\n      \"customer_email\": \"leo.b9b3a375@example.test\",\n      \"created\": 1794884400,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4600,\n      \"total\": 4600,\n      \"amount_due\": 4600,\n      \"amount_paid\": 4600,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_694b611ec35afd\",\n            \"description\": \"Canone\",\n            \"amount\": 4600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1796007600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_260af59677bc19"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_121004910f37c1\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_260af59677bc19\",\n      \"customer_email\": \"ada.58757504@example.test\",\n      \"created\": 1797292800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 6800,\n      \"total\": 6800,\n      \"amount_due\": 6800,\n      \"amount_paid\": 6800,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_242e4edda031d1\",\n            \"description\": \"Canone\",\n            \"amount\": 7300,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_8fb2264ede2f5c\",\n            \"description\": \"Sconto fedeltà\",\n            \"amount\": -500,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1798156800\n    },\n    {\n      \"id\": \"in_271e20258c7925\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_260af59677bc19\",\n      \"customer_email\": \"ada.58757504@example.test\",\n      \"created\": 1794873600,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 7300,\n      \"total\": 7300,\n      \"amount_due\": 7300,\n      \"amount_paid\": 7300,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_4ea15a62001a29\",\n            \"description\": \"Canone\",\n            \"amount\": 7300,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1795737600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_2c1f45737379ea"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_d967383929ba5c\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2c1f45737379ea\",\n      \"customer_email\": \"teo.3cdfb7bf@example.test\",\n      \"created\": 1797296400,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 8800,\n      \"total\": 8800,\n      \"amount_due\": 8800,\n      \"amount_paid\": 4400,\n      \"amount_remaining\": 4400,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_d2d08bfaa0cebd\",\n            \"description\": \"Canone\",\n            \"amount\": 8800,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1798246800\n    },\n    {\n      \"id\": \"in_9d27e1bc3a252b\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2c1f45737379ea\",\n      \"customer_email\": \"teo.3cdfb7bf@example.test\",\n      \"created\": 1794877200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8800,\n      \"total\": 8800,\n      \"amount_due\": 8800,\n      \"amount_paid\": 8800,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_9f3aed58c8daae\",\n            \"description\": \"Canone\",\n            \"amount\": 8800,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1795827600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_4b77315a3897e5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_b56828165af603\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_4b77315a3897e5\",\n      \"customer_email\": \"eva.5a68ab03@example.test\",\n      \"created\": 1797307200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 2900,\n      \"total\": 2900,\n      \"amount_due\": 2900,\n      \"amount_paid\": 2900,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_4af80e80e8ffcf\",\n            \"description\": \"Canone\",\n            \"amount\": 3500,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_79a3f814ca6478\",\n            \"description\": \"Sconto fedeltà\",\n            \"amount\": -600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1798516800\n    },\n    {\n      \"id\": \"in_82e4a0a126eedc\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_4b77315a3897e5\",\n      \"customer_email\": \"eva.5a68ab03@example.test\",\n      \"created\": 1794888000,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 3500,\n      \"total\": 3500,\n      \"amount_due\": 3500,\n      \"amount_paid\": 3500,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_e36c3fdd329b5a\",\n            \"description\": \"Canone\",\n            \"amount\": 3500,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1796097600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_fc2f4c10b67ac9"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_ebf052b5c10276\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_fc2f4c10b67ac9\",\n      \"customer_email\": \"mia.037be33d@example.test\",\n      \"created\": 1797300000,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 9100,\n      \"total\": 9100,\n      \"amount_due\": 9100,\n      \"amount_paid\": 0,\n      \"amount_remaining\": 9100,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_03e14d97fb1f2a\",\n            \"description\": \"Canone\",\n            \"amount\": 9500,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_b798cc9c15dee0\",\n            \"description\": \"Sconto fedeltà\",\n            \"amount\": -400,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1798336800\n    },\n    {\n      \"id\": \"in_42ae37f8282df7\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_fc2f4c10b67ac9\",\n      \"customer_email\": \"mia.037be33d@example.test\",\n      \"created\": 1794880800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 9500,\n      \"total\": 9500,\n      \"amount_due\": 9500,\n      \"amount_paid\": 9500,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_2bbd057d3816ff\",\n            \"description\": \"Canone\",\n            \"amount\": 9500,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Sconto fedeltà\"\n      },\n      \"due_date\": 1795917600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_08b0c551ff6432"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_39591444edd0c8"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_3cb0eb4fe12b78"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_5c15b927ccb128"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_6c344e098c747c"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_7f6ca536697b64"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_9df69067543519"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_c14e56477a59da"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_e5a5d4ede32508"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_14779bd6c59a27"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_260af59677bc19"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_2c1f45737379ea"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_4b77315a3897e5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_fc2f4c10b67ac9"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_08b0c551ff6432"
+    },
+    "output": "{\n  \"id\": \"ch_08b0c551ff6432\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_14779bd6c59a27\",\n  \"invoice\": \"in_a31fb93a7fa7ac\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4600,\n  \"amount_captured\": 4600,\n  \"created\": 1794884520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_39591444edd0c8"
+    },
+    "output": "{\n  \"id\": \"ch_39591444edd0c8\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_4b77315a3897e5\",\n  \"invoice\": \"in_b56828165af603\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 2900,\n  \"amount_captured\": 2900,\n  \"created\": 1797307320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_3cb0eb4fe12b78"
+    },
+    "output": "{\n  \"id\": \"ch_3cb0eb4fe12b78\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_fc2f4c10b67ac9\",\n  \"invoice\": \"in_42ae37f8282df7\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 9500,\n  \"amount_captured\": 9500,\n  \"created\": 1794880920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_5c15b927ccb128"
+    },
+    "output": "{\n  \"id\": \"ch_5c15b927ccb128\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2c1f45737379ea\",\n  \"invoice\": \"in_d967383929ba5c\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4400,\n  \"amount_captured\": 4400,\n  \"created\": 1797296520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_6c344e098c747c"
+    },
+    "output": "{\n  \"id\": \"ch_6c344e098c747c\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_260af59677bc19\",\n  \"invoice\": \"in_271e20258c7925\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 7300,\n  \"amount_captured\": 7300,\n  \"created\": 1794873720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_7f6ca536697b64"
+    },
+    "output": "{\n  \"id\": \"ch_7f6ca536697b64\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_4b77315a3897e5\",\n  \"invoice\": \"in_82e4a0a126eedc\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 3500,\n  \"amount_captured\": 3500,\n  \"created\": 1794888120,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_9df69067543519"
+    },
+    "output": "{\n  \"id\": \"ch_9df69067543519\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2c1f45737379ea\",\n  \"invoice\": \"in_9d27e1bc3a252b\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8800,\n  \"amount_captured\": 8800,\n  \"created\": 1794877320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_c14e56477a59da"
+    },
+    "output": "{\n  \"id\": \"ch_c14e56477a59da\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_14779bd6c59a27\",\n  \"invoice\": \"in_59aeb1e3b26949\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 1150,\n  \"amount_captured\": 1150,\n  \"created\": 1797303720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_e5a5d4ede32508"
+    },
+    "output": "{\n  \"id\": \"ch_e5a5d4ede32508\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_260af59677bc19\",\n  \"invoice\": \"in_121004910f37c1\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 6800,\n  \"amount_captured\": 6800,\n  \"created\": 1797292920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_121004910f37c1"
+    },
+    "output": "{\n  \"id\": \"in_121004910f37c1\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_260af59677bc19\",\n  \"customer_email\": \"ada.58757504@example.test\",\n  \"created\": 1797292800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 6800,\n  \"total\": 6800,\n  \"amount_due\": 6800,\n  \"amount_paid\": 6800,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_242e4edda031d1\",\n        \"description\": \"Canone\",\n        \"amount\": 7300,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_8fb2264ede2f5c\",\n        \"description\": \"Sconto fedeltà\",\n        \"amount\": -500,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1798156800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_271e20258c7925"
+    },
+    "output": "{\n  \"id\": \"in_271e20258c7925\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_260af59677bc19\",\n  \"customer_email\": \"ada.58757504@example.test\",\n  \"created\": 1794873600,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 7300,\n  \"total\": 7300,\n  \"amount_due\": 7300,\n  \"amount_paid\": 7300,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_4ea15a62001a29\",\n        \"description\": \"Canone\",\n        \"amount\": 7300,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1795737600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_42ae37f8282df7"
+    },
+    "output": "{\n  \"id\": \"in_42ae37f8282df7\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_fc2f4c10b67ac9\",\n  \"customer_email\": \"mia.037be33d@example.test\",\n  \"created\": 1794880800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 9500,\n  \"total\": 9500,\n  \"amount_due\": 9500,\n  \"amount_paid\": 9500,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_2bbd057d3816ff\",\n        \"description\": \"Canone\",\n        \"amount\": 9500,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1795917600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_59aeb1e3b26949"
+    },
+    "output": "{\n  \"id\": \"in_59aeb1e3b26949\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_14779bd6c59a27\",\n  \"customer_email\": \"leo.b9b3a375@example.test\",\n  \"created\": 1797303600,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 4600,\n  \"total\": 4600,\n  \"amount_due\": 4600,\n  \"amount_paid\": 1150,\n  \"amount_remaining\": 3450,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_a2491f5e778c13\",\n        \"description\": \"Canone\",\n        \"amount\": 4600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1798426800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_82e4a0a126eedc"
+    },
+    "output": "{\n  \"id\": \"in_82e4a0a126eedc\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_4b77315a3897e5\",\n  \"customer_email\": \"eva.5a68ab03@example.test\",\n  \"created\": 1794888000,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 3500,\n  \"total\": 3500,\n  \"amount_due\": 3500,\n  \"amount_paid\": 3500,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_e36c3fdd329b5a\",\n        \"description\": \"Canone\",\n        \"amount\": 3500,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1796097600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_9d27e1bc3a252b"
+    },
+    "output": "{\n  \"id\": \"in_9d27e1bc3a252b\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2c1f45737379ea\",\n  \"customer_email\": \"teo.3cdfb7bf@example.test\",\n  \"created\": 1794877200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8800,\n  \"total\": 8800,\n  \"amount_due\": 8800,\n  \"amount_paid\": 8800,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_9f3aed58c8daae\",\n        \"description\": \"Canone\",\n        \"amount\": 8800,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1795827600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_a31fb93a7fa7ac"
+    },
+    "output": "{\n  \"id\": \"in_a31fb93a7fa7ac\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_14779bd6c59a27\",\n  \"customer_email\": \"leo.b9b3a375@example.test\",\n  \"created\": 1794884400,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4600,\n  \"total\": 4600,\n  \"amount_due\": 4600,\n  \"amount_paid\": 4600,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_694b611ec35afd\",\n        \"description\": \"Canone\",\n        \"amount\": 4600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1796007600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_b56828165af603"
+    },
+    "output": "{\n  \"id\": \"in_b56828165af603\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_4b77315a3897e5\",\n  \"customer_email\": \"eva.5a68ab03@example.test\",\n  \"created\": 1797307200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 2900,\n  \"total\": 2900,\n  \"amount_due\": 2900,\n  \"amount_paid\": 2900,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_4af80e80e8ffcf\",\n        \"description\": \"Canone\",\n        \"amount\": 3500,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_79a3f814ca6478\",\n        \"description\": \"Sconto fedeltà\",\n        \"amount\": -600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1798516800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_d967383929ba5c"
+    },
+    "output": "{\n  \"id\": \"in_d967383929ba5c\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2c1f45737379ea\",\n  \"customer_email\": \"teo.3cdfb7bf@example.test\",\n  \"created\": 1797296400,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 8800,\n  \"total\": 8800,\n  \"amount_due\": 8800,\n  \"amount_paid\": 4400,\n  \"amount_remaining\": 4400,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_d2d08bfaa0cebd\",\n        \"description\": \"Canone\",\n        \"amount\": 8800,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1798246800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_ebf052b5c10276"
+    },
+    "output": "{\n  \"id\": \"in_ebf052b5c10276\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_fc2f4c10b67ac9\",\n  \"customer_email\": \"mia.037be33d@example.test\",\n  \"created\": 1797300000,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 9100,\n  \"total\": 9100,\n  \"amount_due\": 9100,\n  \"amount_paid\": 0,\n  \"amount_remaining\": 9100,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_03e14d97fb1f2a\",\n        \"description\": \"Canone\",\n        \"amount\": 9500,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_b798cc9c15dee0\",\n        \"description\": \"Sconto fedeltà\",\n        \"amount\": -400,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Sconto fedeltà\"\n  },\n  \"due_date\": 1798336800\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "ada.58757504@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_260af59677bc19\",\n      \"object\": \"customer\",\n      \"name\": \"Ada\",\n      \"email\": \"ada.58757504@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "eva.5a68ab03@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_4b77315a3897e5\",\n      \"object\": \"customer\",\n      \"name\": \"Eva\",\n      \"email\": \"eva.5a68ab03@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "leo.b9b3a375@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_14779bd6c59a27\",\n      \"object\": \"customer\",\n      \"name\": \"Leo\",\n      \"email\": \"leo.b9b3a375@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "mia.037be33d@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_fc2f4c10b67ac9\",\n      \"object\": \"customer\",\n      \"name\": \"Mia\",\n      \"email\": \"mia.037be33d@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "teo.3cdfb7bf@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_2c1f45737379ea\",\n      \"object\": \"customer\",\n      \"name\": \"Teo\",\n      \"email\": \"teo.3cdfb7bf@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  }
+]

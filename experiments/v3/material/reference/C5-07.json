@@ -1,0 +1,87 @@
+[
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700062477
+    },
+    "output": "Checkout complete\nStarting Convert wind\nWind unit knots unexpectedly rendered as mph\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700062487
+    },
+    "output": "Checkout complete\nStarting Format ticks\nMidnight tick rendered twice\nJob ended."
+  },
+  {
+    "tool": "gh_download_job_logs",
+    "arguments": {
+      "job_id": 700062488
+    },
+    "output": "Checkout complete\nStarting Format ticks\nMidnight tick rendered twice\nJob ended."
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10240
+    },
+    "output": "{\n  \"number\": 10240,\n  \"title\": \"Wind unit knots unexpectedly rendered as mph\",\n  \"body\": \"Apply the knots conversion\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10241
+    },
+    "output": "{\n  \"number\": 10241,\n  \"title\": \"Midnight tick rendered twice\",\n  \"body\": \"Deduplicate midnight ticks\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_get_issue",
+    "arguments": {
+      "issue_number": 10261
+    },
+    "output": "{\n  \"number\": 10261,\n  \"title\": \"Update handbook credits\",\n  \"state\": \"open\",\n  \"labels\": []\n}"
+  },
+  {
+    "tool": "gh_list_issues",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10240,\n    \"title\": \"Wind unit knots unexpectedly rendered as mph\",\n    \"body\": \"Apply the knots conversion\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10241,\n    \"title\": \"Midnight tick rendered twice\",\n    \"body\": \"Deduplicate midnight ticks\",\n    \"state\": \"open\",\n    \"labels\": []\n  },\n  {\n    \"number\": 10261,\n    \"title\": \"Update handbook credits\",\n    \"state\": \"open\",\n    \"labels\": []\n  }\n]"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700060477
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700062477,\n      \"run_id\": 700060477,\n      \"name\": \"units\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Convert wind\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700060487
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700062487,\n      \"run_id\": 700060487,\n      \"name\": \"chart\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Format ticks\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_jobs_for_workflow_run",
+    "arguments": {
+      "run_id": 700060488
+    },
+    "output": "{\n  \"total_count\": 1,\n  \"jobs\": [\n    {\n      \"id\": 700062488,\n      \"run_id\": 700060488,\n      \"name\": \"chart\",\n      \"conclusion\": \"failure\",\n      \"steps\": [\n        {\n          \"name\": \"Prepare\",\n          \"conclusion\": \"success\"\n        },\n        {\n          \"name\": \"Format ticks\",\n          \"conclusion\": \"failure\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+    "tool": "gh_list_pull_requests",
+    "arguments": {
+      "state": "open"
+    },
+    "output": "[\n  {\n    \"number\": 10252,\n    \"title\": \"Apply the knots conversion\",\n    \"body\": \"Resolves #10240\",\n    \"state\": \"open\"\n  }\n]"
+  },
+  {
+    "tool": "gh_list_workflow_runs",
+    "arguments": {
+      "branch": "main",
+      "status": "failure"
+    },
+    "output": "{\n  \"total_count\": 3,\n  \"workflow_runs\": [\n    {\n      \"id\": 700060488,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-18T00:00:00+00:00\",\n      \"run_number\": 12,\n      \"head_sha\": \"ba1c805f0ad4ceab09011c205884ab22b9a98769\",\n      \"html_url\": \"https://ci.example.test/weatherboard/actions/runs/700060488\",\n      \"jobs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060488/jobs\",\n      \"logs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060488/logs\",\n      \"artifacts_url\": \"https://ci.example.test/weatherboard/actions/runs/700060488/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"ba1c805f0ad4ceab09011c205884ab22b9a98769\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700060377,\n        \"name\": \"weatherboard\",\n        \"full_name\": \"lab/weatherboard\"\n      }\n    },\n    {\n      \"id\": 700060487,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-17T00:00:00+00:00\",\n      \"run_number\": 11,\n      \"head_sha\": \"5fa2d09cc7e9c4f78517b0b5685d21861d040d02\",\n      \"html_url\": \"https://ci.example.test/weatherboard/actions/runs/700060487\",\n      \"jobs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060487/jobs\",\n      \"logs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060487/logs\",\n      \"artifacts_url\": \"https://ci.example.test/weatherboard/actions/runs/700060487/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"5fa2d09cc7e9c4f78517b0b5685d21861d040d02\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700060377,\n        \"name\": \"weatherboard\",\n        \"full_name\": \"lab/weatherboard\"\n      }\n    },\n    {\n      \"id\": 700060477,\n      \"name\": \"Build\",\n      \"head_branch\": \"main\",\n      \"status\": \"completed\",\n      \"conclusion\": \"failure\",\n      \"created_at\": \"2026-12-15T00:00:00+00:00\",\n      \"run_number\": 1,\n      \"head_sha\": \"8f50e6a6cd14be020b4be8c8683fa41301b9b2bd\",\n      \"html_url\": \"https://ci.example.test/weatherboard/actions/runs/700060477\",\n      \"jobs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060477/jobs\",\n      \"logs_url\": \"https://ci.example.test/weatherboard/actions/runs/700060477/logs\",\n      \"artifacts_url\": \"https://ci.example.test/weatherboard/actions/runs/700060477/artifacts\",\n      \"event\": \"push\",\n      \"display_title\": \"Build release assets\",\n      \"head_commit\": {\n        \"id\": \"8f50e6a6cd14be020b4be8c8683fa41301b9b2bd\",\n        \"message\": \"Update release bundle\"\n      },\n      \"repository\": {\n        \"id\": 700060377,\n        \"name\": \"weatherboard\",\n        \"full_name\": \"lab/weatherboard\"\n      }\n    }\n  ]\n}"
+  }
+]

@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/songbook. The release owner needs a handoff for 14–20 December 2026. Investigate the audio and scores checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700030984,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "e73045120fe9f5fe58470961596060f1b67bf160",
+        "html_url": "https://ci.example.test/songbook/actions/runs/700030984",
+        "jobs_url": "https://ci.example.test/songbook/actions/runs/700030984/jobs",
+        "logs_url": "https://ci.example.test/songbook/actions/runs/700030984/logs",
+        "artifacts_url": "https://ci.example.test/songbook/actions/runs/700030984/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "e73045120fe9f5fe58470961596060f1b67bf160",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700030884,
+          "name": "songbook",
+          "full_name": "lab/songbook"
+        }
+      },
+      {
+        "id": 700030994,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "7743c68f0f02190bb3b8f36c42034627bb71e263",
+        "html_url": "https://ci.example.test/songbook/actions/runs/700030994",
+        "jobs_url": "https://ci.example.test/songbook/actions/runs/700030994/jobs",
+        "logs_url": "https://ci.example.test/songbook/actions/runs/700030994/logs",
+        "artifacts_url": "https://ci.example.test/songbook/actions/runs/700030994/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "7743c68f0f02190bb3b8f36c42034627bb71e263",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700030884,
+          "name": "songbook",
+          "full_name": "lab/songbook"
+        }
+      },
+      {
+        "id": 700030995,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-18T00:00:00+00:00",
+        "run_number": 12,
+        "head_sha": "805c20d223a5a10b82ca7524a297a10a12c99f06",
+        "html_url": "https://ci.example.test/songbook/actions/runs/700030995",
+        "jobs_url": "https://ci.example.test/songbook/actions/runs/700030995/jobs",
+        "logs_url": "https://ci.example.test/songbook/actions/runs/700030995/logs",
+        "artifacts_url": "https://ci.example.test/songbook/actions/runs/700030995/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "805c20d223a5a10b82ca7524a297a10a12c99f06",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700030884,
+          "name": "songbook",
+          "full_name": "lab/songbook"
+        }
+      }
+    ],
+    "jobs": {
+      "700030984": [
+        {
+          "id": 700032984,
+          "run_id": 700030984,
+          "name": "audio",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Mix tracks",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700030994": [
+        {
+          "id": 700032994,
+          "run_id": 700030994,
+          "name": "scores",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Render score",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700030995": [
+        {
+          "id": 700032995,
+          "run_id": 700030995,
+          "name": "scores",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Render score",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700032984": "Checkout complete\nStarting Mix tracks\nSample rate 44100 differs from session\nJob ended.",
+      "700032994": "Checkout complete\nStarting Render score\nClef glyph unavailable\nJob ended.",
+      "700032995": "Checkout complete\nStarting Render score\nClef glyph unavailable\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10120,
+        "title": "Sample rate 44100 differs from session",
+        "body": "Resample imported tracks",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10121,
+        "title": "Clef glyph unavailable",
+        "body": "Install score glyphs",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10141,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10133,
+        "title": "Install score glyphs",
+        "body": "Resolves #10121",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Sample rate 44100 differs from session",
+        "workflow": "Build",
+        "runs": [
+          700030984
+        ],
+        "job": "audio",
+        "step": "Mix tracks",
+        "error": "Sample rate 44100 differs from session",
+        "related_issues": [
+          10120
+        ],
+        "related_pull_requests": [],
+        "next_action": "Resample imported tracks"
+      },
+      {
+        "summary": "Clef glyph unavailable",
+        "workflow": "Build",
+        "runs": [
+          700030994,
+          700030995
+        ],
+        "job": "scores",
+        "step": "Render score",
+        "error": "Clef glyph unavailable",
+        "related_issues": [
+          10121
+        ],
+        "related_pull_requests": [
+          10133
+        ],
+        "next_action": "Install score glyphs"
+      }
+    ],
+    "summary": "Review the scores fix and prepare a change for audio."
+  }
+}

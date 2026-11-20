@@ -1,0 +1,565 @@
+{
+  "prompt": "Coda assistenza «Riattivazione». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.9a5f154c@example.test: Qual è la quota una tantum dovuta alla riattivazione rispetto al canone?\nT2 — teo.1e65762d@example.test: Qual è la quota una tantum dovuta alla riattivazione rispetto al canone?\nT3 — mia.5cf94a55@example.test: Qual è la quota una tantum dovuta alla riattivazione rispetto al canone?\nT4 — leo.07ab4c2b@example.test: Qual è la quota una tantum dovuta alla riattivazione rispetto al canone?\nT5 — eva.7a95526a@example.test: Qual è la quota una tantum dovuta alla riattivazione rispetto al canone?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_4fdda11cbd5988",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.9a5f154c@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_b486e0c4cbb06d",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.1e65762d@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_a85b8b39d93ea3",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.5cf94a55@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_b4d158f530934c",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.07ab4c2b@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_7aa6f37c851bd9",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.7a95526a@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_54308c3bb55cf3",
+        "object": "charge",
+        "customer": "cus_4fdda11cbd5988",
+        "invoice": "in_8d74e0ff60e463",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4900,
+        "amount_captured": 4900,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_4519e904b4961a",
+        "object": "charge",
+        "customer": "cus_4fdda11cbd5988",
+        "invoice": "in_d09f522cb64469",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 5200,
+        "amount_captured": 5200,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_44160f3dee644d",
+        "object": "charge",
+        "customer": "cus_b486e0c4cbb06d",
+        "invoice": "in_5bb42f3ec0ca79",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3300,
+        "amount_captured": 3300,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_24f659085bba54",
+        "object": "charge",
+        "customer": "cus_b486e0c4cbb06d",
+        "invoice": "in_154046a423072b",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 1950,
+        "amount_captured": 1950,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_f5a168b4d14412",
+        "object": "charge",
+        "customer": "cus_a85b8b39d93ea3",
+        "invoice": "in_6287e35ec89b15",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 4100,
+        "amount_captured": 4100,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_a6c04f50115730",
+        "object": "charge",
+        "customer": "cus_b4d158f530934c",
+        "invoice": "in_5dc28fe91bb3ca",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3400,
+        "amount_captured": 3400,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_fd1d7d39ffb0be",
+        "object": "charge",
+        "customer": "cus_b4d158f530934c",
+        "invoice": "in_04c1e0a0274e8c",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 1050,
+        "amount_captured": 1050,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_104f9f514a7b39",
+        "object": "charge",
+        "customer": "cus_7aa6f37c851bd9",
+        "invoice": "in_12ebfdb8274440",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9600,
+        "amount_captured": 9600,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_869bcdb307c750",
+        "object": "charge",
+        "customer": "cus_7aa6f37c851bd9",
+        "invoice": "in_6b164b2ec4d1b1",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 10000,
+        "amount_captured": 10000,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_8d74e0ff60e463",
+        "object": "invoice",
+        "customer": "cus_4fdda11cbd5988",
+        "customer_email": "ada.9a5f154c@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4900,
+        "total": 4900,
+        "amount_due": 4900,
+        "amount_paid": 4900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_d798419f001ae7",
+              "description": "Canone",
+              "amount": 4900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_d09f522cb64469",
+        "object": "invoice",
+        "customer": "cus_4fdda11cbd5988",
+        "customer_email": "ada.9a5f154c@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 5200,
+        "total": 5200,
+        "amount_due": 5200,
+        "amount_paid": 5200,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_a9708b77c10049",
+              "description": "Canone",
+              "amount": 4900,
+              "quantity": 1
+            },
+            {
+              "id": "il_b3ba4e58fd8380",
+              "description": "Quota di riattivazione",
+              "amount": 300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_5bb42f3ec0ca79",
+        "object": "invoice",
+        "customer": "cus_b486e0c4cbb06d",
+        "customer_email": "teo.1e65762d@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3300,
+        "total": 3300,
+        "amount_due": 3300,
+        "amount_paid": 3300,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_d9e58fa7be3f2e",
+              "description": "Canone",
+              "amount": 3300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_154046a423072b",
+        "object": "invoice",
+        "customer": "cus_b486e0c4cbb06d",
+        "customer_email": "teo.1e65762d@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 3900,
+        "total": 3900,
+        "amount_due": 3900,
+        "amount_paid": 1950,
+        "amount_remaining": 1950,
+        "lines": {
+          "data": [
+            {
+              "id": "il_f9786846b04660",
+              "description": "Canone",
+              "amount": 3300,
+              "quantity": 1
+            },
+            {
+              "id": "il_a72d01a23f0807",
+              "description": "Quota di riattivazione",
+              "amount": 600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_6287e35ec89b15",
+        "object": "invoice",
+        "customer": "cus_a85b8b39d93ea3",
+        "customer_email": "mia.5cf94a55@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 4100,
+        "total": 4100,
+        "amount_due": 4100,
+        "amount_paid": 4100,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_fe2b7dbb8c5ac0",
+              "description": "Canone",
+              "amount": 4100,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_450427691c362b",
+        "object": "invoice",
+        "customer": "cus_a85b8b39d93ea3",
+        "customer_email": "mia.5cf94a55@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 4400,
+        "total": 4400,
+        "amount_due": 4400,
+        "amount_paid": 0,
+        "amount_remaining": 4400,
+        "lines": {
+          "data": [
+            {
+              "id": "il_0b6b1ad18847f1",
+              "description": "Canone",
+              "amount": 4100,
+              "quantity": 1
+            },
+            {
+              "id": "il_bf0de30acaffc4",
+              "description": "Quota di riattivazione",
+              "amount": 300,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_5dc28fe91bb3ca",
+        "object": "invoice",
+        "customer": "cus_b4d158f530934c",
+        "customer_email": "leo.07ab4c2b@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 3400,
+        "total": 3400,
+        "amount_due": 3400,
+        "amount_paid": 3400,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_7ce8027f3a4a3d",
+              "description": "Canone",
+              "amount": 3400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_04c1e0a0274e8c",
+        "object": "invoice",
+        "customer": "cus_b4d158f530934c",
+        "customer_email": "leo.07ab4c2b@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 4200,
+        "total": 4200,
+        "amount_due": 4200,
+        "amount_paid": 1050,
+        "amount_remaining": 3150,
+        "lines": {
+          "data": [
+            {
+              "id": "il_5740b4067f2652",
+              "description": "Canone",
+              "amount": 3400,
+              "quantity": 1
+            },
+            {
+              "id": "il_aad59b7c81df47",
+              "description": "Quota di riattivazione",
+              "amount": 800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_12ebfdb8274440",
+        "object": "invoice",
+        "customer": "cus_7aa6f37c851bd9",
+        "customer_email": "eva.7a95526a@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9600,
+        "total": 9600,
+        "amount_due": 9600,
+        "amount_paid": 9600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_c10c2176cf9d54",
+              "description": "Canone",
+              "amount": 9600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_6b164b2ec4d1b1",
+        "object": "invoice",
+        "customer": "cus_7aa6f37c851bd9",
+        "customer_email": "eva.7a95526a@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 10000,
+        "total": 10000,
+        "amount_due": 10000,
+        "amount_paid": 10000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_fb0502dfa3bfed",
+              "description": "Canone",
+              "amount": 9600,
+              "quantity": 1
+            },
+            {
+              "id": "il_971487b64b73e0",
+              "description": "Quota di riattivazione",
+              "amount": 400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Riattivazione"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_4fdda11cbd5988",
+        "diagnosi": "Quota di riattivazione: +3.00 EUR. Canone 49,00 EUR, totale 52,00 EUR, pagato 52,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_8d74e0ff60e463",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_d09f522cb64469",
+            "fatto": "Quota di riattivazione: +3.00 EUR. Canone 49,00 EUR, totale 52,00 EUR, pagato 52,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Quota di riattivazione: +3.00 EUR. Canone 49,00 EUR, totale 52,00 EUR, pagato 52,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_b486e0c4cbb06d",
+        "diagnosi": "Quota di riattivazione: +6.00 EUR. Canone 33,00 EUR, totale 39,00 EUR, pagato 19,50 EUR, residuo 19,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_5bb42f3ec0ca79",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_154046a423072b",
+            "fatto": "Quota di riattivazione: +6.00 EUR. Canone 33,00 EUR, totale 39,00 EUR, pagato 19,50 EUR, residuo 19,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Quota di riattivazione: +6.00 EUR. Canone 33,00 EUR, totale 39,00 EUR, pagato 19,50 EUR, residuo 19,50 EUR. Versare solo il residuo di 19,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 19,50 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_a85b8b39d93ea3",
+        "diagnosi": "Quota di riattivazione: +3.00 EUR. Canone 41,00 EUR, totale 44,00 EUR, pagato 0,00 EUR, residuo 44,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_6287e35ec89b15",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_450427691c362b",
+            "fatto": "Quota di riattivazione: +3.00 EUR. Canone 41,00 EUR, totale 44,00 EUR, pagato 0,00 EUR, residuo 44,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Quota di riattivazione: +3.00 EUR. Canone 41,00 EUR, totale 44,00 EUR, pagato 0,00 EUR, residuo 44,00 EUR. Versare solo il residuo di 44,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 44,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_b4d158f530934c",
+        "diagnosi": "Quota di riattivazione: +8.00 EUR. Canone 34,00 EUR, totale 42,00 EUR, pagato 10,50 EUR, residuo 31,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_5dc28fe91bb3ca",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_04c1e0a0274e8c",
+            "fatto": "Quota di riattivazione: +8.00 EUR. Canone 34,00 EUR, totale 42,00 EUR, pagato 10,50 EUR, residuo 31,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Quota di riattivazione: +8.00 EUR. Canone 34,00 EUR, totale 42,00 EUR, pagato 10,50 EUR, residuo 31,50 EUR. Versare solo il residuo di 31,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 31,50 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_7aa6f37c851bd9",
+        "diagnosi": "Quota di riattivazione: +4.00 EUR. Canone 96,00 EUR, totale 100,00 EUR, pagato 100,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_12ebfdb8274440",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_6b164b2ec4d1b1",
+            "fatto": "Quota di riattivazione: +4.00 EUR. Canone 96,00 EUR, totale 100,00 EUR, pagato 100,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Quota di riattivazione: +4.00 EUR. Canone 96,00 EUR, totale 100,00 EUR, pagato 100,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,570 @@
+{
+  "prompt": "Coda assistenza «Cambio posti». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.1dd12ec5@example.test: Quanto incide sulla mia ultima fattura la variazione dei posti a metà periodo, e per quanti posti?\nT2 — teo.98a62ead@example.test: Quanto incide sulla mia ultima fattura la variazione dei posti a metà periodo, e per quanti posti?\nT3 — mia.84c07b00@example.test: Quanto incide sulla mia ultima fattura la variazione dei posti a metà periodo, e per quanti posti?\nT4 — leo.ede4bb37@example.test: Quanto incide sulla mia ultima fattura la variazione dei posti a metà periodo, e per quanti posti?\nT5 — eva.a6f5fa17@example.test: Quanto incide sulla mia ultima fattura la variazione dei posti a metà periodo, e per quanti posti?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_3b909a51dba934",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.1dd12ec5@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_e0557423bdf409",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.98a62ead@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_a40133f1d9391b",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.84c07b00@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_dd87bbe038f7bf",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.ede4bb37@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_fb6af5e4b05403",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.a6f5fa17@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_58fb1ee03396c3",
+        "object": "charge",
+        "customer": "cus_3b909a51dba934",
+        "invoice": "in_2fc5d037d108e4",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8800,
+        "amount_captured": 8800,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_d97dcd8d158715",
+        "object": "charge",
+        "customer": "cus_3b909a51dba934",
+        "invoice": "in_ca1fc3945e92e1",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9500,
+        "amount_captured": 9500,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_d19dfc69ae389e",
+        "object": "charge",
+        "customer": "cus_e0557423bdf409",
+        "invoice": "in_dadbacf44bb5fd",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8000,
+        "amount_captured": 8000,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_089879754cd331",
+        "object": "charge",
+        "customer": "cus_e0557423bdf409",
+        "invoice": "in_f73c8917f80e06",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 3500,
+        "amount_captured": 3500,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_5e440df90abd38",
+        "object": "charge",
+        "customer": "cus_a40133f1d9391b",
+        "invoice": "in_6b4329fe78b0a1",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 10900,
+        "amount_captured": 10900,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_bb38f7aa786dd4",
+        "object": "charge",
+        "customer": "cus_dd87bbe038f7bf",
+        "invoice": "in_35c2ac78be9f7e",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9700,
+        "amount_captured": 9700,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_023a3740f06a47",
+        "object": "charge",
+        "customer": "cus_dd87bbe038f7bf",
+        "invoice": "in_4eaa757642297a",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 2350,
+        "amount_captured": 2350,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_d1c476042cee99",
+        "object": "charge",
+        "customer": "cus_fb6af5e4b05403",
+        "invoice": "in_a241a168135ebf",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7600,
+        "amount_captured": 7600,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_4e13e781d4105f",
+        "object": "charge",
+        "customer": "cus_fb6af5e4b05403",
+        "invoice": "in_0008a0817eff55",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8200,
+        "amount_captured": 8200,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_2fc5d037d108e4",
+        "object": "invoice",
+        "customer": "cus_3b909a51dba934",
+        "customer_email": "ada.1dd12ec5@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8800,
+        "total": 8800,
+        "amount_due": 8800,
+        "amount_paid": 8800,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_aae45871f0a747",
+              "description": "Canone",
+              "amount": 8800,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_ca1fc3945e92e1",
+        "object": "invoice",
+        "customer": "cus_3b909a51dba934",
+        "customer_email": "ada.1dd12ec5@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9500,
+        "total": 9500,
+        "amount_due": 9500,
+        "amount_paid": 9500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_c121ec7bb99d6e",
+              "description": "Canone",
+              "amount": 8800,
+              "quantity": 1
+            },
+            {
+              "id": "il_8e257f24578c07",
+              "description": "Conguaglio posti a metà periodo",
+              "amount": 700,
+              "quantity": 1,
+              "unit_amount": 700
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_dadbacf44bb5fd",
+        "object": "invoice",
+        "customer": "cus_e0557423bdf409",
+        "customer_email": "teo.98a62ead@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8000,
+        "total": 8000,
+        "amount_due": 8000,
+        "amount_paid": 8000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_abf68ff485577a",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_f73c8917f80e06",
+        "object": "invoice",
+        "customer": "cus_e0557423bdf409",
+        "customer_email": "teo.98a62ead@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7000,
+        "total": 7000,
+        "amount_due": 7000,
+        "amount_paid": 3500,
+        "amount_remaining": 3500,
+        "lines": {
+          "data": [
+            {
+              "id": "il_32d71291dc5917",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            },
+            {
+              "id": "il_27e11b12811ba3",
+              "description": "Conguaglio posti a metà periodo",
+              "amount": -1000,
+              "quantity": 2,
+              "unit_amount": -500
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_6b4329fe78b0a1",
+        "object": "invoice",
+        "customer": "cus_a40133f1d9391b",
+        "customer_email": "mia.84c07b00@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 10900,
+        "total": 10900,
+        "amount_due": 10900,
+        "amount_paid": 10900,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_5a65e80f000319",
+              "description": "Canone",
+              "amount": 10900,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_657bbfc4dbdcde",
+        "object": "invoice",
+        "customer": "cus_a40133f1d9391b",
+        "customer_email": "mia.84c07b00@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 12100,
+        "total": 12100,
+        "amount_due": 12100,
+        "amount_paid": 0,
+        "amount_remaining": 12100,
+        "lines": {
+          "data": [
+            {
+              "id": "il_1581907b7a7ae4",
+              "description": "Canone",
+              "amount": 10900,
+              "quantity": 1
+            },
+            {
+              "id": "il_5d48a39038bc77",
+              "description": "Conguaglio posti a metà periodo",
+              "amount": 1200,
+              "quantity": 3,
+              "unit_amount": 400
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_35c2ac78be9f7e",
+        "object": "invoice",
+        "customer": "cus_dd87bbe038f7bf",
+        "customer_email": "leo.ede4bb37@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9700,
+        "total": 9700,
+        "amount_due": 9700,
+        "amount_paid": 9700,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_722ba299f607dd",
+              "description": "Canone",
+              "amount": 9700,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_4eaa757642297a",
+        "object": "invoice",
+        "customer": "cus_dd87bbe038f7bf",
+        "customer_email": "leo.ede4bb37@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 9400,
+        "total": 9400,
+        "amount_due": 9400,
+        "amount_paid": 2350,
+        "amount_remaining": 7050,
+        "lines": {
+          "data": [
+            {
+              "id": "il_9bdb4fe309104a",
+              "description": "Canone",
+              "amount": 9700,
+              "quantity": 1
+            },
+            {
+              "id": "il_dc7b1fa7bc5aa4",
+              "description": "Conguaglio posti a metà periodo",
+              "amount": -300,
+              "quantity": 1,
+              "unit_amount": -300
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_a241a168135ebf",
+        "object": "invoice",
+        "customer": "cus_fb6af5e4b05403",
+        "customer_email": "eva.a6f5fa17@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7600,
+        "total": 7600,
+        "amount_due": 7600,
+        "amount_paid": 7600,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_a9c85244b87ee4",
+              "description": "Canone",
+              "amount": 7600,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_0008a0817eff55",
+        "object": "invoice",
+        "customer": "cus_fb6af5e4b05403",
+        "customer_email": "eva.a6f5fa17@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8200,
+        "total": 8200,
+        "amount_due": 8200,
+        "amount_paid": 8200,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_42630bf97e6c7d",
+              "description": "Canone",
+              "amount": 7600,
+              "quantity": 1
+            },
+            {
+              "id": "il_fb71ed84947ca3",
+              "description": "Conguaglio posti a metà periodo",
+              "amount": 600,
+              "quantity": 2,
+              "unit_amount": 300
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Cambio posti"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_3b909a51dba934",
+        "diagnosi": "Conguaglio posti a metà periodo: +7.00 EUR. Quantità 1, variazione unitaria 7,00 EUR. Canone 88,00 EUR, totale 95,00 EUR, pagato 95,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_2fc5d037d108e4",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_ca1fc3945e92e1",
+            "fatto": "Conguaglio posti a metà periodo: +7.00 EUR. Quantità 1, variazione unitaria 7,00 EUR. Canone 88,00 EUR, totale 95,00 EUR, pagato 95,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Conguaglio posti a metà periodo: +7.00 EUR. Quantità 1, variazione unitaria 7,00 EUR. Canone 88,00 EUR, totale 95,00 EUR, pagato 95,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_e0557423bdf409",
+        "diagnosi": "Conguaglio posti a metà periodo: -10.00 EUR. Quantità 2, variazione unitaria 5,00 EUR. Canone 80,00 EUR, totale 70,00 EUR, pagato 35,00 EUR, residuo 35,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_dadbacf44bb5fd",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_f73c8917f80e06",
+            "fatto": "Conguaglio posti a metà periodo: -10.00 EUR. Quantità 2, variazione unitaria 5,00 EUR. Canone 80,00 EUR, totale 70,00 EUR, pagato 35,00 EUR, residuo 35,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Conguaglio posti a metà periodo: -10.00 EUR. Quantità 2, variazione unitaria 5,00 EUR. Canone 80,00 EUR, totale 70,00 EUR, pagato 35,00 EUR, residuo 35,00 EUR. Versare solo il residuo di 35,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 35,00 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_a40133f1d9391b",
+        "diagnosi": "Conguaglio posti a metà periodo: +12.00 EUR. Quantità 3, variazione unitaria 4,00 EUR. Canone 109,00 EUR, totale 121,00 EUR, pagato 0,00 EUR, residuo 121,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_6b4329fe78b0a1",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_657bbfc4dbdcde",
+            "fatto": "Conguaglio posti a metà periodo: +12.00 EUR. Quantità 3, variazione unitaria 4,00 EUR. Canone 109,00 EUR, totale 121,00 EUR, pagato 0,00 EUR, residuo 121,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Conguaglio posti a metà periodo: +12.00 EUR. Quantità 3, variazione unitaria 4,00 EUR. Canone 109,00 EUR, totale 121,00 EUR, pagato 0,00 EUR, residuo 121,00 EUR. Versare solo il residuo di 121,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 121,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_dd87bbe038f7bf",
+        "diagnosi": "Conguaglio posti a metà periodo: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 97,00 EUR, totale 94,00 EUR, pagato 23,50 EUR, residuo 70,50 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_35c2ac78be9f7e",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_4eaa757642297a",
+            "fatto": "Conguaglio posti a metà periodo: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 97,00 EUR, totale 94,00 EUR, pagato 23,50 EUR, residuo 70,50 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Conguaglio posti a metà periodo: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 97,00 EUR, totale 94,00 EUR, pagato 23,50 EUR, residuo 70,50 EUR. Versare solo il residuo di 70,50 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 70,50 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_fb6af5e4b05403",
+        "diagnosi": "Conguaglio posti a metà periodo: +6.00 EUR. Quantità 2, variazione unitaria 3,00 EUR. Canone 76,00 EUR, totale 82,00 EUR, pagato 82,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_a241a168135ebf",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_0008a0817eff55",
+            "fatto": "Conguaglio posti a metà periodo: +6.00 EUR. Quantità 2, variazione unitaria 3,00 EUR. Canone 76,00 EUR, totale 82,00 EUR, pagato 82,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Conguaglio posti a metà periodo: +6.00 EUR. Quantità 2, variazione unitaria 3,00 EUR. Canone 76,00 EUR, totale 82,00 EUR, pagato 82,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

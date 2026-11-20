@@ -1,0 +1,338 @@
+[
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_002c3cf32da93e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_99238dbac758b5\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_002c3cf32da93e\",\n      \"invoice\": \"in_1e40f561b2e58a\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 3350,\n      \"amount_captured\": 3350,\n      \"created\": 1797296520,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_1711499e404f45\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_002c3cf32da93e\",\n      \"invoice\": \"in_5dcc1f1beb880d\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 7600,\n      \"amount_captured\": 7600,\n      \"created\": 1794877320,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_2fcd902e755bcc"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_c9f49452c2f776\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2fcd902e755bcc\",\n      \"invoice\": \"in_f05535ba8aacbc\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4300,\n      \"amount_captured\": 4300,\n      \"created\": 1797292920,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_8a167fcd4228ab\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_2fcd902e755bcc\",\n      \"invoice\": \"in_58628b6f7a5e13\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4900,\n      \"amount_captured\": 4900,\n      \"created\": 1794873720,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_8bb95e7d0974c5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_188e733e6f77ca\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_8bb95e7d0974c5\",\n      \"invoice\": \"in_2fa47a7c2d8666\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 8000,\n      \"amount_captured\": 8000,\n      \"created\": 1794880920,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_a10ac9e8498687"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_3a46787d92786e\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_a10ac9e8498687\",\n      \"invoice\": \"in_1bf9d1761a14c1\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 875,\n      \"amount_captured\": 875,\n      \"created\": 1797303720,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_8f5f891e4da177\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_a10ac9e8498687\",\n      \"invoice\": \"in_fca6ac73a42a2d\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 4000,\n      \"amount_captured\": 4000,\n      \"created\": 1794884520,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_charges",
+    "arguments": {
+      "customer": "cus_adb9946cc70f5a"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_150851db4f77f6\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_adb9946cc70f5a\",\n      \"invoice\": \"in_70c0a1f1e6b54d\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 5900,\n      \"amount_captured\": 5900,\n      \"created\": 1797307320,\n      \"currency\": \"eur\"\n    },\n    {\n      \"id\": \"ch_63e96f693dea76\",\n      \"object\": \"charge\",\n      \"customer\": \"cus_adb9946cc70f5a\",\n      \"invoice\": \"in_a9543b23602969\",\n      \"paid\": true,\n      \"status\": \"succeeded\",\n      \"amount\": 6300,\n      \"amount_captured\": 6300,\n      \"created\": 1794888120,\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/charges\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_002c3cf32da93e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_1e40f561b2e58a\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_002c3cf32da93e\",\n      \"customer_email\": \"teo.8fe17f28@example.test\",\n      \"created\": 1797296400,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 6700,\n      \"total\": 6700,\n      \"amount_due\": 6700,\n      \"amount_paid\": 3350,\n      \"amount_remaining\": 3350,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_70a29591fadc7a\",\n            \"description\": \"Canone\",\n            \"amount\": 7600,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_312e8b851eba1f\",\n            \"description\": \"Utilizzo credito prepagato\",\n            \"amount\": -900,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\",\n        \"opening_credit\": 1500,\n        \"closing_credit\": 600\n      },\n      \"due_date\": 1798246800\n    },\n    {\n      \"id\": \"in_5dcc1f1beb880d\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_002c3cf32da93e\",\n      \"customer_email\": \"teo.8fe17f28@example.test\",\n      \"created\": 1794877200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 7600,\n      \"total\": 7600,\n      \"amount_due\": 7600,\n      \"amount_paid\": 7600,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_0cbd769013bd40\",\n            \"description\": \"Canone\",\n            \"amount\": 7600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\"\n      },\n      \"due_date\": 1795827600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_2fcd902e755bcc"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_f05535ba8aacbc\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2fcd902e755bcc\",\n      \"customer_email\": \"ada.950a7a78@example.test\",\n      \"created\": 1797292800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4300,\n      \"total\": 4300,\n      \"amount_due\": 4300,\n      \"amount_paid\": 4300,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_5ee791fca9abe6\",\n            \"description\": \"Canone\",\n            \"amount\": 4900,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_15e8af635ad086\",\n            \"description\": \"Utilizzo credito prepagato\",\n            \"amount\": -600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\",\n        \"opening_credit\": 1400,\n        \"closing_credit\": 800\n      },\n      \"due_date\": 1798156800\n    },\n    {\n      \"id\": \"in_58628b6f7a5e13\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_2fcd902e755bcc\",\n      \"customer_email\": \"ada.950a7a78@example.test\",\n      \"created\": 1794873600,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4900,\n      \"total\": 4900,\n      \"amount_due\": 4900,\n      \"amount_paid\": 4900,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_90980fe065bc6f\",\n            \"description\": \"Canone\",\n            \"amount\": 4900,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\"\n      },\n      \"due_date\": 1795737600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_8bb95e7d0974c5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_2df47ff62b9435\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_8bb95e7d0974c5\",\n      \"customer_email\": \"mia.386c9604@example.test\",\n      \"created\": 1797300000,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 7400,\n      \"total\": 7400,\n      \"amount_due\": 7400,\n      \"amount_paid\": 0,\n      \"amount_remaining\": 7400,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_debfa23e7083f9\",\n            \"description\": \"Canone\",\n            \"amount\": 8000,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_82362deb8956b1\",\n            \"description\": \"Utilizzo credito prepagato\",\n            \"amount\": -600,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\",\n        \"opening_credit\": 800,\n        \"closing_credit\": 200\n      },\n      \"due_date\": 1798336800\n    },\n    {\n      \"id\": \"in_2fa47a7c2d8666\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_8bb95e7d0974c5\",\n      \"customer_email\": \"mia.386c9604@example.test\",\n      \"created\": 1794880800,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 8000,\n      \"total\": 8000,\n      \"amount_due\": 8000,\n      \"amount_paid\": 8000,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_647906340413fe\",\n            \"description\": \"Canone\",\n            \"amount\": 8000,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\"\n      },\n      \"due_date\": 1795917600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_a10ac9e8498687"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_1bf9d1761a14c1\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_a10ac9e8498687\",\n      \"customer_email\": \"leo.032501dc@example.test\",\n      \"created\": 1797303600,\n      \"currency\": \"eur\",\n      \"status\": \"open\",\n      \"subtotal\": 3500,\n      \"total\": 3500,\n      \"amount_due\": 3500,\n      \"amount_paid\": 875,\n      \"amount_remaining\": 2625,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_45c6f859a081fc\",\n            \"description\": \"Canone\",\n            \"amount\": 4000,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_a26559d1437356\",\n            \"description\": \"Utilizzo credito prepagato\",\n            \"amount\": -500,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\",\n        \"opening_credit\": 900,\n        \"closing_credit\": 400\n      },\n      \"due_date\": 1798426800\n    },\n    {\n      \"id\": \"in_fca6ac73a42a2d\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_a10ac9e8498687\",\n      \"customer_email\": \"leo.032501dc@example.test\",\n      \"created\": 1794884400,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 4000,\n      \"total\": 4000,\n      \"amount_due\": 4000,\n      \"amount_paid\": 4000,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_4274ff1cd8b90e\",\n            \"description\": \"Canone\",\n            \"amount\": 4000,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\"\n      },\n      \"due_date\": 1796007600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_invoices",
+    "arguments": {
+      "customer": "cus_adb9946cc70f5a"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"in_70c0a1f1e6b54d\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_adb9946cc70f5a\",\n      \"customer_email\": \"eva.e4b81777@example.test\",\n      \"created\": 1797307200,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 5900,\n      \"total\": 5900,\n      \"amount_due\": 5900,\n      \"amount_paid\": 5900,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_fb96f0a7134e4e\",\n            \"description\": \"Canone\",\n            \"amount\": 6300,\n            \"quantity\": 1\n          },\n          {\n            \"id\": \"il_bb3edaa6aa1e93\",\n            \"description\": \"Utilizzo credito prepagato\",\n            \"amount\": -400,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\",\n        \"opening_credit\": 1300,\n        \"closing_credit\": 900\n      },\n      \"due_date\": 1798516800\n    },\n    {\n      \"id\": \"in_a9543b23602969\",\n      \"object\": \"invoice\",\n      \"customer\": \"cus_adb9946cc70f5a\",\n      \"customer_email\": \"eva.e4b81777@example.test\",\n      \"created\": 1794888000,\n      \"currency\": \"eur\",\n      \"status\": \"paid\",\n      \"subtotal\": 6300,\n      \"total\": 6300,\n      \"amount_due\": 6300,\n      \"amount_paid\": 6300,\n      \"amount_remaining\": 0,\n      \"lines\": {\n        \"data\": [\n          {\n            \"id\": \"il_ad2b29b2abfc75\",\n            \"description\": \"Canone\",\n            \"amount\": 6300,\n            \"quantity\": 1\n          }\n        ]\n      },\n      \"metadata\": {\n        \"batch\": \"Credito prepagato\"\n      },\n      \"due_date\": 1796097600\n    }\n  ],\n  \"has_more\": false,\n  \"url\": \"/v1/invoices\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_150851db4f77f6"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_1711499e404f45"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_188e733e6f77ca"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_3a46787d92786e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_63e96f693dea76"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_8a167fcd4228ab"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_8f5f891e4da177"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_99238dbac758b5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_refunds",
+    "arguments": {
+      "charge": "ch_c9f49452c2f776"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/refunds\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_002c3cf32da93e"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_2fcd902e755bcc"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_8bb95e7d0974c5"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_a10ac9e8498687"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_list_subscriptions",
+    "arguments": {
+      "customer": "cus_adb9946cc70f5a"
+    },
+    "output": "{\n  \"object\": \"list\",\n  \"data\": [],\n  \"has_more\": false,\n  \"url\": \"/v1/subscriptions\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_150851db4f77f6"
+    },
+    "output": "{\n  \"id\": \"ch_150851db4f77f6\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_adb9946cc70f5a\",\n  \"invoice\": \"in_70c0a1f1e6b54d\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 5900,\n  \"amount_captured\": 5900,\n  \"created\": 1797307320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_1711499e404f45"
+    },
+    "output": "{\n  \"id\": \"ch_1711499e404f45\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_002c3cf32da93e\",\n  \"invoice\": \"in_5dcc1f1beb880d\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 7600,\n  \"amount_captured\": 7600,\n  \"created\": 1794877320,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_188e733e6f77ca"
+    },
+    "output": "{\n  \"id\": \"ch_188e733e6f77ca\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_8bb95e7d0974c5\",\n  \"invoice\": \"in_2fa47a7c2d8666\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 8000,\n  \"amount_captured\": 8000,\n  \"created\": 1794880920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_3a46787d92786e"
+    },
+    "output": "{\n  \"id\": \"ch_3a46787d92786e\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_a10ac9e8498687\",\n  \"invoice\": \"in_1bf9d1761a14c1\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 875,\n  \"amount_captured\": 875,\n  \"created\": 1797303720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_63e96f693dea76"
+    },
+    "output": "{\n  \"id\": \"ch_63e96f693dea76\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_adb9946cc70f5a\",\n  \"invoice\": \"in_a9543b23602969\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 6300,\n  \"amount_captured\": 6300,\n  \"created\": 1794888120,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_8a167fcd4228ab"
+    },
+    "output": "{\n  \"id\": \"ch_8a167fcd4228ab\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2fcd902e755bcc\",\n  \"invoice\": \"in_58628b6f7a5e13\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4900,\n  \"amount_captured\": 4900,\n  \"created\": 1794873720,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_8f5f891e4da177"
+    },
+    "output": "{\n  \"id\": \"ch_8f5f891e4da177\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_a10ac9e8498687\",\n  \"invoice\": \"in_fca6ac73a42a2d\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4000,\n  \"amount_captured\": 4000,\n  \"created\": 1794884520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_99238dbac758b5"
+    },
+    "output": "{\n  \"id\": \"ch_99238dbac758b5\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_002c3cf32da93e\",\n  \"invoice\": \"in_1e40f561b2e58a\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 3350,\n  \"amount_captured\": 3350,\n  \"created\": 1797296520,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_charge",
+    "arguments": {
+      "charge": "ch_c9f49452c2f776"
+    },
+    "output": "{\n  \"id\": \"ch_c9f49452c2f776\",\n  \"object\": \"charge\",\n  \"customer\": \"cus_2fcd902e755bcc\",\n  \"invoice\": \"in_f05535ba8aacbc\",\n  \"paid\": true,\n  \"status\": \"succeeded\",\n  \"amount\": 4300,\n  \"amount_captured\": 4300,\n  \"created\": 1797292920,\n  \"currency\": \"eur\"\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_1bf9d1761a14c1"
+    },
+    "output": "{\n  \"id\": \"in_1bf9d1761a14c1\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_a10ac9e8498687\",\n  \"customer_email\": \"leo.032501dc@example.test\",\n  \"created\": 1797303600,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 3500,\n  \"total\": 3500,\n  \"amount_due\": 3500,\n  \"amount_paid\": 875,\n  \"amount_remaining\": 2625,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_45c6f859a081fc\",\n        \"description\": \"Canone\",\n        \"amount\": 4000,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_a26559d1437356\",\n        \"description\": \"Utilizzo credito prepagato\",\n        \"amount\": -500,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\",\n    \"opening_credit\": 900,\n    \"closing_credit\": 400\n  },\n  \"due_date\": 1798426800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_1e40f561b2e58a"
+    },
+    "output": "{\n  \"id\": \"in_1e40f561b2e58a\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_002c3cf32da93e\",\n  \"customer_email\": \"teo.8fe17f28@example.test\",\n  \"created\": 1797296400,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 6700,\n  \"total\": 6700,\n  \"amount_due\": 6700,\n  \"amount_paid\": 3350,\n  \"amount_remaining\": 3350,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_70a29591fadc7a\",\n        \"description\": \"Canone\",\n        \"amount\": 7600,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_312e8b851eba1f\",\n        \"description\": \"Utilizzo credito prepagato\",\n        \"amount\": -900,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\",\n    \"opening_credit\": 1500,\n    \"closing_credit\": 600\n  },\n  \"due_date\": 1798246800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_2df47ff62b9435"
+    },
+    "output": "{\n  \"id\": \"in_2df47ff62b9435\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_8bb95e7d0974c5\",\n  \"customer_email\": \"mia.386c9604@example.test\",\n  \"created\": 1797300000,\n  \"currency\": \"eur\",\n  \"status\": \"open\",\n  \"subtotal\": 7400,\n  \"total\": 7400,\n  \"amount_due\": 7400,\n  \"amount_paid\": 0,\n  \"amount_remaining\": 7400,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_debfa23e7083f9\",\n        \"description\": \"Canone\",\n        \"amount\": 8000,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_82362deb8956b1\",\n        \"description\": \"Utilizzo credito prepagato\",\n        \"amount\": -600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\",\n    \"opening_credit\": 800,\n    \"closing_credit\": 200\n  },\n  \"due_date\": 1798336800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_2fa47a7c2d8666"
+    },
+    "output": "{\n  \"id\": \"in_2fa47a7c2d8666\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_8bb95e7d0974c5\",\n  \"customer_email\": \"mia.386c9604@example.test\",\n  \"created\": 1794880800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 8000,\n  \"total\": 8000,\n  \"amount_due\": 8000,\n  \"amount_paid\": 8000,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_647906340413fe\",\n        \"description\": \"Canone\",\n        \"amount\": 8000,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\"\n  },\n  \"due_date\": 1795917600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_58628b6f7a5e13"
+    },
+    "output": "{\n  \"id\": \"in_58628b6f7a5e13\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2fcd902e755bcc\",\n  \"customer_email\": \"ada.950a7a78@example.test\",\n  \"created\": 1794873600,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4900,\n  \"total\": 4900,\n  \"amount_due\": 4900,\n  \"amount_paid\": 4900,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_90980fe065bc6f\",\n        \"description\": \"Canone\",\n        \"amount\": 4900,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\"\n  },\n  \"due_date\": 1795737600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_5dcc1f1beb880d"
+    },
+    "output": "{\n  \"id\": \"in_5dcc1f1beb880d\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_002c3cf32da93e\",\n  \"customer_email\": \"teo.8fe17f28@example.test\",\n  \"created\": 1794877200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 7600,\n  \"total\": 7600,\n  \"amount_due\": 7600,\n  \"amount_paid\": 7600,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_0cbd769013bd40\",\n        \"description\": \"Canone\",\n        \"amount\": 7600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\"\n  },\n  \"due_date\": 1795827600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_70c0a1f1e6b54d"
+    },
+    "output": "{\n  \"id\": \"in_70c0a1f1e6b54d\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_adb9946cc70f5a\",\n  \"customer_email\": \"eva.e4b81777@example.test\",\n  \"created\": 1797307200,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 5900,\n  \"total\": 5900,\n  \"amount_due\": 5900,\n  \"amount_paid\": 5900,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_fb96f0a7134e4e\",\n        \"description\": \"Canone\",\n        \"amount\": 6300,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_bb3edaa6aa1e93\",\n        \"description\": \"Utilizzo credito prepagato\",\n        \"amount\": -400,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\",\n    \"opening_credit\": 1300,\n    \"closing_credit\": 900\n  },\n  \"due_date\": 1798516800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_a9543b23602969"
+    },
+    "output": "{\n  \"id\": \"in_a9543b23602969\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_adb9946cc70f5a\",\n  \"customer_email\": \"eva.e4b81777@example.test\",\n  \"created\": 1794888000,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 6300,\n  \"total\": 6300,\n  \"amount_due\": 6300,\n  \"amount_paid\": 6300,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_ad2b29b2abfc75\",\n        \"description\": \"Canone\",\n        \"amount\": 6300,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\"\n  },\n  \"due_date\": 1796097600\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_f05535ba8aacbc"
+    },
+    "output": "{\n  \"id\": \"in_f05535ba8aacbc\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_2fcd902e755bcc\",\n  \"customer_email\": \"ada.950a7a78@example.test\",\n  \"created\": 1797292800,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4300,\n  \"total\": 4300,\n  \"amount_due\": 4300,\n  \"amount_paid\": 4300,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_5ee791fca9abe6\",\n        \"description\": \"Canone\",\n        \"amount\": 4900,\n        \"quantity\": 1\n      },\n      {\n        \"id\": \"il_15e8af635ad086\",\n        \"description\": \"Utilizzo credito prepagato\",\n        \"amount\": -600,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\",\n    \"opening_credit\": 1400,\n    \"closing_credit\": 800\n  },\n  \"due_date\": 1798156800\n}"
+  },
+  {
+    "tool": "stripe_retrieve_invoice",
+    "arguments": {
+      "invoice": "in_fca6ac73a42a2d"
+    },
+    "output": "{\n  \"id\": \"in_fca6ac73a42a2d\",\n  \"object\": \"invoice\",\n  \"customer\": \"cus_a10ac9e8498687\",\n  \"customer_email\": \"leo.032501dc@example.test\",\n  \"created\": 1794884400,\n  \"currency\": \"eur\",\n  \"status\": \"paid\",\n  \"subtotal\": 4000,\n  \"total\": 4000,\n  \"amount_due\": 4000,\n  \"amount_paid\": 4000,\n  \"amount_remaining\": 0,\n  \"lines\": {\n    \"data\": [\n      {\n        \"id\": \"il_4274ff1cd8b90e\",\n        \"description\": \"Canone\",\n        \"amount\": 4000,\n        \"quantity\": 1\n      }\n    ]\n  },\n  \"metadata\": {\n    \"batch\": \"Credito prepagato\"\n  },\n  \"due_date\": 1796007600\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "ada.950a7a78@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_2fcd902e755bcc\",\n      \"object\": \"customer\",\n      \"name\": \"Ada\",\n      \"email\": \"ada.950a7a78@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "eva.e4b81777@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_adb9946cc70f5a\",\n      \"object\": \"customer\",\n      \"name\": \"Eva\",\n      \"email\": \"eva.e4b81777@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "leo.032501dc@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_a10ac9e8498687\",\n      \"object\": \"customer\",\n      \"name\": \"Leo\",\n      \"email\": \"leo.032501dc@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "mia.386c9604@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_8bb95e7d0974c5\",\n      \"object\": \"customer\",\n      \"name\": \"Mia\",\n      \"email\": \"mia.386c9604@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  },
+  {
+    "tool": "stripe_search_customers",
+    "arguments": {
+      "email": "teo.8fe17f28@example.test"
+    },
+    "output": "{\n  \"object\": \"search_result\",\n  \"data\": [\n    {\n      \"id\": \"cus_002c3cf32da93e\",\n      \"object\": \"customer\",\n      \"name\": \"Teo\",\n      \"email\": \"teo.8fe17f28@example.test\",\n      \"currency\": \"eur\"\n    }\n  ],\n  \"has_more\": false,\n  \"next_page\": null,\n  \"url\": \"/v1/customers/search\"\n}"
+  }
+]

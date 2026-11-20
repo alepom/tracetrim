@@ -1,0 +1,24 @@
+{
+  "format": "tracetrim/config@1",
+  "projection": "report.projection.json",
+  "unescape": true,
+  "compact": true,
+  "tools": {
+    "gh_list_issues": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "gh_list_jobs_for_workflow_run": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "gh_list_pull_requests": {
+      "trim": "prudent",
+      "expand": true
+    },
+    "gh_list_workflow_runs": {
+      "trim": "prudent",
+      "expand": true
+    }
+  }
+}

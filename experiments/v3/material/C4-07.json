@@ -1,0 +1,570 @@
+{
+  "prompt": "Coda assistenza «Licenze restituite». Riconcilia le fatture con i pagamenti per ciascun cliente. Spiega quali documenti confronti e quale azione serve.\nT1 — ada.40c43039@example.test: Quante licenze sono state stornate e qual è il credito per ciascuna?\nT2 — teo.c6013395@example.test: Quante licenze sono state stornate e qual è il credito per ciascuna?\nT3 — mia.d03dca4a@example.test: Quante licenze sono state stornate e qual è il credito per ciascuna?\nT4 — leo.b42f1d18@example.test: Quante licenze sono state stornate e qual è il credito per ciascuna?\nT5 — eva.d8cde52a@example.test: Quante licenze sono state stornate e qual è il credito per ciascuna?",
+  "world": {
+    "customers": [
+      {
+        "id": "cus_25f0a00240a19a",
+        "object": "customer",
+        "name": "Ada",
+        "email": "ada.40c43039@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_75a28521349220",
+        "object": "customer",
+        "name": "Teo",
+        "email": "teo.c6013395@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_eef09aceae483b",
+        "object": "customer",
+        "name": "Mia",
+        "email": "mia.d03dca4a@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_b5424ab2fa1160",
+        "object": "customer",
+        "name": "Leo",
+        "email": "leo.b42f1d18@example.test",
+        "currency": "eur"
+      },
+      {
+        "id": "cus_83ebd509b82a5a",
+        "object": "customer",
+        "name": "Eva",
+        "email": "eva.d8cde52a@example.test",
+        "currency": "eur"
+      }
+    ],
+    "charges": [
+      {
+        "id": "ch_84cfee3c4a929f",
+        "object": "charge",
+        "customer": "cus_25f0a00240a19a",
+        "invoice": "in_332942193838fb",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9500,
+        "amount_captured": 9500,
+        "created": 1794873720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_3cf99ef85b5b66",
+        "object": "charge",
+        "customer": "cus_25f0a00240a19a",
+        "invoice": "in_afda77ab521bef",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9100,
+        "amount_captured": 9100,
+        "created": 1797292920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_2f4730b1c2bfc9",
+        "object": "charge",
+        "customer": "cus_75a28521349220",
+        "invoice": "in_221b817a7d4509",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7400,
+        "amount_captured": 7400,
+        "created": 1794877320,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_853f595a15c359",
+        "object": "charge",
+        "customer": "cus_75a28521349220",
+        "invoice": "in_cf38ed65cda4a3",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 2800,
+        "amount_captured": 2800,
+        "created": 1797296520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_ace67da2e5a6fc",
+        "object": "charge",
+        "customer": "cus_eef09aceae483b",
+        "invoice": "in_c553489b23813e",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 9500,
+        "amount_captured": 9500,
+        "created": 1794880920,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_117afa8713dde8",
+        "object": "charge",
+        "customer": "cus_b5424ab2fa1160",
+        "invoice": "in_5b027fb92ead6b",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8000,
+        "amount_captured": 8000,
+        "created": 1794884520,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_2213e3804dbccf",
+        "object": "charge",
+        "customer": "cus_b5424ab2fa1160",
+        "invoice": "in_81c963533f6e32",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 1925,
+        "amount_captured": 1925,
+        "created": 1797303720,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_163953c0f1e856",
+        "object": "charge",
+        "customer": "cus_83ebd509b82a5a",
+        "invoice": "in_5ea077f9026f78",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 8500,
+        "amount_captured": 8500,
+        "created": 1794888120,
+        "currency": "eur"
+      },
+      {
+        "id": "ch_22cbee4ac916a0",
+        "object": "charge",
+        "customer": "cus_83ebd509b82a5a",
+        "invoice": "in_de861a602be0f7",
+        "paid": true,
+        "status": "succeeded",
+        "amount": 7100,
+        "amount_captured": 7100,
+        "created": 1797307320,
+        "currency": "eur"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "in_332942193838fb",
+        "object": "invoice",
+        "customer": "cus_25f0a00240a19a",
+        "customer_email": "ada.40c43039@example.test",
+        "created": 1794873600,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9500,
+        "total": 9500,
+        "amount_due": 9500,
+        "amount_paid": 9500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_7d4a5309b19642",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1795737600
+      },
+      {
+        "id": "in_afda77ab521bef",
+        "object": "invoice",
+        "customer": "cus_25f0a00240a19a",
+        "customer_email": "ada.40c43039@example.test",
+        "created": 1797292800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9100,
+        "total": 9100,
+        "amount_due": 9100,
+        "amount_paid": 9100,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_5319573bb1d3c5",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            },
+            {
+              "id": "il_b82b30de89b748",
+              "description": "Storno licenze restituite",
+              "amount": -400,
+              "quantity": 1,
+              "unit_amount": -400
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1798156800
+      },
+      {
+        "id": "in_221b817a7d4509",
+        "object": "invoice",
+        "customer": "cus_75a28521349220",
+        "customer_email": "teo.c6013395@example.test",
+        "created": 1794877200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7400,
+        "total": 7400,
+        "amount_due": 7400,
+        "amount_paid": 7400,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_6bed0ff932035b",
+              "description": "Canone",
+              "amount": 7400,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1795827600
+      },
+      {
+        "id": "in_cf38ed65cda4a3",
+        "object": "invoice",
+        "customer": "cus_75a28521349220",
+        "customer_email": "teo.c6013395@example.test",
+        "created": 1797296400,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 5600,
+        "total": 5600,
+        "amount_due": 5600,
+        "amount_paid": 2800,
+        "amount_remaining": 2800,
+        "lines": {
+          "data": [
+            {
+              "id": "il_91779d654c830c",
+              "description": "Canone",
+              "amount": 7400,
+              "quantity": 1
+            },
+            {
+              "id": "il_b28f89a40b3ad2",
+              "description": "Storno licenze restituite",
+              "amount": -1800,
+              "quantity": 2,
+              "unit_amount": -900
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1798246800
+      },
+      {
+        "id": "in_c553489b23813e",
+        "object": "invoice",
+        "customer": "cus_eef09aceae483b",
+        "customer_email": "mia.d03dca4a@example.test",
+        "created": 1794880800,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 9500,
+        "total": 9500,
+        "amount_due": 9500,
+        "amount_paid": 9500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_1e03dc0d422881",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1795917600
+      },
+      {
+        "id": "in_fbbf3c806c5078",
+        "object": "invoice",
+        "customer": "cus_eef09aceae483b",
+        "customer_email": "mia.d03dca4a@example.test",
+        "created": 1797300000,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7400,
+        "total": 7400,
+        "amount_due": 7400,
+        "amount_paid": 0,
+        "amount_remaining": 7400,
+        "lines": {
+          "data": [
+            {
+              "id": "il_be65c8d86d4fb0",
+              "description": "Canone",
+              "amount": 9500,
+              "quantity": 1
+            },
+            {
+              "id": "il_0540c307b5d655",
+              "description": "Storno licenze restituite",
+              "amount": -2100,
+              "quantity": 3,
+              "unit_amount": -700
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1798336800
+      },
+      {
+        "id": "in_5b027fb92ead6b",
+        "object": "invoice",
+        "customer": "cus_b5424ab2fa1160",
+        "customer_email": "leo.b42f1d18@example.test",
+        "created": 1794884400,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8000,
+        "total": 8000,
+        "amount_due": 8000,
+        "amount_paid": 8000,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_c12e732f70d72e",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1796007600
+      },
+      {
+        "id": "in_81c963533f6e32",
+        "object": "invoice",
+        "customer": "cus_b5424ab2fa1160",
+        "customer_email": "leo.b42f1d18@example.test",
+        "created": 1797303600,
+        "currency": "eur",
+        "status": "open",
+        "subtotal": 7700,
+        "total": 7700,
+        "amount_due": 7700,
+        "amount_paid": 1925,
+        "amount_remaining": 5775,
+        "lines": {
+          "data": [
+            {
+              "id": "il_592472d27e3d2e",
+              "description": "Canone",
+              "amount": 8000,
+              "quantity": 1
+            },
+            {
+              "id": "il_b142c3b4a19b6b",
+              "description": "Storno licenze restituite",
+              "amount": -300,
+              "quantity": 1,
+              "unit_amount": -300
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1798426800
+      },
+      {
+        "id": "in_5ea077f9026f78",
+        "object": "invoice",
+        "customer": "cus_83ebd509b82a5a",
+        "customer_email": "eva.d8cde52a@example.test",
+        "created": 1794888000,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 8500,
+        "total": 8500,
+        "amount_due": 8500,
+        "amount_paid": 8500,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_252edebf434f0e",
+              "description": "Canone",
+              "amount": 8500,
+              "quantity": 1
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1796097600
+      },
+      {
+        "id": "in_de861a602be0f7",
+        "object": "invoice",
+        "customer": "cus_83ebd509b82a5a",
+        "customer_email": "eva.d8cde52a@example.test",
+        "created": 1797307200,
+        "currency": "eur",
+        "status": "paid",
+        "subtotal": 7100,
+        "total": 7100,
+        "amount_due": 7100,
+        "amount_paid": 7100,
+        "amount_remaining": 0,
+        "lines": {
+          "data": [
+            {
+              "id": "il_9e3ef8e607c7f0",
+              "description": "Canone",
+              "amount": 8500,
+              "quantity": 1
+            },
+            {
+              "id": "il_8ef7b985c04b29",
+              "description": "Storno licenze restituite",
+              "amount": -1400,
+              "quantity": 2,
+              "unit_amount": -700
+            }
+          ]
+        },
+        "metadata": {
+          "batch": "Licenze restituite"
+        },
+        "due_date": 1798516800
+      }
+    ],
+    "refunds": [],
+    "subscriptions": []
+  },
+  "key": {
+    "ticket": [
+      {
+        "id": "T1",
+        "customer_id": "cus_25f0a00240a19a",
+        "diagnosi": "Storno licenze restituite: -4.00 EUR. Quantità 1, variazione unitaria 4,00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 91,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_332942193838fb",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_afda77ab521bef",
+            "fatto": "Storno licenze restituite: -4.00 EUR. Quantità 1, variazione unitaria 4,00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 91,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Storno licenze restituite: -4.00 EUR. Quantità 1, variazione unitaria 4,00 EUR. Canone 95,00 EUR, totale 91,00 EUR, pagato 91,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      },
+      {
+        "id": "T2",
+        "customer_id": "cus_75a28521349220",
+        "diagnosi": "Storno licenze restituite: -18.00 EUR. Quantità 2, variazione unitaria 9,00 EUR. Canone 74,00 EUR, totale 56,00 EUR, pagato 28,00 EUR, residuo 28,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_221b817a7d4509",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_cf38ed65cda4a3",
+            "fatto": "Storno licenze restituite: -18.00 EUR. Quantità 2, variazione unitaria 9,00 EUR. Canone 74,00 EUR, totale 56,00 EUR, pagato 28,00 EUR, residuo 28,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Storno licenze restituite: -18.00 EUR. Quantità 2, variazione unitaria 9,00 EUR. Canone 74,00 EUR, totale 56,00 EUR, pagato 28,00 EUR, residuo 28,00 EUR. Versare solo il residuo di 28,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 28,00 EUR."
+        ]
+      },
+      {
+        "id": "T3",
+        "customer_id": "cus_eef09aceae483b",
+        "diagnosi": "Storno licenze restituite: -21.00 EUR. Quantità 3, variazione unitaria 7,00 EUR. Canone 95,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_c553489b23813e",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_fbbf3c806c5078",
+            "fatto": "Storno licenze restituite: -21.00 EUR. Quantità 3, variazione unitaria 7,00 EUR. Canone 95,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Storno licenze restituite: -21.00 EUR. Quantità 3, variazione unitaria 7,00 EUR. Canone 95,00 EUR, totale 74,00 EUR, pagato 0,00 EUR, residuo 74,00 EUR. Versare solo il residuo di 74,00 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 74,00 EUR."
+        ]
+      },
+      {
+        "id": "T4",
+        "customer_id": "cus_b5424ab2fa1160",
+        "diagnosi": "Storno licenze restituite: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 80,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_5b027fb92ead6b",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_81c963533f6e32",
+            "fatto": "Storno licenze restituite: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 80,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Storno licenze restituite: -3.00 EUR. Quantità 1, variazione unitaria 3,00 EUR. Canone 80,00 EUR, totale 77,00 EUR, pagato 19,25 EUR, residuo 57,75 EUR. Versare solo il residuo di 57,75 EUR.",
+        "azioni_interne": [
+          "Versare solo il residuo di 57,75 EUR."
+        ]
+      },
+      {
+        "id": "T5",
+        "customer_id": "cus_83ebd509b82a5a",
+        "diagnosi": "Storno licenze restituite: -14.00 EUR. Quantità 2, variazione unitaria 7,00 EUR. Canone 85,00 EUR, totale 71,00 EUR, pagato 71,00 EUR, residuo 0,00 EUR.",
+        "evidenze": [
+          {
+            "oggetto": "in_5ea077f9026f78",
+            "fatto": "Fattura precedente"
+          },
+          {
+            "oggetto": "in_de861a602be0f7",
+            "fatto": "Storno licenze restituite: -14.00 EUR. Quantità 2, variazione unitaria 7,00 EUR. Canone 85,00 EUR, totale 71,00 EUR, pagato 71,00 EUR, residuo 0,00 EUR."
+          }
+        ],
+        "risposta_al_cliente": "Storno licenze restituite: -14.00 EUR. Quantità 2, variazione unitaria 7,00 EUR. Canone 85,00 EUR, totale 71,00 EUR, pagato 71,00 EUR, residuo 0,00 EUR. Nessun altro versamento.",
+        "azioni_interne": [
+          "Nessun altro versamento."
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/typesetter. The release owner needs a handoff for 14–20 December 2026. Investigate the pdf and calendar checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700000006,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "d86d062d59f67c3a18755dd43ab8dc8d5ea785cb",
+        "html_url": "https://ci.example.test/typesetter/actions/runs/700000006",
+        "jobs_url": "https://ci.example.test/typesetter/actions/runs/700000006/jobs",
+        "logs_url": "https://ci.example.test/typesetter/actions/runs/700000006/logs",
+        "artifacts_url": "https://ci.example.test/typesetter/actions/runs/700000006/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "d86d062d59f67c3a18755dd43ab8dc8d5ea785cb",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 699999906,
+          "name": "typesetter",
+          "full_name": "lab/typesetter"
+        }
+      },
+      {
+        "id": 700000007,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "1045e2d33c391c543d8d325368cc88ab2e9b3dd0",
+        "html_url": "https://ci.example.test/typesetter/actions/runs/700000007",
+        "jobs_url": "https://ci.example.test/typesetter/actions/runs/700000007/jobs",
+        "logs_url": "https://ci.example.test/typesetter/actions/runs/700000007/logs",
+        "artifacts_url": "https://ci.example.test/typesetter/actions/runs/700000007/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "1045e2d33c391c543d8d325368cc88ab2e9b3dd0",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 699999906,
+          "name": "typesetter",
+          "full_name": "lab/typesetter"
+        }
+      },
+      {
+        "id": 700000016,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "048d87cdce07405eede23019ad81dd9d2a32c39d",
+        "html_url": "https://ci.example.test/typesetter/actions/runs/700000016",
+        "jobs_url": "https://ci.example.test/typesetter/actions/runs/700000016/jobs",
+        "logs_url": "https://ci.example.test/typesetter/actions/runs/700000016/logs",
+        "artifacts_url": "https://ci.example.test/typesetter/actions/runs/700000016/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "048d87cdce07405eede23019ad81dd9d2a32c39d",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 699999906,
+          "name": "typesetter",
+          "full_name": "lab/typesetter"
+        }
+      }
+    ],
+    "jobs": {
+      "700000006": [
+        {
+          "id": 700002006,
+          "run_id": 700000006,
+          "name": "pdf",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load fonts",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700000007": [
+        {
+          "id": 700002007,
+          "run_id": 700000007,
+          "name": "pdf",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Load fonts",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700000016": [
+        {
+          "id": 700002016,
+          "run_id": 700000016,
+          "name": "calendar",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Render date",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700002006": "Checkout complete\nStarting Load fonts\nFont family Marula missing\nJob ended.",
+      "700002007": "Checkout complete\nStarting Load fonts\nFont family Marula missing\nJob ended.",
+      "700002016": "Checkout complete\nStarting Render date\nExpected lunedi, got Monday\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10000,
+        "title": "Font family Marula missing",
+        "body": "Bundle the Marula font",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10001,
+        "title": "Expected lunedi, got Monday",
+        "body": "Pin the renderer locale",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10021,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10012,
+        "title": "Bundle the Marula font",
+        "body": "Resolves #10000",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Font family Marula missing",
+        "workflow": "Build",
+        "runs": [
+          700000006,
+          700000007
+        ],
+        "job": "pdf",
+        "step": "Load fonts",
+        "error": "Font family Marula missing",
+        "related_issues": [
+          10000
+        ],
+        "related_pull_requests": [
+          10012
+        ],
+        "next_action": "Bundle the Marula font"
+      },
+      {
+        "summary": "Expected lunedi, got Monday",
+        "workflow": "Build",
+        "runs": [
+          700000016
+        ],
+        "job": "calendar",
+        "step": "Render date",
+        "error": "Expected lunedi, got Monday",
+        "related_issues": [
+          10001
+        ],
+        "related_pull_requests": [],
+        "next_action": "Pin the renderer locale"
+      }
+    ],
+    "summary": "Review the pdf fix and prepare a change for calendar."
+  }
+}

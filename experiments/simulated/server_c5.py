@@ -4,13 +4,18 @@ JSON responses are serialised with 2-space indentation; job logs are plain
 text, as `GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs` returns them.
 """
 import json
+import sys
 
 from mcp.server.mcpserver import MCPServer
 
 from experiments.simulated.worlds import REPO, github_world
 
 app = MCPServer("github-repo-sim")
-W = github_world()
+if __name__ == "__main__" and sys.argv[1:2] == ["--v3-task"]:
+    from experiments.v3.tools import load_world
+    W = load_world("C5", sys.argv[2])
+else:
+    W = github_world()
 
 
 def out(obj) -> str:

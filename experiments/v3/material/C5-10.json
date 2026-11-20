@@ -1,0 +1,211 @@
+{
+  "prompt": "Repository: lab/archive. The release owner needs a handoff for 14–20 December 2026. Investigate the scan and export checks on main. Group repeated failures, quote the decisive log lines, and distinguish the fix already under review from work still to open.",
+  "world": {
+    "runs": [
+      {
+        "id": 700090262,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-15T00:00:00+00:00",
+        "run_number": 1,
+        "head_sha": "3677f78e4268184be9fe06ee4d93eee6881f13a1",
+        "html_url": "https://ci.example.test/archive/actions/runs/700090262",
+        "jobs_url": "https://ci.example.test/archive/actions/runs/700090262/jobs",
+        "logs_url": "https://ci.example.test/archive/actions/runs/700090262/logs",
+        "artifacts_url": "https://ci.example.test/archive/actions/runs/700090262/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "3677f78e4268184be9fe06ee4d93eee6881f13a1",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700090162,
+          "name": "archive",
+          "full_name": "lab/archive"
+        }
+      },
+      {
+        "id": 700090263,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-16T00:00:00+00:00",
+        "run_number": 2,
+        "head_sha": "1da6156537eacba238112c8a92c1d58336a7aee3",
+        "html_url": "https://ci.example.test/archive/actions/runs/700090263",
+        "jobs_url": "https://ci.example.test/archive/actions/runs/700090263/jobs",
+        "logs_url": "https://ci.example.test/archive/actions/runs/700090263/logs",
+        "artifacts_url": "https://ci.example.test/archive/actions/runs/700090263/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "1da6156537eacba238112c8a92c1d58336a7aee3",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700090162,
+          "name": "archive",
+          "full_name": "lab/archive"
+        }
+      },
+      {
+        "id": 700090272,
+        "name": "Build",
+        "head_branch": "main",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-12-17T00:00:00+00:00",
+        "run_number": 11,
+        "head_sha": "ee7d652115a09458ed54074a0b6e0dbe9e02aa47",
+        "html_url": "https://ci.example.test/archive/actions/runs/700090272",
+        "jobs_url": "https://ci.example.test/archive/actions/runs/700090272/jobs",
+        "logs_url": "https://ci.example.test/archive/actions/runs/700090272/logs",
+        "artifacts_url": "https://ci.example.test/archive/actions/runs/700090272/artifacts",
+        "event": "push",
+        "display_title": "Build release assets",
+        "head_commit": {
+          "id": "ee7d652115a09458ed54074a0b6e0dbe9e02aa47",
+          "message": "Update release bundle"
+        },
+        "repository": {
+          "id": 700090162,
+          "name": "archive",
+          "full_name": "lab/archive"
+        }
+      }
+    ],
+    "jobs": {
+      "700090262": [
+        {
+          "id": 700092262,
+          "run_id": 700090262,
+          "name": "scan",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate pages",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700090263": [
+        {
+          "id": 700092263,
+          "run_id": 700090263,
+          "name": "scan",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate pages",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ],
+      "700090272": [
+        {
+          "id": 700092272,
+          "run_id": 700090272,
+          "name": "export",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Prepare",
+              "conclusion": "success"
+            },
+            {
+              "name": "Write manifest",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    "logs": {
+      "700092262": "Checkout complete\nStarting Validate pages\nPage sequence skips folio seven\nJob ended.",
+      "700092263": "Checkout complete\nStarting Validate pages\nPage sequence skips folio seven\nJob ended.",
+      "700092272": "Checkout complete\nStarting Write manifest\nManifest lists obsolete cover sheet\nJob ended."
+    },
+    "issues": [
+      {
+        "number": 10360,
+        "title": "Page sequence skips folio seven",
+        "body": "Restore the missing folio",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10361,
+        "title": "Manifest lists obsolete cover sheet",
+        "body": "Remove the obsolete cover entry",
+        "state": "open",
+        "labels": []
+      },
+      {
+        "number": 10381,
+        "title": "Update handbook credits",
+        "state": "open",
+        "labels": []
+      }
+    ],
+    "pulls": [
+      {
+        "number": 10373,
+        "title": "Remove the obsolete cover entry",
+        "body": "Resolves #10361",
+        "state": "open"
+      }
+    ]
+  },
+  "key": {
+    "root_causes": [
+      {
+        "summary": "Page sequence skips folio seven",
+        "workflow": "Build",
+        "runs": [
+          700090262,
+          700090263
+        ],
+        "job": "scan",
+        "step": "Validate pages",
+        "error": "Page sequence skips folio seven",
+        "related_issues": [
+          10360
+        ],
+        "related_pull_requests": [],
+        "next_action": "Restore the missing folio"
+      },
+      {
+        "summary": "Manifest lists obsolete cover sheet",
+        "workflow": "Build",
+        "runs": [
+          700090272
+        ],
+        "job": "export",
+        "step": "Write manifest",
+        "error": "Manifest lists obsolete cover sheet",
+        "related_issues": [
+          10361
+        ],
+        "related_pull_requests": [
+          10373
+        ],
+        "next_action": "Remove the obsolete cover entry"
+      }
+    ],
+    "summary": "Review the export fix and prepare a change for scan."
+  }
+}
