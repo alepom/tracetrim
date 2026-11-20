@@ -182,8 +182,12 @@ def table(data):
     for tool, row in data["tools"].items():
         for field, n in row["missed_fields"].items():
             print(f"  {tool} {field}  {n['a']}/{n['b']}")
+    if data["full_cheaper_calls"]:
+        print("Calls served whole, cheaper than trimmed:")
     for item in data["full_cheaper_calls"]:
-        print(f"  Full cheaper {','.join(item['sides']).upper()}: {item['run']} #{item['call']} {item['tool']}")
+        print(f"  {','.join(item['sides']).upper()}: {item['run']} #{item['call']} {item['tool']}")
+    if data["divergences"]:
+        print("Examples of divergence:")
     for item in data["divergences"]:
         print(f"  {item['run']} #{item['call']} {item['tool']} {item['field']}: hidden only by {item['hidden_by'].upper()}")
     print(f"Observed expand requests: {data['observed_expand']}. {data['limitations']}")

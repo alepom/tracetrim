@@ -4,6 +4,24 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.3.0
+
+A new command. **Nothing changes in what the model receives, in the report or in the configs.** The paper and
+every measure are unchanged. Not archived on Zenodo: the archive of 1.1.0 (DOI 10.5281/zenodo.24263018) stays
+the version to cite.
+
+- **`tracetrim compare TRACES... --a SETTINGS --b SETTINGS [--json]`** evaluates two trimming configurations
+  offline on the same recorded runs, each run with the projection learned from the others (leave-one-out).
+  Settings: `protect_ids`, `learning`, `keep_positions`, `unseen`, `compact`. Per tool and in total it shows the
+  tokens served, `[trimmed]` lines included, the calls where a field the agent reused would be hidden (by
+  name), the calls served whole because cheaper, and examples of divergence. Used fields are judged with the
+  rules of 1.1 for both sides; `expand` requests are counted only as recorded in the files given, since a
+  replay cannot tell whether the model would have asked for a field. JSON output: `tracetrim/compare@1`. On
+  the public billing case, `protect_ids=record` serves 12.4% fewer tokens than `all` (73,942 to 64,764) with
+  the same 9 calls of 84 missing a reused field.
+
+Developed by Astra under the coordination of the main session (`tests/test_compare.py`).
+
 ## 1.2.0
 
 Sessions of the HTTP proxy. **With the default options, what the model receives does not change**; the proxy
