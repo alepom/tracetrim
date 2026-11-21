@@ -1,0 +1,13 @@
+{
+  "_status": "Gemini 3.8 Flash, chosen by the author on 2026-11-21 (ORDINE-12c, rule of step 1). Prices as experiments/prices-e3.json: read on 2026-11-11 on Google Cloud's Agent Platform (Vertex AI) pricing page, cloud.google.com/vertex-ai/generative-ai/pricing, section Gemini 3.8 Flash, Standard pay-as-you-go, global endpoint; introductory prices valid through 2026-12-31 (from 2027-01-01 the page gives 1.50 / 0.15 / 7.50); non-global endpoints cost 10% more; confirmed by the author on 2026-11-12.",
+  "_source": "Google Cloud, Agent Platform pricing, Gemini 3.8 Flash, Standard PayGo, global",
+  "_pro_not_used": "The Pro-tier models listed on 2026-11-21 (google-genai 3.2.0, models.list query_base, location global): gemini-2.5-pro and gemini-3.1-pro-preview. The pricing page is rendered by JavaScript and could not be read automatically, so no Pro price could be documented. gemini-4-argon, -carbon, -hydrogen and -neon are also listed, with no tier, description or documented price.",
+  "model": "gemini-3.8-flash",
+  "location": "global",
+  "verified": true,
+  "input_per_mtok": 0.75,
+  "cached_input_per_mtok": 0.075,
+  "output_per_mtok": 3.75,
+  "output_includes": "response and reasoning (thinking) tokens",
+  "thinking_level": "HIGH"
+}

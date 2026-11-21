@@ -308,7 +308,8 @@ def status(where: Where) -> dict:
 # The files added after the freeze, by ORDINE-12b. The lock's manifest takes every *.py of
 # experiments/v3, so `freeze --verify` would refuse them; the check below asks instead that
 # every frozen file is unchanged and that nothing else was added (deviation in REPORT-12b).
-ADDED = {"experiments/v3/live.py", "experiments/v3/analysis.py", "experiments/v3/judging.py"}
+ADDED = {"experiments/v3/live.py", "experiments/v3/analysis.py", "experiments/v3/judging.py",
+         "experiments/v3/judge_gemini.py"}   # the last one by ORDINE-12c
 
 
 def verify_frozen() -> int:
