@@ -187,12 +187,15 @@ Whichever way it is connected:
 
 **Closing without waiting** (1.4, off by default): relearning takes longer as runs accumulate (about 5 s on
 the billing traces and 14 s on the CI traces at 100 runs), and by default the reply to `tracetrim_done` waits
-for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded (and marked
-pending on disk) and relearns in a thread. Only that reply is earlier: a tool call or an `expand` that arrives
-while the relearning runs waits for it, so the model receives, and the proxy learns from, exactly what it would
-without the option; every file of the work directory ends byte for byte the same. One relearning runs at a time,
-requests that arrive meanwhile fold into one more, shutdown completes the one in progress, and a closing left
-out of the report by a stopped process is relearned at the next start
+for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded, and relearns
+in a thread, never on its event loop. Only that reply is earlier: every request that arrives while the
+relearning runs (a tool call, an `expand`, another closing, a tool listing) waits for it, so the model
+receives, and the proxy learns from, exactly what it would without the option; every file of the work
+directory ends byte for byte the same. One relearning runs at a time, and each report reads one moment of the
+work directory: the runs it lists, with their savings, counters and evidence. Shutdown completes the
+relearning in progress and relearns the open runs it keeps, in a thread as well. A run is marked pending on
+disk in the same write that records it (in every mode, since 1.4), so a run left out of the report by a
+stopped process is relearned at the next start
 ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;

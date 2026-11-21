@@ -119,7 +119,9 @@ class HttpRuns:
                     pass
 
     @asynccontextmanager
-    async def lifespan(self, close):
+    async def lifespan(self, close, flush=None):
+        """`flush(session)`: keeps an open run at shutdown (the proxy's, through its relearning coordinator when
+        there is one); without it, `Learner.flush` on the event loop, as up to 1.3."""
         task = asyncio.create_task(self.sweep(close))
         try:
             yield
@@ -136,8 +138,11 @@ class HttpRuns:
                 failure = None
                 for session in self.sessions.values():
                     try:
-                        with self.engine.learner.use_run(session.run):
-                            self.engine.learner.flush()
+                        if flush is not None:
+                            await flush(session)
+                        else:
+                            with self.engine.learner.use_run(session.run):
+                                self.engine.learner.flush()
                     except Exception as e:
                         failure = failure or e
                 if failure is not None:

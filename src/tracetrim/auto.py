@@ -46,7 +46,7 @@ import json
 import re
 import threading
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from contextvars import ContextVar
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -167,6 +167,9 @@ class Learner:
         self._relearning = threading.Lock()
         # What the last relearning published, read from one consistent snapshot: for the proxy's log.
         self.published: dict | None = None
+        # Counts the writes a relearning reads (traces, state, savings, evidence, tool list): a relearning reads them
+        # outside the lock and keeps what it read only if no write came in between (`_inputs`).
+        self._generation = 0
         self._run = ContextVar("tracetrim_run", default=Run(last_number=self.state["runs"]))
         # The filtered results counted in `trimmed` since the tool's counters last started again:
         # only an expansion of one of them counts against the tool (an older result can still be
@@ -180,7 +183,9 @@ class Learner:
         self.closed_sessions = 0                     # confirmed session count at the last closing
         self.unsupported: list[str] = []             # the last run closed: values of its answer no output contains
 
-        if recovered or self.state.get("report_pending"):
+        # A run on disk that no report covers yet: marked pending in the same write that records the run, or (a
+        # process stopped between the trace and the state) numbered after the runs the state knows.
+        if recovered or self.state.get("report_pending") or self._next_run() - 1 > self.state["runs"]:
             self.relearn()
 
     @property
@@ -213,14 +218,16 @@ class Learner:
 
     # -- observation ------------------------------------------------------
     def call(self, tool: str, arguments: dict, output: str, turn: int | None = None,
-             *, session_key: str | None = None) -> int:
-        """Record a call of the open run; return its position in the run."""
+             *, session_key: str | None = None, at: float | None = None) -> int:
+        """Record a call of the open run; return its position in the run. `at`: when the integration received it
+        (the proxy: the pause after an answer is then the agent's, from the reply to `tracetrim_done`)."""
         with self.lock:
             if not self.events and self.run.answered_at is not None:
                 # The first call after an answer. Within the idle pause it may be
                 # the same task going on (the agent closed too early) or the next
                 # one: the two cannot be told apart, so they are counted, not merged.
-                if self.idle_seconds is not None and time.time() - self.run.answered_at <= self.idle_seconds:
+                now = time.time() if at is None else at
+                if self.idle_seconds is not None and now - self.run.answered_at <= self.idle_seconds:
                     self.state["answered_runs_followed_by_calls"] += 1
                 self.run.answered_at = None
             e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
@@ -274,6 +281,7 @@ class Learner:
             data["runs"] = {}                    # an entry of another shape: start again
             self._add_sizes(data, run)
         store.write_json(self.savings_path, data)
+        self._generation += 1
         self.run.sizes, self.run.expand_sizes = {}, [0, 0]
 
     def _add_sizes(self, data: dict, run: str) -> None:
@@ -289,7 +297,10 @@ class Learner:
         """The tool list as published to the model, for the report's section on
         definitions. Changes nothing the model receives. True when it changed."""
         with self.lock:
-            return definitions.record(self.dir, tools)
+            changed = definitions.record(self.dir, tools)
+            if changed:
+                self._generation += 1
+            return changed
 
     def trimmed(self, tool: str) -> None:
         with self.lock:
@@ -390,10 +401,13 @@ class Learner:
 
     def finish_pending(self) -> bool:
         """Finish any interrupted publication before the next workdir write."""
+        if not self.pending_close:           # read without the lock: the proxy asks on its event loop at every call
+            return False
         with self.lock:
             if not self.pending_close:
                 return False
             store.recover_close(self.dir)
+            self._generation += 1
             self.pending_close = False
             return True
 
@@ -472,6 +486,9 @@ class Learner:
         if complete:
             self.state["complete_runs"] += 1
             self.run.answered_at = time.time()
+        # In the same write that records the run: no report covers it yet. The relearning that does clears it; a
+        # process stopped before then relearns at its next start (1.4: in every mode, not only with isolated sessions).
+        self.state["report_pending"] = True
         self._save()
         if failed is not None:
             raise failed
@@ -486,6 +503,7 @@ class Learner:
         data = evidence.load(self.evidence_path)
         evidence.merge(data, run, found, broad, self._origins)
         evidence.save(self.evidence_path, data)
+        self._generation += 1
         for n in notes:
             # A run counts for the switch-off only if an expand in it really gave a removed field
             # back (not a failed request, not a repeat) on a result that counts against the tool.
@@ -499,11 +517,13 @@ class Learner:
         earlier = log.read_text(encoding="utf-8") if log.exists() else ""
         store.write_atomic(log, earlier + "".join(json.dumps(n, ensure_ascii=False) + "\n" for n in notes))
 
-    def flush(self) -> Path | None:
-        """On shutdown: keep the calls of an unfinished run, for telemetry."""
+    def flush(self, relearn: bool = True) -> Path | None:
+        """On shutdown: keep the calls of an unfinished run, for telemetry. `relearn=False`: the caller relearns
+        (the proxy with `--background-relearn`, through its coordinator); the run is pending on disk until then."""
         path = self.done(None)
         if path is not None:
-            self.relearn()
+            if relearn:
+                self.relearn()
             return path
         with self.lock:
             # Nothing to close, but `expand` requests made since the last closing
@@ -517,17 +537,41 @@ class Learner:
         return None
 
     # -- learning ---------------------------------------------------------
-    def mark_report_pending(self) -> None:
-        """Record on disk, before the closing is confirmed, that the report must include the runs closed so
-        far: a process stopped before the relearning ends relearns at its next start (`report_pending`)."""
-        with self.lock:
-            self.state["report_pending"] = True
-            self._save()
-
     def relearn(self) -> Policy | None:
         """Regenerate the report; return a new policy when one should be applied."""
         with self._relearning:
             return self._relearn()
+
+    # The state a relearning reads, copied with the runs on disk.
+    _READ = ("runs", "trimmed", "expanded", "expand_runs", "sampling", "full_cheaper", "off", "refused_closings",
+             "answered_runs_followed_by_calls", "mixed_sessions")
+
+    def _inputs(self) -> dict:
+        """What one relearning reads, all from one generation of the work directory: the runs on disk, the state,
+        the savings, the evidence and the published tool list, with no write of this process between them.
+
+        The files are read outside the lock: the lock is taken only to note the generation (and copy the state,
+        in memory) and then to check that it has not changed, so a call or a closing on the proxy's event loop
+        never waits for these reads. If a write came in between, they are read again; the last attempt reads
+        under the lock (a write at every attempt: a busy process without `--background-relearn`)."""
+        attempts = 4
+        for attempt in range(attempts):
+            with self.lock if attempt == attempts - 1 else nullcontext():
+                with self.lock:
+                    generation = self._generation
+                    state = copy.deepcopy({k: self.state[k] for k in self._READ if k in self.state})
+                paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
+                try:
+                    savings = json.loads(self.savings_path.read_text(encoding="utf-8")) \
+                        if self.savings_path.exists() else None
+                except (OSError, ValueError):
+                    savings = None                   # a measure: the report goes without the section
+                data = evidence.load(self.evidence_path)
+                tools = definitions.load(self.dir)
+                with self.lock:
+                    if self._generation == generation:
+                        return {"state": state, "paths": paths, "savings": savings, "evidence": data, "tools": tools}
+        raise AssertionError("unreachable: the last attempt holds the lock")
 
     def _relearn(self) -> Policy | None:
         from . import arguments, lists, measure
@@ -536,12 +580,9 @@ class Learner:
         from .traces import load
         from .usage import analyse
 
-        # The runs this relearning covers: listed with the state, under the lock that every closing holds.
-        with self.lock:
-            runs_at_start = self.state["runs"]
-            paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
-        if not paths:
-            return None
+        inputs = self._inputs()
+        state, paths = inputs["state"], inputs["paths"]
+        runs_at_start = state["runs"]
         # A trace that cannot be read (written in place by 0.3.5 and cut short by a killed process) is set aside,
         # as state.json is: until 1.0 it stopped every later relearning.
         readable = {}
@@ -555,6 +596,7 @@ class Learner:
                     pass
         paths = [p for p in paths if p in readable]
         if not paths:
+            self._commit(runs_at_start, None)
             return None
         complete = [p for p in paths if "noanswer" not in p.name]
         # Telemetry from every run; learning only from runs with an answer.
@@ -574,7 +616,7 @@ class Learner:
             d["grounding"] = grounding.summarise(traces if complete else [], self.dir)
         except Exception:                    # noqa: BLE001
             pass
-        published = definitions.load(self.dir)
+        published = inputs["tools"]
         if published is not None:
             # Tools called in complete runs only: a run with no answer says nothing of what a task needs.
             called = [{c.tool for c in t.calls} for t in traces] if complete else []
@@ -591,38 +633,34 @@ class Learner:
         d["arguments"] = arguments.cardinality(traces)
         ready = len(complete) >= self.min_runs
 
-        with self.lock:
-            if self.savings_path.exists():
-                try:
-                    d["savings"] = rp.savings(json.loads(self.savings_path.read_text(encoding="utf-8")))
-                except Exception:            # noqa: BLE001 - a measure: the report goes without the section
-                    pass
-            a = self.adaptive
-            data = evidence.load(self.evidence_path)
-            # The targeted correction comes first: fields are promoted before a
-            # whole tool is judged, and a tool that just got one starts counting again.
-            last = f"run-{self.state['runs']:04d}"
-            new = evidence.decide(data, a, last) if a.promote and ready else []
-            # A field that came back by itself (recovered with expand, written, and now kept by
-            # ordinary learning) corrects the cut as a promotion does: the requests that asked
-            # for it no longer count against the tool.
-            # A field the operator reverted stays removed: its requests are not settled.
-            reverted_now = evidence.promoted(data, "reverted")
-            kept = {t: k - reverted_now.get(t, set()) for t, k in projection.keep.items()}
-            resumed = evidence.resume(data, kept, last) if ready else []
-            if new or resumed:
-                evidence.save(self.evidence_path, data)
-                for tool in {p["tool"] for p in new + resumed}:
-                    for counter in ("trimmed", "expanded", "expand_runs"):
-                        self.state[counter].pop(tool, None)
-                    self._counted.pop(tool, None)
-            self._switch_off_overexpanded()
-            off = list(self.state["off"])
-            counters = {k: json.loads(json.dumps(self.state[k]))
-                        for k in ("trimmed", "expanded", "expand_runs", "sampling", "full_cheaper")}
-            if "mixed_sessions" in self.state:
-                d["mixed_sessions"] = self.state["mixed_sessions"].copy()
-            closings = (self.state["refused_closings"], self.state["answered_runs_followed_by_calls"])
+        if inputs["savings"] is not None:
+            try:
+                d["savings"] = rp.savings(inputs["savings"])
+            except Exception:                # noqa: BLE001 - a measure: the report goes without the section
+                pass
+        a = self.adaptive
+        data = inputs["evidence"]
+        # The targeted correction comes first: fields are promoted before a
+        # whole tool is judged, and a tool that just got one starts counting again.
+        last = f"run-{runs_at_start:04d}"
+        new = evidence.decide(data, a, last) if a.promote and ready else []
+        # A field that came back by itself (recovered with expand, written, and now kept by
+        # ordinary learning) corrects the cut as a promotion does: the requests that asked
+        # for it no longer count against the tool.
+        # A field the operator reverted stays removed: its requests are not settled.
+        reverted_now = evidence.promoted(data, "reverted")
+        kept = {t: k - reverted_now.get(t, set()) for t, k in projection.keep.items()}
+        resumed = evidence.resume(data, kept, last) if ready else []
+        restarted = sorted({p["tool"] for p in new + resumed})
+        for tool in restarted:
+            for counter in ("trimmed", "expanded", "expand_runs"):
+                state[counter].pop(tool, None)
+        self._switch_off_overexpanded(state)
+        off = list(state["off"])
+        counters = {k: state[k] for k in ("trimmed", "expanded", "expand_runs", "sampling", "full_cheaper")}
+        if "mixed_sessions" in state:
+            d["mixed_sessions"] = state["mixed_sessions"]
+        closings = (state["refused_closings"], state["answered_runs_followed_by_calls"])
 
         # Promotions and reverts change what the learned projection keeps.
         active, reverted = evidence.promoted(data), evidence.promoted(data, "reverted")
@@ -661,17 +699,60 @@ class Learner:
         d["auto"] = config["auto"]
         store.write_atomic(self.dir / "report.html", rp.render_html(d, sugg))
         store.write_json(self.dir / "report.json", d)
-        with self.lock:
-            if ready:
-                self.state["config_from_runs"] = len(complete)
-            # Only when no run was closed meanwhile: otherwise the report is still behind, and stays pending
-            # (on disk) until a relearning covers that run too, after a restart if need be.
-            if self.state["runs"] == runs_at_start:
-                self.state.pop("report_pending", None)
-            self._save()
-            self.published = {"runs": runs_at_start, "complete_runs": len(complete), "applied": ready,
-                              "tools": sorted(config["tools"]), "off": list(off)}
+        self._commit(runs_at_start, {"new": new, "resumed": resumed, "restarted": restarted, "off": off,
+                                     "complete_runs": len(complete), "ready": ready, "tools": sorted(config["tools"])})
         return Policy(config, projection) if ready else None
+
+    def _commit(self, runs_at_start: int, decided: dict | None) -> None:
+        """After the products of a relearning are written: its decisions go into the evidence and the state, and the
+        report stops being pending if no run was closed since its inputs were read (otherwise it stays pending, on
+        disk, until a relearning covers that run too, after a restart if need be).
+
+        The decisions are added, not written over: the promotions and resumed fields this relearning found (by
+        tool and field, as `evidence.decide` and `evidence.resume` do), on the evidence as it is now, so that what
+        was written meanwhile (a closing, a late `expand`, `tracetrim promotions` in another process) is kept. The
+        evidence is read outside the lock, as in `_inputs`: under it only memory and the writes."""
+        evidence_changes = decided is not None and bool(decided["new"] or decided["resumed"])
+        attempts = 4
+        for attempt in range(attempts):
+            with self.lock if attempt == attempts - 1 else nullcontext():
+                if evidence_changes:
+                    with self.lock:
+                        generation = self._generation
+                    data = evidence.load(self.evidence_path)
+                with self.lock:
+                    if evidence_changes and self._generation != generation:
+                        continue                     # written meanwhile: read again
+                    self._apply(runs_at_start, decided, data if evidence_changes else None)
+                    return
+        raise AssertionError("unreachable: the last attempt holds the lock")
+
+    def _apply(self, runs_at_start: int, decided: dict | None, data: dict | None) -> None:
+        """`_commit`, under the lock."""
+        if decided is None:                      # no readable run: nothing published, nothing left to cover
+            if self.state["runs"] == runs_at_start and self.state.pop("report_pending", None) is not None:
+                self._save()
+            return
+        if data is not None:
+            for key, entries in (("promotions", decided["new"]), ("resumed", decided["resumed"])):
+                known = {(e["tool"], e["field"]) for e in data[key]}
+                data[key] += [e for e in entries if (e["tool"], e["field"]) not in known]
+            evidence.save(self.evidence_path, data)
+            self._generation += 1
+        for tool in decided["restarted"]:
+            for counter in ("trimmed", "expanded", "expand_runs"):
+                self.state[counter].pop(tool, None)
+            self._counted.pop(tool, None)
+        for tool in decided["off"]:
+            if tool not in self.state["off"]:
+                self.state["off"].append(tool)
+        if decided["ready"]:
+            self.state["config_from_runs"] = decided["complete_runs"]
+        if self.state["runs"] == runs_at_start:
+            self.state.pop("report_pending", None)
+        self._save()
+        self.published = {"runs": runs_at_start, "complete_runs": decided["complete_runs"],
+                          "applied": decided["ready"], "tools": decided["tools"], "off": list(decided["off"])}
 
     def _adaptive_report(self, d, data, before, after, usages, counters, count) -> dict:
         """What the report says about evidence, promotions and sampling."""
@@ -716,7 +797,7 @@ class Learner:
         self.count("")
         return self.unit
 
-    def _switch_off_overexpanded(self) -> None:
+    def _switch_off_overexpanded(self, state: dict) -> None:
         """The last resort: a tool whose filtered results are expanded too often
         is no longer filtered. The counts start again whenever a cut of the
         tool is corrected, by a promotion or by ordinary learning keeping a
@@ -725,10 +806,10 @@ class Learner:
         correction gets its chance first. `Adaptive(switch_off_runs=N)` asks the
         same of every tool, promotion or not: results expanded in N distinct runs."""
         needed = runs_needed(self.adaptive)
-        for tool, n in self.state["trimmed"].items():
-            if tool not in self.state["off"] and over_expanded(
-                    n, self.state["expanded"].get(tool, 0), len(self.state["expand_runs"].get(tool, [])), needed):
-                self.state["off"].append(tool)
+        for tool, n in state["trimmed"].items():
+            if tool not in state["off"] and over_expanded(
+                    n, state["expanded"].get(tool, 0), len(state["expand_runs"].get(tool, [])), needed):
+                state["off"].append(tool)
 
     def initial_policy(self) -> Policy | None:
         """The config learned in a previous session, if any."""
@@ -748,6 +829,7 @@ class Learner:
     def _save(self) -> None:
         with self.lock:
             store.write_json(self.state_path, self.state)
+            self._generation += 1
 
 
 class AutoTrim:

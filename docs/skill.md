@@ -201,7 +201,9 @@ See [HTTP sessions](../README.md#http-sessions) for the automatic proxy’s mixe
   report counts the refused closings, so this can be seen.
 - An answer followed by more calls opens a second run. The proxy cannot tell an agent that closed too
   early from the next task, so it does not merge them; the report counts the runs closed by an answer
-  and followed by calls within the idle pause. The count adds up the two cases: on a host where the
+  and followed by calls within the idle pause (since 1.4 the pause runs from the reply to `tracetrim_done`
+  to the next call, as the agent sees it; until 1.3 from the closing, so the relearning the agent waited for
+  counted as pause). The count adds up the two cases: on a host where the
   user opens the next conversation right away it grows at every run, and by itself it is not a sign
   of a problem.
 - A session that ends without `tracetrim_done` leaves a run without answer: telemetry, not learning.

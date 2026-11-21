@@ -44,6 +44,9 @@ class ToolCall:
     server: str | None = None
     upstream_tool: str | None = None
     session_key: str | None = None  # anonymous, in-memory provenance for the HTTP run warning
+    # When the integration received the call (the proxy, since 1.4): the pause after an answer is measured to it,
+    # not to when its result came back. None: when it is recorded.
+    received_at: float | None = None
 
 
 @dataclass(frozen=True)
