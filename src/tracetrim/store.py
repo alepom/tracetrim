@@ -96,10 +96,16 @@ def clean(directory: str | Path) -> None:
 #     waiting, to learn whether another process owns the directory. A POSIX record lock: it belongs to the process,
 #     so Learners of one process never see each other.
 # Where neither fcntl nor msvcrt exists the locks are not taken, as up to 1.3.
+# What a process holds is kept per process id: a child made with fork() inherits these tables but not the POSIX
+# record locks, and must take its own (REVISIONE-14b-quinquies).
 WRITE_LOCK = ".tracetrim-write.lock"
 OPEN_LOCK = ".tracetrim-open.lock"
 _guard = threading.Lock()
-_writers: dict[str, dict] = {}
+_writers: dict[tuple[int, str], dict] = {}
+
+
+def _key(directory: str | Path) -> tuple[int, str]:
+    return os.getpid(), str(Path(directory).resolve())
 
 
 def _lock(fh) -> None:
@@ -138,7 +144,7 @@ def _unlock(fh) -> None:
 def write_lock(directory: str | Path):
     """Exclusive between processes and between threads, reentrant within a thread: see WRITE_LOCK."""
     directory = Path(directory)
-    key = str(directory.resolve())
+    key = _key(directory)
     with _guard:
         entry = _writers.setdefault(key, {"rlock": threading.RLock(), "depth": 0, "file": None})
     with entry["rlock"]:
@@ -168,8 +174,18 @@ def write_lock(directory: str | Path):
 _alone: ContextVar[frozenset] = ContextVar("tracetrim_alone", default=frozenset())
 
 
-_held: dict[str, dict] = {}                # directory -> {"file", "count"}: the OPEN_LOCK, once per process
+_held: dict[tuple[int, str], dict] = {}    # (pid, directory) -> {"file", "count"}: the OPEN_LOCK, once per process
 _held_guard = threading.Lock()
+
+
+def _after_fork() -> None:
+    """In a child made with fork(): the guards another thread of the parent may have held at that moment are new."""
+    global _guard, _held_guard
+    _guard, _held_guard = threading.Lock(), threading.Lock()
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_after_fork)
 
 
 def hold_open(directory: str | Path):
@@ -182,7 +198,7 @@ def hold_open(directory: str | Path):
         import fcntl
     except ImportError:
         return None
-    key = str(Path(directory).resolve())
+    key = _key(directory)
     if key in _alone.get():
         return None
     with _held_guard:
@@ -198,6 +214,10 @@ def hold_open(directory: str | Path):
         entry["count"] += 1
 
     def give_back():
+        if os.getpid() != key[0]:
+            # A Learner inherited by a child made with fork(): the descriptor is the parent's, and closing it in the
+            # child would give up the child's own lock on the file (a POSIX record lock goes with any descriptor).
+            return
         with _held_guard:
             entry = _held.get(key)
             if entry is None:
@@ -218,7 +238,8 @@ def alone(directory: str | Path):
     except ImportError:
         yield True
         return
-    if str(Path(directory).resolve()) in _held:
+    key = _key(directory)
+    if key in _held:
         # This process owns it (a Learner of the same process: tests, or an embedding program): no other process
         # can, and touching the lock here would give up the process's own.
         yield True
@@ -230,7 +251,7 @@ def alone(directory: str | Path):
         except OSError:
             yield False
             return
-        token = _alone.set(_alone.get() | {str(Path(directory).resolve())})
+        token = _alone.set(_alone.get() | {key})
         try:
             yield True
         finally:

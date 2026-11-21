@@ -36,6 +36,10 @@ class Policy:
         self.structural = config.get("structural")
         if self.structural not in (None, "toon", "headroom"):
             raise ValueError(f"structural must be null, 'toon' or 'headroom', not {self.structural!r}")
+        # Automatic mode (1.4): how many corrections of its Learner this policy was learned after. A result it
+        # filtered counts against a tool only if the policy came after the tool's last correction
+        # (tracetrim.auto.Learner.observed). 0 for a policy read from a file.
+        self.corrections = 0
 
     @classmethod
     def load(cls, path: str | Path) -> "Policy":

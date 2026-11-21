@@ -61,6 +61,9 @@ def load_jsonl(path: Path) -> Trace:
         if not line.strip():
             continue
         d = json.loads(line)
+        if not isinstance(d, dict):
+            # `null`, a number, a list: not an event (until 1.3 the reading stopped with AttributeError).
+            raise ValueError(f"{path.name}:{n}: not an event")
         kind = d.get("kind")
         if kind == "call":
             args = d.get("arguments", "")

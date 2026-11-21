@@ -233,6 +233,7 @@ def cmd_proxy(a):
 def cmd_promotions(a):
     """List the fields promoted on evidence in a work directory, or take some back."""
     from contextlib import nullcontext
+    from datetime import datetime, timezone
 
     from . import evidence, store
     from .auto import Learner
@@ -241,7 +242,8 @@ def cmd_promotions(a):
     editing = a.revert is not None or bool(a.restore)
     if a.revert is not None and len(a.revert) > 2:
         raise SystemExit("--revert takes nothing (all), a TOOL, or a TOOL and a FIELD")
-    changed, in_use = [], False
+    changed, in_use, owed = [], False, False
+    mark = work / store.CHANGED
     # Read, changed, written and applied under the lock that a running proxy also takes to write the evidence (1.4):
     # until 1.3 a relearning or a closing of the proxy could write its own copy over the change, and a second
     # `tracetrim promotions` now waits for this one to end, then reads its change (REVISIONE-14b-quater).
@@ -255,18 +257,25 @@ def cmd_promotions(a):
             changed = evidence.revert(data, *a.revert)
         elif a.restore:
             changed = evidence.restore(data, *a.restore)
+        # A change saved and not applied yet: a command stopped after saving it (or one that left it to the proxy).
+        owed = editing and mark.exists()
         if changed:
+            # The mark is written before the evidence: a command stopped at any point after the change is saved
+            # leaves it, and the change is applied by the next relearning, here when the command is repeated, or by
+            # a proxy, or at a Learner's next start (REVISIONE-14b-quinquies: repeated, the command found nothing
+            # to change and left the config as it was). Written again after the evidence, so that a proxy's
+            # relearning that read the mark before the change does not take it as covered.
+            store.write_atomic(mark, datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
             evidence.save(path, data)
+            store.write_atomic(mark, datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
+        if changed or owed:
             with store.alone(work) as alone:
                 if not alone:
                     # A proxy (or another Learner process) owns the directory: relearning from here would write state
                     # and report over its own. The mark makes it, or its next start, relearn with the change.
                     in_use = True
-                    from datetime import datetime, timezone
-                    store.write_atomic(work / store.CHANGED,
-                                       datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
                 else:
-                    # Rewrite config and report now.
+                    # Rewrite config and report now; the relearning removes the mark.
                     # With the settings the work directory was learned with (kept in report.json), not the defaults:
                     # a relearning with other thresholds could switch a tool off that the proxy would keep.
                     from dataclasses import fields
@@ -280,18 +289,24 @@ def cmd_promotions(a):
                             protect_ids=config.get("auto", {}).get("protect_ids", "all"),
                             learning=config.get("auto", {}).get("learning", "1.1"),
                             compact=config.get("compact", True) is not False,
-                            keep_positions=config.get("keep_positions", True) is not False).relearn()
+                            keep_positions=config.get("keep_positions", True) is not False,
+                            relearn_at_start=False).relearn()
     for p in data["promotions"]:
-        mark = " <- changed" if p in changed else ""
+        flag = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"
-              f"{'' if len(p['runs']) == 1 else 's'}: {', '.join(p['runs'])}){mark}")
+              f"{'' if len(p['runs']) == 1 else 's'}: {', '.join(p['runs'])}){flag}")
     if not data["promotions"]:
         print("no promotions")
     elif (a.revert is not None or a.restore) and not changed:
         print("nothing changed: no promotion matches")
+    if owed and not changed and not in_use:
+        print("a change saved earlier was not applied yet: config and report now apply it")
     if in_use:
         print("the work directory is in use (a proxy is running on it): the change is saved, and the proxy applies it "
               "at its next relearning")
+    elif not editing and mark.exists():
+        print("a change is saved and not applied yet: the next relearning applies it (repeat the command, or start "
+              "the proxy)")
 
 
 def cmd_skill(a):

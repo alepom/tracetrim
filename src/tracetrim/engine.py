@@ -332,10 +332,10 @@ class Engine:
     def _observe(self, call: ToolCall, result: ToolResult) -> Observation:
         if self.learner is None:
             return Observation(result.output) if result.verbatim else self.trimmer.observe(call.tool, result.output)
-        index = self.learner.call(call.tool, call.arguments, result.output, call.turn, session_key=call.session_key,
-                                  at=call.received_at)
+        index = self.learner.call(call.tool, call.arguments, result.output, call.turn, session_key=call.session_key)
         if result.verbatim:
             return Observation(result.output)
+        policy = self.policy                     # the one this result is filtered with (Learner.observed)
         obs = self.trimmer.observe(call.tool, result.output)
         if obs.exposure == FILTERED and self.learner.adaptive.sample_rate > 0:
             # Sampling: now and then a result that would be filtered goes on
@@ -348,7 +348,7 @@ class Engine:
                 if obs.call_id:
                     self.trimmer.forget(obs.call_id)
                 obs = Observation(whole, SAMPLED, None, obs.hidden)
-        self.learner.observed(index, call, obs)
+        self.learner.observed(index, call, obs, policy)
         return obs
 
     def unknown_expand(self, call_id: str) -> str:
@@ -423,6 +423,8 @@ class Engine:
 
     def close(self, answer: str | None) -> Path | None:
         path = self.done(answer)
-        if path is not None:
+        # Also when there was nothing to close but a relearning is owed (a retry after a failed one, or after a
+        # publication another call finished): the closing is not confirmed with the policy of before.
+        if path is not None or (self.learner is not None and self.learner.relearn_owed):
             self.relearn()
         return path

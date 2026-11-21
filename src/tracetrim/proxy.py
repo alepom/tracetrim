@@ -430,7 +430,7 @@ class BackgroundLearning:
             await self.request()
         with learner.use_run(run) if run is not None else nullcontext():
             path = learner.flush(relearn=False)
-        if path is not None:
+        if path is not None or learner.relearn_owed:
             await self.request()
         return path
 
@@ -455,6 +455,8 @@ def _server(o: Options):
                        # With the option, a run left out of the report is relearned by the coordinator, in a thread.
                        relearn_at_start=not o.background_relearn)
                if o.auto_dir else None)
+    if learner:
+        learner.arrivals_reported = True         # on arrival, before any wait (`call_tool`)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
@@ -513,13 +515,45 @@ def _server(o: Options):
             with learner.use_run(session.run):
                 learner.flush()
 
-    async def relearn_now():
-        """After an interrupted closing was finished: relearn, through the coordinator when there is one (two
-        relearnings never run at once)."""
+    async def learn_in_thread():
+        """Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on the loop never
+        sees the policy change halfway through. A caller that goes away (a cancelled request) does not stop the
+        worker, which keeps writing: it is awaited, and its policy installed, before the closing lock is given
+        back to another writer (REVISIONE-14b-quinquies; until then only isolated sessions waited)."""
+        import anyio
+        learning = asyncio.ensure_future(asyncio.to_thread(engine.learn_policy))
+        cancelled = False
+        # Shielded from the cancellation of the request's scope (the SDK cancels a handler when its client cancels
+        # the request), and from a cancellation of the task itself, which is delivered once the policy is installed.
+        with anyio.CancelScope(shield=True):
+            while True:
+                try:
+                    policy = await asyncio.shield(learning)
+                    break
+                except asyncio.CancelledError:
+                    if learning.cancelled():
+                        raise
+                    cancelled = True
+        engine.install(policy)
+        if cancelled:
+            raise asyncio.CancelledError
+
+    async def relearn_now(quiet=False):
+        """A relearning is owed (an interrupted publication was finished, or the last relearning failed): relearn,
+        through the coordinator when there is one (two relearnings never run at once), and before going on.
+        `quiet`: a failure is only logged, as the coordinator does, and the request is served with the policy in
+        place; the relearning stays owed, and the next closing makes it. Learning never fails a tool call."""
         if background is not None:
             await background.request()
-        else:
-            engine.relearn()
+            await background.settled()
+            return
+        try:
+            await learn_in_thread()
+        except Exception as e:                   # noqa: BLE001
+            if not quiet:
+                raise
+            print(f"[tracetrim] WARNING: relearning failed ({type(e).__name__}: {e}); the policy in place is kept",
+                  file=sys.stderr, flush=True)
 
     async def close_run(answer, session=None) -> bool:
         """Close the run, if one is open. One closing at a time: a second
@@ -528,19 +562,26 @@ def _server(o: Options):
             if background is not None:
                 await background.settled()        # a closing never overlaps a relearning, as without the option
             # An interrupted publication (closings go through a journal in every mode since 1.4) is finished, and
-            # relearned through the coordinator when there is one, before this closing writes.
+            # relearned, before this closing writes; if that relearning fails, the one of this closing covers it.
             if learner.finish_pending():
-                await relearn_now()
+                await relearn_now(quiet=True)
             previous = learner.run.last_number
             try:
-                if engine.done(answer) is None:
-                    return False
+                path = engine.done(answer)
             finally:
                 # Once the trace is on disk, its original handles must keep
                 # pointing to that closed run even if a secondary write failed.
                 if session and session.run.last_number != previous:
                     closed = session.run
                     session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
+            if path is None:
+                # Nothing left to close: a repeat, or the retry of a closing that failed. If a relearning is owed (its
+                # own failed, or another request finished its publication), it is made before the reply: the retry
+                # is confirmed with the policy that covers its run (REVISIONE-14b-quinquies: it replied with the
+                # policy of before). Without the option a failure is the reply, and the client can try again.
+                if learner.relearn_owed:
+                    await relearn_now()
+                return False
             # No await since the closing: until its reply, no call counts as following this answer (`replied`).
             answered = bool(answer and answer.strip())
             if answered:
@@ -557,19 +598,7 @@ def _server(o: Options):
                 await background.request()
                 replied(session, answered)
                 return True
-            # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
-            # the loop never sees the policy change halfway through.
-            if not isolated:
-                engine.install(await asyncio.to_thread(engine.learn_policy))
-            else:
-                learning = asyncio.create_task(asyncio.to_thread(engine.learn_policy))
-                try:
-                    engine.install(await asyncio.shield(learning))
-                except asyncio.CancelledError:
-                    # The worker keeps writing even after its caller disconnects.
-                    # Finish publication before allowing another writer to enter.
-                    engine.install(await learning)
-                    raise
+            await learn_in_thread()
             st = learner.state
             log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
             after_learning()
@@ -610,7 +639,7 @@ def _server(o: Options):
             if background is not None:
                 # Runs first on exit: the relearning in progress ends before the sessions are drained.
                 stack.push_async_callback(background.drain)
-                if learner.needs_relearn:
+                if learner.relearn_owed:
                     background.schedule()        # the recovery at start; requests wait for it
             yield {"sessions": sessions}
 
@@ -649,6 +678,8 @@ def _server(o: Options):
             tools.append(types.Tool(**DONE))
             if background is not None:
                 await background.settled()        # recorded after the relearning in progress, which reads the list
+            if learner.finish_pending():
+                await relearn_now(quiet=True)
             # The list as published, for the report's section on tool definitions. A record
             # that fails costs the section, never the listing.
             try:
@@ -662,6 +693,11 @@ def _server(o: Options):
         if isolated:
             connection = getattr(ctx.session, "_connection", None)
             session = isolated.session(session_keys.transport_key(connection))
+        if learner and params.name not in ("tracetrim_done", "expand"):
+            # Now, in the order of arrival: the first call after the reply to an answer is the one the pause is
+            # measured to, whichever result comes back first (REVISIONE-14b-quinquies).
+            learner.arrived(received, session.run if isolated else None)
+        if isolated:
             # The event loop may deliver a request before the expiry task gets
             # CPU (e.g. while it is publishing another session's report).
             # On arrival: the pause is the client's, from the reply to its last request.
@@ -671,21 +707,22 @@ def _server(o: Options):
                 # Inside the request: while it waits for a relearning the session is busy, never idle.
                 if background is not None:
                     await background.settled()
-                if learner.finish_pending():
-                    await relearn_now()
                 if expired:
                     with learner.use_run(session.run):
                         await close_run(None, session)
                 with learner.use_run(session.run):
-                    return await handle_tool(ctx, params, session, session.live, received)
-        return await handle_tool(ctx, params, None, live, received)
+                    return await handle_tool(ctx, params, session, session.live)
+        return await handle_tool(ctx, params, None, live)
 
-    async def handle_tool(ctx, params, session, live, received=None):
+    async def handle_tool(ctx, params, session, live):
         args = params.arguments or {}
         if background is not None:
             # Every request waits for the relearning in progress (see BackgroundLearning): without the option it
             # came after the reply to the closing that started it.
             await background.settled()
+        if learner and learner.finish_pending():
+            # An interrupted publication, finished before this request is served; its relearning follows at once.
+            await relearn_now(quiet=True)
         if learner and params.name == "tracetrim_done":
             answer = args.get("answer")
             if not isinstance(answer, str):
@@ -714,10 +751,10 @@ def _server(o: Options):
                 last_call[0] = time.time()
             # No await since `settled`: from here until it is recorded, a relearning waits for this call.
             with background.call() if background is not None else nullcontext():
-                return await upstream_call(ctx, params, args, session, live, received)
+                return await upstream_call(ctx, params, args, session, live)
         return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
 
-    async def upstream_call(ctx, params, args, session, live, received):
+    async def upstream_call(ctx, params, args, session, live):
         """A tool call to its upstream server: the result recorded, trimmed when the policy says so."""
         sessions = ctx.lifespan_context["sessions"]
         if params.name not in routes:           # a client that calls before listing
@@ -728,7 +765,7 @@ def _server(o: Options):
         server, name = routes[params.name]
         r = await sessions[server].call_tool(name, args)
         key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys and not isolated else None
-        call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key, received_at=received)
+        call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key)
         content = list(r.content or [])
         # An error, or anything that is not plain text (images, resources),
         # goes back exactly as the server sent it: nothing to learn or trim.
