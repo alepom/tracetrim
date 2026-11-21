@@ -88,10 +88,41 @@ def over_expanded(filtered: int, expanded: int, runs: int, needed: int = 0) -> b
 
 
 def answered(name: str, trace) -> bool:
-    """A run closed with an answer: named so, and its trace ends with the answer. A trace cut short before it
-    (written in place up to 0.3.5) is not, whatever its name: the state and the report count runs by this one rule
-    (REVISIONE-14b-quinquies: the state counted an empty trace as complete)."""
-    return "noanswer" not in name and bool(trace.events) and trace.events[-1].kind == "message"
+    """A run closed with an answer: named so, and its trace ends with the answer, not blank, as a closing requires.
+    A trace cut short before it (written in place up to 0.3.5) is not, whatever its name: the state and the report
+    count runs by this one rule (REVISIONE-14b-quinquies: the state counted an empty trace as complete; REVISIONE-
+    14b-sexies: and one that ended with a blank message)."""
+    return ("noanswer" not in name and bool(trace.events) and trace.events[-1].kind == "message"
+            and bool(trace.events[-1].text.strip()))
+
+
+def statuses(data: dict) -> set:
+    """The promotions of an evidence file, as (tool, field, status)."""
+    return {(p.get("tool"), p.get("field"), p.get("status")) for p in data.get("promotions", [])}
+
+
+def held(data: dict, changes: list) -> list:
+    """The changes noted in the mark of `tracetrim promotions` (store.changes) that the evidence `data` holds: saved,
+    and perhaps not applied yet. One it does not hold was noted by a command stopped before saving it."""
+    have = statuses(data)
+    return [c for c in changes if (c.get("tool"), c.get("field"), c.get("status")) in have]
+
+
+def pending_mark(directory: Path) -> bool:
+    """Under the write lock (no command is between its mark and its evidence): whether the mark names a change that
+    the evidence holds, which a relearning has to apply. A mark that names none was left by a command stopped before
+    saving its change: it is removed, and nothing is owed. A mark with no note (an earlier build of 1.4) counts."""
+    mark = directory / store.CHANGED
+    if not mark.exists():
+        return False
+    changes = store.changes(directory)
+    try:
+        if changes is None or held(evidence.load(directory / "evidence.json"), changes):
+            return True
+    except (OSError, ValueError):
+        return True                      # an evidence file that cannot be read: the relearning says so
+    mark.unlink(missing_ok=True)
+    return False
 
 
 @dataclass
@@ -156,12 +187,17 @@ class Learner:
         # The integration says when a tool call arrives (`arrived`; the proxy, since 1.4); otherwise a call counts
         # as arriving when it is recorded.
         self.arrivals_reported = False
+        # Answers followed by a call within the pause, decided on arrival and counted in the state when the call is
+        # recorded (or the run closed): a relearning that reads its inputs before the call is served, as with
+        # `--background-relearn`, reads the state as it was at the reply (REVISIONE-14b-sexies).
+        self._followed = 0
         # Under the write lock: `tracetrim promotions` writes its temporary file under it, and the cleaning must not
         # remove it (REVISIONE-14b-quater).
         with store.write_lock(self.dir):
             recovered = store.recover_close(self.dir)
             store.clean(self.dir)
             store.clean(self.dir / "traces")
+            marked = pending_mark(self.dir)
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
         # as in `tracetrim measure`): with fewer than two there is nothing to
         # hold out, and nothing would ever be trimmed.
@@ -231,7 +267,7 @@ class Learner:
         # from the journal of an interrupted closing, or taken in by `_realign`; or a change of the evidence that
         # `tracetrim promotions` left to the proxy (store.CHANGED).
         self.needs_relearn = bool(recovered or behind or self.state.get("report_pending")
-                                  or (self.dir / store.CHANGED).exists())
+                                  or marked)
         self._owed = int(self.needs_relearn)
         if self.needs_relearn and relearn_at_start:
             self.relearn()
@@ -291,6 +327,7 @@ class Learner:
         with self.lock:
             if not self.arrivals_reported:
                 self.arrived(time.time())
+            self._count_followed()
             e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
             if turn is not None:
                 e["turn"] = turn             # calls of one turn do not use each other's outputs
@@ -313,8 +350,13 @@ class Learner:
             if run.answered_at is None or run.reply_pending or at < run.answered_at:
                 return
             if self.idle_seconds is not None and at - run.answered_at <= self.idle_seconds:
-                self.state["answered_runs_followed_by_calls"] += 1
+                self._followed += 1          # into the state when the call is recorded (`_count_followed`)
             run.answered_at = None
+
+    def _count_followed(self) -> None:
+        if self._followed:
+            self.state["answered_runs_followed_by_calls"] += self._followed
+            self._followed = 0
 
     def measured(self, tool: str, sizes) -> None:
         """The three counts of a call of the open run (contract.Sizes)."""
@@ -485,11 +527,13 @@ class Learner:
 
     def done(self, answer: str | None) -> Path | None:
         """Close the run. Returns the trace written, or None if there was nothing
-        to write: closing twice, or retrying a closing, changes nothing."""
-        # An interrupted publication is finished and relearned first, without holding the lock: a relearning takes
-        # its own lock and then this one (REVISIONE-14b-quater found the opposite order here).
-        if self.finish_pending():
-            self.relearn()
+        to write: closing twice, or retrying a closing, changes nothing.
+
+        An interrupted publication is finished first. The relearning it owes (`relearn_owed`) is the caller's, as
+        for the run this closing records: `Engine.close` and the proxy relearn and install the policy (REVISIONE-
+        14b-sexies: relearned here, its policy never reached the engine, and a run open at shutdown was lost when
+        that relearning failed before the run was written)."""
+        self.finish_pending()
         with self.lock:
             if not self.events:
                 return None
@@ -538,14 +582,14 @@ class Learner:
             self.state["report_pending"] = True
             # The savings not saved yet go with the journal too: a closing that does not reach it leaves them as they
             # were, whatever its preparation took or left (REVISIONE-14b-quinquies: run 2 lost, or counted twice).
-            unsaved, owed = self._unsaved, self._owed
+            unsaved, owed, followed = self._unsaved, self._owed, self._followed
             try:
                 with self.use_run(closed), store.collect_close() as files:
                     path, failed = self._stage_run(answer)
                 store.write_json(self.dir / store.JOURNAL,
                                  {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})
             except BaseException:
-                self.state, self._unsaved, self._owed = previous, unsaved, owed
+                self.state, self._unsaved, self._owed, self._followed = previous, unsaved, owed, followed
                 raise
             # The journal is the commit point. Handles to the original Run must
             # now see the cleared, numbered run, including if publication fails.
@@ -621,6 +665,7 @@ class Learner:
         # In the same write that records the run: no report covers it yet. The relearning that does clears it; a
         # process stopped before then relearns at its next start (1.4: in every mode, not only with isolated sessions).
         self.state["report_pending"] = True
+        self._count_followed()
         self._save()
         return path, failed
 
@@ -662,6 +707,7 @@ class Learner:
                     notes, self.run.notes = [dict(n, index=None) for n in self.notes], []
                     self._absorb(f"run-{self.run.last_number:04d}", [], notes, None)
                 self._save_sizes(f"run-{self.run.last_number:04d}")
+                self._count_followed()
                 self._save()
         if relearn and (path is not None or self.relearn_owed):
             self.relearn()
@@ -686,9 +732,10 @@ class Learner:
         memory) and then to check that it has not changed. If a write of this process came in between, everything is
         read again after a short pause, growing with the attempts: never under the lock, so a call or a closing on
         the event loop never waits for these reads. With `--background-relearn` no request of the proxy writes while
-        a relearning runs (BackgroundLearning), so the first attempt is the only one; without it, another client's
-        write can make it read again, for as long as writes keep coming in every attempt. (Writes of another process
-        are checked at the commit, in both modes.)"""
+        a relearning runs (BackgroundLearning; the arrival of a call changes nothing it reads until the call is
+        recorded, `arrived`), so the first attempt is the only one; without it, another client's write can make it
+        read again, for as long as writes keep coming in every attempt. (Writes of another process are checked at
+        the commit, in both modes.)"""
         pause = 0.0
         while True:
             with self.lock:
@@ -697,7 +744,7 @@ class Learner:
                 self.finish_pending()
                 generation, owed = self._generation, self._owed
                 state = copy.deepcopy({k: self.state[k] for k in self._READ if k in self.state})
-            # Before the evidence: a change `tracetrim promotions` marks after this read is not covered (`_apply`).
+            # Before the evidence: a mark with no note is covered only if it is still the one read here (`_covered`).
             marker = store.stamp(self.dir / store.CHANGED)
             paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
             try:
@@ -710,7 +757,7 @@ class Learner:
             with self.lock:
                 if self._generation == generation:
                     return {"state": state, "paths": paths, "savings": savings, "evidence": data, "tools": tools,
-                            "marker": marker, "owed": owed}
+                            "marker": marker, "statuses": statuses(data), "owed": owed}
             pause = min(0.05, pause * 2 or 0.001)
             time.sleep(pause)
 
@@ -889,13 +936,13 @@ class Learner:
         """`_commit`, under the lock. The evidence and the state go through a journal, both or neither: a process
         stopped between them found the promotion on its next start without the restart of the tool's counts, and
         switched the tool off (REVISIONE-14b-quater)."""
-        runs_at_start, marker = inputs["state"]["runs"], inputs["marker"]
+        runs_at_start = inputs["state"]["runs"]
         with store.write_lock(self.dir):
             self.finish_pending()                # an interrupted closing first: its replay would undo these writes
             if decided is None:                  # no readable run: nothing published, nothing left to cover
                 if self.state["runs"] == runs_at_start and self.state.pop("report_pending", None) is not None:
                     self._save()
-                self._covered(marker)
+                self._covered(inputs)
                 self._paid = max(self._paid, inputs["owed"])
                 return
             previous = copy.deepcopy(self.state)
@@ -935,16 +982,27 @@ class Learner:
             # The journal is the commit point: published now, or by the next write (which then owes a relearning,
             # since the policy of this one is not installed if its publication fails here).
             self._publish_pending(owe=False)
-            self._covered(marker)
+            self._covered(inputs)
             self._paid = max(self._paid, inputs["owed"])
             self.published = {"runs": runs_at_start, "complete_runs": decided["complete_runs"],
                               "applied": decided["ready"], "tools": decided["tools"], "off": list(decided["off"])}
 
-    def _covered(self, marker) -> None:
-        """The change `tracetrim promotions` marked is in this relearning: the mark goes, unless it was written again
-        since the inputs were read (under the write lock, which the command holds to write it)."""
-        if marker is not None and store.stamp(self.dir / store.CHANGED) == marker:
-            (self.dir / store.CHANGED).unlink(missing_ok=True)
+    def _covered(self, inputs: dict) -> None:
+        """Under the write lock, which `tracetrim promotions` holds from its mark to its evidence: the mark goes if this
+        relearning read every change it names that the evidence holds (one it does not hold was never saved). The
+        mark names its changes (REVISIONE-14b-sexies: a relearning that read the evidence of before the change took
+        a mark of the same stamp as covered). A mark with no note goes if it is still the one the inputs saw."""
+        mark = self.dir / store.CHANGED
+        if not mark.exists():
+            return
+        changes = store.changes(self.dir)
+        if changes is None:
+            covered = inputs["marker"] is not None and store.stamp(mark) == inputs["marker"]
+        else:
+            saved = held(evidence.load(self.evidence_path), changes)
+            covered = all((c.get("tool"), c.get("field"), c.get("status")) in inputs["statuses"] for c in saved)
+        if covered:
+            mark.unlink(missing_ok=True)
 
     def _adaptive_report(self, d, data, before, after, usages, counters, count) -> dict:
         """What the report says about evidence, promotions and sampling."""
@@ -1013,9 +1071,13 @@ class Learner:
                 return None
             if config.get("auto", {}).get("applied") and config.get("tools"):
                 try:
-                    return Policy.load(p)
+                    policy = Policy.load(p)
                 except (ValueError, OSError, KeyError):  # its projection unreadable: learnt again at the next closing
                     return None
+                # Written by the last relearning, after every correction made so far: one made by the recovery in the
+                # constructor too (REVISIONE-14b-sexies: read as older, its results did not count).
+                policy.corrections = self._corrections
+                return policy
         return None
 
     def _save(self) -> None:

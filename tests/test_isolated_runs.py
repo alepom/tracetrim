@@ -128,7 +128,9 @@ def test_interrupted_isolated_close_is_retryable_and_published_once(tmp_path, mo
     assert (tmp_path / "traces/run-0001.jsonl").is_file() and not learner.events
     if restart:
         learner = Learner(tmp_path)
-    assert learner.done("one") is None and not (tmp_path / store.JOURNAL).exists()
+        engine = Engine(learner)
+    # The retry: nothing left to close; the relearning the finished publication owes is made (Engine.close).
+    assert engine.close("one") is None and not (tmp_path / store.JOURNAL).exists()
     assert len(list((tmp_path / "traces").glob("*.jsonl"))) == 1
     state = json.loads((tmp_path / "state.json").read_text())
     assert state["runs"] == state["complete_runs"] == 1

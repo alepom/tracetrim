@@ -111,16 +111,18 @@ to come back in a second, independent run. Promotion starts once trimming has st
   tracetrim promotions tracetrim-data/ --restore list_orders 'data[].refund_note'
   ```
 
-  A reverted field is removed again and is not promoted a second time. With no process on the work
-  directory, the command also rewrites config and report at once; two commands on one directory run one
-  after the other. With a proxy running on it, the command only saves the change, leaves a mark
+  A reverted field is removed again and is not promoted a second time. With no proxy or other learner on
+  the work directory, the command also rewrites config and report at once; two commands on one directory run
+  one after the other. With a proxy running on it (or an `AutoTrim` of the same program), the command only
+  saves the change, leaves a mark
   (`.tracetrim-evidence-changed`) and says so: the proxy applies it at its next relearning (its next
   closing, or its next start if it stops first), and never writes it over, since evidence.json is read,
   changed and written under a lock that every process takes. While the command holds that lock (its change
   written to disk, and a closing of the proxy it may have to finish first), the proxy's closings wait for it,
   and so, on the proxy's event loop, does every other request: usually milliseconds, as long as the disk
-  takes. The mark is written before the change: a command stopped halfway leaves it, and the change is
-  applied by the next relearning, or at once when the command is repeated with no process on the directory.
+  takes. The mark is written before the change and names it: a command stopped halfway leaves it, a
+  relearning removes it only once it has read the change, and the change is applied by the next relearning,
+  or at once when the command is repeated with no proxy on the directory.
   The command tells a running proxy through a
   lock the proxy holds, on Linux and macOS (since 1.4); on Windows it cannot, and relearns at once as up to
   1.3, so stop the proxy before reverting there. The operator's choice prevails: if ordinary learning

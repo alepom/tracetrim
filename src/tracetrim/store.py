@@ -231,8 +231,8 @@ def hold_open(directory: str | Path):
 
 @contextmanager
 def alone(directory: str | Path):
-    """True when no other process owns the directory (and none can start owning it until the block ends); False
-    when one does. True where it cannot be known (no fcntl), as up to 1.3."""
+    """True when no Learner owns the directory (and no process can start owning it until the block ends); False
+    when one does, in another process or in this one. True where it cannot be known (no fcntl), as up to 1.3."""
     try:
         import fcntl
     except ImportError:
@@ -240,9 +240,10 @@ def alone(directory: str | Path):
         return
     key = _key(directory)
     if key in _held:
-        # This process owns it (a Learner of the same process: tests, or an embedding program): no other process
-        # can, and touching the lock here would give up the process's own.
-        yield True
+        # A Learner of this process owns it (an embedding program, a test): relearning from another Learner would
+        # write state and report over its own, as from another process. Touching the lock here would also give up
+        # the process's own (REVISIONE-14b-sexies: True here, also while a child made with fork() held it too).
+        yield False
         return
     fh = open(Path(directory) / OPEN_LOCK, "a+b")
     try:
@@ -264,6 +265,17 @@ def alone(directory: str | Path):
 # Left by `tracetrim promotions` when it changed the evidence of a directory a proxy owns: the next relearning, in
 # that proxy or at the next start, applies the change and removes it.
 CHANGED = ".tracetrim-evidence-changed"
+
+
+def changes(directory: str | Path) -> list | None:
+    """The changes noted in the mark (`tracetrim promotions`, since 1.4): [{"tool", "field", "status"}]; None for a
+    mark with no note or none at all."""
+    try:
+        note = json.loads((Path(directory) / CHANGED).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    changed = note.get("changed") if isinstance(note, dict) else None
+    return changed if isinstance(changed, list) and all(isinstance(c, dict) for c in changed) else None
 
 
 def stamp(path: str | Path):

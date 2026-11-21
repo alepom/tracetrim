@@ -1820,3 +1820,358 @@ def test_a_relearning_that_keeps_failing_never_stops_the_runs(tmp_path, monkeypa
     state = json.loads((tmp_path / "state.json").read_text())
     assert state["runs"] == 5 and state["complete_runs"] == 5 and "report_pending" not in state
     assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 5
+
+
+# -- REVISIONE-14b-sexies ----------------------------------------------------------------------------------------
+
+def broken_relearning(monkeypatch):
+    """Every relearning fails while `on` (the report cannot be built)."""
+    broken = {"on": False}
+    relearn = auto.Learner._relearn
+
+    def failing(self):
+        if broken["on"]:
+            raise RuntimeError("simulated")
+        return relearn(self)
+    monkeypatch.setattr(auto.Learner, "_relearn", failing)
+    return broken
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_retry_is_never_confirmed_while_its_relearning_fails(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-sexies: the publication of run 2 fails at the state, a tool listing finishes it, and the
+    relearning keeps failing. With the option the retry replied `Recorded.` with the report of one run and the old
+    policy. Now it fails in both modes, and the next retry, once relearning works, is confirmed and filtered."""
+    from mcp.shared.exceptions import MCPError
+    armed, broken = fail_once(monkeypatch, "state.json"), broken_relearning(monkeypatch)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, background_relearn=on))
+        async with Client(server) as client:
+            await run(client)
+            if on:
+                await settled(learner)
+            assert not (await client.call_tool("volumes", {})).is_error
+            armed["on"] = True
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            broken["on"] = True
+            await client.list_tools()                                       # finishes the publication
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})   # the retry: not confirmed
+            assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 1
+            broken["on"] = False
+            reply = await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            assert reply.content[0].text == auto.DONE_REPLY
+            assert "call_id=" in (await client.call_tool("volumes", {})).content[0].text
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 2
+
+
+def test_autotrim_installs_the_policy_after_a_transient_failure(tmp_path, monkeypatch):
+    """REVISIONE-14b-sexies: AutoTrim, run 2's publication fails once at the state; the same `done` again finished
+    it and relearned inside Learner.done, whose policy was dropped: report and config said trimming, the engine
+    did not, and the next result went whole."""
+    armed = fail_once(monkeypatch, "state.json")
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    armed["on"] = True
+    with pytest.raises(OSError):
+        tt.done(ANSWER)
+    tt.done(ANSWER)                                       # the retry, the failure gone
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 2
+    assert tt.trimming and not tt.learner.relearn_owed
+    assert "call_id=" in tt.output("volumes", {}, json.dumps(PAYLOAD))
+
+
+def test_a_relearning_that_read_the_evidence_before_a_revert_keeps_its_mark(tmp_path, monkeypatch, capsys):
+    """REVISIONE-14b-sexies: the command writes the mark; a relearning reads its stamp and the evidence still
+    `active`; the command saves `reverted` and fails on its second mark. The relearning took the mark as covered and
+    removed it: evidence reverted, config still promoting the field, even after repeating the command and a restart.
+    The mark now names the change, and stays until a relearning has read it."""
+    import gc
+    from tracetrim import store
+    from tracetrim.cli import main
+    from tracetrim.evidence import Adaptive
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    learner = auto.Learner(work, 2, adaptive=Adaptive(promote=True, promote_requested_runs=2))   # owns the directory
+    first_mark, inputs_read = threading.Event(), threading.Event()
+    write_atomic, seen = store.write_atomic, {"marks": 0}
+
+    def writing(path, text):
+        if Path(path).name == store.CHANGED:
+            seen["marks"] += 1
+            if seen["marks"] == 2:
+                raise OSError("simulated")                # the second mark, after the evidence
+            write_atomic(path, text)
+            first_mark.set()
+            assert inputs_read.wait(10)                   # the relearning reads before the evidence is saved
+            return
+        return write_atomic(path, text)
+    monkeypatch.setattr(store, "write_atomic", writing)
+    inputs = auto.Learner._inputs
+
+    def reading(self):
+        assert first_mark.wait(10)
+        got = inputs(self)
+        inputs_read.set()
+        return got
+    monkeypatch.setattr(auto.Learner, "_inputs", reading)
+    worker = threading.Thread(target=learner.relearn)
+    worker.start()
+    command = ["promotions", str(work), "--revert", "volumes", "items[].note_0"]
+    with pytest.raises(OSError):
+        main(command)
+    worker.join(10)
+    monkeypatch.undo()
+    assert (work / store.CHANGED).exists()                # the relearning did not read the change: the mark stays
+    main(command)                                         # repeated: the proxy (here, the Learner) applies it
+    assert "in use" in capsys.readouterr().out
+    del learner
+    gc.collect()
+    proxy._server(options(work, promote=True, promote_runs=2))          # the next start
+    assert [p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]] == ["reverted"]
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == {}
+    assert not (work / store.CHANGED).exists()
+
+
+def test_a_learner_of_the_same_process_owns_the_directory(tmp_path, capsys):
+    """REVISIONE-14b-sexies: `alone` answered True whenever this process held the directory, so `tracetrim
+    promotions` called by a program running an AutoTrim relearned from a second Learner, over the first one's files.
+    Now the command leaves the change to that AutoTrim, whose next closing applies it."""
+    from tracetrim import store
+    from tracetrim.cli import main
+    from tracetrim.evidence import Adaptive
+    tt = auto.AutoTrim(tmp_path, min_runs=2, adaptive=Adaptive(promote=True, promote_requested_runs=2))
+    for i in range(1, 5):
+        out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+        m = re.search(r"call_id=(c[0-9a-f]{8})", out)
+        if m and i >= 3:
+            tt.expand({"call_id": m.group(1), "fields": ["items[].note_0"]})
+        tt.done(ANSWER)
+    assert json.loads((tmp_path / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_0"]}
+    with store.alone(tmp_path) as alone:
+        assert alone is False
+    main(["promotions", str(tmp_path), "--revert", "volumes", "items[].note_0"])
+    assert "in use" in capsys.readouterr().out and (tmp_path / store.CHANGED).exists()
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)                                       # its relearning applies the revert
+    assert json.loads((tmp_path / "report.config.json").read_text())["auto"]["promoted"] == {}
+    assert not (tmp_path / store.CHANGED).exists()
+
+
+def test_a_run_open_at_shutdown_is_kept_when_the_relearning_fails(tmp_path, monkeypatch):
+    """REVISIONE-14b-sexies: without the option, A's closing is left in the journal; at shutdown B's open run is kept
+    through Learner.flush, which finished A's publication and relearned before writing B's run: the relearning
+    failed, and B's run was lost."""
+    broken = broken_relearning(monkeypatch)
+    armed = fail_once(monkeypatch, "state.json")
+    learner = auto.Learner(tmp_path, 2)
+    a, b = auto.Run(), auto.Run()
+    with learner.use_run(a):
+        learner.call("volumes", {}, json.dumps(PAYLOAD))
+    with learner.use_run(b):
+        learner.call("volumes", {}, json.dumps(PAYLOAD))
+    armed["on"] = True
+    with learner.use_run(a), pytest.raises(OSError):
+        learner.done(ANSWER)                              # in the journal
+    broken["on"] = True
+    with learner.use_run(b), pytest.raises(RuntimeError):
+        learner.flush()                                   # B's run written, then the relearning fails
+    assert (tmp_path / "traces" / "run-0002-noanswer.jsonl").exists()
+    assert json.loads((tmp_path / "state.json").read_text())["runs"] == 2
+
+
+@pytest.mark.parametrize("isolated", [False, True])
+def test_a_closing_by_inactivity_never_fails_the_call_that_follows(tmp_path, monkeypatch, isolated):
+    """REVISIONE-14b-sexies: without the option, a call after the idle pause closed the run first; its relearning
+    failed, and the call failed before reaching the upstream. Now the call is served and recorded in the new run."""
+    servers, learners = capture_uvicorn(monkeypatch), capture_learners(monkeypatch)
+    broken = broken_relearning(monkeypatch)
+
+    async def go():
+        task, url = await start_http(options(tmp_path / "work", idle_seconds=0.25, isolate_sessions=isolated),
+                                     servers)
+        learner = learners[-1]
+        async with Client(url, mode="legacy") as client:
+            assert not (await client.call_tool("volumes", {})).is_error
+            broken["on"] = True                           # whichever closes the run by inactivity, it relearns in vain
+            await asyncio.sleep(0.35)
+            assert not (await client.call_tool("volumes", {})).is_error
+            broken["on"] = False
+            state = learner.state
+            assert state["runs"] == 1
+            runs = [s.run for s in learner_sessions(learner)] if isolated else [learner.run]
+            assert sum(len(r.events) for r in runs) == 1
+        await stop_http(task, servers)
+    asyncio.run(go())
+
+
+def learner_sessions(learner):
+    """The isolated sessions of the proxy built with `learner` (tests only)."""
+    import gc
+    from tracetrim.sessions import HttpRuns
+    return [s for h in gc.get_objects() if isinstance(h, HttpRuns) and h.engine.learner is learner
+            for s in h.sessions.values()]
+
+
+def test_a_legacy_trace_ending_with_a_blank_answer_is_not_complete(tmp_path):
+    """REVISIONE-14b-sexies: a trace whose last message is blank counted as a complete run (a closing never
+    records a blank answer)."""
+    learner = auto.Learner(tmp_path, 2, durable_closes=False)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done("1")
+    learner.relearn()
+    (tmp_path / "traces" / "run-0002.jsonl").write_text(
+        '{"kind": "call", "tool": "t", "arguments": {}, "output": "{}"}\n{"kind": "message", "text": "  "}\n')
+    del learner
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 2 and state["complete_runs"] == 1
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 1
+
+
+def test_the_pause_starts_at_the_reply_also_after_a_failed_relearning(tmp_path, monkeypatch):
+    """REVISIONE-14b-sexies: without the option, the closing of run 2 is recorded and its relearning fails; the retry
+    replies `Recorded.`, but no reply had been marked, and the next call did not count as following the answer."""
+    from mcp.shared.exceptions import MCPError
+    broken = broken_relearning(monkeypatch)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path))
+        async with Client(server) as client:
+            await run(client)
+            assert not (await client.call_tool("volumes", {})).is_error          # follows the answer of run 1
+            broken["on"] = True
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            broken["on"] = False
+            assert (await client.call_tool("tracetrim_done", {"answer": ANSWER})).content[0].text == auto.DONE_REPLY
+            assert not (await client.call_tool("volumes", {})).is_error          # follows the answer of run 2
+            assert learner.state["answered_runs_followed_by_calls"] == 2
+    asyncio.run(go())
+
+
+def test_a_correction_made_at_start_counts_the_results_of_its_policy(tmp_path):
+    """REVISIONE-14b-sexies: the relearning of the recovery at start promotes note_0; the engine then reads the policy
+    it wrote from the file, taken as older than the correction: its filtered results never counted."""
+    import gc
+    engine = promoting(tmp_path)
+    up_to_the_promotion(engine)                           # run 4 recorded, not relearned: pending on disk
+    del engine
+    gc.collect()
+    engine = promoting(tmp_path)                          # the recovery promotes note_0
+    assert [p["field"] for p in json.loads((tmp_path / "evidence.json").read_text())["promotions"]] == \
+        ["items[].note_0"]
+    assert observe(engine)
+    assert engine.learner.state["trimmed"] == {"volumes": 1}
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_the_report_of_a_closing_reads_the_state_of_its_reply(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-sexies: volumes, done, volumes. With the option the second call arrived while the relearning had
+    not read its inputs yet, and its arrival already counted it as following the answer: the report of run 1 said 1,
+    without the option 0. The arrival is now counted when its call is recorded."""
+    hold = threading.Event()
+    inputs = auto.Learner._inputs
+
+    def held(self):
+        if on and self.state["runs"] == 1:
+            hold.wait(5)
+        return inputs(self)
+    monkeypatch.setattr(auto.Learner, "_inputs", held)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, background_relearn=on))
+        async with Client(server) as client:
+            await run(client)
+            call = asyncio.create_task(client.call_tool("volumes", {}))
+            await asyncio.sleep(0.3)
+            hold.set()
+            assert not (await call).is_error
+            assert learner.state["answered_runs_followed_by_calls"] == 1
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["answered_runs_followed_by_calls"] == 0
+
+
+def two_promotions(work):
+    """note_0 asked back in runs 3 and 4, note_1 in runs 5 and 6: both promoted (two runs each)."""
+    async def go():
+        server, learner = proxy._server(options(work, promote=True, promote_runs=2))
+        async with Client(server) as client:
+            for i in range(1, 7):
+                out = (await client.call_tool("volumes", {})).content[0].text
+                m = re.search(r"call_id=(c[0-9a-f]{8})", out)
+                if m and i >= 3:
+                    field = "items[].note_0" if i < 5 else "items[].note_1"
+                    await client.call_tool("expand", {"call_id": m.group(1), "fields": [field]})
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+    asyncio.run(go())
+    import gc
+    gc.collect()
+
+
+def test_a_mark_whose_change_was_never_saved_is_dropped(tmp_path, monkeypatch, capsys):
+    """A restore stops after its mark and before the evidence: the mark names a change the evidence does not hold.
+    It is dropped at the next start (under the write lock no command is between the two writes), and nothing is
+    relearned for it, then or at later starts."""
+    from tracetrim import evidence, store
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    import gc
+    gc.collect()
+    main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])     # applied at once
+    save = evidence.save
+    monkeypatch.setattr(evidence, "save", lambda *a, **kw: (_ for _ in ()).throw(OSError("simulated")))
+    with pytest.raises(OSError):
+        main(["promotions", str(work), "--restore", "volumes", "items[].note_0"])
+    monkeypatch.setattr(evidence, "save", save)
+    assert (work / store.CHANGED).exists()
+    capsys.readouterr()
+    main(["promotions", str(work)])
+    assert "not applied yet" not in capsys.readouterr().out     # the restore was never saved
+    stamp = (work / "report.json").stat().st_mtime_ns
+    for _ in range(2):
+        proxy._server(options(work, promote=True, promote_runs=2))
+        gc.collect()
+    assert not (work / store.CHANGED).exists()
+    assert (work / "report.json").stat().st_mtime_ns == stamp          # nothing to relearn
+    assert [p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]] == ["reverted"]
+
+
+def test_a_second_change_keeps_the_first_one_named_in_the_mark(tmp_path, monkeypatch, capsys):
+    """With a proxy on the directory, a revert of note_0 is saved and left to it; a revert of note_1 then stops before
+    its evidence. Its mark names both: at the next start the first one, saved, is applied (a mark naming only the
+    second, never saved, would have been dropped with the first still pending)."""
+    from tracetrim import evidence, store
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    two_promotions(work)
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_0", "items[].note_1"]}
+    proc = holder(work)
+    main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])
+    assert "in use" in capsys.readouterr().out
+    save = evidence.save
+    monkeypatch.setattr(evidence, "save", lambda *a, **kw: (_ for _ in ()).throw(OSError("simulated")))
+    with pytest.raises(OSError):
+        main(["promotions", str(work), "--revert", "volumes", "items[].note_1"])
+    monkeypatch.setattr(evidence, "save", save)
+    proc.stdin.close()
+    proc.wait(10)
+    proxy._server(options(work, promote=True, promote_runs=2))          # the next start
+    status = {p["field"]: p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]}
+    assert status == {"items[].note_0": "reverted", "items[].note_1": "active"}
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_1"]}
+    assert not (work / store.CHANGED).exists()

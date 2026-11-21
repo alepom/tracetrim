@@ -4,6 +4,7 @@ The tool is the simulated order list of the demo (experiments/simulated/orders.p
 after three runs tracetrim removes `carrier`, `refund_note` and the remarks.
 """
 import asyncio
+import gc
 import json
 import os
 import sys
@@ -364,6 +365,8 @@ def test_a_promotion_can_be_taken_back_and_is_not_made_again(tmp_path, capsys):
         run(tt, k, [NOTE])
     main(["promotions", str(tmp_path)])
     assert capsys.readouterr().out.startswith(f"active    {TOOL}  {NOTE}  (requested in 2 runs: run-0004, run-0005)")
+    del tt                                                             # no learner on the directory: relearned at once
+    gc.collect()
     main(["promotions", str(tmp_path), "--revert", TOOL, NOTE])
     assert "reverted" in capsys.readouterr().out
     assert NOTE in dropped(tmp_path)                                   # the config before the promotion
@@ -371,6 +374,8 @@ def test_a_promotion_can_be_taken_back_and_is_not_made_again(tmp_path, capsys):
     for k in (6, 7, 8):
         assert "refund_note" not in run(again, k, [NOTE]).split(MARK)[0]
     assert [p["status"] for p in ev(tmp_path)["promotions"]] == ["reverted"]
+    del again
+    gc.collect()
     main(["promotions", str(tmp_path), "--restore", TOOL, NOTE])
     assert NOTE in kept(tmp_path) and "active" in capsys.readouterr().out
     main(["promotions", str(tmp_path), "--revert"])                    # everything
@@ -551,6 +556,8 @@ def test_a_reverted_field_that_learning_would_keep_stays_removed_and_is_reported
     tt = learned(tmp_path, promote=True)
     run(tt, 4, [CARRIER], f" Carrier: {newest(4)['carrier']}.")        # written: ordinary learning keeps it too
     assert CARRIER in kept(tmp_path)
+    del tt
+    gc.collect()
     main(["promotions", str(tmp_path), "--revert", TOOL, CARRIER])
     capsys.readouterr()
     assert CARRIER in dropped(tmp_path)                                # the operator's choice stands
@@ -746,6 +753,8 @@ def test_the_promotions_command_relearns_with_the_settings_of_the_work_directory
     tt = learned(tmp_path, promote=True, switch_off_runs=5)
     for k in (4, 5):
         run(tt, k, [NOTE])                                                    # promoted
+    del tt                                                                    # no learner on the directory
+    gc.collect()
     used = []
     real = auto.Learner
 

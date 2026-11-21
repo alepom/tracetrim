@@ -574,46 +574,67 @@ def _server(o: Options):
                 if session and session.run.last_number != previous:
                     closed = session.run
                     session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
+            answered = bool(answer and answer.strip())
             if path is None:
                 # Nothing left to close: a repeat, or the retry of a closing that failed. If a relearning is owed (its
-                # own failed, or another request finished its publication), it is made before the reply: the retry
-                # is confirmed with the policy that covers its run (REVISIONE-14b-quinquies: it replied with the
-                # policy of before). Without the option a failure is the reply, and the client can try again.
+                # own failed, or another request finished its publication), it is made before the reply, and the
+                # retry is confirmed only if it covered its run (REVISIONE-14b-quinquies: it replied with the policy
+                # of before; REVISIONE-14b-sexies: with the option, also when that relearning failed). Otherwise a
+                # failure is the reply, and the client can try again.
                 if learner.relearn_owed:
                     await relearn_now()
+                    if learner.relearn_owed:
+                        raise RuntimeError("the run is recorded, but its report and policy could not be updated "
+                                           "(the relearning failed): call tracetrim_done again")
+                replied(session, answered, again=True)
                 return False
             # No await since the closing: until its reply, no call counts as following this answer (`replied`).
-            answered = bool(answer and answer.strip())
             if answered:
                 (session.run if session else learner.run).reply_pending = True
-            _warn_mixed(learner)
-            run_total = (session.live if session else live).new_run()
-            if background is not None:
-                # Pending on disk with the run (Learner._write_run); the relearning follows (BackgroundLearning).
-                with learner.lock:
-                    number = learner.state["runs"]
-                log(f"run {number} closed ({'with answer' if answer else 'no answer: telemetry only'}): "
-                    f"{run_total} · relearning in the background")
+            try:
+                _warn_mixed(learner)
+                run_total = (session.live if session else live).new_run()
+                if background is not None:
+                    # Pending on disk with the run (Learner._write_run); the relearning follows (BackgroundLearning).
+                    with learner.lock:
+                        number = learner.state["runs"]
+                    log(f"run {number} closed ({'with answer' if answer else 'no answer: telemetry only'}): "
+                        f"{run_total} · relearning in the background")
+                    _log_unsupported()
+                    await background.request()
+                    return True
+                await learn_in_thread()
+                st = learner.state
+                log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
+                after_learning()
                 _log_unsupported()
-                await background.request()
-                replied(session, answered)
                 return True
-            await learn_in_thread()
-            st = learner.state
-            log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
-            after_learning()
-            _log_unsupported()
-            replied(session, answered)
-            return True
+            finally:
+                # A reply, an error too: the run is recorded (REVISIONE-14b-sexies: after a failed relearning no
+                # reply was marked, and the next call never counted as following the answer).
+                replied(session, answered)
 
-    def replied(session, answered):
+    def replied(session, answered, again=False):
         """The pause after an answer starts at the reply, as the agent sees it: without the option the reply came
-        after the relearning, with it before (until 1.3 the pause was counted from the closing, relearning included)."""
+        after the relearning, with it before (until 1.3 the pause was counted from the closing, relearning included).
+        `again`: the reply to a repeat or a retry; it moves the start of the pause only if no call has come since."""
         run = session.run if session else learner.run
         if answered:
             with learner.lock:
+                if again and run.answered_at is None:
+                    return
                 run.answered_at = time.time()
                 run.reply_pending = False
+
+    async def close_idle(session=None):
+        """A closing by inactivity, before a call is served. Its failure is logged and the call is served, with the
+        policy in place: in the run just recorded if only its relearning failed (which stays owed), in the open run
+        if the closing itself could not be written (REVISIONE-14b-sexies: the call failed before the upstream)."""
+        try:
+            await close_run(None, session)
+        except Exception as e:                   # noqa: BLE001
+            print(f"[tracetrim] WARNING: closing by inactivity failed ({type(e).__name__}: {e}); the call is served",
+                  file=sys.stderr, flush=True)
 
     def _log_unsupported():
         if learner.unsupported:
@@ -709,7 +730,7 @@ def _server(o: Options):
                     await background.settled()
                 if expired:
                     with learner.use_run(session.run):
-                        await close_run(None, session)
+                        await close_idle(session)
                 with learner.use_run(session.run):
                     return await handle_tool(ctx, params, session, session.live)
         return await handle_tool(ctx, params, None, live)
@@ -744,7 +765,7 @@ def _server(o: Options):
         else:
             if not isolated:
                 if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
-                    await close_run(None)
+                    await close_idle()
                     if background is not None:
                         await background.settled()    # served after the relearning of that closing, as without
                 # After any wait: the next call measures the client's pause, never the relearning (REVISIONE-14b-bis).

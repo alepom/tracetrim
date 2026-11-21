@@ -236,7 +236,7 @@ def cmd_promotions(a):
     from datetime import datetime, timezone
 
     from . import evidence, store
-    from .auto import Learner
+    from .auto import Learner, held, pending_mark
     work = Path(a.workdir)
     path = work / "evidence.json"
     editing = a.revert is not None or bool(a.restore)
@@ -253,21 +253,31 @@ def cmd_promotions(a):
             # write the evidence of before.
             store.recover_close(work)
         data = evidence.load(path)
+        # A change saved and not applied yet: a command stopped after saving it (or one that left it to the proxy).
+        # A mark that names no saved change was left by a command stopped before saving: it goes (`pending_mark`).
+        owed = editing and pending_mark(work)
+        earlier = held(data, store.changes(work) or []) if owed else []
         if a.revert is not None:
             changed = evidence.revert(data, *a.revert)
         elif a.restore:
             changed = evidence.restore(data, *a.restore)
-        # A change saved and not applied yet: a command stopped after saving it (or one that left it to the proxy).
-        owed = editing and mark.exists()
         if changed:
             # The mark is written before the evidence: a command stopped at any point after the change is saved
             # leaves it, and the change is applied by the next relearning, here when the command is repeated, or by
             # a proxy, or at a Learner's next start (REVISIONE-14b-quinquies: repeated, the command found nothing
-            # to change and left the config as it was). Written again after the evidence, so that a proxy's
-            # relearning that read the mark before the change does not take it as covered.
-            store.write_atomic(mark, datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
+            # to change and left the config as it was). It names the changes not applied yet, the earlier ones
+            # still saved and this one: a relearning removes it only once it has read each of them (REVISIONE-14b-
+            # sexies: one that read the evidence of before removed it). Written again after the evidence, so that
+            # its stamp also changes.
+            noted = {(c["tool"], c["field"]): c for c in earlier}
+            noted.update({(p["tool"], p["field"]): {"tool": p["tool"], "field": p["field"], "status": p["status"]}
+                          for p in changed})
+            note = json.dumps({"format": "tracetrim/evidence-changed@1",
+                               "at": datetime.now(timezone.utc).isoformat(timespec="microseconds"),
+                               "changed": list(noted.values())}) + "\n"
+            store.write_atomic(mark, note)
             evidence.save(path, data)
-            store.write_atomic(mark, datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
+            store.write_atomic(mark, note)
         if changed or owed:
             with store.alone(work) as alone:
                 if not alone:
@@ -304,7 +314,7 @@ def cmd_promotions(a):
     if in_use:
         print("the work directory is in use (a proxy is running on it): the change is saved, and the proxy applies it "
               "at its next relearning")
-    elif not editing and mark.exists():
+    elif not editing and mark.exists() and (store.changes(work) is None or held(data, store.changes(work))):
         print("a change is saved and not applied yet: the next relearning applies it (repeat the command, or start "
               "the proxy)")
 
