@@ -37,7 +37,7 @@ import json
 import os
 import shlex
 import sys
-from contextlib import AsyncExitStack, asynccontextmanager, nullcontext
+from contextlib import AsyncExitStack, asynccontextmanager, contextmanager, nullcontext
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -337,15 +337,20 @@ class BackgroundLearning:
     """`--background-relearn`: the closing replies once the run is on disk, and the relearning runs after it.
 
     - The only coordinator of relearning while the proxy runs: closings, finished interrupted closings, the idle
-      expiry of isolated sessions and the runs kept at shutdown all ask it; one relearning at a time, always in a
-      thread, never on the event loop.
-    - Every request waits for it: a tool call, an `expand`, a closing, a refused closing or a tool listing that
-      arrives while a relearning runs is served once the new policy is installed (`settled`), as it would have
-      been without the option, where it came after the reply to the closing that started the relearning. Only
-      that reply is earlier. So nothing the proxy learns from changes during a relearning, and what the model
-      receives and what the proxy learns are the same as without the option (tests/test_background_relearn.py
-      compares every file byte for byte). The pauses that close a run by inactivity, and the one after an answer,
-      are the client's: measured from a reply, or after a wait, never across one.
+      expiry of isolated sessions, the runs kept at shutdown and the recovery at start all ask it; one relearning
+      at a time, always in a thread, never on the event loop.
+    - The order of requests and relearnings. A request that arrives while a relearning runs (a tool call, an
+      `expand`, a closing, a refused closing, a tool listing) waits for it (`settled`) and is served with the new
+      policy. A tool call already on its way to the upstream when a relearning is asked for (another client's) is
+      recorded first: the relearning reads its inputs once no call is in flight (`call`). So nothing the proxy
+      learns from changes while a relearning reads and computes.
+    - With one client at a time, whose requests follow one another, every request comes after a reply: without
+      the option the reply to a closing comes after its relearning, with it before, and the next request waits.
+      So what the model receives and what the proxy learns are the same in both modes (tests/test_background_
+      relearn.py compares every file byte for byte), and the pauses that close a run by inactivity, and the one
+      after an answer, are the client's: measured from a reply, or after a wait, never across one. With several
+      clients the modes differ by design: without the option a request from another client is served at once,
+      with the policy in place, while the relearning runs.
     - The run is recorded on disk as pending in the same write that records it (`Learner._write_run`); it stays
       pending until a relearning has covered it, so a process stopped earlier relearns at its next start.
       Every product of the report is written atomically.
@@ -356,10 +361,27 @@ class BackgroundLearning:
     """
 
     def __init__(self, engine, after, warn):
+        import asyncio
         self.engine, self.after, self.warn = engine, after, warn
         self.task = None
         self.again = False
         self.stopping = False
+        self.in_flight = 0                   # tool calls past `settled`, not yet recorded
+        self._no_call = asyncio.Event()
+        self._no_call.set()
+
+    @contextmanager
+    def call(self):
+        """Around a tool call, from `settled` to its record: a relearning reads its inputs once none is in flight.
+        Entered with no await after `settled`, so a relearning cannot start in between."""
+        self.in_flight += 1
+        self._no_call.clear()
+        try:
+            yield
+        finally:
+            self.in_flight -= 1
+            if not self.in_flight:
+                self._no_call.set()
 
     def schedule(self) -> None:
         import asyncio
@@ -378,6 +400,7 @@ class BackgroundLearning:
         import asyncio
         while True:
             self.again = False
+            await self._no_call.wait()       # the calls already on their way are recorded first
             try:
                 self.engine.install(await asyncio.to_thread(self.engine.learn_policy))
                 self.after()
@@ -426,7 +449,9 @@ def _server(o: Options):
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
     learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive,
                        protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False,
-                       keep_positions=o.keep_positions is not False, durable_closes=o.isolate_sessions)
+                       keep_positions=o.keep_positions is not False,
+                       # With the option, a run left out of the report is relearned by the coordinator, in a thread.
+                       relearn_at_start=not o.background_relearn)
                if o.auto_dir else None)
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
@@ -500,7 +525,9 @@ def _server(o: Options):
         async with closing:
             if background is not None:
                 await background.settled()        # a closing never overlaps a relearning, as without the option
-            if isolated and learner.finish_pending():
+            # An interrupted publication (closings go through a journal in every mode since 1.4) is finished, and
+            # relearned through the coordinator when there is one, before this closing writes.
+            if learner.finish_pending():
                 await relearn_now()
             previous = learner.run.last_number
             try:
@@ -575,6 +602,8 @@ def _server(o: Options):
             if background is not None:
                 # Runs first on exit: the relearning in progress ends before the sessions are drained.
                 stack.push_async_callback(background.drain)
+                if learner.needs_relearn:
+                    background.schedule()        # the recovery at start; requests wait for it
             yield {"sessions": sessions}
 
     async def all_tools(session):
@@ -675,63 +704,69 @@ def _server(o: Options):
                         await background.settled()    # served after the relearning of that closing, as without
                 # After any wait: the next call measures the client's pause, never the relearning (REVISIONE-14b-bis).
                 last_call[0] = time.time()
-            sessions = ctx.lifespan_context["sessions"]
-            if params.name not in routes:           # a client that calls before listing
-                await upstream_tools(sessions)
-            if params.name not in routes:
-                return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
-                                            isError=True)
-            server, name = routes[params.name]
-            r = await sessions[server].call_tool(name, args)
-            key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys and not isolated else None
-            call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key, received_at=received)
-            content = list(r.content or [])
-            # An error, or anything that is not plain text (images, resources),
-            # goes back exactly as the server sent it: nothing to learn or trim.
-            is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
-            structured = getattr(r, "structured_content", None)
-            if is_error or any(getattr(c, "type", "text") != "text" for c in content):
-                # Passed back exactly as sent, and still recorded: errors are
-                # what the report's error analysis is about.
-                text_part = "".join(getattr(c, "text", "") or "" for c in content if getattr(c, "type", "") == "text")
-                kinds = sorted({getattr(c, "type", "?") for c in content if getattr(c, "type", "") != "text"})
-                note = text_part if text_part else f"[non-text content: {', '.join(kinds)}]"
-                if is_error and not note.lower().startswith("error"):
-                    note = "Error: " + note
-                if rec:
-                    rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": note},
-                                         ensure_ascii=False) + "\n")
-                    rec.flush()
-                seen = engine.observe(call, ToolResult(note, verbatim=True))
-                live.call(params.name, note, note, seen.sizes)
-                return r                     # exactly as the server sent it, metadata included
-            raw = "".join(getattr(c, "text", "") or "" for c in content)
+            # No await since `settled`: from here until it is recorded, a relearning waits for this call.
+            with background.call() if background is not None else nullcontext():
+                return await upstream_call(ctx, params, args, session, live, received)
+        return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
+
+    async def upstream_call(ctx, params, args, session, live, received):
+        """A tool call to its upstream server: the result recorded, trimmed when the policy says so."""
+        sessions = ctx.lifespan_context["sessions"]
+        if params.name not in routes:           # a client that calls before listing
+            await upstream_tools(sessions)
+        if params.name not in routes:
+            return types.CallToolResult(content=[types.TextContent(type="text", text=f"Error: unknown tool {params.name}.")],
+                                        isError=True)
+        server, name = routes[params.name]
+        r = await sessions[server].call_tool(name, args)
+        key = session_keys.for_call(getattr(ctx.session, "_connection", None)) if session_keys and not isolated else None
+        call = ToolCall(params.name, args, server=server, upstream_tool=name, session_key=key, received_at=received)
+        content = list(r.content or [])
+        # An error, or anything that is not plain text (images, resources),
+        # goes back exactly as the server sent it: nothing to learn or trim.
+        is_error = bool(getattr(r, "is_error", None) or getattr(r, "isError", None))
+        structured = getattr(r, "structured_content", None)
+        if is_error or any(getattr(c, "type", "text") != "text" for c in content):
+            # Passed back exactly as sent, and still recorded: errors are
+            # what the report's error analysis is about.
+            text_part = "".join(getattr(c, "text", "") or "" for c in content if getattr(c, "type", "") == "text")
+            kinds = sorted({getattr(c, "type", "?") for c in content if getattr(c, "type", "") != "text"})
+            note = text_part if text_part else f"[non-text content: {', '.join(kinds)}]"
+            if is_error and not note.lower().startswith("error"):
+                note = "Error: " + note
             if rec:
-                rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
+                rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": note},
                                      ensure_ascii=False) + "\n")
                 rec.flush()
-            obs = engine.observe(call, ToolResult(raw))
-            if isolated:
-                isolated.remember(session, obs.call_id)
-            text = obs.text
-            live.call(params.name, raw, text, obs.sizes)
-            if text == raw:
-                # Nothing trimmed: the server's result goes back untouched,
-                # structured content and metadata included.
-                return r
-            if structured is not None and engine.policy is not None and obs.exposure == FILTERED:
-                # The structured copy is trimmed like the text, or it would carry
-                # back everything the projection removed. A result passed whole on
-                # purpose (sampled, or cheaper whole) keeps it whole as well.
-                projected = engine.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
-                try:
-                    structured = json.loads(projected)
-                except ValueError:
-                    structured = None
-            meta = getattr(r, "meta", None)
-            return types.CallToolResult(content=[types.TextContent(type="text", text=text)],
-                                        structuredContent=structured, **({"_meta": meta} if meta else {}))
-        return types.CallToolResult(content=[types.TextContent(type="text", text=text)])
+            seen = engine.observe(call, ToolResult(note, verbatim=True))
+            live.call(params.name, note, note, seen.sizes)
+            return r                     # exactly as the server sent it, metadata included
+        raw = "".join(getattr(c, "text", "") or "" for c in content)
+        if rec:
+            rec.write(json.dumps({"kind": "call", "tool": params.name, "arguments": args, "output": raw},
+                                 ensure_ascii=False) + "\n")
+            rec.flush()
+        obs = engine.observe(call, ToolResult(raw))
+        if isolated:
+            isolated.remember(session, obs.call_id)
+        text = obs.text
+        live.call(params.name, raw, text, obs.sizes)
+        if text == raw:
+            # Nothing trimmed: the server's result goes back untouched,
+            # structured content and metadata included.
+            return r
+        if structured is not None and engine.policy is not None and obs.exposure == FILTERED:
+            # The structured copy is trimmed like the text, or it would carry
+            # back everything the projection removed. A result passed whole on
+            # purpose (sampled, or cheaper whole) keeps it whole as well.
+            projected = engine.policy.apply(params.name, json.dumps(structured, ensure_ascii=False))
+            try:
+                structured = json.loads(projected)
+            except ValueError:
+                structured = None
+        meta = getattr(r, "meta", None)
+        return types.CallToolResult(content=[types.TextContent(type="text", text=text)],
+                                    structuredContent=structured, **({"_meta": meta} if meta else {}))
 
     # The skill explains expand and tracetrim_done: published whenever expand is offered.
     publish = o.skill and offers_expand

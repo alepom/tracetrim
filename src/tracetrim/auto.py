@@ -46,7 +46,7 @@ import json
 import re
 import threading
 import time
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -102,7 +102,8 @@ class Run:
 class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None,
                  adaptive: Adaptive | None = None, protect_ids: str = "all", learning: str = "1.1",
-                 compact: bool = True, keep_positions: bool = True, durable_closes: bool = False):
+                 compact: bool = True, keep_positions: bool = True, durable_closes: bool = True,
+                 relearn_at_start: bool = True):
         """`idle_seconds`: the pause after which the integration closes a run
         by itself (the proxy does; a function-calling loop closes its own
         runs, and passes None). Only used to count runs that an answer closed
@@ -112,7 +113,11 @@ class Learner:
         "record" (tracetrim.projection.PROTECT_IDS; since 1.1).
         `learning`: the rules of usage detection and of the report's measure, "1.1" (the default) or "1.0"
         (tracetrim.usage.LEARNING). `compact`, `keep_positions`: whether run time writes compact JSON and keeps the
-        places of list elements left with no field; the measure follows them, and the config records them."""
+        places of list elements left with no field; the measure follows them, and the config records them.
+        `durable_closes`: a closing is written through a journal, all its files or none (1.4: in every mode; until
+        1.3 only with the proxy's isolated sessions); False restores the writes of 1.3, file after file.
+        `relearn_at_start`: a run left out of the report by a stopped process is relearned in the constructor; False
+        leaves it to the caller (`needs_relearn`): the proxy with `--background-relearn` does it in a thread."""
         from .projection import protect_mode
         from .usage import learning_flags
         self.learning = learning
@@ -124,9 +129,13 @@ class Learner:
             raise ValueError('protect_ids: "all" or "record" in automatic mode')
         self.dir = Path(workdir)
         (self.dir / "traces").mkdir(parents=True, exist_ok=True)
+        # Held for the life of the Learner: `tracetrim promotions` in another process then knows the directory is in
+        # use, and does not relearn it from there (store.OPEN_LOCK).
+        self._open = store.hold_open(self.dir)
         self.durable_closes = durable_closes
         self.pending_close = False
-        recovered = store.recover_close(self.dir)
+        with store.write_lock(self.dir):
+            recovered = store.recover_close(self.dir)
         store.clean(self.dir)
         store.clean(self.dir / "traces")
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
@@ -159,6 +168,10 @@ class Learner:
                 # Written in place by a version before atomic writes, and cut short.
                 # The traces are intact: counters restart, learning does not.
                 self.state_path.replace(self.state_path.with_suffix(".json.corrupt"))
+        # Traces numbered after the runs the state knows: a closing written file after file (`durable_closes=False`,
+        # or 1.3) stopped between its trace and its state. The state takes them in, once, and the report must cover
+        # them; their counts and notes were only in memory.
+        behind = self._realign()
         # One lock for everything the calls and the learning thread share:
         # the state, the open run and the evidence file.
         self.lock = threading.RLock()
@@ -183,10 +196,26 @@ class Learner:
         self.closed_sessions = 0                     # confirmed session count at the last closing
         self.unsupported: list[str] = []             # the last run closed: values of its answer no output contains
 
-        # A run on disk that no report covers yet: marked pending in the same write that records the run, or (a
-        # process stopped between the trace and the state) numbered after the runs the state knows.
-        if recovered or self.state.get("report_pending") or self._next_run() - 1 > self.state["runs"]:
+        # A run on disk that no report covers yet: marked pending in the same write that records the run, replayed
+        # from the journal of an interrupted closing, or taken in by `_realign`.
+        self.needs_relearn = bool(recovered or behind or self.state.get("report_pending"))
+        if self.needs_relearn and relearn_at_start:
             self.relearn()
+
+    def _realign(self) -> bool:
+        """Take into the state the traces numbered after its runs (see the constructor). True when there were."""
+        later = {}
+        for p in (self.dir / "traces").glob("run-*.jsonl"):
+            m = re.match(r"run-(\d+)", p.name)
+            if m and int(m[1]) > self.state["runs"]:
+                later[int(m[1])] = "noanswer" not in p.name
+        if not later:
+            return False
+        self.state["runs"] = max(later)
+        self.state["complete_runs"] += sum(later.values())
+        self.state["report_pending"] = True
+        store.write_json(self.state_path, self.state)
+        return True
 
     @property
     def run(self) -> Run:
@@ -226,8 +255,10 @@ class Learner:
                 # The first call after an answer. Within the idle pause it may be
                 # the same task going on (the agent closed too early) or the next
                 # one: the two cannot be told apart, so they are counted, not merged.
+                # Only a call that arrived after the answer: one already on its way when the run was closed
+                # (another client's, received before the reply) follows no answer.
                 now = time.time() if at is None else at
-                if self.idle_seconds is not None and now - self.run.answered_at <= self.idle_seconds:
+                if self.idle_seconds is not None and 0 <= now - self.run.answered_at <= self.idle_seconds:
                     self.state["answered_runs_followed_by_calls"] += 1
                 self.run.answered_at = None
             e = {"kind": "call", "tool": tool, "arguments": arguments, "output": output}
@@ -403,7 +434,7 @@ class Learner:
         """Finish any interrupted publication before the next workdir write."""
         if not self.pending_close:           # read without the lock: the proxy asks on its event loop at every call
             return False
-        with self.lock:
+        with self.lock, store.write_lock(self.dir):
             if not self.pending_close:
                 return False
             store.recover_close(self.dir)
@@ -412,28 +443,35 @@ class Learner:
             return True
 
     def _durable_done(self, answer: str | None) -> Path:
-        original = self.run
-        closed = copy.copy(original)
-        closed.sessions = original.sessions.copy()
-        # _write_run replaces the event, note, index and size containers. Its
-        # aggregate state is updated in place, so prepare that on a private copy.
-        previous = self.state
-        self.state = copy.deepcopy(previous)
-        self.state["report_pending"] = True
-        try:
-            with self.use_run(closed), store.collect_close() as files:
-                path = self._write_run(answer)
-            store.write_json(self.dir / store.JOURNAL,
-                             {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})
-        except BaseException:
-            self.state = previous
-            raise
-        # The journal is the commit point. Handles to the original Run must
-        # now see the cleared, numbered run, including if publication fails.
-        vars(original).update(vars(closed))
-        self.pending_close = True
-        self.finish_pending()
+        # Under the write lock from the evidence read to the publication: `tracetrim promotions` in another process
+        # never edits evidence.json between them (store.WRITE_LOCK).
+        with store.write_lock(self.dir):
+            original = self.run
+            closed = copy.copy(original)
+            closed.sessions = original.sessions.copy()
+            # _write_run replaces the event, note, index and size containers. Its
+            # aggregate state is updated in place, so prepare that on a private copy.
+            previous = self.state
+            self.state = copy.deepcopy(previous)
+            self.state["report_pending"] = True
+            try:
+                with self.use_run(closed), store.collect_close() as files:
+                    path, failed = self._stage_run(answer)
+                store.write_json(self.dir / store.JOURNAL,
+                                 {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})
+            except BaseException:
+                self.state = previous
+                raise
+            # The journal is the commit point. Handles to the original Run must
+            # now see the cleared, numbered run, including if publication fails.
+            vars(original).update(vars(closed))
+            self.pending_close = True
+            self.finish_pending()
         self._check_grounding(path, bool(answer and answer.strip()))
+        if failed is not None:
+            # A secondary write failed once the trace was staged (the evidence, the savings): the run is on disk with
+            # what did not fail, as in a closing written file after file since 1.0, and the failure is raised.
+            raise failed
         return path
 
     def _check_grounding(self, path, complete):
@@ -443,6 +481,14 @@ class Learner:
             self.unsupported = []
 
     def _write_run(self, answer: str | None) -> Path:
+        path, failed = self._stage_run(answer)
+        if failed is not None:
+            raise failed
+        return path
+
+    def _stage_run(self, answer: str | None) -> tuple[Path, Exception | None]:
+        """Write the run (`_write_run`), or collect its files for the journal (`_durable_done`). Returns the trace and
+        the failure of a secondary write, if one failed after the trace."""
         events, notes = self.events, self.notes
         number = self._next_run()
         complete = bool(answer and answer.strip())
@@ -490,9 +536,7 @@ class Learner:
         # process stopped before then relearns at its next start (1.4: in every mode, not only with isolated sessions).
         self.state["report_pending"] = True
         self._save()
-        if failed is not None:
-            raise failed
-        return path
+        return path, failed
 
     def _absorb(self, run: str, events: list[dict], notes: list[dict], answer: str | None) -> None:
         """Turn the notes of a run into evidence, kept in evidence.json; the
@@ -500,9 +544,10 @@ class Learner:
         if not notes:
             return
         found, broad = evidence.derive(events, notes, answer)
-        data = evidence.load(self.evidence_path)
-        evidence.merge(data, run, found, broad, self._origins)
-        evidence.save(self.evidence_path, data)
+        with store.write_lock(self.dir):         # read, merged and written with no other process in between
+            data = evidence.load(self.evidence_path)
+            evidence.merge(data, run, found, broad, self._origins)
+            evidence.save(self.evidence_path, data)
         self._generation += 1
         for n in notes:
             # A run counts for the switch-off only if an expand in it really gave a removed field
@@ -550,28 +595,30 @@ class Learner:
         """What one relearning reads, all from one generation of the work directory: the runs on disk, the state,
         the savings, the evidence and the published tool list, with no write of this process between them.
 
-        The files are read outside the lock: the lock is taken only to note the generation (and copy the state,
-        in memory) and then to check that it has not changed, so a call or a closing on the proxy's event loop
-        never waits for these reads. If a write came in between, they are read again; the last attempt reads
-        under the lock (a write at every attempt: a busy process without `--background-relearn`)."""
-        attempts = 4
-        for attempt in range(attempts):
-            with self.lock if attempt == attempts - 1 else nullcontext():
-                with self.lock:
-                    generation = self._generation
-                    state = copy.deepcopy({k: self.state[k] for k in self._READ if k in self.state})
-                paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
-                try:
-                    savings = json.loads(self.savings_path.read_text(encoding="utf-8")) \
-                        if self.savings_path.exists() else None
-                except (OSError, ValueError):
-                    savings = None                   # a measure: the report goes without the section
-                data = evidence.load(self.evidence_path)
-                tools = definitions.load(self.dir)
-                with self.lock:
-                    if self._generation == generation:
-                        return {"state": state, "paths": paths, "savings": savings, "evidence": data, "tools": tools}
-        raise AssertionError("unreachable: the last attempt holds the lock")
+        Read as a seqlock reader reads: the lock is taken only to note the generation (and copy the state, in
+        memory) and then to check that it has not changed. If a write of this process came in between, everything is
+        read again after a short pause, growing with the attempts: never under the lock, so a call or a closing on
+        the event loop never waits for these reads. With `--background-relearn` nothing writes while a relearning
+        runs (BackgroundLearning), so the first attempt is the only one; without it, another client's write can make
+        it read again, for as long as writes keep coming in every attempt."""
+        pause = 0.0
+        while True:
+            with self.lock:
+                generation = self._generation
+                state = copy.deepcopy({k: self.state[k] for k in self._READ if k in self.state})
+            paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
+            try:
+                savings = json.loads(self.savings_path.read_text(encoding="utf-8")) \
+                    if self.savings_path.exists() else None
+            except (OSError, ValueError):
+                savings = None                       # a measure: the report goes without the section
+            data = evidence.load(self.evidence_path)
+            tools = definitions.load(self.dir)
+            with self.lock:
+                if self._generation == generation:
+                    return {"state": state, "paths": paths, "savings": savings, "evidence": data, "tools": tools}
+            pause = min(0.05, pause * 2 or 0.001)
+            time.sleep(pause)
 
     def _relearn(self) -> Policy | None:
         from . import arguments, lists, measure
@@ -710,22 +757,26 @@ class Learner:
 
         The decisions are added, not written over: the promotions and resumed fields this relearning found (by
         tool and field, as `evidence.decide` and `evidence.resume` do), on the evidence as it is now, so that what
-        was written meanwhile (a closing, a late `expand`, `tracetrim promotions` in another process) is kept. The
-        evidence is read outside the lock, as in `_inputs`: under it only memory and the writes."""
-        evidence_changes = decided is not None and bool(decided["new"] or decided["resumed"])
-        attempts = 4
-        for attempt in range(attempts):
-            with self.lock if attempt == attempts - 1 else nullcontext():
-                if evidence_changes:
-                    with self.lock:
-                        generation = self._generation
-                    data = evidence.load(self.evidence_path)
-                with self.lock:
-                    if evidence_changes and self._generation != generation:
-                        continue                     # written meanwhile: read again
-                    self._apply(runs_at_start, decided, data if evidence_changes else None)
+        was written meanwhile is kept: a closing or a late `expand` of this process (the generation), or
+        `tracetrim promotions` in another one (the file's stamp, checked under the write lock that every process
+        takes to write it). The evidence is read outside both locks, as in `_inputs`, and read again if it changed;
+        under the locks only the check and the writes."""
+        if decided is None or not (decided["new"] or decided["resumed"]):
+            with self.lock:
+                self._apply(runs_at_start, decided, None)
+            return
+        pause = 0.0
+        while True:
+            with self.lock:
+                generation = self._generation
+            seen = store.stamp(self.evidence_path)
+            data = evidence.load(self.evidence_path)
+            with self.lock, store.write_lock(self.dir):
+                if self._generation == generation and store.stamp(self.evidence_path) == seen:
+                    self._apply(runs_at_start, decided, data)
                     return
-        raise AssertionError("unreachable: the last attempt holds the lock")
+            pause = min(0.05, pause * 2 or 0.001)
+            time.sleep(pause)
 
     def _apply(self, runs_at_start: int, decided: dict | None, data: dict | None) -> None:
         """`_commit`, under the lock."""
@@ -739,6 +790,10 @@ class Learner:
                 data[key] += [e for e in entries if (e["tool"], e["field"]) not in known]
             evidence.save(self.evidence_path, data)
             self._generation += 1
+        # A promotion or a resumed field corrects the cut of its tool, and the tool's counts start again. They start
+        # again for every result filtered with the old cut, which is every result filtered before the new policy is
+        # installed: those filtered after this relearning read its inputs too (another client's, without
+        # `--background-relearn`; with it none is filtered in between).
         for tool in decided["restarted"]:
             for counter in ("trimmed", "expanded", "expand_runs"):
                 self.state[counter].pop(tool, None)

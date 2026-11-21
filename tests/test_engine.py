@@ -182,14 +182,15 @@ def test_the_final_answer_is_stored_as_a_message_and_triggers_nothing(tmp_path):
 
 
 def test_a_trace_left_by_an_interrupted_closing_is_not_overwritten(tmp_path):
-    engine = Engine(Learner(tmp_path, min_runs=2))
+    engine = Engine(Learner(tmp_path, min_runs=2, durable_closes=False))     # written file after file, as in 1.3
     engine.observe(call(0), ToolResult(billing.output(0)))
     engine.close(billing.answer(0))
     # The process died after writing run 2 and before saving the state.
     orphan = tmp_path / "traces" / "run-0002.jsonl"
     orphan.write_text((tmp_path / "traces" / "run-0001.jsonl").read_text())
-    again = Engine(Learner(tmp_path, min_runs=2))
-    assert again.learner.state["runs"] == 1
+    again = Engine(Learner(tmp_path, min_runs=2, durable_closes=False))
+    # Since 1.4 the state takes the orphan in (until 1.3 it stayed at 1, and the orphan was only skipped).
+    assert again.learner.state["runs"] == 2 and again.learner.state["complete_runs"] == 2
     again.observe(call(1), ToolResult(billing.output(1)))
     assert again.close(billing.answer(1)).name == "run-0003.jsonl" and orphan.exists()
 

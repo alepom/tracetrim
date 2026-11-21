@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from contextlib import contextmanager
 from contextvars import ContextVar
 import tempfile
@@ -81,3 +82,137 @@ def clean(directory: str | Path) -> None:
     """Remove what an interrupted write left behind."""
     for tmp in Path(directory).glob(".*.tmp"):
         tmp.unlink(missing_ok=True)
+
+
+# -- between processes (1.4) ---------------------------------------------------------------------------------------
+# A work directory has one owner, the process whose Learner runs on it (a proxy, an AutoTrim loop); `tracetrim
+# promotions` may edit its evidence from another process meanwhile. Two locks, each on a file of its own:
+#   - WRITE_LOCK: exclusive, held for every read-modify-write of evidence.json and for the journal of a closing, by
+#     every process. Reentrant within a process (an RLock in front of the file lock).
+#   - OPEN_LOCK: shared, held by every Learner for its life; `tracetrim promotions` tries it exclusively, without
+#     waiting, to learn whether another process owns the directory. A POSIX record lock: it belongs to the process,
+#     so Learners of one process never see each other.
+# Where neither fcntl nor msvcrt exists the locks are not taken, as up to 1.3.
+WRITE_LOCK = ".tracetrim-write.lock"
+OPEN_LOCK = ".tracetrim-open.lock"
+_guard = threading.Lock()
+_writers: dict[str, dict] = {}
+
+
+def _lock(fh) -> None:
+    try:
+        import fcntl
+    except ImportError:
+        try:
+            import msvcrt
+        except ImportError:
+            return
+        fh.seek(0)
+        while True:
+            try:
+                msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 1)    # gives up after about 10 s: try again
+                return
+            except OSError:
+                continue
+    fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+
+
+def _unlock(fh) -> None:
+    try:
+        import fcntl
+    except ImportError:
+        try:
+            import msvcrt
+        except ImportError:
+            return
+        fh.seek(0)
+        msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+        return
+    fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+
+
+@contextmanager
+def write_lock(directory: str | Path):
+    """Exclusive between processes and between threads, reentrant within a thread: see WRITE_LOCK."""
+    directory = Path(directory)
+    key = str(directory.resolve())
+    with _guard:
+        entry = _writers.setdefault(key, {"rlock": threading.RLock(), "depth": 0, "file": None})
+    with entry["rlock"]:
+        if entry["depth"] == 0:
+            fh = open(directory / WRITE_LOCK, "a+b")
+            try:
+                _lock(fh)
+            except BaseException:
+                fh.close()
+                raise
+            entry["file"] = fh
+        entry["depth"] += 1
+        try:
+            yield
+        finally:
+            entry["depth"] -= 1
+            if entry["depth"] == 0:
+                fh, entry["file"] = entry["file"], None
+                try:
+                    _unlock(fh)
+                finally:
+                    fh.close()
+
+
+# Directories this context already holds exclusively (`alone`): a Learner made inside does not take the shared lock,
+# which for a POSIX record lock of the same process would replace the exclusive one.
+_alone: ContextVar[frozenset] = ContextVar("tracetrim_alone", default=frozenset())
+
+
+def hold_open(directory: str | Path):
+    """For the life of a Learner: the shared OPEN_LOCK, so that another process knows the directory is in use. Waits
+    while `tracetrim promotions` relearns it. Returns the file to keep open (None without fcntl)."""
+    try:
+        import fcntl
+    except ImportError:
+        return None
+    if str(Path(directory).resolve()) in _alone.get():
+        return None
+    fh = open(Path(directory) / OPEN_LOCK, "a+b")
+    try:
+        fcntl.lockf(fh.fileno(), fcntl.LOCK_SH)
+    except OSError:
+        fh.close()
+        return None
+    return fh
+
+
+@contextmanager
+def alone(directory: str | Path):
+    """True when no other process owns the directory (and none can start owning it until the block ends); False
+    when one does. True where it cannot be known (no fcntl), as up to 1.3."""
+    try:
+        import fcntl
+    except ImportError:
+        yield True
+        return
+    fh = open(Path(directory) / OPEN_LOCK, "a+b")
+    try:
+        try:
+            fcntl.lockf(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            yield False
+            return
+        token = _alone.set(_alone.get() | {str(Path(directory).resolve())})
+        try:
+            yield True
+        finally:
+            _alone.reset(token)
+            fcntl.lockf(fh.fileno(), fcntl.LOCK_UN)
+    finally:
+        fh.close()
+
+
+def stamp(path: str | Path):
+    """What changes when a file is replaced (atomically: another inode) or written: None when missing."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return st.st_ino, st.st_mtime_ns, st.st_size

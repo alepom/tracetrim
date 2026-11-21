@@ -702,3 +702,365 @@ def test_a_promotion_is_identical_in_both_modes_and_read_outside_the_lock(tmp_pa
     assert_identical(results)
     assert json.loads(results["on"]["evidence.json"])["promotions"]       # the decision path was taken
     assert owned and not any(owned)
+
+
+# -- REVISIONE-14b-ter -------------------------------------------------------------------------------------------
+
+def capture_uvicorn(monkeypatch):
+    import uvicorn
+    servers = []
+    init = uvicorn.Server.__init__
+
+    def capture(self, *a, **kw):
+        init(self, *a, **kw)
+        servers.append(self)
+    monkeypatch.setattr(uvicorn.Server, "__init__", capture)
+    return servers
+
+
+def capture_learners(monkeypatch):
+    learners = []
+    build = proxy._server
+
+    def capture(o):
+        server, learner = build(o)
+        learners.append(learner)
+        return server, learner
+    monkeypatch.setattr(proxy, "_server", capture)
+    return learners
+
+
+async def start_http(o, servers):
+    port = free_port()
+    task = asyncio.create_task(proxy.serve_http(o, host="127.0.0.1", port=port, token=None, allowed_hosts=[]))
+    for _ in range(200):
+        if servers and servers[-1].started:
+            break
+        await asyncio.sleep(0.05)
+    return task, f"http://127.0.0.1:{port}/mcp"
+
+
+async def stop_http(task, servers):
+    servers[-1].should_exit = True
+    await asyncio.wait_for(task, 30)
+
+
+@pytest.mark.parametrize("isolated", [False, True])
+def test_a_call_already_in_the_upstream_is_recorded_before_the_relearning_reads(tmp_path, monkeypatch, isolated):
+    """REVISIONE-14b-ter: B's call reaches the upstream, then A closes. The relearning reads its inputs once B's
+    result is recorded, so they count it; and B's call, received before the answer, follows no answer."""
+    servers, learners = capture_uvicorn(monkeypatch), capture_learners(monkeypatch)
+    gate = tmp_path / "gate"
+    gate.mkdir()
+    reads = []
+    inputs = auto.Learner._inputs
+
+    def counted(self):
+        got = inputs(self)
+        reads.append(dict(got["state"]["trimmed"]))
+        return got
+    monkeypatch.setattr(auto.Learner, "_inputs", counted)
+
+    async def go():
+        # The upstream with its gate (an `env` of the servers file reaches the upstream process).
+        o = proxy.Options(servers={"upstream": {"command": sys.executable, "args": [str(ROOT / "tests" / "fixtures" /
+                                                                                     "meta_server.py")],
+                                                "env": {"META_GATE": str(gate)}}},
+                          auto_dir=str(tmp_path / "work"), quiet=True, min_runs=2, background_relearn=True,
+                          isolate_sessions=isolated)
+        task, url = await start_http(o, servers)
+        learner = learners[-1]
+        async with Client(url, mode="legacy") as a, Client(url, mode="legacy") as b:
+            for _ in range(2):                                        # two runs: the policy applies
+                await run(a)
+                await settled(learner)
+            assert "call_id=" in (await a.call_tool("volumes", {})).content[0].text
+            followed = learner.state["answered_runs_followed_by_calls"]
+            held = asyncio.create_task(b.call_tool("volumes", {"gate": "b"}))
+            for _ in range(1000):
+                if (gate / "b.arrived").exists():
+                    break
+                await asyncio.sleep(0.01)
+            assert (gate / "b.arrived").exists()
+            reply = await a.call_tool("tracetrim_done", {"answer": ANSWER})      # A closes, B in the upstream
+            assert reply.content[0].text == auto.DONE_REPLY
+            await asyncio.sleep(0.3)
+            assert len(reads) == 2                                    # the third relearning waits for B
+            (gate / "b.go").touch()
+            assert "call_id=" in (await held).content[0].text        # the policy in place when it was sent
+            await settled(learner)
+            assert reads[-1] == {"volumes": 2}                        # B's filtered result is in the inputs
+            assert learner.state["answered_runs_followed_by_calls"] == followed
+        await stop_http(task, servers)
+    asyncio.run(go())
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_with_two_clients_a_call_during_a_relearning(tmp_path, monkeypatch, on):
+    """The order with several clients, as documented (BackgroundLearning): with the option, B's call that arrives
+    while A's relearning runs waits for it and gets the new policy; without it, B is served at once with the
+    policy in place (REVISIONE-14b-ter: 96 tokens against 75)."""
+    servers, learners = capture_uvicorn(monkeypatch), capture_learners(monkeypatch)
+    entered, release = threading.Event(), threading.Event()
+    relearn = auto.Learner.relearn
+
+    def held(self):
+        if self.state["runs"] == 2:                   # the relearning that makes the policy apply
+            entered.set()
+            release.wait(5)
+        return relearn(self)
+    monkeypatch.setattr(auto.Learner, "relearn", held)
+
+    async def go():
+        o = options(tmp_path / "work", isolate_sessions=True, background_relearn=on)
+        task, url = await start_http(o, servers)
+        learner = learners[-1]
+        async with Client(url, mode="legacy") as a, Client(url, mode="legacy") as b:
+            await run(a)
+            if on:
+                await settled(learner)
+            assert not (await a.call_tool("volumes", {})).is_error
+            closing = asyncio.create_task(a.call_tool("tracetrim_done", {"answer": ANSWER}))
+            assert await asyncio.to_thread(entered.wait, 5)
+            call = asyncio.create_task(b.call_tool("volumes", {}))
+            await asyncio.sleep(0.4)
+            assert call.done() is (not on)            # without the option, served during the relearning
+            release.set()
+            out = (await call).content[0].text
+            await closing
+            assert ("call_id=" in out) is on          # with it, after the relearning, with the new policy
+            if on:
+                await settled(learner)
+        await stop_http(task, servers)
+    asyncio.run(go())
+
+
+class Stop(BaseException):
+    """A process stopped at a precise write."""
+
+
+def test_a_trace_ahead_of_the_state_is_taken_in_once(tmp_path, monkeypatch):
+    """REVISIONE-14b-ter: a closing written file after file (1.3, or `durable_closes=False`) stops after the trace
+    and the savings, before the state. The next start takes the run into the state, on disk, and relearns; the
+    one after has nothing to do."""
+    from tracetrim import store
+    from tracetrim.contract import ToolCall, ToolResult
+    from tracetrim.engine import Engine
+    learner = auto.Learner(tmp_path, 2, durable_closes=False)
+    engine = Engine(learner)
+    for value in (1, 3):
+        engine.observe(ToolCall("t", {}), ToolResult(json.dumps({"a": value, "b": value + 1})))
+        if value == 1:
+            engine.close("1")
+    write_json = store.write_json
+
+    def stop_at_state(path, data):
+        if Path(path).name == "state.json":
+            raise Stop
+        return write_json(path, data)
+    monkeypatch.setattr(store, "write_json", stop_at_state)
+    with pytest.raises(Stop):
+        learner.done("3")
+    monkeypatch.setattr(store, "write_json", write_json)
+    assert json.loads((tmp_path / "state.json").read_text())["runs"] == 1          # behind its traces
+    relearnings = []
+    relearn = auto.Learner.relearn
+    monkeypatch.setattr(auto.Learner, "relearn", lambda self: relearnings.append(1) or relearn(self))
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 2 and state["complete_runs"] == 2 and "report_pending" not in state
+    report = json.loads((tmp_path / "report.json").read_text())
+    assert report["auto"]["complete_runs"] == 2
+    assert [r["run"] for r in report["savings"]["runs"]] == ["run-0001", "run-0002"]
+    assert relearnings == [1]
+    auto.Learner(tmp_path, 2)                                                      # the next start: nothing to do
+    assert relearnings == [1]
+
+
+def test_a_closing_stopped_in_its_journal_is_published_whole_once(tmp_path, monkeypatch):
+    """Closings go through a journal in every mode (1.4): stopped after the journal and the trace, before the state,
+    the next start publishes the whole closing (trace, savings, evidence, state) and the one after does nothing."""
+    from tracetrim import store
+    from tracetrim.contract import ToolCall, ToolResult
+    from tracetrim.engine import Engine
+    learner = auto.Learner(tmp_path, 2)
+    engine = Engine(learner)
+    engine.observe(ToolCall("t", {}), ToolResult('{"a": 1, "b": 2}'))
+    engine.close("1")
+    engine.observe(ToolCall("t", {}), ToolResult('{"a": 3, "b": 4}'))
+    replace = store.os.replace
+
+    def stop_at_state(src, dst):
+        if Path(dst).name == "state.json":
+            raise Stop
+        return replace(src, dst)
+    monkeypatch.setattr(store.os, "replace", stop_at_state)
+    with pytest.raises(Stop):
+        learner.done("3")
+    monkeypatch.setattr(store.os, "replace", replace)
+    assert (tmp_path / store.JOURNAL).exists() and (tmp_path / "traces" / "run-0002.jsonl").exists()
+    relearnings = []
+    relearn = auto.Learner.relearn
+    monkeypatch.setattr(auto.Learner, "relearn", lambda self: relearnings.append(1) or relearn(self))
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == state["complete_runs"] == 2 and "report_pending" not in state
+    assert "run-0002" in json.loads((tmp_path / "savings.json").read_text())["runs"]
+    assert not (tmp_path / store.JOURNAL).exists() and relearnings == [1]
+    auto.Learner(tmp_path, 2)
+    assert relearnings == [1]
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_copy_taken_in_the_middle_of_an_ordinary_closing_restarts_to_the_same_files(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-ter (0 copies out of 8): with sessions that are not isolated, a copy of the work directory taken
+    right after the trace or the savings of a closing, before its state, restarts to the files of the closing let
+    finish, byte for byte."""
+    import shutil
+    from tracetrim import store
+    deterministic(monkeypatch)
+    work = tmp_path / "work"
+    copies = {}
+    write_atomic = store.write_atomic
+
+    def copying(path, text):
+        write_atomic(path, text)
+        name = Path(path).name
+        if store._writes.get() is None and name in ("run-0002.jsonl", "savings.json") and name not in copies \
+                and (work / "traces" / "run-0002.jsonl").exists():
+            copies[name] = tmp_path / f"copy-{name}"
+            shutil.copytree(work, copies[name])
+    monkeypatch.setattr(store, "write_atomic", copying)
+
+    async def go():
+        server, learner = proxy._server(options(work, background_relearn=on))
+        async with Client(server) as client:
+            await run(client)
+            if on:
+                await settled(learner)
+            await run(client)
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+    monkeypatch.setattr(store, "write_atomic", write_atomic)
+    assert sorted(copies) == ["run-0002.jsonl", "savings.json"]
+    finished = snapshot(work)
+    for name, copy in copies.items():
+        assert json.loads((copy / "state.json").read_text())["runs"] == 1        # the state was not written yet
+        proxy._server(options(copy))                                             # the next start
+        assert snapshot(copy) == finished, name
+
+
+def test_a_revert_from_another_process_is_kept(tmp_path, monkeypatch):
+    """REVISIONE-14b-ter: `tracetrim promotions --revert`, run in another process while the relearning that adds a
+    new promotion has read the evidence, is not written over; and with the directory in use the command does not
+    relearn it from there."""
+    import subprocess
+    from tracetrim import evidence
+    paused, release = threading.Event(), threading.Event()
+    load, commit = evidence.load, auto.Learner._commit
+    local = threading.local()
+
+    def committing(self, runs_at_start, decided):
+        local.on = runs_at_start == 6                 # the relearning that promotes note_1
+        try:
+            return commit(self, runs_at_start, decided)
+        finally:
+            local.on = False
+
+    def read(*a, **kw):
+        data = load(*a, **kw)
+        if getattr(local, "on", False) and not paused.is_set():
+            paused.set()                              # the commit has read the evidence: hold it here
+            release.wait(30)
+        return data
+    monkeypatch.setattr(auto.Learner, "_commit", committing)
+    monkeypatch.setattr(evidence, "load", read)
+    work = tmp_path / "work"
+
+    async def go():
+        server, learner = proxy._server(options(work, background_relearn=True, promote=True))
+        async with Client(server) as client:
+            for i in range(1, 7):                     # filtered from run 3: note_0 asked in 3 and 4, note_1 in 5 and 6
+                out = (await client.call_tool("volumes", {})).content[0].text
+                m = re.search(r"call_id=(c[0-9a-f]{8})", out)
+                field = "items[].note_0" if i in (3, 4) else "items[].note_1"
+                if m:
+                    await client.call_tool("expand", {"call_id": m.group(1), "fields": [field]})
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+                if i < 6:
+                    await settled(learner)
+                if i == 4:
+                    assert [p["field"] for p in json.loads((work / "evidence.json").read_text())["promotions"]] \
+                        == ["items[].note_0"]
+            # Run 6's relearning promotes note_1 and is held after reading the evidence.
+            assert await asyncio.to_thread(paused.wait, 10)
+            cli = await asyncio.to_thread(subprocess.run, [
+                sys.executable, "-m", "tracetrim.cli", "promotions", str(work), "--revert", "volumes",
+                "items[].note_0"], capture_output=True, text=True, env={**__import__("os").environ,
+                                                                       "PYTHONPATH": str(ROOT / "src")})
+            assert cli.returncode == 0, cli.stderr
+            assert "in use" in cli.stdout
+            release.set()
+            await learner.background.drain()
+    asyncio.run(go())
+    status = {p["field"]: p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]}
+    assert status == {"items[].note_0": "reverted", "items[].note_1": "active"}
+
+
+def test_writes_during_every_read_never_wait_for_the_relearning(tmp_path, monkeypatch):
+    """REVISIONE-14b-ter (854 ms at the fourth attempt): another client's write during each read of a relearning
+    makes it read again, never under the lock, and the write never waits for it."""
+    from tracetrim import evidence
+    learner = auto.Learner(tmp_path, 2)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done("1")
+    reading = threading.Event()
+    load = evidence.load
+    owned = []
+
+    def slow(*a, **kw):
+        if threading.current_thread() is not threading.main_thread():
+            owned.append(learner.lock._is_owned())
+            reading.set()
+            time.sleep(0.3)
+        return load(*a, **kw)
+    monkeypatch.setattr(evidence, "load", slow)
+    worker = threading.Thread(target=learner.relearn)
+    worker.start()
+    waits = []
+    for _ in range(5):                                   # a write in each of five reads
+        assert reading.wait(5)
+        reading.clear()
+        start = time.perf_counter()
+        learner.refused()
+        waits.append(time.perf_counter() - start)
+    worker.join(20)
+    assert not worker.is_alive() and len(owned) >= 6 and not any(owned)
+    assert max(waits) < 0.1
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["refused_closings"] == 5
+
+
+def test_the_recovery_at_start_runs_in_a_thread_with_the_option(tmp_path, monkeypatch):
+    """REVISIONE-14b-ter (491 ms on the loop): with the option, the constructor leaves a run pending on disk to the
+    coordinator, which relearns it in a thread; the first request waits for it."""
+    learner = auto.Learner(tmp_path, 2)
+    learner.events.append({"kind": "call", "tool": "volumes", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done(ANSWER)                                 # recorded, not relearned: pending on disk
+    assert json.loads((tmp_path / "state.json").read_text())["report_pending"] is True
+    seen = tracking(monkeypatch)
+
+    async def go():
+        start = time.perf_counter()
+        server, learner = proxy._server(options(tmp_path, background_relearn=True))
+        built = time.perf_counter() - start
+        with Ticker() as ticker:
+            async with Client(server) as client:
+                start = time.perf_counter()
+                assert not (await client.call_tool("volumes", {})).is_error
+                waited = time.perf_counter() - start
+        return built, waited, ticker.longest
+    built, waited, longest = asyncio.run(go())
+    assert built < 0.3 and waited >= 0.3 and longest < 0.25
+    assert seen["calls"] == 1 and not any(seen["main"])
+    assert "report_pending" not in json.loads((tmp_path / "state.json").read_text())

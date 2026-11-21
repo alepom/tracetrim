@@ -111,9 +111,13 @@ to come back in a second, independent run. Promotion starts once trimming has st
   tracetrim promotions tracetrim-data/ --restore list_orders 'data[].refund_note'
   ```
 
-  A reverted field is removed again and is not promoted a second time. A running proxy picks the change
-  up at its next closing. The operator's choice prevails: if ordinary learning would keep a reverted
-  field (its value was seen written), the field stays removed and the report lists it as to review.
+  A reverted field is removed again and is not promoted a second time. With no process on the work
+  directory, the command also rewrites config and report at once. With a proxy running on it (since 1.4
+  the command can tell), it only saves the change and says so: the proxy picks it up at its next
+  relearning, after its next closing, and never writes it over (evidence.json is read, changed and
+  written under a lock that every process takes). The operator's choice prevails: if ordinary learning
+  would keep a reverted field (its value was seen written), the field stays removed and the report lists
+  it as to review.
 
 ## Sampling without filter (`--sample-rate`)
 
@@ -193,7 +197,10 @@ an estimate of the calls that could have been made in an earlier turn.
 | `report.json`, `report.html` | section `savings`: where the saving of each run comes from, re-serialisation and fields; section `adaptive`: promotions, their effect on tokens, evidence, sampling; `turns`: calls per turn |
 
 Every file is written aside and renamed: a process killed while writing leaves the previous content.
-One lock protects what tool calls and the learning thread share. Work directories of 0.3.5 load as they are.
+Since 1.4 a closing writes its files through a journal (`.tracetrim-pending-close.json`, removed once they are
+in place): stopped at any point, the next start finds all of them or none. One lock protects what tool calls
+and the learning thread share; two lock files, `.tracetrim-write.lock` and `.tracetrim-open.lock`, coordinate
+the processes on one work directory. Work directories of 0.3.5 load as they are.
 
 ## The offline demo
 

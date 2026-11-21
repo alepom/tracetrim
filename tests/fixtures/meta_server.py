@@ -17,6 +17,14 @@ async def list_tools(ctx, params):
 
 
 async def call_tool(ctx, params):
+    # META_GATE (a directory) and the argument `gate`: the call says it arrived (<gate>.arrived) and returns once
+    # <gate>.go exists, to hold a call in the upstream (tests/test_background_relearn.py).
+    gate = (params.arguments or {}).get("gate")
+    if gate and os.environ.get("META_GATE"):
+        folder = os.environ["META_GATE"]
+        open(os.path.join(folder, f"{gate}.arrived"), "w").close()
+        while not os.path.exists(os.path.join(folder, f"{gate}.go")):
+            await asyncio.sleep(0.01)
     # META_INDENT: send the text indented, as many servers do, so that the proxy re-serialises
     # it even when it passes the result whole (tests/test_proxy_passthrough.py).
     indent = int(os.environ["META_INDENT"]) if os.environ.get("META_INDENT") else None

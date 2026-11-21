@@ -188,15 +188,19 @@ Whichever way it is connected:
 **Closing without waiting** (1.4, off by default): relearning takes longer as runs accumulate (about 5 s on
 the billing traces and 14 s on the CI traces at 100 runs), and by default the reply to `tracetrim_done` waits
 for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded, and relearns
-in a thread, never on its event loop. Only that reply is earlier: every request that arrives while the
-relearning runs (a tool call, an `expand`, another closing, a tool listing) waits for it, so the model
-receives, and the proxy learns from, exactly what it would without the option; every file of the work
-directory ends byte for byte the same. One relearning runs at a time, and each report reads one moment of the
-work directory: the runs it lists, with their savings, counters and evidence. Shutdown completes the
-relearning in progress and relearns the open runs it keeps, in a thread as well. A run is marked pending on
-disk in the same write that records it (in every mode, since 1.4), so a run left out of the report by a
-stopped process is relearned at the next start
+in a thread, never on its event loop. Only that reply is earlier: a request that arrives while the relearning
+runs (a tool call, an `expand`, another closing, a tool listing) waits for it and is served with the new
+policy, and a call already on its way to the upstream server is recorded before the relearning reads the runs.
+With one agent at a time, whose requests follow one another, the model receives, and the proxy learns from,
+exactly what it would without the option: every file of the work directory ends byte for byte the same. With
+several clients the two modes differ by design: without the option, another client's request is served at
+once, with the policy in place, while a closing relearns. One relearning runs at a time, each report reads one
+moment of the work directory (the runs it lists, with their savings, counters and evidence), and shutdown and
+the recovery at start relearn in a thread as well
 ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
+
+Since 1.4, in every mode, a closing writes its files through a journal: a process stopped at any point leaves
+all of them or none, and the next start relearns what no report covers yet.
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
 delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the
