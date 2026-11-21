@@ -1,4 +1,71 @@
-# Protocol v3b · Does the learned projection preserve answer quality on hard billing tasks?
+# Protocol v3b · Does the learned projection lose the facts it hides, on hard billing tasks?
+
+**Version 2, preregistered on 21 November 2026 before any campaign run** (REVISIONE-13, path A, approved by the
+author). Version 1 (commit `8a9ed3c`) required tasks where the raw arm R scores between 0.40 and 0.90. Its
+calibration found none: R reported 0.94–1.00 of the facts on all 18 candidates, including every fact that P
+hides. Version 2 keeps the tasks, the arms, the model and the key. It drops the difficulty filter on R, and
+makes the share of the **facts P hides** the primary outcome. The sections below replace those of version 1
+where they differ: Question, Calibration, Campaign, Outcomes. Task construction, the hidden-field check,
+novelty and arms are unchanged and kept as written. The selected tasks, the schedule, the private calibration
+scores and the mapping are frozen in `protocol-v3b.lock` before the campaign. Protocol v3 is unchanged.
+
+## Version 2 · what changes
+
+**Question.** When the facts a billing answer needs sit in fields that P removes from list calls, does P still
+report them as R does? R, which sees every field, reads them almost always (calibration). The risk measured is
+P's alone.
+
+**Scorer.** `experiments/v3b/facts.py` also accepts an amount written in whole cents followed by the word
+(«10674 centesimi», «10674 cent»), as the calibration answers did. This was fixed before version 2. The
+calibration is rescored with it and reported descriptively. The version-1 scores are kept privately
+(`out/v3b/calibration/scores-v1.json`) and both fingerprints go into the lock. Rescored: 17 of 18 candidates
+at 1.000, one at 0.947; hidden facts 79 of 79.
+
+**Tasks.** The first 12 candidates by number, C4b-01 to C4b-12, with 54 hidden facts (3 to 6 per task). They
+are chosen mechanically, not on calibration results. The calibration runs never enter the campaign.
+
+**Campaign.** 12 tasks × 3 repetitions × 2 arms = 72 new runs. Blocks (task, repetition) are shuffled with
+seed 130422, and the arm order inside a block comes from a balanced list shuffled with the same seed
+(`experiments/v3b/run.py`). Model, loop, guards, retry rule and caps are those of version 1.
+
+**Budget rule.** Estimate the spend: the private v3 ledgers, the campaign at the mean calibration cost per run
+(P costed like R), and the Gemini judge at its upper bound (two passes and a third reading of every task, at
+the measured v3 cost per call scaled by input tokens). If the estimate exceeds the warning, drop the judge
+first, then reduce to the first 10 tasks. If it still exceeds the warning, stop and ask. The decision is
+recorded in `material/selection.json`; the figures stay private.
+
+**Primary outcome: hidden-fact share.** For each answer, the share of the key's hidden facts (`hidden` in the
+key, the facts P removes from list calls) that the answer reports correctly, by `facts.py`.
+
+**Hypothesis H1b (version 2).** P − R ≥ −0.10 on the hidden-fact share:
+- P minus R within repetition, averaged within task, tasks averaged equally;
+- percentile bootstrap, 95%, 10,000 draws, seed 311, resampling tasks with all their repetitions and both arms;
+- preservation requires the lower endpoint strictly above −0.10;
+- an interval spanning −0.10 is inconclusive, and one wholly below it is a material loss;
+- report the point estimate, the full interval and R's level as reference.
+
+**Secondary outcomes:**
+- the share of all key facts, P − R with the same estimator, no margin; an interval wholly below zero is
+  reported as a loss;
+- the Gemini composite, if the budget rule keeps the judge. Judge, grouping, seeds and combination are as in
+  version 1. P − R with the same estimator, described at −0.5 and −0.25;
+- in P, `expand` calls and runs, and for each hidden fact whether its value reached the model through
+  `expand`, an untrimmed detail call, or not at all, and whether it was reported;
+- gates, grounding, calls, turns, tokens and cost relative to R;
+- agreement between the passes and third readings, if judged.
+
+**Missing data.** As in protocol v3: complete pairs, with 0/1 worst and best bounds on the shares (and 0/4 on
+the composite) for infrastructure losses.
+
+**Limits.**
+- R's level near 1 means the comparison tests P against a near-perfect reference: a loss shows as P below 1.
+- The hidden-field construction uses typical requests. A live agent in P may reach a hidden value through
+  untrimmed detail endpoints rather than `expand`, which is part of what P offers.
+- One model, one synthetic task family, 12 tasks.
+
+---
+
+# Version 1 (8a9ed3c), kept as preregistered
 
 **Preregistered before calibration.** This file, the task generator, the key and the objective scorer are
 committed before the first calibration run. The selected tasks, the schedule and the private mapping are frozen in

@@ -73,6 +73,8 @@ def test_analysis_estimator_and_recovery():
     c = an.contrast(values)
     assert abs(c["point"] + 0.15) < 1e-9 and c["tasks"] == 10
     assert c["ci95"][0] <= -0.15 <= c["ci95"][1] and c["verdict_0.5"] == "preserved"
+    h = an.contrast({k: v / 4 for k, v in values.items()}, (an.PRIMARY_MARGIN,))
+    assert set(k for k in h if k.startswith("verdict")) == {"verdict_0.1"}
     assert an.verdict([-0.6, -0.2], -0.5) == "inconclusive" and an.verdict([-0.9, -0.6], -0.5) == "material loss"
     del values["C4b-01/1/R"]
     assert len(an.per_task(values)) == 10
@@ -82,3 +84,10 @@ def test_analysis_estimator_and_recovery():
               {"kind": "call", "tool": "expand", "output": '{"data":[{"balance":-1234}]}'}]
     assert an.reached(fact, events) == ["expand"]
     assert an.reached(fact, events[:1]) == []
+
+
+def test_amounts_in_whole_cents():
+    f = {"kind": "amount", "value": 10674}
+    assert facts.found(f, {"x": "totale 10674 centesimi"}) and facts.found(f, {"x": "-10674 cent"})
+    assert not facts.found(f, {"x": "110674 centesimi"}) and not facts.found(f, {"x": "10674 euro"})
+    assert not facts.found(f, {"x": "10674"})

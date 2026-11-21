@@ -36,7 +36,9 @@ def manifest() -> dict:
     return {"format": "tracetrim/protocol-v3b@1",
             "files": {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)},
             "calibration_scores_sha256": digest(CALIBRATION / "scores.json"),
-            "anonymous_mapping_sha256": digest(PRIVATE / "mapping.json")}
+            "calibration_scores_v1_sha256": digest(CALIBRATION / "scores-v1.json"),
+            # Sealed only when the plan keeps the Gemini judge (material/selection.json).
+            "anonymous_mapping_sha256": digest(PRIVATE / "mapping.json") if (PRIVATE / "mapping.json").exists() else None}
 
 
 def verify() -> int:

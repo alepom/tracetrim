@@ -7,7 +7,8 @@ object only, all its fields together:
   customer  the ticket's `customer_id` equals the key's
   id        the Stripe identifier appears in the ticket
   amount    the amount in cents appears in euros with two decimals, comma or point, with or
-            without a thousands separator (amounts are never whole euros, by construction)
+            without a thousands separator (amounts are never whole euros, by construction), or as
+            whole cents followed by the word (10674 centesimi, 10674 cent): version 2 of the protocol
   count     the number, in digits or as an Italian word, directly followed by its unit (TB, licenze)
 
 A missing answer, unparsable JSON or a missing ticket scores zero on the facts concerned.
@@ -38,7 +39,8 @@ def found(fact: dict, ticket: dict) -> bool:
     if fact["kind"] == "id":
         return fact["value"] in text
     if fact["kind"] == "amount":
-        return amount_pattern(fact["value"]).search(text) is not None
+        return amount_pattern(fact["value"]).search(text) is not None or \
+            re.search(rf"(?<![\d.,]){abs(fact['value'])}\s*(?:centesim|cent\b|cents\b)", text, re.I) is not None
     if fact["kind"] == "count":
         n = fact["value"]
         number = rf"(?:{n}|{WORDS[n]})" if n in WORDS else str(n)

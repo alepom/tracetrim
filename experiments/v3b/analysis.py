@@ -1,14 +1,15 @@
-"""The analysis fixed in protocol-v3b.md, run after the blind scores.
+"""The analysis fixed in protocol-v3b.md, version 2.
 
-  python -m experiments.v3b.analysis                       # on out/v3b/judged.json
+  python -m experiments.v3b.analysis                       # after the campaign (and the judge, if planned)
   python -m experiments.v3b.analysis --fake SEED --out F   # invented judge scores, to test the script
 
-H1b: P minus R on the judged composite, paired within repetition, averaged within task, tasks
-equal; percentile bootstrap 95% (10,000 draws, seed 311, tasks resampled with all repetitions and
-both arms); verdict at -0.5, descriptive at -0.25. Co-primary: the same estimator on the share of
-key facts (experiments/v3b/facts.py), no margin. Secondary: gates, grounding, hidden facts by arm,
-expand and how each hidden value reached the model in P, process measures with cost relative to R,
-agreement of the passes. Costs only relative to R, never as amounts.
+Primary: P minus R on the share of the facts P hides that the answer reports correctly
+(experiments/v3b/facts.py), paired within repetition, averaged within task, tasks equal; percentile
+bootstrap 95% (10,000 draws, seed 311, tasks resampled with all repetitions and both arms);
+preserved if the lower endpoint is above -0.10. Secondary: the same estimator on the share of all
+key facts (no margin) and, when judged, on the Gemini composite (described at -0.5 and -0.25);
+gates, grounding, expand and how each hidden value reached the model in P, process measures with
+cost relative to R, agreement of the passes. Costs only relative to R, never as amounts.
 """
 from __future__ import annotations
 
@@ -29,8 +30,10 @@ from . import facts
 from .hidden import matches
 from .run import PRIVATE, campaign_slots, where
 from .tools import task_data
+from .worlds import DATA
 
-MARGIN, SENSITIVITY = -0.5, -0.25
+PRIMARY_MARGIN = -0.10
+MARGIN, SENSITIVITY = -0.5, -0.25          # the judged composite, secondary in version 2
 DRAWS, SEED = 10_000, 311
 DETAIL = {"stripe_retrieve_invoice", "stripe_retrieve_charge", "stripe_list_refunds"}
 
@@ -59,11 +62,12 @@ def verdict(ci, margin):
     return "preserved" if ci[0] > margin else "material loss" if ci[1] < margin else "inconclusive"
 
 
-def contrast(values: dict[str, float]) -> dict:
+def contrast(values: dict[str, float], margins=(MARGIN, SENSITIVITY)) -> dict:
     t = per_task(values)
     ci = bootstrap(t)
     return {"point": mean(t.values()) if t else None, "ci95": ci, "tasks": len(t),
-            "verdict_0.5": verdict(ci, MARGIN), "verdict_0.25": verdict(ci, SENSITIVITY), "per_task": t}
+            **{f"verdict_{abs(m):g}": verdict(ci, m) for m in margins},
+            "wholly_below_zero": ci is not None and ci[1] < 0, "per_task": t}
 
 
 def reached(fact: dict, events: list[dict]) -> list[str]:
@@ -85,7 +89,7 @@ def reached(fact: dict, events: list[dict]) -> list[str]:
 def analyse(judged: dict, gone: dict) -> dict:
     camp = where(PRIVATE)
     slots = [s for s in campaign_slots() if s not in gone]
-    composite = {s: mean(judged["scores"][s][d] for d in DIMS) for s in slots}
+    composite = {s: mean(judged["scores"][s][d] for d in DIMS) for s in slots} if judged else None
     shares, hidden, gates, ground, meta, recovery = {}, {}, {}, {}, {}, []
     for s in slots:
         task, rep, arm = s.split("/")
@@ -125,10 +129,10 @@ def analyse(judged: dict, gone: dict) -> dict:
     process["P"]["cost_relative_to_R"] = process["P"].pop("_cost") / ref if ref else None
     process["R"]["cost_relative_to_R"] = 1.0
 
-    def bounds(values, lo, hi):
+    def bounds(values, lo, hi, margins=(MARGIN, SENSITIVITY)):
         worst = dict(values) | {s: (lo if s.endswith("/P") else hi) for s in gone}
         best = dict(values) | {s: (hi if s.endswith("/P") else lo) for s in gone}
-        return {"worst": contrast(worst)["ci95"], "best": contrast(best)["ci95"]}
+        return {"worst": contrast(worst, margins)["ci95"], "best": contrast(best, margins)["ci95"]}
 
     def paired(flags):
         out = {"both": 0, "only_R": 0, "only_P": 0, "neither": 0}
@@ -149,11 +153,15 @@ def analyse(judged: dict, gone: dict) -> dict:
             b["via"][h] = b["via"].get(h, 0) + 1
     return {
         "protocol": "protocol-v3b.md", "answers": len(slots), "missing": {a: sum(s.endswith("/" + a) for s in gone) for a in "RP"},
-        "H1b_composite_P_minus_R": contrast(composite) | ({"missing_bounds": bounds(composite, 0.0, 4.0)} if gone else {}),
-        "coprimary_fact_share_P_minus_R": contrast(shares) | ({"missing_bounds": bounds(shares, 0.0, 1.0)} if gone else {}),
-        "composite_by_arm": {a: arm_rows(a, lambda ss: mean(composite[s] for s in ss)) for a in "RP"},
+        "primary_hidden_fact_share_P_minus_R": contrast(hidden, (PRIMARY_MARGIN,))
+        | ({"missing_bounds": bounds(hidden, 0.0, 1.0, (PRIMARY_MARGIN,))} if gone else {}),
+        "secondary_fact_share_P_minus_R": contrast(shares, ())
+        | ({"missing_bounds": bounds(shares, 0.0, 1.0, ())} if gone else {}),
+        "secondary_composite_P_minus_R": (contrast(composite) | ({"missing_bounds": bounds(composite, 0.0, 4.0)}
+                                                                if gone else {})) if judged else None,
+        "composite_by_arm": {a: arm_rows(a, lambda ss: mean(composite[s] for s in ss)) for a in "RP"} if judged else None,
         "dimensions_by_arm": {a: arm_rows(a, lambda ss: {d: mean(judged["scores"][s][d] for s in ss) for d in DIMS})
-                              for a in "RP"},
+                              for a in "RP"} if judged else None,
         "fact_share_by_arm": {a: arm_rows(a, lambda ss: mean(shares[s] for s in ss)) for a in "RP"},
         "hidden_fact_share_by_arm": {a: arm_rows(a, lambda ss: mean(hidden[s] for s in ss)) for a in "RP"},
         "gates": {"by_arm": {a: arm_rows(a, lambda ss: sum(gates[s] for s in ss)) for a in "RP"}, "paired": paired(gates)},
@@ -166,7 +174,8 @@ def analyse(judged: dict, gone: dict) -> dict:
                               "reported_when_reached": sum(r["reported"] for r in recovery if r["reached"]),
                               "reported_when_not_reached": sum(r["reported"] for r in recovery if not r["reached"]),
                               "by_template": by_template},
-        "agreement": judged.get("agreement"), "adjudicated": judged.get("adjudicated"),
+        "agreement": judged.get("agreement") if judged else None,
+        "adjudicated": judged.get("adjudicated") if judged else None,
         "process": process,
     }
 
@@ -191,13 +200,15 @@ def main(argv=None):
         judged = fake(a.fake, gone)
         gone = gone | {s: "not run (fake analysis)" for s in campaign_slots() if s not in judged["scores"] and s not in gone}
     else:
-        judged = json.loads((PRIVATE / "judged.json").read_text())
+        planned = json.loads((DATA / "selection.json").read_text()).get("judge")
+        judged = json.loads((PRIVATE / "judged.json").read_text()) if planned else None
     res = analyse(judged, gone) | ({"FAKE_SCORES": True} if a.fake is not None else {})
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    h, c = res["H1b_composite_P_minus_R"], res["coprimary_fact_share_P_minus_R"]
-    print(f"H1b P-R: {h['point']} CI {h['ci95']} -> {h['verdict_0.5']} (at -0.25: {h['verdict_0.25']}); "
-          f"facts P-R: {c['point']} CI {c['ci95']}; written {a.out}")
+    h, c = res["primary_hidden_fact_share_P_minus_R"], res["secondary_fact_share_P_minus_R"]
+    j = res["secondary_composite_P_minus_R"]
+    print(f"hidden facts P-R: {h['point']} CI {h['ci95']} -> {h['verdict_0.1']}; all facts P-R: {c['point']} "
+          f"CI {c['ci95']}; composite P-R: {j and j['point']} CI {j and j['ci95']}; written {a.out}")
 
 
 if __name__ == "__main__":

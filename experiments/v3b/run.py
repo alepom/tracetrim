@@ -35,7 +35,8 @@ LEDGERS = {"v3_campaign": V3 / "ledger.jsonl", "v3_judge": V3 / "judge-ledger.js
 SCHEDULE_SEED = 130422
 REPETITIONS = 3
 LOW, HIGH, TARGET = 0.40, 0.90, 0.65
-KEEP_MAX, KEEP_MIN = 12, 10
+KEEP_MAX, KEEP_MIN = 12, 10                # version 1 (calibration rule), kept for the record
+V2_TASKS, V2_MIN_TASKS = 12, 10
 V3_JUDGE_TOKENS = 806_602 / 20          # mean o200k input tokens of a v3 judge group (REPORT-12c)
 
 
@@ -101,41 +102,44 @@ def estimate(tasks: list[str], reps: int, mean_run: float, mean_answer_tokens: f
 
 
 def select():
+    """Version 2 of the protocol (REVISIONE-13): no difficulty filter on R. The first 12 candidates by
+    number, 3 repetitions; if the estimate with the judge exceeds the warning, the judge is dropped
+    first, then the tasks go down to the first 10. The calibration is reported, descriptively."""
     scores = calibration_scores()
     if set(scores) != set(candidates()):
         raise SystemExit(f"calibration incomplete: {len(scores)} of {CANDIDATES} scored")
-    shares = {t: s["share"] for t, s in scores.items()}
     write(CALIBRATION / "scores.json", scores)          # private; its SHA-256 goes into the lock
-    eligible, kept = rule(shares)
-    result = {"rule": f"{LOW} <= s <= {HIGH}; at most {KEEP_MAX} closest to {TARGET}; at least {KEEP_MIN}",
-              "calibration_share_R": shares, "eligible": eligible, "kept": kept}
-    if len(kept) < KEEP_MIN:
-        print(json.dumps(result, indent=1))
-        raise SystemExit(f"only {len(kept)} eligible tasks: stop and report, the tasks are revised")
     w = where(CALIBRATION)
     metas = [json.loads(w.trace(f"{t}/0/R").with_suffix(".meta.json").read_text()) for t in candidates()]
     mean_run = sum(m["cost_usd"] for m in metas) / len(metas)
     mean_answer = sum(m["tokens"]["final_answer"] for m in metas) / len(metas)
     warn, _ = caps("v3")
-    reps, steps = REPETITIONS, []
-    est = estimate(kept, reps, mean_run, mean_answer)
-    while est["total"] > warn:
-        if len(kept) > KEEP_MIN:
-            kept = sorted(sorted(kept, key=lambda t: (round(abs(shares[t] - TARGET), 9), t))[:KEEP_MIN])
-            steps.append("tasks reduced to 10")
-        elif reps > 2:
-            reps = 2
-            steps.append("repetitions reduced to 2")
-        else:
-            print(json.dumps(result | {"budget_steps": steps}, indent=1))
-            raise SystemExit("the estimate exceeds the warning even with 10 tasks and 2 repetitions: stop and ask")
-        est = estimate(kept, reps, mean_run, mean_answer)
-    result.update(kept=kept, repetitions=reps, budget_steps=steps, schedule_seed=SCHEDULE_SEED)
+    kept, judge, steps = candidates()[:V2_TASKS], True, []
+
+    def total(est):
+        return est["spent"] + est["campaign"] + (est["judge_upper"] if judge else 0.0)
+    est = estimate(kept, REPETITIONS, mean_run, mean_answer)
+    if total(est) > warn:
+        judge = False
+        steps.append("Gemini judge removed")
+    if total(est) > warn:
+        kept = candidates()[:V2_MIN_TASKS]
+        steps.append("tasks reduced to the first 10")
+        est = estimate(kept, REPETITIONS, mean_run, mean_answer)
+    if total(est) > warn:
+        raise SystemExit("the estimate exceeds the warning even without the judge and with 10 tasks: stop and ask")
+    result = {"version": 2, "rule": f"the first {V2_TASKS} candidates by number; {REPETITIONS} repetitions; "
+                                     "budget: drop the judge, then keep the first 10",
+              "calibration_share_R": {t: s["share"] for t, s in scores.items()},
+              "calibration_hidden_share_R": {t: s["hidden_share"] for t, s in scores.items()},
+              "kept": kept, "repetitions": REPETITIONS, "judge": judge, "budget_steps": steps,
+              "schedule_seed": SCHEDULE_SEED}
     write(DATA / "selection.json", result)
-    write(DATA / "schedule.json", schedule(kept, reps))
+    write(DATA / "schedule.json", schedule(kept, REPETITIONS))
     # The figures stay private: printed for the report, never written to a versioned file.
-    print(json.dumps({k: round(v, 2) for k, v in est.items()}), "(private: USD at list prices)")
-    print(json.dumps({"eligible": len(eligible), "kept": kept, "repetitions": reps, "steps": steps}))
+    print(json.dumps({k: round(v, 2) for k, v in est.items()} | {"total_with_plan": round(total(est), 2)}),
+          "(private: USD at list prices)")
+    print(json.dumps({"kept": kept, "repetitions": REPETITIONS, "judge": judge, "steps": steps}))
 
 
 def campaign_slots() -> list[str]:
