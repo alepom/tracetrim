@@ -116,6 +116,8 @@ def test_malformed_once_then_reported(where):
     c = Client(bad=1)
     run(jg.run(where, 1, c, PRICES, limit=1, limits=LIMITS))
     assert jg.status(where, 1)["scored"] == 1 and len(c.calls) == 2
+    raw = sorted(p.name for p in where.pass_dir(1).glob("*.response.json"))
+    assert [n.split(".", 1)[1] for n in raw] == ["1.response.json", "2.response.json"]
     c = Client(bad=2)
     run(jg.run(where, 1, c, PRICES, limits=LIMITS))
     st = jg.status(where, 1)

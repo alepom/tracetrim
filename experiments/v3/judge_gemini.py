@@ -289,7 +289,7 @@ async def judge_group(where: Where, n: int, group: dict, client, p: dict, limits
         may_start(where, limits)
         k = attempts(where, n, group["group"]) + 1
         stem = folder / f"{group['group']}.{k}"
-        stem.with_suffix(".request.json").write_text(json.dumps(req | {"labels": labels, "model": p["model"]},
+        folder.joinpath(f"{stem.name}.request.json").write_text(json.dumps(req | {"labels": labels, "model": p["model"]},
                                                                 ensure_ascii=False, indent=1) + "\n")
         t0 = time.time()
         line = {"pass": n, "group": group["group"], "attempt": k, "model": p["model"],
@@ -303,7 +303,7 @@ async def judge_group(where: Where, n: int, group: dict, client, p: dict, limits
             continue
         usage, text = usage_of(r), text_of(r)
         cand = r.candidates[0] if getattr(r, "candidates", None) else None
-        stem.with_suffix(".response.json").write_text(json.dumps(
+        folder.joinpath(f"{stem.name}.response.json").write_text(json.dumps(
             {"text": text, "usage": usage, "finish_reason": str(getattr(cand, "finish_reason", None)),
              "model_version": getattr(r, "model_version", None), "retries": retries}, ensure_ascii=False, indent=1) + "\n")
         try:
