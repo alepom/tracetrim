@@ -114,3 +114,19 @@ def test_one_retry_then_missing(tmp_path):
     assert run(live.run_slot(other, where, Client(fail=2), "m", CAPS)) is None
     assert other in live.missing(where) and not where.trace(other).exists()
     assert live.done(where, other)
+
+
+def test_arms_choose_policy_and_skill_version(tmp_path):
+    """Protocol v3c: arm P2 is the frozen policy P with the skill text of version 2; the default stays version 1."""
+    where = live.Where(tmp_path)
+    arms = {"P1": {"policy": "P", "skill_version": "1"}, "P2": {"policy": "P", "skill_version": "2"}}
+    seen = {}
+    for arm in ("P1", "P2"):
+        client = Client()
+        run(live.run_slot(f"C4-05/1/{arm}", where, client, "m", CAPS, arms=arms))
+        expand = next(t for t in client.created[0]["tools"] if t["name"] == "expand")
+        seen[arm] = (client.created[0]["instructions"], expand["description"])
+    assert "missing, unknown" not in seen["P1"][0] and "missing, unknown" in seen["P2"][0]
+    assert "missing" not in seen["P1"][1] and "missing" in seen["P2"][1]
+    meta = json.loads(where.trace("C4-05/1/P2").with_suffix(".meta.json").read_text())
+    assert meta["skill"]["version"] == "2" and meta["tools_trimmed"]

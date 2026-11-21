@@ -54,7 +54,7 @@ from pathlib import Path
 
 from . import definitions, evidence, grounding, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
-from .engine import EXPAND, Engine, requested_fields
+from .engine import EXPAND, Engine, expand_tool, requested_fields  # noqa: F401  (EXPAND: imported from here before 1.4)
 from .evidence import Adaptive
 from .runtime import Policy
 from .traces import load as load_trace
@@ -762,6 +762,9 @@ class AutoTrim:
     found, a long text cancelled by one piece written before the call, the report measuring without compact
     JSON. Since 1.1.
 
+    `skill_version="1"` gives `instructions` and `expand_tool` the text of 1.3, without the check before
+    declaring information absent that version 2 adds (since 1.4).
+
     `breakdown=False` stops counting, call by call, what re-serialising saves
     and what removing fields saves (the report's section on where the saving
     comes from). The count changes nothing the model receives.
@@ -770,13 +773,16 @@ class AutoTrim:
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
                  strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
                  breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1",
-                 keep_positions: bool = True):
+                 keep_positions: bool = True, skill_version: str | None = None):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
                                      compact=compact, keep_positions=keep_positions), structural=structural,
                              compact=compact, breakdown=breakdown, keep_positions=keep_positions)
         self.strategy = strategy
-        self.expand_tool = {"name": EXPAND["name"], "description": EXPAND["description"],
-                            "parameters": EXPAND["inputSchema"]}
+        from . import skill
+        self.skill_version = skill_version or skill.VERSION
+        tool = expand_tool(self.skill_version)
+        self.expand_tool = {"name": tool["name"], "description": tool["description"],
+                            "parameters": tool["inputSchema"]}
 
     @property
     def learner(self) -> Learner:
@@ -810,7 +816,7 @@ class AutoTrim:
         """Text for the system prompt: the tracetrim skill without the part on
         `tracetrim_done`, which a function-calling loop does not need."""
         from .skill import text
-        return text(strategy=self.strategy, done=False)
+        return text(strategy=self.strategy, done=False, version=self.skill_version)
 
     def offered(self, tools: list[dict]) -> None:
         """Optional: the tools as you send them to the model, `expand` included, in

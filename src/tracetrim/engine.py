@@ -24,15 +24,28 @@ from .projection import dumps
 from .runtime import Policy
 from .usage import leaves, parse_output
 
+_EXPAND_V1 = ("Some tool results are trimmed to save context: the fields removed are listed in the line "
+              "'[trimmed] call_id=... hidden: ...' after the result. Call expand with that call_id and "
+              "the fields or groups you need, to get their values from the original result.")
+# Since 1.4 (skill version 2, protocol-v3c.md): the check before declaring information absent.
+_EXPAND_V2 = _EXPAND_V1 + (" Before you state that information is missing or unknown, check whether a hidden field "
+                           "could hold it (a description, note, memo or reason) and expand it first.")
 EXPAND = {
     "name": "expand",
-    "description": ("Some tool results are trimmed to save context: the fields removed are listed in the line "
-                    "'[trimmed] call_id=... hidden: ...' after the result. Call expand with that call_id and "
-                    "the fields or groups you need, to get their values from the original result."),
+    "description": _EXPAND_V2,
     "inputSchema": {"type": "object", "required": ["call_id", "fields"], "properties": {
         "call_id": {"type": "string"},
         "fields": {"type": "array", "items": {"type": "string"}}}},
 }
+
+
+def expand_tool(version: str | None = None) -> dict:
+    """The `expand` tool as listed with skill version `version` (default: the current one): "1" is 1.3's text."""
+    from . import skill
+    version = version or skill.VERSION
+    if version not in skill.VERSIONS:
+        raise ValueError(f"skill version {version!r}: one of {', '.join(skill.VERSIONS)}")
+    return dict(EXPAND, description=_EXPAND_V1 if version == "1" else _EXPAND_V2)
 MAX_GROUPS = 25
 MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MARK = "\n[trimmed] "        # starts the line that follows a filtered result

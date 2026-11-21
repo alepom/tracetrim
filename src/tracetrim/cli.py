@@ -219,7 +219,7 @@ def cmd_proxy(a):
                 compact=False if a.no_compact else None,
                 keep_positions=False if a.no_keep_positions else None,
                 breakdown=not a.no_breakdown, log_client=a.log_client, isolate_sessions=a.isolate_sessions,
-                background_relearn=a.background_relearn,
+                background_relearn=a.background_relearn, skill_version=a.skill_version,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
                 switch_off_runs=a.switch_off_runs, protect_ids=a.protect_ids, learning=a.learning,
                 sample_max_share=a.sample_max_share, sample_seed=a.sample_seed,
@@ -276,7 +276,7 @@ def cmd_skill(a):
     load MCP skills, or (--write) as a SKILL.md folder for hosts that read
     skills from disk."""
     from . import skill
-    kw = {"strategy": a.strategy, "done": not a.no_done}
+    kw = {"strategy": a.strategy, "done": not a.no_done, "version": a.skill_version}
     if a.write:
         path = Path(a.write) / skill.NAME / "SKILL.md"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -442,6 +442,9 @@ def main(argv=None):
     s.add_argument("--quiet", action="store_true", help="suppress per-call output on stderr; session warnings are still printed")
     s.add_argument("--isolate-sessions", action="store_true",
                    help="keep a separate run for each HTTP transport session (--http --auto only)")
+    s.add_argument("--skill-version", choices=["1", "2"], default="2",
+                   help="text of the skill and of expand: 2 (default since 1.4) adds the check before declaring "
+                        "information absent; 1 restores the text of 1.3")
     s.add_argument("--background-relearn", action="store_true",
                    help="reply to tracetrim_done once the run is recorded and relearn in the background; calls "
                         "meanwhile use the policy in place (--auto only)")
@@ -501,6 +504,7 @@ def main(argv=None):
     s.add_argument("--no-done", action="store_true",
                    help="leave out tracetrim_done (function calling: the loop passes the answer itself)")
     s.add_argument("--write", metavar="DIR", help="write DIR/tracetrim/SKILL.md instead of printing the text")
+    s.add_argument("--skill-version", choices=["1", "2"], default="2", help="2 (default since 1.4), or 1 for the text of 1.3")
     s.set_defaults(func=cmd_skill)
 
     from .init import HOSTS

@@ -16,6 +16,11 @@ TEXTS = Path(skill.__file__).parent / "skills" / "tracetrim"
 PINNED = {"1": {
     "done.md": "960512dc2eabb5c2771caa75d121548e80026b2c00f251e7d595803e7fc27541",
     "expand.md": "f103feef47e62b199a8972a66bfe290679124a633a93847053f124e331b7b20c",
+    "strategy.md": "b7f7914377743b0c76bca4c373062598c6d9502a1d31c085923044e8addfe496"},
+    # 2 (1.4): expand.md adds the check before declaring information absent; done.md and strategy.md unchanged.
+    "2": {
+    "done.md": "960512dc2eabb5c2771caa75d121548e80026b2c00f251e7d595803e7fc27541",
+    "expand.md": "b80a8ff64d4df82048b5d31d7b5a313df2af09c6e2e6f42121f69eeb698f342a",
     "strategy.md": "b7f7914377743b0c76bca4c373062598c6d9502a1d31c085923044e8addfe496"}}
 LEVELS = [{"strategy": s, "done": d} for s in (False, True) for d in (True, False)]
 
@@ -23,6 +28,35 @@ LEVELS = [{"strategy": s, "done": d} for s in (False, True) for d in (True, Fals
 def test_the_texts_match_the_version_they_are_published_under():
     now = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(TEXTS.glob("*.md"))}
     assert now == PINNED[skill.VERSION], "skill text changed: raise skill.VERSION and pin the new digests"
+
+
+@pytest.mark.parametrize("version", ["1", "2"])
+def test_every_version_serves_exactly_its_pinned_texts(version):
+    for part, digest in PINNED[version].items():
+        served = skill._file(part.removesuffix(".md"), version).read_bytes()
+        assert hashlib.sha256(served).hexdigest() == digest, (version, part)
+
+
+def test_version_1_is_the_text_of_1_3_and_version_2_adds_the_absence_check():
+    from tracetrim.engine import expand_tool
+    old, new = skill.text(version="1"), skill.text()
+    assert "missing, unknown or not in the data" in new and "missing" not in old
+    assert new.startswith(old.rstrip("\n").rsplit("\n", 1)[0][:200])
+    assert "missing or unknown" in expand_tool()["description"]
+    assert "missing" not in expand_tool("1")["description"]
+    assert skill.frontmatter(version="1")["metadata"]["version"] == "1"
+    with pytest.raises(ValueError):
+        skill.text(version="3")
+
+
+def test_the_proxy_and_the_cli_choose_the_version(tmp_path, capsys):
+    from tracetrim import proxy
+    assert proxy.Options().skill_version == skill.VERSION == "2"
+    main(["skill", "--skill-version", "1"])
+    assert capsys.readouterr().out == skill.text(version="1")
+    tt = AutoTrim(tmp_path, skill_version="1")
+    assert tt.instructions == skill.text(done=False, version="1") and "missing" not in tt.expand_tool["description"]
+    assert "missing" in AutoTrim(tmp_path / "b").expand_tool["description"]
 
 
 def test_base_is_always_on_and_strategy_only_when_asked():
@@ -117,3 +151,23 @@ def test_the_tool_descriptions_are_enough_without_the_skill():
     assert "not the conversation" in json.dumps(DONE["inputSchema"])
     assert "call_id" in EXPAND["description"] and "[trimmed]" in EXPAND["description"]
     assert DONE_REPLY == "Recorded."
+
+
+@pytest.mark.parametrize("version", ["1", "2"])
+def test_the_proxy_lists_expand_and_publishes_the_skill_of_its_version(tmp_path, version):
+    import asyncio
+    import sys
+    from mcp import Client
+    from tracetrim import proxy
+    from tracetrim.engine import expand_tool
+    upstream = f"{sys.executable} {Path(__file__).resolve().parent / 'fixtures' / 'meta_server.py'}"
+
+    async def go():
+        server, _ = proxy._server(proxy.Options(upstream_cmd=upstream, auto_dir=str(tmp_path), quiet=True,
+                                                skill_version=version))
+        async with Client(server) as client:
+            tools = {t.name: t for t in (await client.list_tools()).tools}
+            assert tools["expand"].description == expand_tool(version)["description"]
+            read = await client.read_resource(skill.URI)
+            assert read.contents[0].text == skill.skill_md(done=True, version=version)
+    asyncio.run(go())

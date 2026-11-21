@@ -57,6 +57,7 @@ from .tools import BLOCKED, CASE_TOOLS, DataForSEO, domain_gate, to_args, toolse
 from .v04_preconditions import NEEDED, phase_a
 
 WARN, CAP = caps("v04")          # local, never published: experiments/caps.py
+SKILL = "1"                      # the skill text these protocols ran with (tracetrim.skill.VERSIONS; 2 came in 1.4)
 DATAFORSEO = ("C1", "C2")                      # cases whose tools are billed by the provider
 GUARD_CALLS, GUARD_TURNS = 80, 40              # a safety guard, as in the original study: a run that hits it is flagged
 E1_ARMS = {"R": (False, False), "S": (True, False), "T": (False, True), "ST": (True, True)}      # strategy, trimming
@@ -322,11 +323,13 @@ class Trimmed:
     as the engine exposes them, plus `expand`. `engine` is a fixed one (E1) or
     the one of an `AutoTrim` (E2)."""
 
-    def __init__(self, inner, engine: Engine):
-        from tracetrim.engine import EXPAND
+    def __init__(self, inner, engine: Engine, skill_version: str = "1"):
+        # The protocols of 0.4 (and v3, v3b) ran with the text of skill version 1: kept unless asked otherwise.
+        from tracetrim.engine import expand_tool
+        tool = expand_tool(skill_version)
         self.inner, self.engine = inner, engine
-        self.schemas = inner.schemas + [{"type": "function", "strict": False, "name": EXPAND["name"],
-                                         "description": EXPAND["description"], "parameters": EXPAND["inputSchema"]}]
+        self.schemas = inner.schemas + [{"type": "function", "strict": False, "name": tool["name"],
+                                         "description": tool["description"], "parameters": tool["inputSchema"]}]
         self.turn = 0
         self.last = None                              # the Observation of the last tool call
         self.original = ""                            # ... and the output the tool returned for it
@@ -402,12 +405,12 @@ def instructions(run: Run) -> tuple[str, str]:
     """(the case's system prompt, the skill text this arm adds to it)."""
     system = (PROMPTS / f"{run.case.lower()}-system.md").read_text(encoding="utf-8")
     if run.experiment == "E4":
-        added = skill.text(strategy=False, done=False, expand=True)      # as E1's arm T: both arms trim
+        added = skill.text(strategy=False, done=False, expand=True, version=SKILL)      # as E1's arm T: both arms trim
     elif run.experiment in ("E1", "E3"):
         strategy, trimming = E1_ARMS[run.arm]
-        added = skill.text(strategy=strategy, done=False, expand=trimming)
+        added = skill.text(strategy=strategy, done=False, expand=trimming, version=SKILL)
     else:
-        added = skill.text(strategy=False, done=False)          # every E2 arm trims: the `expand` part, no strategy
+        added = skill.text(strategy=False, done=False, version=SKILL)   # every E2 arm trims: the `expand` part, no strategy
     return system, added
 
 
@@ -609,7 +612,7 @@ async def execute(run: Run, where: Where = HERE, client=None, model: str | None 
         "sequence": run.sequence or None, "n": run.n, "model": model, "dry_run": dry,
         "started": datetime.fromtimestamp(t0, timezone.utc).isoformat(timespec="seconds"),
         "seconds": round(time.time() - t0, 1),
-        "skill": {"version": skill.VERSION, "strategy": "### Know when to stop" in added, "expand": "`expand`" in added,
+        "skill": {"version": SKILL, "strategy": "### Know when to stop" in added, "expand": "`expand`" in added,
                   "tokens": count(added)},
         "trimming": engine is not None, "tools_trimmed": sorted(engine.policy.tools) if engine is not None else [],
         "turns": len(turns), "calls": n_calls, "expand_calls": n_expand, "usage": total, "usage_per_turn": turns,

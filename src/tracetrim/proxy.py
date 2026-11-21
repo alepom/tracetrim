@@ -43,9 +43,10 @@ from pathlib import Path
 
 from . import skill
 from .about import VERSION
+from .skill import VERSION as SKILL_VERSION
 from .contract import ToolCall, ToolResult
 from .contract import FILTERED
-from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
+from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer, expand_tool, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
 
 MAX_SSE_EVENT = 16 * 1024 * 1024
@@ -171,6 +172,9 @@ class Options:
     # --auto: reply to tracetrim_done once the run is on disk, and relearn in the background (1.4, off by default:
     # see BackgroundLearning). Off, the reply waits for the relearning, as in 1.3.
     background_relearn: bool = False
+    # The text of the skill and of `expand` (1.4: version 2, the check before declaring information absent);
+    # "1" restores the text of 1.3. See tracetrim.skill.VERSIONS.
+    skill_version: str = SKILL_VERSION   # not `skill.VERSION`: in this class `skill` is the field above
 
     def upstreams(self) -> dict:
         """Every upstream as a named spec, `${VAR}` expanded."""
@@ -251,7 +255,7 @@ def route_names(listed: dict[str, list]) -> dict[str, tuple[str, str]]:
     return routes
 
 
-def publish_skill(server, *, strategy: bool, done: bool) -> dict:
+def publish_skill(server, *, strategy: bool, done: bool, version: str = skill.VERSION) -> dict:
     """Serve the tracetrim skill as the MCP Skills extension asks (SEP-2640,
     `io.modelcontextprotocol/skills`): `skills/list` and `skills/get` return
     the entry (frontmatter and file manifest with digests), and the SKILL.md
@@ -272,8 +276,8 @@ def publish_skill(server, *, strategy: bool, done: bool) -> dict:
     from mcp.shared.exceptions import MCPError
 
     invalid = types.INVALID_PARAMS
-    entry = skill.entry(strategy=strategy, done=done)
-    content = skill.skill_md(strategy=strategy, done=done)
+    entry = skill.entry(strategy=strategy, done=done, version=version)
+    content = skill.skill_md(strategy=strategy, done=done, version=version)
     cache = {"ttlMs": SKILL_TTL_MS, "cacheScope": "public"}
 
     class GetSkillParams(types.RequestParams):
@@ -547,7 +551,7 @@ def _server(o: Options):
         # In automatic mode expand is listed from the start: clients may cache
         # the tool list, and trimming begins only after the first runs.
         if offers_expand:
-            tools.append(types.Tool(**EXPAND))
+            tools.append(types.Tool(**expand_tool(o.skill_version)))
         if learner:
             tools.append(types.Tool(**DONE))
             # The list as published, for the report's section on tool definitions. A record
@@ -681,7 +685,7 @@ def _server(o: Options):
         server.middleware.append(log_request)
         log(f"client requests logged to {o.log_client} (methods, declared capabilities, names: no arguments or results)")
     if publish:
-        entry = publish_skill(server, strategy=o.skill_strategy, done=learner is not None)
+        entry = publish_skill(server, strategy=o.skill_strategy, done=learner is not None, version=o.skill_version)
         log(f"skill: {entry['uri']} · {entry['resources'][0]['digest'][:19]}… · strategy "
             f"{'on' if o.skill_strategy else 'off'}")
     elif o.skill_strategy:

@@ -115,10 +115,11 @@ def may_start(where: Where, limits: tuple[float, float] | None = None) -> float:
     return total
 
 
-def instructions(arm: str, task: str) -> tuple[str, str]:
-    """(system prompt with the arm's addition, the addition). R adds nothing."""
+def instructions(arm: str, task: str, skill_version: str = "1") -> tuple[str, str]:
+    """(system prompt with the arm's addition, the addition). R adds nothing. Protocols v3 and v3b ran with the
+    skill text of version 1; protocol v3c compares it with version 2."""
     system = (PROMPTS / f"{task[:2].lower()}-system.md").read_text(encoding="utf-8")
-    added = "" if arm == "R" else skill.text(strategy=False, done=False)
+    added = "" if arm == "R" else skill.text(strategy=False, done=False, version=skill_version)
     return system + ("\n\n" + added if added else ""), added
 
 
@@ -135,7 +136,9 @@ def _append(path: Path, line: dict) -> None:
 
 
 async def attempt(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools,
-                  data=task_data) -> dict:
+                  data=task_data, arms: dict | None = None) -> dict:
+    """`arms` (protocol v3c): arm name -> {"policy": arm whose frozen policy it uses, "skill_version"}; by default
+    the arm's own policy and skill version 1, as in protocols v3 and v3b."""
     """One provider attempt of one slot. Writes the final trace and meta, or raises
     Infrastructure (after recording the attempt), or Budget."""
     before = may_start(where, limits)
@@ -146,9 +149,11 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
     if trace_path.exists():
         raise SystemExit(f"{trace_path} exists: a completed slot is never run again")
     count = tokenizer()
-    system, added = instructions(arm, task)
+    spec = (arms or {}).get(arm, {})
+    version = spec.get("skill_version", "1")
+    system, added = instructions(arm, task, version)
     user = data(task)["prompt"]
-    engine = engine_for(arm, task)
+    engine = engine_for(spec.get("policy", arm), task)
     events = [{"kind": "prompt", "text": system, "turn": -1}, {"kind": "prompt", "text": user, "turn": -1}]
     turns, flags, total = [], [], {"input": 0, "cached": 0, "output": 0}
     tokens = {"tool_definitions": 0, "instructions_added": count(added), "outputs_original": 0,
@@ -161,7 +166,7 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
         stage = "tools"
         async with tools_factory(task) as base:
             counted = Counted(base)
-            tools = Trimmed(counted, engine) if engine is not None else counted
+            tools = Trimmed(counted, engine, version) if engine is not None else counted
             tokens["tool_definitions"] = count(json.dumps(tools.schemas, ensure_ascii=False))
             schemas = schema_records(tools.schemas)
             kwargs = {"model": model, "instructions": system, "tools": tools.schemas,
@@ -253,7 +258,7 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
         "model": model, "model_returned": sorted(m for m in returned if m),
         "started": datetime.fromtimestamp(t0, timezone.utc).isoformat(timespec="seconds"),
         "seconds": round(time.time() - t0, 1),
-        "skill": {"version": skill.VERSION, "tokens": count(added)} if added else None,
+        "skill": {"version": version, "tokens": count(added)} if added else None,
         "tools_trimmed": sorted(engine.policy.tools) if engine is not None else [],
         "turns": len(turns), "calls": n_calls, "expand_calls": n_expand, "usage": total, "usage_per_turn": turns,
         "tokens": tokens, "exposure": exposure, "outcomes": outcomes,
@@ -268,7 +273,7 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
 
 
 async def run_slot(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools,
-                   data=task_data) -> dict | None:
+                   data=task_data, arms: dict | None = None) -> dict | None:
     """A slot with at most one retry of an infrastructure failure; two failures make it missing."""
     while True:
         if done(where, slot):
@@ -280,7 +285,7 @@ async def run_slot(slot: str, where: Where, client, model: str, limits=None, too
             print(f"  {slot}: missing after {MAX_ATTEMPTS} attempts", flush=True)
             return None
         try:
-            return await attempt(slot, where, client, model, limits, tools_factory, data)
+            return await attempt(slot, where, client, model, limits, tools_factory, data, arms)
         except Infrastructure as exc:
             print(f"  {slot}: infrastructure failure, attempt {attempts(where, slot)}: {exc}", flush=True)
 
@@ -290,11 +295,12 @@ def pending(where: Where) -> list[str]:
 
 
 async def campaign(where: Where, client, model: str, limit: int | None = None, limits=None,
-                   tools_factory=TaskTools, slots: list[str] | None = None, data=task_data) -> list[dict]:
+                   tools_factory=TaskTools, slots: list[str] | None = None, data=task_data,
+                   arms: dict | None = None) -> list[dict]:
     todo = slots if slots is not None else pending(where)
     out = []
     for slot in todo[:limit] if limit is not None else todo:
-        meta = await run_slot(slot, where, client, model, limits, tools_factory, data)
+        meta = await run_slot(slot, where, client, model, limits, tools_factory, data, arms)
         if meta is not None:
             out.append(meta)
             print(f"  {slot}: {meta['turns']} turns, {meta['calls']} calls, {meta['expand_calls']} expand, "

@@ -27,7 +27,10 @@ from pathlib import Path
 NAME = "tracetrim"
 # Version of the text. Raise it whenever a file in skills/tracetrim/ changes:
 # hosts tell one edition from another by it (and by the digest).
-VERSION = "1"
+# 2 (1.4): before stating that information is missing, check the hidden fields (protocol-v3c.md).
+# Version 1 stays available (`version="1"`, `proxy --skill-version 1`): its files differ in skills/tracetrim/v1/.
+VERSION = "2"
+VERSIONS = ("1", "2")
 URI = f"skill://{NAME}/SKILL.md"
 EXTENSION = "io.modelcontextprotocol/skills"
 _DIR = Path(__file__).parent / "skills" / NAME
@@ -37,15 +40,23 @@ def _parts(strategy: bool, done: bool, expand: bool = True) -> list[str]:
     return (["done"] if done else []) + (["expand"] if expand else []) + (["strategy"] if strategy else [])
 
 
-def text(strategy: bool = False, done: bool = True, expand: bool = True) -> str:
+def _file(part: str, version: str) -> Path:
+    if version not in VERSIONS:
+        raise ValueError(f"skill version {version!r}: one of {', '.join(VERSIONS)}")
+    older = _DIR / f"v{version}" / f"{part}.md"
+    return older if version != VERSION and older.exists() else _DIR / f"{part}.md"
+
+
+def text(strategy: bool = False, done: bool = True, expand: bool = True, version: str = VERSION) -> str:
     """The instructions, as Markdown. `done=False` leaves out `tracetrim_done`:
     a function-calling loop passes the answer itself (`AutoTrim.done`).
     `expand=False` leaves out `expand` too: with `strategy=True` that is the
-    strategy alone, for an agent whose tool results are not trimmed."""
-    return "\n".join((_DIR / f"{p}.md").read_text(encoding="utf-8") for p in _parts(strategy, done, expand))
+    strategy alone, for an agent whose tool results are not trimmed.
+    `version="1"` gives the text of 1.3 and earlier."""
+    return "\n".join(_file(p, version).read_text(encoding="utf-8") for p in _parts(strategy, done, expand))
 
 
-def frontmatter(strategy: bool = False, done: bool = True) -> dict:
+def frontmatter(strategy: bool = False, done: bool = True, version: str = VERSION) -> dict:
     what = ("pass your final answer to tracetrim_done, " if done else "") + "recover trimmed fields with expand"
     when = ("the tools tracetrim_done or expand are available" if done else "the tool expand is available")
     return {
@@ -55,7 +66,7 @@ def frontmatter(strategy: bool = False, done: bool = True) -> dict:
                            "feedback, progressive search, when to stop)" if strategy else "")
                         + f". Use whenever {when}, or a tool result ends with a '[trimmed]' line."),
         "license": "MIT",
-        "metadata": {"version": VERSION, "strategy": "on" if strategy else "off"},
+        "metadata": {"version": version, "strategy": "on" if strategy else "off"},
     }
 
 
@@ -73,14 +84,15 @@ def _yaml(d: dict, indent: str = "") -> str:
                    else f"{indent}{k}: {json.dumps(v, ensure_ascii=False)}\n" for k, v in d.items())
 
 
-def skill_md(strategy: bool = False, done: bool = True) -> str:
+def skill_md(strategy: bool = False, done: bool = True, version: str = VERSION) -> str:
     """The SKILL.md file: YAML frontmatter, then the instructions."""
-    return f"---\n{_yaml(frontmatter(strategy, done))}---\n\n# tracetrim\n\n{text(strategy, done)}"
+    return (f"---\n{_yaml(frontmatter(strategy, done, version))}---\n\n# tracetrim\n\n"
+            f"{text(strategy, done, version=version)}")
 
 
-def entry(strategy: bool = False, done: bool = True) -> dict:
+def entry(strategy: bool = False, done: bool = True, version: str = VERSION) -> dict:
     """The skill as `skills/list` and `skills/get` return it: the frontmatter,
     and the manifest of its files with size and SHA-256 of the bytes served."""
-    raw = skill_md(strategy, done).encode("utf-8")
-    return {"uri": URI, "frontmatter": frontmatter(strategy, done),
+    raw = skill_md(strategy, done, version).encode("utf-8")
+    return {"uri": URI, "frontmatter": frontmatter(strategy, done, version),
             "resources": [{"uri": URI, "digest": "sha256:" + hashlib.sha256(raw).hexdigest(), "size": len(raw)}]}

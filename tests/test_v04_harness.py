@@ -65,12 +65,12 @@ def test_the_skill_text_is_added_only_in_the_arms_that_have_it(arm, strategy, ex
     assert system == (ROOT / "experiments" / "prompts" / "c4-system.md").read_text()
     assert ("### Know when to stop" in added) is strategy and ("`expand`" in added) is expand
     assert "tracetrim_done" not in added                               # the loop passes the answer itself
-    assert added == skill.text(strategy=strategy, done=False, expand=expand) and (added == "") is (arm == "R")
+    assert added == skill.text(strategy=strategy, done=False, expand=expand, version=v04.SKILL) and (added == "") is (arm == "R")
 
 
 def test_e2_arms_get_the_expand_text_the_variant_prompt_and_no_strategy():
     run = Run("E2", "C4", "promotion", 1, 1)
-    assert v04.instructions(run)[1] == skill.text(done=False)
+    assert v04.instructions(run)[1] == skill.text(done=False, version=v04.SKILL)   # the protocol's text, version 1
     assert v04.user_prompt(run) == (ROOT / "experiments" / "prompts" / "c4v-user.md").read_text()
     assert v04.user_prompt(Run("E1", "C4", "ST", 1)) == (ROOT / "experiments" / "prompts" / "c4-user.md").read_text()
 
@@ -259,7 +259,7 @@ def test_in_the_dry_run_the_system_prompt_carries_the_text_of_its_arm_only(dry, 
     original = (ROOT / "experiments" / "prompts" / "c4-system.md").read_text()
     assert system.startswith(original) and (system == original) is (arm == "R")
     assert ("### Know when to stop" in system) is strategy and ("## Hidden fields: `expand`" in system) is expand
-    assert m["skill"] == {"version": skill.VERSION, "strategy": strategy, "expand": expand,
+    assert m["skill"] == {"version": v04.SKILL, "strategy": strategy, "expand": expand,
                           "tokens": m["tokens"]["instructions_added"]}
     assert (m["skill"]["tokens"] == 0) is (arm == "R") and m["trimming"] is expand
     # The trimmed arms offer `expand`; the others have exactly the case's tools.

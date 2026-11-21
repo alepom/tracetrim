@@ -7,8 +7,8 @@ Since 0.4.
 
 | Level | When | What it says | Tokens (`o200k_base`) |
 | - | - | - | - |
-| **base** | always | call `tracetrim_done` once with the complete final answer (the answer, not the conversation); get hidden fields back with `expand` | 221 |
-| **strategy** | only when asked for | how to organise tool calls: independent calls together, grouped inputs, error feedback, progressive search, when to stop | +549 (770 in all) |
+| **base** | always | call `tracetrim_done` once with the complete final answer (the answer, not the conversation); get hidden fields back with `expand`, and check them before saying information is missing | 291 |
+| **strategy** | only when asked for | how to organise tool calls: independent calls together, grouped inputs, error feedback, progressive search, when to stop | +549 (840 in all) |
 
 The strategy teaches a method and prescribes no parameter value: limits, thresholds, ranges and
 budgets stay with your prompts and with the tools' schemas. It is off by default: see what was
@@ -16,7 +16,12 @@ measured, below.
 
 The text lives in `src/tracetrim/skills/tracetrim/` (`done.md`, `expand.md`, `strategy.md`) and has
 its own version, `tracetrim.skill.VERSION`; a test fails when a text changes and the version does not.
-Token counts are those of the text alone; the published `SKILL.md` adds its frontmatter (312 and 884).
+Version 2 (1.4) adds to the base level, and to the description of `expand`, one rule: before saying that
+information is missing, check whether a hidden field could hold it and expand it first. It answers a failure
+measured in protocol v3b: an agent that did not recover a free-text field (a customer's description, an invoice
+memo) concluded that the information did not exist. `proxy --skill-version 1`, `tracetrim skill --skill-version 1`
+and `AutoTrim(skill_version="1")` give the text of 1.3 (in `skills/tracetrim/v1/`).
+Token counts are those of the text alone; the published `SKILL.md` adds its frontmatter (382 and 954).
 
 ## What was measured on the strategy
 
