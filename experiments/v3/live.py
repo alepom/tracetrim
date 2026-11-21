@@ -63,8 +63,9 @@ class Budget(SystemExit):
 
 
 class Where:
-    def __init__(self, root: Path = coordinator.PRIVATE):
+    def __init__(self, root: Path = coordinator.PRIVATE, also: tuple = ()):
         self.root = Path(root)
+        self.also = tuple(Path(p) for p in also)      # other ledgers under the same caps (protocol v3b)
         self.traces = self.root / "traces"
         self.attempts = self.root / "attempts"
         self.ledger = self.root / "ledger.jsonl"
@@ -83,7 +84,9 @@ def lines(where: Where) -> list[dict]:
 
 
 def spent(where: Where) -> float:
-    return sum(e["cost_usd"] for e in lines(where))
+    other = sum(json.loads(x)["cost_usd"] for p in where.also if p.exists() for x in p.read_text().splitlines()
+                if x.strip())
+    return sum(e["cost_usd"] for e in lines(where)) + other
 
 
 def missing(where: Where) -> dict:
@@ -131,7 +134,8 @@ def _append(path: Path, line: dict) -> None:
         fh.write(json.dumps(line, ensure_ascii=False) + "\n")
 
 
-async def attempt(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools) -> dict:
+async def attempt(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools,
+                  data=task_data) -> dict:
     """One provider attempt of one slot. Writes the final trace and meta, or raises
     Infrastructure (after recording the attempt), or Budget."""
     before = may_start(where, limits)
@@ -143,7 +147,7 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
         raise SystemExit(f"{trace_path} exists: a completed slot is never run again")
     count = tokenizer()
     system, added = instructions(arm, task)
-    user = task_data(task)["prompt"]
+    user = data(task)["prompt"]
     engine = engine_for(arm, task)
     events = [{"kind": "prompt", "text": system, "turn": -1}, {"kind": "prompt", "text": user, "turn": -1}]
     turns, flags, total = [], [], {"input": 0, "cached": 0, "output": 0}
@@ -263,7 +267,8 @@ async def attempt(slot: str, where: Where, client, model: str, limits=None, tool
     return meta
 
 
-async def run_slot(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools) -> dict | None:
+async def run_slot(slot: str, where: Where, client, model: str, limits=None, tools_factory=TaskTools,
+                   data=task_data) -> dict | None:
     """A slot with at most one retry of an infrastructure failure; two failures make it missing."""
     while True:
         if done(where, slot):
@@ -275,7 +280,7 @@ async def run_slot(slot: str, where: Where, client, model: str, limits=None, too
             print(f"  {slot}: missing after {MAX_ATTEMPTS} attempts", flush=True)
             return None
         try:
-            return await attempt(slot, where, client, model, limits, tools_factory)
+            return await attempt(slot, where, client, model, limits, tools_factory, data)
         except Infrastructure as exc:
             print(f"  {slot}: infrastructure failure, attempt {attempts(where, slot)}: {exc}", flush=True)
 
@@ -285,11 +290,11 @@ def pending(where: Where) -> list[str]:
 
 
 async def campaign(where: Where, client, model: str, limit: int | None = None, limits=None,
-                   tools_factory=TaskTools, slots: list[str] | None = None) -> list[dict]:
+                   tools_factory=TaskTools, slots: list[str] | None = None, data=task_data) -> list[dict]:
     todo = slots if slots is not None else pending(where)
     out = []
     for slot in todo[:limit] if limit is not None else todo:
-        meta = await run_slot(slot, where, client, model, limits, tools_factory)
+        meta = await run_slot(slot, where, client, model, limits, tools_factory, data)
         if meta is not None:
             out.append(meta)
             print(f"  {slot}: {meta['turns']} turns, {meta['calls']} calls, {meta['expand_calls']} expand, "

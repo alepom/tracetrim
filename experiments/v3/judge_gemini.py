@@ -79,12 +79,13 @@ class Malformed(ValueError):
 # -- private places ------------------------------------------------------------
 
 class Where:
-    def __init__(self, root: Path = PRIVATE):
+    def __init__(self, root: Path = PRIVATE, also: tuple = (), seeds: dict = SEEDS):
         self.root = Path(root)
+        self.seeds = seeds                       # the order of the answers, one seed per pass
         self.judge = self.root / "judge"
         self.ledger = self.root / "judge-ledger.jsonl"
         self.reviewed = self.root / "judge-warning-reviewed"
-        self.campaign = Campaign(self.root)
+        self.campaign = Campaign(self.root, also)   # `also`: other ledgers under the same caps (v3b)
 
     def cards(self, n: int) -> Path:
         return self.root / f"pass-{n}"
@@ -208,7 +209,7 @@ def prepare(where: Where, n: int) -> list[dict]:
     """The plan and the requests of a pass, written privately, and the text copy checked."""
     folder = where.pass_dir(n)
     folder.mkdir(parents=True, exist_ok=True)
-    groups = plan(where.cards(n), SEEDS[n])
+    groups = plan(where.cards(n), where.seeds[n])
     stored = folder / "plan.json"
     labels = [{"group": g["group"], "labels": g["labels"]} for g in groups]
     if stored.exists():
