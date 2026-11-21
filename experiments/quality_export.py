@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""The publishable results of protocols v3 and v3b, from their private campaign directories.
+"""The publishable results of protocols v3, v3b and v3c, from their private campaign directories.
 
-  .venv/bin/python -m experiments.quality_export      # writes results/v3/quality.json, results/v3b/quality.json
+  .venv/bin/python -m experiments.quality_export      # writes results/v3, v3b and v3c quality.json
 
 Reads out/v3 and out/v3b (git-ignored: traces, ledgers, blind scores, analyses) and writes only
 what the paper reports: estimates and intervals, levels by arm, agreement, gates, grounding,
@@ -27,11 +27,16 @@ def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+# Keys that carry a cost as a ratio between arms, never an amount.
+RATIOS = {"cost_relative_to_R", "hard_cost_P2_over_P1", "ordinary_cost_P2_over_P1", "ordinary_cost_ratio",
+          "ordinary_cost_within_limit"}
+
+
 def no_amounts(obj, where=""):
     """Refuse any key that could carry money; only ratios to R are allowed."""
     if isinstance(obj, dict):
         for k, v in obj.items():
-            if ("cost" in k or "usd" in k.lower() or "spend" in k) and k != "cost_relative_to_R":
+            if ("cost" in k or "usd" in k.lower() or "spend" in k) and k not in RATIOS:
                 raise ValueError(f"amount-like key {where}/{k}")
             no_amounts(v, f"{where}/{k}")
     elif isinstance(obj, list):
@@ -161,8 +166,24 @@ def hidden_check() -> dict:
             "per_task_min": min(r["hidden_facts"] for r in rows), "per_task_max": max(r["hidden_facts"] for r in rows)}
 
 
+def v3c() -> dict:
+    d = OUT / "v3c"
+    a = load(d / "analysis.json")
+    keep = ("runs", "missing", "primary_hidden_fact_share_P2_minus_P1", "secondary_fact_share_P2_minus_P1",
+            "hidden_fact_share_by_arm", "fact_share_by_arm", "hidden_fields", "historical_R_hidden_share",
+            "P1_minus_R_historical", "P2_minus_R_historical", "hard_cost_P2_over_P1", "ordinary_cost_P2_over_P1",
+            "ordinary_gates", "ordinary_answers", "ordinary_unsupported", "secondary_composite_P2_minus_P1",
+            "decision", "tasks")
+    process = {k: {arm: {x: v for x, v in row.items()} for arm, row in a[k].items()}
+               for k in ("hard_process", "ordinary_process")}
+    return {"protocol": "protocol-v3c.md", "agent_models_returned": models(d), "judge": JUDGE,
+            "arms": {"P1": "frozen prudent policy P, skill text version 1", "P2": "the same policy, skill text version 2"},
+            **{k: a[k] for k in keep}, **process,
+            "ratings_both_passes": ratings(d), "answers_with_cues": load(d / "cues.json")["answers_with_cues"]}
+
+
 def main():
-    for name, build in (("v3", v3), ("v3b", v3b)):
+    for name, build in (("v3", v3), ("v3b", v3b), ("v3c", v3c)):
         data = build()
         no_amounts(data)
         path = RES / name / "quality.json"

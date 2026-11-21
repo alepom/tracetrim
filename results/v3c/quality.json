@@ -1,0 +1,388 @@
+{
+  "protocol": "protocol-v3c.md",
+  "agent_models_returned": [
+    "gpt-5.6-terra"
+  ],
+  "judge": {
+    "model": "gemini-3.8-flash",
+    "endpoint": "Vertex AI, global",
+    "thinking_level": "HIGH",
+    "grouping": "one call per task and pass: the evidence once, the task's answers under neutral labels"
+  },
+  "arms": {
+    "P1": "frozen prudent policy P, skill text version 1",
+    "P2": "the same policy, skill text version 2"
+  },
+  "runs": 92,
+  "missing": {
+    "P1": 0,
+    "P2": 0
+  },
+  "primary_hidden_fact_share_P2_minus_P1": {
+    "point": 0.07222222222222223,
+    "ci95": [
+      0.002777777777777776,
+      0.14444444444444443
+    ],
+    "tasks": 12,
+    "verdict": "improved",
+    "per_task": {
+      "C4b-01": 0.20000000000000004,
+      "C4b-04": 0.0,
+      "C4b-03": 0.0666666666666667,
+      "C4b-10": 0.0,
+      "C4b-06": 0.26666666666666666,
+      "C4b-12": 0.16666666666666666,
+      "C4b-02": -0.06666666666666665,
+      "C4b-05": 0.19999999999999996,
+      "C4b-11": -0.16666666666666666,
+      "C4b-07": 0.0,
+      "C4b-09": 0.0,
+      "C4b-08": 0.19999999999999998
+    }
+  },
+  "secondary_fact_share_P2_minus_P1": {
+    "point": 0.01981806367771281,
+    "ci95": [
+      0.002387914230019501,
+      0.0375487329434698
+    ],
+    "tasks": 12,
+    "verdict": "improved",
+    "per_task": {
+      "C4b-01": 0.0526315789473684,
+      "C4b-04": 0.0,
+      "C4b-03": 0.01754385964912279,
+      "C4b-10": 0.0,
+      "C4b-06": 0.0666666666666667,
+      "C4b-12": 0.03333333333333336,
+      "C4b-02": -0.017543859649122823,
+      "C4b-05": 0.050000000000000044,
+      "C4b-11": -0.037037037037037014,
+      "C4b-07": 0.0,
+      "C4b-09": 0.01666666666666668,
+      "C4b-08": 0.05555555555555558
+    }
+  },
+  "hidden_fact_share_by_arm": {
+    "P1": 0.850925925925926,
+    "P2": 0.9231481481481482
+  },
+  "fact_share_by_arm": {
+    "P1": 0.9595272904483431,
+    "P2": 0.9793453541260558
+  },
+  "hidden_fields": {
+    "balance: data[].balance": {
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "via": {
+          "expand": 27
+        }
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "via": {
+          "expand": 27
+        }
+      }
+    },
+    "balance: data[].description": {
+      "P1": {
+        "facts": 27,
+        "reported": 11,
+        "reached": 0,
+        "via": {}
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 19,
+        "reached": 14,
+        "via": {
+          "expand": 14
+        }
+      }
+    },
+    "replacement: data[].from_invoice.invoice": {
+      "P1": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null,
+        "via": null
+      },
+      "P2": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null,
+        "via": null
+      }
+    },
+    "memo: data[].description": {
+      "P1": {
+        "facts": 27,
+        "reported": 17,
+        "reached": 17,
+        "via": {
+          "detail": 17
+        }
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 24,
+        "reached": 24,
+        "via": {
+          "expand": 15,
+          "detail": 9
+        }
+      }
+    },
+    "credit_note: data[].post_payment_credit_notes_amount": {
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "via": {
+          "detail": 13,
+          "expand": 18
+        }
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 25,
+        "reached": 24,
+        "via": {
+          "detail": 5,
+          "expand": 23
+        }
+      }
+    },
+    "partial_refund: data[].refunds.data[].description": {
+      "P1": {
+        "facts": 24,
+        "reported": 23,
+        "reached": 2,
+        "via": {
+          "detail": 2
+        }
+      },
+      "P2": {
+        "facts": 24,
+        "reported": 24,
+        "reached": 3,
+        "via": {
+          "detail": 3,
+          "expand": 1
+        }
+      }
+    }
+  },
+  "historical_R_hidden_share": 1.0,
+  "P1_minus_R_historical": {
+    "point": -0.14907407407407405,
+    "ci95": [
+      -0.21296296296296294,
+      -0.0861111111111111
+    ],
+    "tasks": 12,
+    "verdict": "worse",
+    "per_task": {
+      "C4b-01": -0.2666666666666667,
+      "C4b-04": 0.0,
+      "C4b-03": -0.19999999999999996,
+      "C4b-10": -0.06666666666666665,
+      "C4b-06": -0.33333333333333326,
+      "C4b-12": -0.2222222222222222,
+      "C4b-02": -0.06666666666666665,
+      "C4b-05": -0.19999999999999996,
+      "C4b-11": -0.16666666666666663,
+      "C4b-07": 0.0,
+      "C4b-09": 0.0,
+      "C4b-08": -0.2666666666666666
+    }
+  },
+  "P2_minus_R_historical": {
+    "point": -0.07685185185185185,
+    "ci95": [
+      -0.13240740740740742,
+      -0.032407407407407406
+    ],
+    "tasks": 12,
+    "verdict": "worse",
+    "per_task": {
+      "C4b-01": -0.06666666666666665,
+      "C4b-04": 0.0,
+      "C4b-03": -0.1333333333333333,
+      "C4b-10": -0.06666666666666665,
+      "C4b-06": -0.06666666666666665,
+      "C4b-12": -0.05555555555555558,
+      "C4b-02": -0.1333333333333333,
+      "C4b-05": 0.0,
+      "C4b-11": -0.33333333333333337,
+      "C4b-07": 0.0,
+      "C4b-09": 0.0,
+      "C4b-08": -0.06666666666666665
+    }
+  },
+  "hard_cost_P2_over_P1": 1.0007401337261292,
+  "ordinary_cost_P2_over_P1": 0.9442765783632635,
+  "ordinary_gates": {
+    "P1": 10,
+    "P2": 10
+  },
+  "ordinary_answers": {
+    "P1": 10,
+    "P2": 10
+  },
+  "ordinary_unsupported": {
+    "P1": 0,
+    "P2": 0
+  },
+  "secondary_composite_P2_minus_P1": {
+    "point": 0.41203703703703703,
+    "ci95": [
+      0.14814814814814817,
+      0.699074074074074
+    ],
+    "tasks": 12,
+    "verdict": "improved",
+    "per_task": {
+      "C4b-01": 1.3333333333333333,
+      "C4b-04": 0.22222222222222218,
+      "C4b-03": 0.5555555555555555,
+      "C4b-10": -0.055555555555555504,
+      "C4b-06": 1.222222222222222,
+      "C4b-12": 0.6666666666666669,
+      "C4b-02": 0.3333333333333333,
+      "C4b-05": 0.44444444444444436,
+      "C4b-11": -0.3333333333333332,
+      "C4b-07": 0.055555555555555504,
+      "C4b-09": -0.11111111111111116,
+      "C4b-08": 0.611111111111111
+    },
+    "by_arm": {
+      "P1": 3.101851851851852,
+      "P2": 3.513888888888889
+    },
+    "dimensions": {
+      "P1": {
+        "correctness": 2.9722222222222223,
+        "completeness": 3.0972222222222223,
+        "action": 3.236111111111111
+      },
+      "P2": {
+        "correctness": 3.4027777777777777,
+        "completeness": 3.5555555555555554,
+        "action": 3.5833333333333335
+      }
+    },
+    "agreement": {
+      "correctness": {
+        "exact": 0.9305555555555556,
+        "within_one": 1.0,
+        "quadratic_kappa": 0.9305019305019305
+      },
+      "completeness": {
+        "exact": 0.8472222222222222,
+        "within_one": 1.0,
+        "quadratic_kappa": 0.8103448275862069
+      },
+      "action": {
+        "exact": 0.875,
+        "within_one": 1.0,
+        "quadratic_kappa": 0.8797327394209354
+      }
+    },
+    "adjudicated": 0
+  },
+  "decision": {
+    "h1c": true,
+    "ordinary_cost_ratio": 0.9442765783632635,
+    "ordinary_cost_within_limit": true,
+    "ordinary_gates": {
+      "P1": 10,
+      "P2": 10
+    },
+    "ordinary_gates_not_fewer": true,
+    "default_version": "2"
+  },
+  "tasks": {
+    "hard": [
+      "C4b-01",
+      "C4b-02",
+      "C4b-03",
+      "C4b-04",
+      "C4b-05",
+      "C4b-06",
+      "C4b-07",
+      "C4b-08",
+      "C4b-09",
+      "C4b-10",
+      "C4b-11",
+      "C4b-12"
+    ],
+    "ordinary": [
+      "C4-01",
+      "C4-02",
+      "C4-03",
+      "C4-04",
+      "C4-05",
+      "C4-06",
+      "C4-07",
+      "C4-08",
+      "C4-09",
+      "C4-10"
+    ]
+  },
+  "hard_process": {
+    "P1": {
+      "runs": 36,
+      "calls": 15.86111111111111,
+      "turns": 4.694444444444445,
+      "expand_calls": 109,
+      "runs_with_expand": 34,
+      "outputs_delivered_tokens": 393733,
+      "flags": []
+    },
+    "P2": {
+      "runs": 36,
+      "calls": 14.777777777777779,
+      "turns": 4.777777777777778,
+      "expand_calls": 158,
+      "runs_with_expand": 36,
+      "outputs_delivered_tokens": 375603,
+      "flags": []
+    }
+  },
+  "ordinary_process": {
+    "P1": {
+      "runs": 10,
+      "calls": 15,
+      "turns": 3.4,
+      "expand_calls": 5,
+      "runs_with_expand": 1,
+      "outputs_delivered_tokens": 92290,
+      "flags": []
+    },
+    "P2": {
+      "runs": 10,
+      "calls": 15,
+      "turns": 3.4,
+      "expand_calls": 5,
+      "runs_with_expand": 1,
+      "outputs_delivered_tokens": 92318,
+      "flags": []
+    }
+  },
+  "ratings_both_passes": {
+    "0": 0,
+    "1": 0,
+    "2": 58,
+    "3": 183,
+    "4": 191
+  },
+  "answers_with_cues": 0
+}
