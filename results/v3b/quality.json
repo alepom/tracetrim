@@ -1,0 +1,382 @@
+{
+  "protocol": "protocol-v3b.md (version 2)",
+  "agent_models_returned": [
+    "gpt-5.6-terra"
+  ],
+  "judge": {
+    "model": "gemini-3.8-flash",
+    "endpoint": "Vertex AI, global",
+    "thinking_level": "HIGH",
+    "grouping": "one call per task and pass: the evidence once, the task's answers under neutral labels"
+  },
+  "calibration": {
+    "candidates": 18,
+    "eligible_version_1": 0,
+    "version_1_rule": "0.40 <= R fact share <= 0.90",
+    "R_fact_share_version_1_scorer": {
+      "C4b-01": 1.0,
+      "C4b-02": 0.9473684210526315,
+      "C4b-03": 1.0,
+      "C4b-04": 1.0,
+      "C4b-05": 1.0,
+      "C4b-06": 1.0,
+      "C4b-07": 1.0,
+      "C4b-08": 1.0,
+      "C4b-09": 1.0,
+      "C4b-10": 1.0,
+      "C4b-11": 1.0,
+      "C4b-12": 0.95,
+      "C4b-13": 1.0,
+      "C4b-14": 0.9444444444444444,
+      "C4b-15": 1.0,
+      "C4b-16": 1.0,
+      "C4b-17": 1.0,
+      "C4b-18": 1.0
+    },
+    "R_fact_share_version_2_scorer": {
+      "C4b-01": 1.0,
+      "C4b-02": 0.9473684210526315,
+      "C4b-03": 1.0,
+      "C4b-04": 1.0,
+      "C4b-05": 1.0,
+      "C4b-06": 1.0,
+      "C4b-07": 1.0,
+      "C4b-08": 1.0,
+      "C4b-09": 1.0,
+      "C4b-10": 1.0,
+      "C4b-11": 1.0,
+      "C4b-12": 1.0,
+      "C4b-13": 1.0,
+      "C4b-14": 1.0,
+      "C4b-15": 1.0,
+      "C4b-16": 1.0,
+      "C4b-17": 1.0,
+      "C4b-18": 1.0
+    },
+    "R_hidden_share": {
+      "C4b-01": 1.0,
+      "C4b-02": 1.0,
+      "C4b-03": 1.0,
+      "C4b-04": 1.0,
+      "C4b-05": 1.0,
+      "C4b-06": 1.0,
+      "C4b-07": 1.0,
+      "C4b-08": 1.0,
+      "C4b-09": 1.0,
+      "C4b-10": 1.0,
+      "C4b-11": 1.0,
+      "C4b-12": 1.0,
+      "C4b-13": 1.0,
+      "C4b-14": 1.0,
+      "C4b-15": 1.0,
+      "C4b-16": 1.0,
+      "C4b-17": 1.0,
+      "C4b-18": 1.0
+    }
+  },
+  "design": {
+    "case": "C4",
+    "tasks": [
+      "C4b-01",
+      "C4b-02",
+      "C4b-03",
+      "C4b-04",
+      "C4b-05",
+      "C4b-06",
+      "C4b-07",
+      "C4b-08",
+      "C4b-09",
+      "C4b-10",
+      "C4b-11",
+      "C4b-12"
+    ],
+    "repetitions": 3,
+    "arms": [
+      "R",
+      "P"
+    ],
+    "runs": 72,
+    "hidden_facts_per_task": {
+      "C4b-01": 5,
+      "C4b-02": 5,
+      "C4b-03": 5,
+      "C4b-04": 3,
+      "C4b-05": 5,
+      "C4b-06": 5,
+      "C4b-07": 3,
+      "C4b-08": 5,
+      "C4b-09": 3,
+      "C4b-10": 5,
+      "C4b-11": 4,
+      "C4b-12": 6
+    },
+    "judge_kept_by_budget_rule": true
+  },
+  "answers": 72,
+  "missing": {
+    "R": 0,
+    "P": 0
+  },
+  "primary_hidden_fact_share_P_minus_R": {
+    "point": -0.16249999999999998,
+    "ci95": [
+      -0.22453703703703703,
+      -0.09814814814814814
+    ],
+    "tasks": 12,
+    "verdict_0.1": "inconclusive",
+    "wholly_below_zero": true,
+    "per_task": {
+      "C4b-04": -0.11111111111111112,
+      "C4b-01": -0.3333333333333333,
+      "C4b-09": 0.0,
+      "C4b-03": -0.19999999999999998,
+      "C4b-10": -0.3333333333333333,
+      "C4b-02": -0.06666666666666665,
+      "C4b-11": -0.25,
+      "C4b-05": -0.1333333333333333,
+      "C4b-07": 0.0,
+      "C4b-08": -0.26666666666666666,
+      "C4b-06": -0.19999999999999998,
+      "C4b-12": -0.055555555555555546
+    }
+  },
+  "secondary_fact_share_P_minus_R": {
+    "point": -0.03813352826510723,
+    "ci95": [
+      -0.05450779727095518,
+      -0.021881091617933737
+    ],
+    "tasks": 12,
+    "wholly_below_zero": true,
+    "per_task": {
+      "C4b-04": -0.017543859649122823,
+      "C4b-01": -0.08771929824561404,
+      "C4b-09": 0.0,
+      "C4b-03": -0.05263157894736844,
+      "C4b-10": -0.08771929824561404,
+      "C4b-02": -0.017543859649122823,
+      "C4b-11": -0.05555555555555558,
+      "C4b-05": -0.01666666666666668,
+      "C4b-07": 0.0,
+      "C4b-08": -0.05555555555555558,
+      "C4b-06": -0.05000000000000001,
+      "C4b-12": -0.01666666666666668
+    }
+  },
+  "secondary_composite_P_minus_R": {
+    "point": -0.9305555555555555,
+    "ci95": [
+      -1.25,
+      -0.5740740740740741
+    ],
+    "tasks": 12,
+    "verdict_0.5": "material loss",
+    "verdict_0.25": "material loss",
+    "wholly_below_zero": true,
+    "per_task": {
+      "C4b-04": 0.0,
+      "C4b-01": -1.4444444444444446,
+      "C4b-09": 0.11111111111111116,
+      "C4b-03": -1.111111111111111,
+      "C4b-10": -1.722222222222222,
+      "C4b-02": -1.222222222222222,
+      "C4b-11": -1.3333333333333333,
+      "C4b-05": -1.0,
+      "C4b-07": 0.0,
+      "C4b-08": -1.3333333333333333,
+      "C4b-06": -1.3333333333333333,
+      "C4b-12": -0.7777777777777778
+    }
+  },
+  "levels": {
+    "hidden_fact_share": {
+      "R": 1.0,
+      "P": 0.8375
+    },
+    "fact_share": {
+      "R": 0.9970679012345679,
+      "P": 0.9589343729694607
+    },
+    "composite": {
+      "R": 3.8981481481481484,
+      "P": 2.9675925925925926
+    },
+    "dimensions": {
+      "R": {
+        "correctness": 3.9722222222222223,
+        "completeness": 3.9444444444444446,
+        "action": 3.7777777777777777
+      },
+      "P": {
+        "correctness": 2.9305555555555554,
+        "completeness": 2.9722222222222223,
+        "action": 3.0
+      }
+    }
+  },
+  "hidden_fields": {
+    "balance: data[].balance": {
+      "R": [
+        27,
+        27
+      ],
+      "P": [
+        27,
+        27
+      ],
+      "P_reached": 27,
+      "P_via": {
+        "expand": 27
+      }
+    },
+    "balance: data[].description": {
+      "R": [
+        27,
+        27
+      ],
+      "P": [
+        9,
+        27
+      ],
+      "P_reached": 0,
+      "P_via": {}
+    },
+    "credit_note: data[].post_payment_credit_notes_amount": {
+      "R": [
+        27,
+        27
+      ],
+      "P": [
+        27,
+        27
+      ],
+      "P_reached": 27,
+      "P_via": {
+        "expand": 13,
+        "detail": 18
+      }
+    },
+    "memo: data[].description": {
+      "R": [
+        27,
+        27
+      ],
+      "P": [
+        19,
+        27
+      ],
+      "P_reached": 19,
+      "P_via": {
+        "detail": 19
+      }
+    },
+    "partial_refund: data[].refunds.data[].description": {
+      "R": [
+        24,
+        24
+      ],
+      "P": [
+        22,
+        24
+      ],
+      "P_reached": 2,
+      "P_via": {
+        "detail": 2
+      }
+    },
+    "replacement: data[].from_invoice.invoice": {
+      "R": [
+        30,
+        30
+      ],
+      "P": [
+        30,
+        30
+      ],
+      "P_reached": null,
+      "P_via": null
+    }
+  },
+  "construction_check": {
+    "candidates": 18,
+    "hidden_facts": 79,
+    "verified": 79,
+    "per_task_min": 3,
+    "per_task_max": 6
+  },
+  "ratings_both_passes": {
+    "0": 0,
+    "1": 1,
+    "2": 56,
+    "3": 130,
+    "4": 245
+  },
+  "agreement": {
+    "correctness": {
+      "exact": 0.9861111111111112,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.9871244635193133
+    },
+    "completeness": {
+      "exact": 0.9722222222222222,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.9713261648745519
+    },
+    "action": {
+      "exact": 0.8611111111111112,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.8692335633853977
+    }
+  },
+  "adjudicated": 0,
+  "answers_with_cues": 0,
+  "gates": {
+    "by_arm": {
+      "R": 36,
+      "P": 36
+    },
+    "paired": {
+      "both": 36,
+      "only_R": 0,
+      "only_P": 0,
+      "neither": 0
+    }
+  },
+  "grounding": {
+    "R": {
+      "values": 2501,
+      "unsupported": 27,
+      "answers_with_unsupported": 22
+    },
+    "P": {
+      "values": 2508,
+      "unsupported": 21,
+      "answers_with_unsupported": 21
+    }
+  },
+  "process": {
+    "R": {
+      "runs": 36,
+      "calls": 13.63888888888889,
+      "turns": 3.75,
+      "expand_calls": 0,
+      "runs_with_expand": 0,
+      "outputs_original_tokens": 572997,
+      "outputs_delivered_tokens": 572997,
+      "flags": [],
+      "cost_relative_to_R": 1.0
+    },
+    "P": {
+      "runs": 36,
+      "calls": 16.13888888888889,
+      "turns": 4.638888888888889,
+      "expand_calls": 102,
+      "runs_with_expand": 34,
+      "outputs_original_tokens": 625201,
+      "outputs_delivered_tokens": 396045,
+      "flags": [],
+      "cost_relative_to_R": 1.0046452667258166
+    }
+  }
+}

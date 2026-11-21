@@ -10,7 +10,11 @@ and the payload generator are included, with the exact versions of the OpenAPI d
 Study 3 the repository adds the two frozen protocols with their deviations (\texttt{protocol-v04.md},
 \texttt{protocol-v04-e3.md}), the aggregate results (\texttt{results/v04}, \texttt{results/v06}) and a summary of the
 measures (\texttt{docs/measures-v04.md}); the traces of the two cases built on the search-data API, and the recorded
-outputs of E3, are not redistributable either. Table~\ref{tab:availability} summarises what an independent reader can check, and with what.
+outputs of E3, are not redistributable either. For Study 4 it adds the frozen protocols with their locks and
+deviations (\nolinkurl{protocol-v3.md}, \nolinkurl{protocol-v3.lock}, \nolinkurl{experiments/v3/DEVIATIONS.md},
+\nolinkurl{protocol-v3b.md}, \nolinkurl{protocol-v3b.lock}), the synthetic worlds, prompts, keys and reference evidence
+(\nolinkurl{experiments/v3/material}, \nolinkurl{experiments/v3b/material}), the rubric, the judge script and the aggregate
+results (\nolinkurl{results/v3}, \nolinkurl{results/v3b}); everything in it is synthetic. Table~\ref{tab:availability} summarises what an independent reader can check, and with what.
 
 \begin{table}[h]
 \centering\small
@@ -20,7 +24,8 @@ Status & Results \\
 \midrule
 Replicable from open material & Studies~1 and~2 on the literature scan, billing support and CI triage (full traces,
 simulated servers, replay code); Study~3 on billing support and CI triage, with the traces of the dataset; the
-offline baselines on the same three cases. \\
+offline baselines on the same three cases; Study~4's worlds, construction check and analyses from its aggregate
+results (rerunning its campaigns needs API access to the agent's and the judge's models). \\
 \addlinespace
 Recomputable only in part, from derived records & The editorial plan and the content-gap analysis: which fields each
 call used, the misses and the token counts of the raw outputs, from the per-call records; not the token savings, the

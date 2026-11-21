@@ -57,10 +57,15 @@ def plain(tex_path, macros) -> str:
 
 
 PAPER_VERSION_TWO_DATE = "November 2026"
-# The release that version 2 of the paper came with: the paper does not move with later releases
-# (1.1 changes nothing it reports), so its version line and software DOI name this one, not about.*.
-PAPER_SOFTWARE_VERSION = "1.0.0"
-PAPER_SOFTWARE_DOI = "10.5281/zenodo.24190053"     # the archive of that release
+# The release that version 3 of the paper comes with: Study 4 ran on it (the library at commit e821e18), so the
+# version line and the software DOI name this one, not about.*. Version 2 came with 1.0.0 (10.5281/zenodo.24190053).
+PAPER_SOFTWARE_VERSION = "1.3.1"
+PAPER_SOFTWARE_DOI = "10.5281/zenodo.24406362"     # the archive of that release
+PAPER_VERSION_THREE_DATE = "November 2026"
+# Version 3's own DOI exists only once the author creates the new version on Zenodo: until then the status line
+# names the concept DOI, which resolves to the latest version.
+PAPER_CONCEPT_DOI = "10.5281/zenodo.23953933"
+PAPER_V3_DOI = None
 
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
@@ -87,12 +92,14 @@ def main():
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
-        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 2. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
-        f"with versions 0.1 and 0.2, Study 3 with 0.4}}\n"
+        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 3. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
+        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with {PAPER_SOFTWARE_VERSION}}}\n"
         # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
+        f"\\newcommand{{\\PaperVersionThreeDate}}{{{PAPER_VERSION_THREE_DATE}}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
-        + (f" DOI \\href{{https://doi.org/{about.PAPER_DOI}}}{{{about.PAPER_DOI}}}." if about.PAPER_DOI else "") + "}\n"
+        + (f" DOI \\href{{https://doi.org/{PAPER_V3_DOI}}}{{{PAPER_V3_DOI}}}." if PAPER_V3_DOI else
+           f" All versions: DOI \\href{{https://doi.org/{PAPER_CONCEPT_DOI}}}{{{PAPER_CONCEPT_DOI}}}.") + "}\n"
         f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{PAPER_SOFTWARE_DOI}}}{{{PAPER_SOFTWARE_DOI}}}}}\n"
         f"\\newcommand{{\\RepositoryURL}}{{\\url{{{about.REPOSITORY}}}}}\n", encoding="utf-8")
 
@@ -348,6 +355,9 @@ def main():
     # Before abstract.txt, which fills in the macros of the whole abstract, Study 3's included.
     from . import paper_numbers_v04
     paper_numbers_v04.macros(m, GEN)
+    # ---- Study 4 (version 3): results/v3 and results/v3b ---------------------------
+    from . import paper_numbers_v3
+    paper_numbers_v3.macros(m, GEN)
 
     (GEN / "abstract.txt").write_text(plain(ROOT / "paper" / "sections" / "abstract.tex", macros) + "\n",
                                       encoding="utf-8")

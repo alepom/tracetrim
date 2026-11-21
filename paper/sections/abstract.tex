@@ -4,7 +4,7 @@ reuses and remove the rest, protecting identifiers and letting the agent recover
 \texttt{expand} tool. In live runs of tracetrim 0.4 on \texttt{\SthreeModelA}, under frozen protocols, a fixed
 projection with \texttt{expand} lowered the median LLM API cost per run by \SthreeEOneTrimCosti{} and
 \SthreeEOneTrimCostiv{} on two agents with every implemented gate passing, though a stricter audit found billing
-diagnoses less complete with trimming, so preservation of answer quality is not yet established; when a changed task
+diagnoses less complete with trimming; when a changed task
 needed removed fields, adaptive learning kept them from the next run in \SthreeHFiveKept{} of
 \SthreeHFiveRecoveries{} cases. Offline, with today's defaults, the learned projection removed \BaseLearnedRawi,
 \BaseLearnedRawiii{} and \BaseLearnedRawv{} of held-out tool-output tokens on three of five agents, and
@@ -14,5 +14,9 @@ a gateway would, the 0.1 aggressive projection missed a used field in \MissesPoo
 structured calls it trims on the real-API agents, against \MissesPooledShareRealFull{} from complete traces; replays
 located three failure mechanisms (transformed values, fields used only to reason, invented identifiers), which the
 safeguards of 0.2 repaired on the conversations already observed. The method helps most where outputs carry much the
-task does not use, least where the agent cites most of what it reads; it has not yet been validated on tasks held out
-from development. The library, a telemetry report and an MCP proxy are released.
+task does not use, least where the agent cites most of what it reads. On tasks held out from development, judged
+blind (tracetrim 1.3.1), the prudent projection did not lower answer quality on new ordinary tasks (difference
+\SfourAPoint{}, 95\% interval \SfourACI{} on a 0--4 scale, at a ceiling), but on tasks built to need the fields it
+removes the agent reported \SfourBHiddenP{} of those facts against \SfourBHiddenR{} with complete outputs
+(\SfourBPoint{}, \SfourBCI{}), at no saving: when it did not recover a hidden field, it declared the fact absent.
+The library, a telemetry report and an MCP proxy are released.

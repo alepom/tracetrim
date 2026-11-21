@@ -50,13 +50,13 @@ Squeez \citep{kovacs2026squeez} & lines of one tool output & the current query &
 Policies study \citep{satish2026beyond} & history, tool results & recency, content type, summaries & none, or summariser calls & no & success, tokens, latency, cost \\
 Coca-Cola \citep{liu2026tools} & observations (to latent tokens) & next-action matching & trained compressor, open weights & no & success, tokens, runtime \\
 Headroom \citep{headroom2026} & by content type & rules, per-tool usage & none for its JSON path$^a$ & yes & --$^b$ \\
-tracetrim (this work) & fields of structured outputs & reuse in the agent's own text & none & yes (\texttt{expand}) & gates, tokens, cost \\
+tracetrim (this work) & fields of structured outputs & reuse in the agent's own text & none & yes (\texttt{expand}) & gates, tokens, cost, blind-judged quality \\
 \bottomrule
 \end{tabular}
 \caption{The closest approaches, on the dimensions that separate them, as their sources describe them. ``Live
 evaluation'': what the source measures in agent runs. $^a$As far as the source states. $^b$A tool, not a study; we
-compared its token counts on our replays (Section~\ref{sec:study2}). tracetrim has not yet been validated on tasks
-held out from its development (Section~\ref{sec:limitations}).}
+compared its token counts on our replays (Section~\ref{sec:study2}). Answer quality on tasks
+held out from tracetrim's development is tested in Study~4 (Section~\ref{sec:study4}).}
 \label{tab:related}
 \end{table}
 

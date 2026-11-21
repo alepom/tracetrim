@@ -2,10 +2,11 @@
 \label{sec:limitations}
 
 \begin{itemize}
-\item \textbf{Validated on the development tasks only.} The tasks, prompts, gates, safeguards and default rules
-were developed on the same five agents on which they are evaluated, and Studies~2 and~3 reuse them. No result has
-yet been tested on tasks, agents or APIs kept apart from development: the results describe these workloads, and
-validation on new ones is the main step still missing.
+\item \textbf{Development tasks, and held-out tasks only on two simulated agents.} The tasks, prompts, gates,
+safeguards and default rules were developed on the same five agents on which Studies~1--3 evaluate them. Study~4
+tests answer quality on held-out tasks, but only for the two simulated agents, with synthetic worlds, the same
+tools and the projection learned on their development runs. No result has been tested on agents or APIs kept apart
+from development.
 \item \textbf{What the checks check.} The gates, the protocols' tests and the rule-based audits added afterwards
 check identifiers, links, names, keywords and some relations (a volume against its keyword, a link against the
 invoice cited, a view count against its video), not every association an answer makes. The stricter post-hoc audits confirmed nearly all answers, and their
@@ -59,6 +60,18 @@ author's review. No independent human rater read every answer, and no agreement 
   rules were fixed before any number, they and the post-hoc analysis of E3 were not in a protocol, and the host
   checks are few observations per host. Every attempt is kept in every figure, the run that asked a question instead
   of doing the task included; a ratio that such a run cannot have is computed without it and says so.
+\item \textbf{Study 4.} One agent model, \texttt{\SfourModel}, and one judge, \texttt{\SfourJudge}, an AI model that
+  knew the design of the study but not the arm of each answer. Its two passes measure its own repeatability, not the
+  validity of its ratings, and no human rated the answers. The judge read the answers to a task together, each to be
+  scored on its own; a contrast between neighbouring answers would affect every arm alike, but cannot be excluded.
+  Part~A ran at a ceiling (\SfourACeiling{} of the ratings were the maximum), so it had little room to detect a loss.
+  Part~B's tasks were built to need removed fields, and its reference arm reported all of them. It measures how much a
+  projection loses when the use of a tool changes, not how often that happens in real use. Its primary result missed
+  the preregistered margin by \SfourBMarginGap{} and is reported as inconclusive as the rule requires, although its
+  whole interval lies below zero. Its objective scorer checks the presence of facts, not the reasoning around them.
+  Tasks per part are few (\SfourATasks{} and \SfourBTasks), with two or three runs per task and arm. The protocols'
+  judge was changed before any score, and Part~B ran under a second version written after a calibration that stopped
+  the first; both changes are dated and reported.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
   on them, the released data are derived per-call records: enough to recompute which fields each call used and the
   misses, but neither the token savings, which need the payloads, nor a replay of the conversations.

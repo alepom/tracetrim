@@ -1,0 +1,461 @@
+{
+  "protocol": "protocol-v3.md",
+  "deviations": "experiments/v3/DEVIATIONS.md",
+  "agent_models_returned": [
+    "gpt-5.6-terra"
+  ],
+  "judge": {
+    "model": "gemini-3.8-flash",
+    "endpoint": "Vertex AI, global",
+    "thinking_level": "HIGH",
+    "grouping": "one call per task and pass: the evidence once, the task's answers under neutral labels"
+  },
+  "design": {
+    "cases": [
+      "C4",
+      "C5"
+    ],
+    "tasks_per_case": 10,
+    "repetitions": 2,
+    "arms": [
+      "R",
+      "P",
+      "I"
+    ],
+    "runs": 120
+  },
+  "answers": 120,
+  "missing": {
+    "R": 0,
+    "P": 0,
+    "I": 0
+  },
+  "H1_P_minus_R": {
+    "point": {
+      "combined": 0.054166666666666675,
+      "by_case": {
+        "C4": 0.10833333333333335,
+        "C5": 0.0
+      }
+    },
+    "ci95": {
+      "combined": [
+        -0.008333333333333349,
+        0.13333333333333336
+      ],
+      "by_case": {
+        "C4": [
+          -0.016666666666666698,
+          0.2666666666666667
+        ],
+        "C5": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "tasks": {
+      "C4": 10,
+      "C5": 10
+    },
+    "verdict_0.5": "preserved",
+    "verdict_0.25": "preserved",
+    "per_task": {
+      "C4": {
+        "C4-05": 0.5,
+        "C4-09": 0.0,
+        "C4-04": 0.0,
+        "C4-06": -0.16666666666666674,
+        "C4-01": 0.5833333333333335,
+        "C4-03": -0.08333333333333326,
+        "C4-10": 0.0,
+        "C4-08": 0.08333333333333326,
+        "C4-02": 0.0,
+        "C4-07": 0.16666666666666674
+      },
+      "C5": {
+        "C5-10": 0.0,
+        "C5-05": 0.0,
+        "C5-08": 0.0,
+        "C5-06": 0.0,
+        "C5-09": 0.0,
+        "C5-07": 0.0,
+        "C5-03": 0.0,
+        "C5-02": 0.0,
+        "C5-04": 0.0,
+        "C5-01": 0.0
+      }
+    }
+  },
+  "secondary_I_minus_R": {
+    "point": {
+      "combined": 0.04166666666666667,
+      "by_case": {
+        "C4": 0.08333333333333334,
+        "C5": 0.0
+      }
+    },
+    "ci95": {
+      "combined": [
+        -0.029166666666666684,
+        0.12083333333333335
+      ],
+      "by_case": {
+        "C4": [
+          -0.05833333333333337,
+          0.2416666666666667
+        ],
+        "C5": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "tasks": {
+      "C4": 10,
+      "C5": 10
+    },
+    "verdict_0.5": "preserved",
+    "verdict_0.25": "preserved",
+    "per_task": {
+      "C4": {
+        "C4-05": 0.5,
+        "C4-09": -0.3333333333333335,
+        "C4-04": 0.0,
+        "C4-06": 0.0,
+        "C4-01": 0.5000000000000002,
+        "C4-03": 0.0,
+        "C4-10": -0.08333333333333326,
+        "C4-08": 0.08333333333333326,
+        "C4-02": 0.0,
+        "C4-07": 0.16666666666666674
+      },
+      "C5": {
+        "C5-10": 0.0,
+        "C5-05": 0.0,
+        "C5-08": 0.0,
+        "C5-06": 0.0,
+        "C5-09": 0.0,
+        "C5-07": 0.0,
+        "C5-03": 0.0,
+        "C5-02": 0.0,
+        "C5-04": 0.0,
+        "C5-01": 0.0
+      }
+    }
+  },
+  "dimensions": {
+    "C4": {
+      "R": {
+        "correctness": 3.825,
+        "completeness": 3.85,
+        "action": 3.925,
+        "composite": 3.8666666666666667,
+        "answers": 20
+      },
+      "P": {
+        "correctness": 3.95,
+        "completeness": 3.975,
+        "action": 4.0,
+        "composite": 3.975,
+        "answers": 20
+      },
+      "I": {
+        "correctness": 4.0,
+        "completeness": 3.9,
+        "action": 3.95,
+        "composite": 3.95,
+        "answers": 20
+      }
+    },
+    "C5": {
+      "R": {
+        "correctness": 4.0,
+        "completeness": 4.0,
+        "action": 4.0,
+        "composite": 4.0,
+        "answers": 20
+      },
+      "P": {
+        "correctness": 4.0,
+        "completeness": 4.0,
+        "action": 4.0,
+        "composite": 4.0,
+        "answers": 20
+      },
+      "I": {
+        "correctness": 4.0,
+        "completeness": 4.0,
+        "action": 4.0,
+        "composite": 4.0,
+        "answers": 20
+      }
+    }
+  },
+  "ratings_both_passes": {
+    "0": 0,
+    "1": 0,
+    "2": 3,
+    "3": 19,
+    "4": 698
+  },
+  "agreement": {
+    "correctness": {
+      "exact": 0.9916666666666667,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.90625
+    },
+    "completeness": {
+      "exact": 0.9416666666666667,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.4444444444444444
+    },
+    "action": {
+      "exact": 0.975,
+      "within_one": 1.0,
+      "quadratic_kappa": 0.5673076923076923
+    }
+  },
+  "adjudicated": 0,
+  "answers_with_cues": 0,
+  "gates": {
+    "by_arm": {
+      "C4": {
+        "R": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        },
+        "P": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        },
+        "I": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        }
+      },
+      "C5": {
+        "R": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        },
+        "P": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        },
+        "I": {
+          "pass": 20,
+          "zero_denominator": 0,
+          "answers": 20
+        }
+      }
+    },
+    "paired": {
+      "P": {
+        "both": 40,
+        "only_R": 0,
+        "only_P": 0,
+        "neither": 0
+      },
+      "I": {
+        "both": 40,
+        "only_R": 0,
+        "only_I": 0,
+        "neither": 0
+      }
+    }
+  },
+  "grounding": {
+    "by_arm": {
+      "C4": {
+        "R": {
+          "values": 1753,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        },
+        "P": {
+          "values": 1790,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        },
+        "I": {
+          "values": 1675,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        }
+      },
+      "C5": {
+        "R": {
+          "values": 243,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        },
+        "P": {
+          "values": 256,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        },
+        "I": {
+          "values": 252,
+          "unsupported": 0,
+          "answers_with_unsupported": 0
+        }
+      }
+    },
+    "paired": {
+      "P": {
+        "both": 40,
+        "only_R": 0,
+        "only_P": 0,
+        "neither": 0
+      },
+      "I": {
+        "both": 40,
+        "only_R": 0,
+        "only_I": 0,
+        "neither": 0
+      }
+    }
+  },
+  "process": {
+    "C4": {
+      "R": {
+        "runs": 20,
+        "calls": 14.75,
+        "turns": 3.2,
+        "expand_calls": 0,
+        "runs_with_expand": 0,
+        "outputs_original_tokens": 288533,
+        "outputs_delivered_tokens": 288533,
+        "input_tokens": 495265,
+        "output_tokens": 60849,
+        "flags": [],
+        "cost_relative_to_R": 1.0
+      },
+      "P": {
+        "runs": 20,
+        "calls": 15,
+        "turns": 3.15,
+        "expand_calls": 5,
+        "runs_with_expand": 1,
+        "outputs_original_tokens": 292460,
+        "outputs_delivered_tokens": 186537,
+        "input_tokens": 358062,
+        "output_tokens": 62887,
+        "flags": [],
+        "cost_relative_to_R": 0.8536411073112864
+      },
+      "I": {
+        "runs": 20,
+        "calls": 15,
+        "turns": 3.2,
+        "expand_calls": 0,
+        "runs_with_expand": 0,
+        "outputs_original_tokens": 288726,
+        "outputs_delivered_tokens": 168480,
+        "input_tokens": 334419,
+        "output_tokens": 62648,
+        "flags": [],
+        "cost_relative_to_R": 0.8198806068783995
+      }
+    },
+    "C5": {
+      "R": {
+        "runs": 20,
+        "calls": 9.1,
+        "turns": 4,
+        "expand_calls": 0,
+        "runs_with_expand": 0,
+        "outputs_original_tokens": 478890,
+        "outputs_delivered_tokens": 478890,
+        "input_tokens": 1026541,
+        "output_tokens": 15596,
+        "flags": [],
+        "cost_relative_to_R": 1.0
+      },
+      "P": {
+        "runs": 20,
+        "calls": 10.9,
+        "turns": 4.25,
+        "expand_calls": 12,
+        "runs_with_expand": 8,
+        "outputs_original_tokens": 492314,
+        "outputs_delivered_tokens": 249442,
+        "input_tokens": 522597,
+        "output_tokens": 17259,
+        "flags": [],
+        "cost_relative_to_R": 0.5856827620481374
+      },
+      "I": {
+        "runs": 20,
+        "calls": 10.05,
+        "turns": 4.2,
+        "expand_calls": 12,
+        "runs_with_expand": 7,
+        "outputs_original_tokens": 486327,
+        "outputs_delivered_tokens": 211604,
+        "input_tokens": 425356,
+        "output_tokens": 16926,
+        "flags": [],
+        "cost_relative_to_R": 0.5148098969574034
+      }
+    }
+  },
+  "full_cheaper_calls": {
+    "C4": {
+      "R": 0,
+      "P": 2,
+      "I": 2
+    },
+    "C5": {
+      "R": 0,
+      "P": 0,
+      "I": 0
+    }
+  },
+  "exposure_replay": {
+    "C4": {
+      "R": {
+        "tokens": 725943,
+        "calls": 840,
+        "full": 840
+      },
+      "P": {
+        "tokens": 463370,
+        "calls": 840,
+        "filtered": 820,
+        "full": 20
+      },
+      "I": {
+        "tokens": 421259,
+        "calls": 840,
+        "filtered": 820,
+        "full": 20
+      }
+    },
+    "C5": {
+      "R": {
+        "tokens": 2363072,
+        "calls": 1040,
+        "full": 1040
+      },
+      "P": {
+        "tokens": 1350624,
+        "calls": 1040,
+        "filtered": 640,
+        "full": 400
+      },
+      "I": {
+        "tokens": 1217920,
+        "calls": 1040,
+        "filtered": 640,
+        "full": 400
+      }
+    }
+  }
+}

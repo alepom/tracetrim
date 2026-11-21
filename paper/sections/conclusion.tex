@@ -5,7 +5,11 @@ With the defaults it ships today, a projection learned from an agent's own trace
 live runs on one model, a fixed projection with \texttt{expand} lowered the median LLM API cost per run by
 \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents. All implemented gates passed, but the stricter
 billing audit found less complete diagnoses in the trimmed arm (\AuditEOneAuditT{} against \AuditEOneAuditR{}
-without trimming); preservation of answer quality has not been established. Fields that a changed task needed came back by themselves from the next run in \SthreeHFiveKept{} of
+without trimming). On tasks held out from development, judged blind, the prudent projection kept the answers' quality
+on new ordinary tasks (\SfourAPoint{} on a 0--4 scale, interval \SfourACI{}, at a ceiling). On tasks that needed the
+fields it removes, it lost facts: \SfourBHiddenP{} of them reported against \SfourBHiddenR{} (\SfourBPoint{},
+interval \SfourBCI{}, inconclusive against the preregistered margin by \SfourBMarginGap{}), at no saving, because the
+agent, without recovering a hidden field, declared the fact absent. Fields that a changed task needed came back by themselves from the next run in \SthreeHFiveKept{} of
 \SthreeHFiveRecoveries{} cases, and, offline, learning removed \BaseLearnedStaticBigMin{} to
 \BaseLearnedStaticBigMax{} of what a minifier and a static filter leave on three of five agents. The studies with
 earlier versions show where these defaults come from.
@@ -29,6 +33,8 @@ information that this reuse makes only partly observable, and the safeguards cor
 The method is therefore best used as it is implemented: as a proposal learned from complete traces, reviewed by a
 person, applied with identifiers protected and with a way back for the agent when a cut was wrong, which in Study 3
 also corrected the projection. It helps most where tool outputs carry much that the task does not use, and least
-where the agent cites most of what it reads, where minifying is enough. The evidence comes from few runs, one model
-for trimming and learning, and the tasks on which the method was developed; validation on new tasks is the next
-step.
+where the agent cites most of what it reads, where minifying is enough. Study~4 adds a condition: a projection
+learned on one use of a tool should not be trusted when the use changes. There, the agent's inference that a
+trimmed field holds nothing is the weak point, and the place where the library's notice and recovery instructions
+must improve. The evidence comes from few runs and one agent model, on the five agents of development and on
+held-out tasks for two of them.
