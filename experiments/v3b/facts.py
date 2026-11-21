@@ -46,10 +46,14 @@ def found(fact: dict, ticket: dict) -> bool:
     raise ValueError(f"unknown fact kind {fact['kind']}")
 
 
-def score_answer(answer, key: dict) -> dict:
-    tickets = {}
+def tickets_of(answer) -> dict:
     if isinstance(answer, dict) and isinstance(answer.get("ticket"), list):
-        tickets = {str(t.get("id")): t for t in answer["ticket"] if isinstance(t, dict)}
+        return {str(t.get("id")): t for t in answer["ticket"] if isinstance(t, dict)}
+    return {}
+
+
+def score_answer(answer, key: dict) -> dict:
+    tickets = tickets_of(answer)
     total = correct = hidden = hidden_ok = 0
     per_ticket = {}
     for k in key["ticket"]:

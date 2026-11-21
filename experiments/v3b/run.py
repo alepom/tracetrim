@@ -105,6 +105,7 @@ def select():
     if set(scores) != set(candidates()):
         raise SystemExit(f"calibration incomplete: {len(scores)} of {CANDIDATES} scored")
     shares = {t: s["share"] for t, s in scores.items()}
+    write(CALIBRATION / "scores.json", scores)          # private; its SHA-256 goes into the lock
     eligible, kept = rule(shares)
     result = {"rule": f"{LOW} <= s <= {HIGH}; at most {KEEP_MAX} closest to {TARGET}; at least {KEEP_MIN}",
               "calibration_share_R": shares, "eligible": eligible, "kept": kept}

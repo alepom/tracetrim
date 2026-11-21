@@ -61,3 +61,24 @@ def test_schedule_blocks_and_balance():
     pairs = [s[i:i + 2] for i in range(0, 60, 2)]
     assert all(a.rsplit("/", 1)[0] == b.rsplit("/", 1)[0] for a, b in pairs)
     assert sum(a.endswith("/R") for a, _ in pairs) == 15
+
+
+def test_analysis_estimator_and_recovery():
+    from experiments.v3b import analysis as an
+    values = {}
+    for t in range(1, 11):
+        for r in (1, 2, 3):
+            values[f"C4b-{t:02}/{r}/R"] = 3.0
+            values[f"C4b-{t:02}/{r}/P"] = 3.0 - (0.3 if t <= 5 else 0.0)
+    c = an.contrast(values)
+    assert abs(c["point"] + 0.15) < 1e-9 and c["tasks"] == 10
+    assert c["ci95"][0] <= -0.15 <= c["ci95"][1] and c["verdict_0.5"] == "preserved"
+    assert an.verdict([-0.6, -0.2], -0.5) == "inconclusive" and an.verdict([-0.9, -0.6], -0.5) == "material loss"
+    del values["C4b-01/1/R"]
+    assert len(an.per_task(values)) == 10
+    fact = {"kind": "amount", "value": 1234, "hidden": ["stripe_search_customers", "data[].balance"]}
+    events = [{"kind": "call", "tool": "stripe_search_customers", "output": '{"data":[{"balance":-1234}]}',
+               "sent": '{"data":[{"id":"x"}]}\n[trimmed] call_id=c00000000 hidden: data[].balance'},
+              {"kind": "call", "tool": "expand", "output": '{"data":[{"balance":-1234}]}'}]
+    assert an.reached(fact, events) == ["expand"]
+    assert an.reached(fact, events[:1]) == []
