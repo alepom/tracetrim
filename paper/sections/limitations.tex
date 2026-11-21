@@ -71,7 +71,10 @@ author's review. No independent human rater read every answer, and no agreement 
   whole interval lies below zero. Its objective scorer checks the presence of facts, not the reasoning around them.
   Tasks per part are few (\SfourATasks{} and \SfourBTasks), with two or three runs per task and arm. The protocols'
   judge was changed before any score, and Part~B ran under a second version written after a calibration that stopped
-  the first; both changes are dated and reported.
+  the first; both changes are dated and reported. The second reader of Part~B is also an AI agent, added after the
+  results, on a sample. Part~C's correction was designed after Part~B and tested on the same tasks: its gain may
+  be smaller on other tasks, which its check on ordinary tasks covers only for cost and gates. Its lower bound is
+  close to zero, and its comparison with R is historical.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
   on them, the released data are derived per-call records: enough to recompute which fields each call used and the
   misses, but neither the token savings, which need the payloads, nor a replay of the conversations.

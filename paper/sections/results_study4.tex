@@ -4,10 +4,11 @@
 Studies~1--3 evaluated the method on the tasks on which it was developed, and the stricter billing audit of
 Study~3 found the trimmed arm's diagnoses less complete (Section~\ref{sec:s3audit}). Study~4, added in version~3 of
 this paper, asks whether the prudent projection preserves the quality of the answer on tasks never used in
-development, judged blind. It has two parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
+development, judged blind. It has three parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
 draws new ordinary tasks for the two simulated agents. Part~B (\texttt{protocol-v3b.md}) builds billing tasks
-whose answers need exactly the fields that the projection removes. Both parts ran on the library at release
-1.3.1, unchanged.
+whose answers need exactly the fields that the projection removes. Parts A and B ran on the library at release
+1.3.1, unchanged. Part~C (\texttt{protocol-v3c.md}) measures a correction of the failure that Part~B found: a
+change of one rule in the text that accompanies the projection.
 
 \paragraph{Common design.} Each run is a fresh conversation of \texttt{\SfourModel} at default parameters, in the
 study's own loop with the function-calling adapter, as in Study~3, against the simulated servers of billing support
@@ -161,6 +162,74 @@ declaring a fact absent. This is the mechanism behind the billing audit of Study
 API cost per run was \SfourBCost{} times R's. On tasks that keep needing removed fields, the saving disappears in
 the recovery.
 
+\paragraph{A second blind reader (post hoc).} At the author's request, after the results, a second AI judge
+read a sample of \SfourBSecondAnswers{} answers, \SfourBSecondPerArm{} per arm, drawn with a fixed seed. The judge
+was an AI agent in a separate session, not \texttt{\SfourJudge}. It read each answer on its own under a new
+identifier, blind to the arm and to the first judge's scores. Against the first judge's combined scores on the
+same answers it agreed exactly on \SfourBSecondExactMin{} to \SfourBSecondExactMax{} of the ratings per
+dimension, within one point on \SfourBSecondWithinOne{}, with quadratic-weighted kappa \SfourBSecondKappaMin{} to
+\SfourBSecondKappaMax{}. On the sample, P minus R on the composite was \SfourBSecondReaderDiff{} for the second
+reader and \SfourBSecondJudgeDiff{} for the first. The loss does not depend on the judge.
+
+\subsection{Part C: correcting the inference of absence}
+\label{sec:s4c}
+
+\paragraph{The correction.} Version~2 of the skill, the text that tells the agent how to work with trimmed
+results, adds one rule, also to the description of \texttt{expand}: before stating that information is missing
+or unknown, check whether a hidden field could hold it (a description, note, memo or reason) and expand it first.
+Nothing else changes: not the projection, not the notice after a trimmed result, not the tools.
+
+\paragraph{Design.} \texttt{protocol-v3c.md} was preregistered and frozen, the library under test included,
+before the first run. It has two arms on the frozen prudent policy of Parts~A and~B: P1 with the text of
+version~1, which Parts~A and~B used, and P2 with version~2. The runs:
+\begin{itemize}
+\item the \SfourCHardTasks{} tasks of Part~B, three times per arm;
+\item the \SfourCOrdinaryTasks{} billing tasks of Part~A, once per arm, to check cost and gates where nothing
+needed is hidden.
+\end{itemize}
+That makes \SfourCRuns{} new runs, in seeded blocks. The primary outcome is Part~B's hidden-fact share, P2
+minus P1 with the same estimator; the correction counts as an improvement if the lower end of the interval lies
+above 0. A decision rule, fixed in advance, makes version~2 the library's default only if three conditions hold:
+\begin{itemize}
+\item the primary outcome improves;
+\item on the ordinary tasks P2 costs at most 10\% more than P1;
+\item on the ordinary tasks P2 passes no fewer gates.
+\end{itemize}
+The judge and the scoring are those of Part~B.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_s4c.tex}
+\caption{Study~4C: the same frozen projection with the skill text of version~1 (P1) and version~2 (P2), on the
+tasks of Part~B (\SfourCRunsPerArm{} runs per arm); costs also on the ordinary tasks of Part~A. Intervals: 95\%
+bootstrap over tasks. The primary outcome and its interval are in bold.}
+\label{tab:s4c}
+\end{table}
+
+\paragraph{Results.} All \SfourCRuns{} runs completed, with \SfourCMissing{} missing. P1 reported
+\SfourCHiddenPone{} of the hidden facts, which reproduces Part~B's P, and P2 reported \SfourCHiddenPtwo{}: P2
+minus P1 was \textbf{\SfourCPoint{}}, 95\% interval \textbf{\SfourCCI{}}. That is \emph{\SfourCVerdict} by the
+preregistered rule, though the lower end is close to zero (Table~\ref{tab:s4c}). The gain is where Part~B lost:
+\begin{itemize}
+\item the origin of the last credit, \SfourCOriginPone{} against \SfourCOriginPtwo{}, with the customer's
+description recovered by \texttt{expand} \SfourCOriginExpandPtwo{} times, never in P1;
+\item the TB of the invoice memo, \SfourCMemoPone{} against \SfourCMemoPtwo{}.
+\end{itemize}
+One fact type moved the other way: credit notes, \SfourCCreditNotePone{} against \SfourCCreditNotePtwo{}.
+
+All key facts rose by \SfourCFactsPoint{} \SfourCFactsCI{}, and the judged composite by \SfourCCompositePoint{}
+\SfourCCompositeCI{}, from \SfourCCompositePone{} to \SfourCCompositePtwo{}. The passes agreed exactly on
+\SfourCExactMin{} to \SfourCExactMax{} per dimension, with \SfourCAdjudicated{} third readings, and
+\SfourCCues{} answers contained an arm cue. P2 called \texttt{expand} \SfourCExpandPtwo{} times in
+\SfourCExpandRunsPtwo{} of \SfourCRunsPerArm{} runs, against \SfourCExpandPone{} times in \SfourCExpandRunsPone{}
+runs for P1. Its cost per run relative to P1 was \SfourCHardCost{} on the hard tasks and \SfourCOrdinaryCost{} on
+the ordinary ones, where gates passed in \SfourCOrdinaryGates{} answers.
+
+All three conditions of the decision rule hold, and version~\SfourCDefault{} is the default from tracetrim 1.4;
+version~1 remains available as an option. Against R of Part~B, which was not run again, the gap narrowed but
+did not close: P1 minus R \SfourCPoneMinusR{} \SfourCPoneMinusRCI{}, P2 minus R \SfourCPtwoMinusR{}
+\SfourCPtwoMinusRCI{}. This comparison is descriptive only.
+
 \begin{figure}[t]
 \centering
 \input{generated/fig_quality.tex}
@@ -183,4 +252,8 @@ separately.
 whole-cent amounts before the second version, and two scripts changed in form only, before any score.
 \item Part~B's check of how a hidden value reached the agent is wrong for the replacement link
 (Table~\ref{tab:s4b_hidden}).
+\item The second reader of Part~B was added after its results, at the author's request: a check of the judge,
+not an outcome.
+\item Part~C froze the whole library. Corrections to other functions, made during its campaign, were committed
+only after its analysis, so the lock was verified at every step.
 \end{itemize}

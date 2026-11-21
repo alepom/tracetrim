@@ -223,3 +223,86 @@ def macros(m, GEN: Path) -> None:
     (GEN / "table_s4b.tex").write_text(
         "\\begin{tabular}{lrrrr}\n\\toprule\nOutcome & R & P & P $-$ R & 95\\% interval \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
+
+    # ---- 4B, a second blind reader (post hoc): results/v3b/second_reader.json -----------
+    sr_path = ROOT / "results" / "v3b" / "second_reader.json"
+    if sr_path.exists():
+        sr = json.loads(sr_path.read_text(encoding="utf-8"))
+        ag = sr["agreement_with_judge"]
+        m("SfourBSecondAnswers", str(sr["sample"]["answers"]))
+        m("SfourBSecondPerArm", word(sr["sample"]["per_arm"]))
+        m("SfourBSecondExactMin", share(min(v["exact"] for v in ag.values()), 0))
+        m("SfourBSecondExactMax", share(max(v["exact"] for v in ag.values()), 0))
+        m("SfourBSecondWithinOne", share(min(v["within_one"] for v in ag.values()), 0))
+        m("SfourBSecondKappaMin", f"{min(v['quadratic_kappa'] for v in ag.values()):.2f}")
+        m("SfourBSecondKappaMax", f"{max(v['quadratic_kappa'] for v in ag.values()):.2f}")
+        diff = sr["composite_P_minus_R_on_sample"]
+        m("SfourBSecondReaderDiff", sgn(diff["reader"]))
+        m("SfourBSecondJudgeDiff", sgn(diff["judge"]))
+
+    # ---- 4C: protocol v3c, the corrected skill text ----------------------------------------
+    c_path = ROOT / "results" / "v3c" / "quality.json"
+    if not c_path.exists():
+        return
+    c = json.loads(c_path.read_text(encoding="utf-8"))
+    assert c["agent_models_returned"] == [model]
+    pc, fc, jc = (c["primary_hidden_fact_share_P2_minus_P1"], c["secondary_fact_share_P2_minus_P1"],
+                  c["secondary_composite_P2_minus_P1"])
+    m("SfourCRuns", str(c["runs"]))
+    m("SfourCMissing", word(sum(c["missing"].values())))
+    m("SfourCHardTasks", word(len(c["tasks"]["hard"])))
+    m("SfourCOrdinaryTasks", word(len(c["tasks"]["ordinary"])))
+    m("SfourCPoint", sgn(pc["point"], 3))
+    m("SfourCCI", ci(pc["ci95"], 3))
+    m("SfourCVerdict", pc["verdict"])
+    m("SfourCHiddenPone", share(c["hidden_fact_share_by_arm"]["P1"]))
+    m("SfourCHiddenPtwo", share(c["hidden_fact_share_by_arm"]["P2"]))
+    m("SfourCFactsPoint", sgn(fc["point"], 3))
+    m("SfourCFactsCI", ci(fc["ci95"], 3))
+    m("SfourCCompositePoint", sgn(jc["point"]))
+    m("SfourCCompositeCI", ci(jc["ci95"]))
+    m("SfourCCompositePone", f"{jc['by_arm']['P1']:.2f}")
+    m("SfourCCompositePtwo", f"{jc['by_arm']['P2']:.2f}")
+    m("SfourCExactMin", share(min(v["exact"] for v in jc["agreement"].values())))
+    m("SfourCExactMax", share(max(v["exact"] for v in jc["agreement"].values())))
+    m("SfourCAdjudicated", word(jc["adjudicated"]))
+    m("SfourCCues", word(c["answers_with_cues"]))
+    m("SfourCPoneMinusR", sgn(c["P1_minus_R_historical"]["point"], 3))
+    m("SfourCPoneMinusRCI", ci(c["P1_minus_R_historical"]["ci95"], 3))
+    m("SfourCPtwoMinusR", sgn(c["P2_minus_R_historical"]["point"], 3))
+    m("SfourCPtwoMinusRCI", ci(c["P2_minus_R_historical"]["ci95"], 3))
+    m("SfourCHardCost", ratio(c["hard_cost_P2_over_P1"]))
+    m("SfourCOrdinaryCost", ratio(c["ordinary_cost_P2_over_P1"]))
+    g = c["ordinary_gates"]
+    m("SfourCOrdinaryGates", f"{g['P1']}/{c['ordinary_answers']['P1']} and {g['P2']}/{c['ordinary_answers']['P2']}")
+    hp = c["hard_process"]
+    m("SfourCExpandPone", str(hp["P1"]["expand_calls"]))
+    m("SfourCExpandPtwo", str(hp["P2"]["expand_calls"]))
+    m("SfourCExpandRunsPone", str(hp["P1"]["runs_with_expand"]))
+    m("SfourCExpandRunsPtwo", str(hp["P2"]["runs_with_expand"]))
+    m("SfourCRunsPerArm", str(hp["P2"]["runs"]))
+    m("SfourCDefault", c["decision"]["default_version"])
+    hf = c["hidden_fields"]
+    for key, name in (("balance: data[].description", "Origin"), ("memo: data[].description", "Memo"),
+                      ("credit_note: data[].post_payment_credit_notes_amount", "CreditNote")):
+        for arm, tag in (("P1", "Pone"), ("P2", "Ptwo")):
+            m(f"SfourC{name}{tag}", f"{hf[key][arm]['reported']}/{hf[key][arm]['facts']}")
+    m("SfourCOriginExpandPtwo", str(hf["balance: data[].description"]["P2"]["via"].get("expand", 0)))
+
+    rows = [f"Hidden facts reported (primary) & {share(c['hidden_fact_share_by_arm']['P1'])} & "
+            f"{share(c['hidden_fact_share_by_arm']['P2'])} & \\textbf{{{sgn(pc['point'], 3)}}} & "
+            f"\\textbf{{{ci(pc['ci95'], 3)}}} \\\\",
+            f"All key facts reported & {share(c['fact_share_by_arm']['P1'])} & {share(c['fact_share_by_arm']['P2'])} & "
+            f"{sgn(fc['point'], 3)} & {ci(fc['ci95'], 3)} \\\\",
+            f"Judged composite (0--4) & {jc['by_arm']['P1']:.2f} & {jc['by_arm']['P2']:.2f} & {sgn(jc['point'])} & "
+            f"{ci(jc['ci95'])} \\\\",
+            f"\\quad origin of the last credit & {hf['balance: data[].description']['P1']['reported']}/27 & "
+            f"{hf['balance: data[].description']['P2']['reported']}/27 & & \\\\",
+            f"\\quad TB in the invoice memo & {hf['memo: data[].description']['P1']['reported']}/27 & "
+            f"{hf['memo: data[].description']['P2']['reported']}/27 & & \\\\",
+            f"Cost per run, hard tasks (P2/P1) & & & {ratio(c['hard_cost_P2_over_P1'])} & \\\\",
+            f"Cost per run, ordinary tasks (P2/P1) & & & {ratio(c['ordinary_cost_P2_over_P1'])} & \\\\"]
+    rows = [r.replace("/27", "/" + str(hf["balance: data[].description"]["P1"]["facts"])) for r in rows]
+    (GEN / "table_s4c.tex").write_text(
+        "\\begin{tabular}{lrrrr}\n\\toprule\nOutcome & P1 (text v1) & P2 (text v2) & P2 $-$ P1 & 95\\% interval \\\\\n"
+        "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")
