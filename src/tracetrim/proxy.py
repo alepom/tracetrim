@@ -349,8 +349,10 @@ class BackgroundLearning:
       So what the model receives and what the proxy learns are the same in both modes (tests/test_background_
       relearn.py compares every file byte for byte), and the pauses that close a run by inactivity, and the one
       after an answer, are the client's: measured from a reply, or after a wait, never across one. With several
-      clients the modes differ by design: without the option a request from another client is served at once,
-      with the policy in place, while the relearning runs.
+      clients the modes differ by design: without the option another client's tool call, `expand` or tool listing
+      is served at once, with the policy in place, while a closing relearns (closings wait for one another in both
+      modes). A tool call waits for the relearning only once it is recorded: a client that disappears without
+      cancelling its call keeps the relearning waiting until the upstream answers it.
     - The run is recorded on disk as pending in the same write that records it (`Learner._write_run`); it stays
       pending until a relearning has covered it, so a process stopped earlier relearns at its next start.
       Every product of the report is written atomically.
@@ -539,6 +541,10 @@ def _server(o: Options):
                 if session and session.run.last_number != previous:
                     closed = session.run
                     session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
+            # No await since the closing: until its reply, no call counts as following this answer (`replied`).
+            answered = bool(answer and answer.strip())
+            if answered:
+                (session.run if session else learner.run).reply_pending = True
             _warn_mixed(learner)
             run_total = (session.live if session else live).new_run()
             if background is not None:
@@ -549,7 +555,7 @@ def _server(o: Options):
                     f"{run_total} · relearning in the background")
                 _log_unsupported()
                 await background.request()
-                replied(session)
+                replied(session, answered)
                 return True
             # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
             # the loop never sees the policy change halfway through.
@@ -568,15 +574,17 @@ def _server(o: Options):
             log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
             after_learning()
             _log_unsupported()
-            replied(session)
+            replied(session, answered)
             return True
 
-    def replied(session):
+    def replied(session, answered):
         """The pause after an answer starts at the reply, as the agent sees it: without the option the reply came
         after the relearning, with it before (until 1.3 the pause was counted from the closing, relearning included)."""
         run = session.run if session else learner.run
-        if run.answered_at is not None:
-            run.answered_at = time.time()
+        if answered:
+            with learner.lock:
+                run.answered_at = time.time()
+                run.reply_pending = False
 
     def _log_unsupported():
         if learner.unsupported:

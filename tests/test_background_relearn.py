@@ -961,10 +961,10 @@ def test_a_revert_from_another_process_is_kept(tmp_path, monkeypatch):
     load, commit = evidence.load, auto.Learner._commit
     local = threading.local()
 
-    def committing(self, runs_at_start, decided):
+    def committing(self, runs_at_start, decided, *rest):
         local.on = runs_at_start == 6                 # the relearning that promotes note_1
         try:
-            return commit(self, runs_at_start, decided)
+            return commit(self, runs_at_start, decided, *rest)
         finally:
             local.on = False
 
@@ -1064,3 +1064,315 @@ def test_the_recovery_at_start_runs_in_a_thread_with_the_option(tmp_path, monkey
     assert built < 0.3 and waited >= 0.3 and longest < 0.25
     assert seen["calls"] == 1 and not any(seen["main"])
     assert "report_pending" not in json.loads((tmp_path / "state.json").read_text())
+
+
+# -- REVISIONE-14b-quater ----------------------------------------------------------------------------------------
+
+def promote_sequence(work, on, promote_runs=4, expand_runs=(3, 4, 5, 6)):
+    """Six runs; note_0 asked back in `expand_runs`: with promote_runs=4 the promotion comes at run 6, when the tool
+    has 4 filtered results, all expanded, in 4 runs (the switch-off rule would apply without the promotion)."""
+    async def go():
+        server, learner = proxy._server(options(work, background_relearn=on, promote=True, promote_runs=promote_runs))
+        async with Client(server) as client:
+            for i in range(1, 7):
+                out = (await client.call_tool("volumes", {})).content[0].text
+                m = re.search(r"call_id=(c[0-9a-f]{8})", out)
+                if m and i in expand_runs:
+                    await client.call_tool("expand", {"call_id": m.group(1), "fields": ["items[].note_0"]})
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+                if on:
+                    await settled(learner)
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_stop_while_a_promotion_is_written_restarts_to_the_same_files(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-quater: stopped after the promotion reached evidence.json and before the state (with the
+    restart of the tool's counts), the next start switched the tool off. The two go through one journal."""
+    import shutil
+    from tracetrim import store
+    deterministic(monkeypatch)
+    work, copy = tmp_path / "work", tmp_path / "copy"
+    write_atomic = store.write_atomic
+
+    def copying(path, text):
+        write_atomic(path, text)
+        if (store._writes.get() is None and Path(path).name == "evidence.json" and not copy.exists()
+                and (work / store.JOURNAL).exists() and '"promotions": [\n    {' in text):
+            shutil.copytree(work, copy)                 # the commit's evidence is published, its state not yet
+    monkeypatch.setattr(store, "write_atomic", copying)
+    promote_sequence(work, on)
+    monkeypatch.setattr(store, "write_atomic", write_atomic)
+    assert copy.exists()
+    finished = snapshot(work)
+    assert json.loads(finished["state.json"])["off"] == []
+    proxy._server(options(copy, promote=True, promote_runs=4))       # the next start
+    assert snapshot(copy) == finished
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_write_after_a_failed_publication_finishes_it_first(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-quater: the publication of run 3 fails at the state; a late expand and a refused closing that
+    follow are written, and the replay of that publication, at the next closing, no longer undoes them."""
+    from tracetrim import store
+    replace = store.os.replace
+    fail = {"on": False}
+
+    def failing(src, dst):
+        if fail["on"] and Path(dst).name == "state.json":
+            fail["on"] = False
+            raise OSError("simulated")
+        return replace(src, dst)
+    monkeypatch.setattr(store.os, "replace", failing)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, background_relearn=on))
+        async with Client(server) as client:
+            for _ in range(2):
+                await run(client)
+                if on:
+                    await settled(learner)
+            out = (await client.call_tool("volumes", {})).content[0].text
+            cid = re.search(r"call_id=(c[0-9a-f]{8})", out).group(1)
+            await client.call_tool("expand", {"call_id": cid, "fields": ["items[].note_0"]})
+            fail["on"] = True
+            from mcp.shared.exceptions import MCPError
+            with pytest.raises(MCPError):                                      # published in part: the journal stays
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            assert (tmp_path / store.JOURNAL).exists()
+            await client.call_tool("expand", {"call_id": cid, "fields": ["items[].note_1"]})   # late
+            assert (await client.call_tool("tracetrim_done", {"answer": " "})).is_error        # refused
+            await run(client)                                                  # the next closing
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+    fields = json.loads((tmp_path / "evidence.json").read_text())["tools"]["volumes"]["fields"]
+    assert "run-0003" in fields["items[].note_1"]["requested"]
+    assert json.loads((tmp_path / "savings.json").read_text())["runs"]["run-0003"]["expand"]["calls"] == 2
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["refused_closings"] == 1 and state["runs"] == 4 and "report_pending" not in state
+
+
+def test_two_promotions_commands_without_a_proxy_leave_the_last_choice(tmp_path, monkeypatch):
+    """REVISIONE-14b-quater: with no proxy, a revert that is relearning and a restore in another process. The second
+    waits for the first, then applies its own change: evidence and config agree on the last choice."""
+    import gc
+    import subprocess
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()                                          # no Learner of this process holds the directory
+    env = {**__import__("os").environ, "PYTHONPATH": str(ROOT / "src")}
+    probe = subprocess.run([sys.executable, "-c", "import sys\nfrom tracetrim import store\n"
+                            "with store.alone(sys.argv[1]) as a: print(a)", str(work)],
+                           capture_output=True, text=True, env=env)
+    assert probe.stdout.strip() == "True", probe.stderr
+    inside = threading.Event()
+    relearn = auto.Learner.relearn
+
+    def slow(self):
+        inside.set()
+        time.sleep(1.5)
+        return relearn(self)
+    monkeypatch.setattr(auto.Learner, "relearn", slow)
+    first = threading.Thread(target=main, args=(["promotions", str(work), "--revert", "volumes", "items[].note_0"],))
+    first.start()
+    assert inside.wait(10)
+    second = subprocess.run([sys.executable, "-m", "tracetrim.cli", "promotions", str(work), "--restore", "volumes",
+                             "items[].note_0"], capture_output=True, text=True, env=env)
+    first.join(20)
+    assert second.returncode == 0 and "in use" not in second.stdout, second.stdout + second.stderr
+    status = [p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]]
+    promoted = json.loads((work / "report.config.json").read_text())["auto"]["promoted"]
+    assert status == ["active"] and promoted == {"volumes": ["items[].note_0"]}
+
+
+def test_counts_a_failed_savings_write_could_not_save_stay_with_their_run(tmp_path, monkeypatch):
+    """REVISIONE-14b-quater: the savings of run 2 fail to be prepared; they are saved with the next closing, under
+    run 2, not added to run 3."""
+    from tracetrim.contract import ToolCall, ToolResult
+    from tracetrim.engine import Engine
+    learner = auto.Learner(tmp_path, 2)
+    engine = Engine(learner)
+    add = auto.Learner._add_sizes
+    fail = {"on": False}
+
+    def failing(self, *a, **kw):
+        if fail["on"]:
+            fail["on"] = False
+            raise RuntimeError("simulated")
+        return add(self, *a, **kw)
+    monkeypatch.setattr(auto.Learner, "_add_sizes", failing)
+    for i in range(3):
+        engine.observe(ToolCall("t", {}), ToolResult(json.dumps({"a": i, "b": i + 1})))
+        fail["on"] = i == 1
+        if i == 1:
+            with pytest.raises(RuntimeError):
+                learner.done(str(i))
+        else:
+            learner.done(str(i))
+    runs = json.loads((tmp_path / "savings.json").read_text())["runs"]
+    assert {r: v["tools"]["t"]["calls"] for r, v in runs.items()} == {"run-0001": 1, "run-0002": 1, "run-0003": 1}
+
+
+def alone_from_another_process(work):
+    import subprocess
+    env = {**__import__("os").environ, "PYTHONPATH": str(ROOT / "src")}
+    out = subprocess.run([sys.executable, "-c", "import sys\nfrom tracetrim import store\n"
+                          "with store.alone(sys.argv[1]) as a: print(a)", str(work)],
+                         capture_output=True, text=True, env=env)
+    return out.stdout.strip() == "True"
+
+
+def test_the_directory_stays_in_use_while_any_learner_of_the_process_lives(tmp_path):
+    """REVISIONE-14b-quater: two Learners of one process; the presence went with the first one given back."""
+    import gc
+    one, two = auto.Learner(tmp_path, 2), auto.Learner(tmp_path, 2)
+    assert not alone_from_another_process(tmp_path)
+    del one
+    gc.collect()
+    assert not alone_from_another_process(tmp_path)
+    del two
+    gc.collect()
+    assert alone_from_another_process(tmp_path)
+
+
+def test_the_cleaning_at_start_never_removes_a_file_being_written_under_the_lock(tmp_path, monkeypatch):
+    """REVISIONE-14b-quater: `tracetrim promotions` took the write lock between the replay of the journal and the
+    cleaning of a Learner that was starting; the cleaning removed its temporary file, and the command failed."""
+    import os
+    import tempfile
+    from tracetrim import store
+    (tmp_path / "traces").mkdir()
+    replayed, created, done = threading.Event(), threading.Event(), {}
+    clean = store.clean
+
+    def cleaning(directory):
+        if not replayed.is_set():
+            replayed.set()
+            created.wait(0.5)                             # the writer's chance to come in before the cleaning
+        return clean(directory)
+    monkeypatch.setattr(store, "clean", cleaning)
+
+    def writer():
+        try:
+            assert replayed.wait(5)
+            with store.write_lock(tmp_path):
+                fd, name = tempfile.mkstemp(dir=tmp_path, prefix=".evidence.json.", suffix=".tmp")
+                os.write(fd, b"{}")
+                os.close(fd)
+                created.set()
+                time.sleep(0.3)
+                os.replace(name, tmp_path / "evidence.json")
+            done["ok"] = True
+        except Exception as e:                            # noqa: BLE001
+            done["error"] = e
+    t = threading.Thread(target=writer)
+    t.start()
+    auto.Learner(tmp_path, 2)
+    t.join(5)
+    assert done == {"ok": True}
+
+
+def test_a_trace_cut_short_ahead_of_the_state_is_not_counted_complete(tmp_path):
+    """REVISIONE-14b-quater: a 1.3 trace cut short, numbered after the state: its number is taken, it is not
+    counted as a complete run."""
+    learner = auto.Learner(tmp_path, 2, durable_closes=False)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done("1")
+    learner.relearn()
+    (tmp_path / "traces" / "run-0002.jsonl").write_text('{"kind": "call", "tool": "t", "outp')
+    del learner
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 2 and state["complete_runs"] == 1
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 1
+
+
+def test_a_closing_that_finishes_a_publication_never_deadlocks_with_a_relearning(tmp_path, monkeypatch):
+    """REVISIONE-14b-quater: `done` relearned after finishing an interrupted publication while holding the
+    Learner's lock; a relearning in another thread held its own lock and waited for the Learner's."""
+    from tracetrim import store
+    learner = auto.Learner(tmp_path, 2)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done("1")
+    paused, go_on = threading.Event(), threading.Event()
+    inputs = auto.Learner._inputs
+
+    def held(self):
+        paused.set()
+        go_on.wait(10)
+        return inputs(self)
+    monkeypatch.setattr(auto.Learner, "_inputs", held)
+    worker = threading.Thread(target=learner.relearn)    # holds the relearning lock, paused before its inputs
+    worker.start()
+    assert paused.wait(5)
+    replace = store.os.replace
+
+    def failing(src, dst):
+        if Path(dst).name == "state.json":
+            raise OSError("simulated")
+        return replace(src, dst)
+    monkeypatch.setattr(store.os, "replace", failing)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 3, "b": 4}'})
+    with pytest.raises(OSError):
+        learner.done("3")                                 # published in part: pending
+    monkeypatch.setattr(store.os, "replace", replace)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 5, "b": 6}'})
+    closer = threading.Thread(target=learner.done, args=("5",))    # finishes it, then relearns
+    closer.start()
+    time.sleep(0.3)
+    go_on.set()
+    worker.join(10)
+    closer.join(10)
+    assert not worker.is_alive() and not closer.is_alive()
+    assert json.loads((tmp_path / "state.json").read_text())["runs"] == 3
+
+
+def test_a_result_filtered_with_a_corrected_cut_does_not_count(tmp_path):
+    """REVISIONE-14b-quater: between a promotion and the installation of its policy, a result that still hides the
+    promoted field was filtered with the old cut: it does not count against the tool."""
+    from tracetrim.contract import FILTERED, Observation, ToolCall
+    learner = auto.Learner(tmp_path, 2)
+    learner._corrected = {"t": {"items[].note_0"}}
+    call = ToolCall("t", {})
+    learner.call("t", {}, "{}")
+    learner.observed(0, call, Observation("x", FILTERED, "c1", ("items[].note_0", "items[].note_1")))
+    assert learner.state["trimmed"] == {}
+    learner.call("t", {}, "{}")
+    learner.observed(1, call, Observation("x", FILTERED, "c2", ("items[].note_1",)))
+    assert learner.state["trimmed"] == {"t": 1}
+
+
+def test_with_two_clients_a_call_during_the_closing_follows_no_answer(tmp_path, monkeypatch):
+    """REVISIONE-14b-quater: without the option, B's call while A's closing relearns came before A's reply: it does
+    not count as a call after the answer, and A's next call still does."""
+    servers, learners = capture_uvicorn(monkeypatch), capture_learners(monkeypatch)
+    entered, release = threading.Event(), threading.Event()
+    relearn = auto.Learner.relearn
+
+    def held(self):
+        if self.state["runs"] == 1:
+            entered.set()
+            release.wait(5)
+        return relearn(self)
+    monkeypatch.setattr(auto.Learner, "relearn", held)
+
+    async def go():
+        o = options(tmp_path / "work")
+        task, url = await start_http(o, servers)
+        learner = learners[-1]
+        async with Client(url, mode="legacy") as a, Client(url, mode="legacy") as b:
+            assert not (await a.call_tool("volumes", {})).is_error
+            closing = asyncio.create_task(a.call_tool("tracetrim_done", {"answer": ANSWER}))
+            assert await asyncio.to_thread(entered.wait, 5)
+            assert not (await b.call_tool("volumes", {})).is_error            # before A's reply
+            assert learner.state["answered_runs_followed_by_calls"] == 0
+            release.set()
+            await closing
+            assert not (await a.call_tool("volumes", {})).is_error            # after it
+            assert learner.state["answered_runs_followed_by_calls"] == 1
+        await stop_http(task, servers)
+    asyncio.run(go())

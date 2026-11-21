@@ -193,10 +193,12 @@ runs (a tool call, an `expand`, another closing, a tool listing) waits for it an
 policy, and a call already on its way to the upstream server is recorded before the relearning reads the runs.
 With one agent at a time, whose requests follow one another, the model receives, and the proxy learns from,
 exactly what it would without the option: every file of the work directory ends byte for byte the same. With
-several clients the two modes differ by design: without the option, another client's request is served at
-once, with the policy in place, while a closing relearns. One relearning runs at a time, each report reads one
+several clients the two modes differ by design: without the option, another client's tool call or `expand` is
+served at once, with the policy in place, while a closing relearns (closings wait for one another in both
+modes). One relearning runs at a time, each report reads one
 moment of the work directory (the runs it lists, with their savings, counters and evidence), and shutdown and
-the recovery at start relearn in a thread as well
+the recovery at start relearn in a thread as well. One limit: a client that disappears without cancelling a
+call it sent keeps the relearning waiting until the upstream server answers that call
 ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
 
 Since 1.4, in every mode, a closing writes its files through a journal: a process stopped at any point leaves

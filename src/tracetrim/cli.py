@@ -242,8 +242,9 @@ def cmd_promotions(a):
     if a.revert is not None and len(a.revert) > 2:
         raise SystemExit("--revert takes nothing (all), a TOOL, or a TOOL and a FIELD")
     changed, in_use = [], False
-    # Read, changed and written under the lock that a running proxy also takes to write the evidence (1.4): until
-    # 1.3 a relearning or a closing of the proxy could write its own copy over the change.
+    # Read, changed, written and applied under the lock that a running proxy also takes to write the evidence (1.4):
+    # until 1.3 a relearning or a closing of the proxy could write its own copy over the change, and a second
+    # `tracetrim promotions` now waits for this one to end, then reads its change (REVISIONE-14b-quater).
     with store.write_lock(work) if editing and work.is_dir() else nullcontext():
         if editing and work.is_dir():
             # A closing left in its journal by a stopped process goes first: replayed after this change, it would
@@ -256,28 +257,30 @@ def cmd_promotions(a):
             changed = evidence.restore(data, *a.restore)
         if changed:
             evidence.save(path, data)
-    if changed:
-        with store.alone(work) as alone:
-            if not alone:
-                # A proxy (or another process) owns the directory: it applies the change at its next relearning.
-                # Relearning from here too would write state and report over its own (1.4).
-                in_use = True
-            else:
-                # Rewrite config and report now.
-                # With the settings the work directory was learned with (kept in report.json), not the defaults:
-                # a relearning with other thresholds could switch a tool off that the proxy would keep.
-                from dataclasses import fields
-                from .evidence import Adaptive
-                config = json.loads((work / "report.config.json").read_text()) if (work / "report.config.json").exists() else {}
-                report = json.loads((work / "report.json").read_text()) if (work / "report.json").exists() else {}
-                saved = (report.get("adaptive") or {}).get("settings") or {}
-                known = {f.name for f in fields(Adaptive)}
-                adaptive = Adaptive(**{k: v for k, v in saved.items() if k in known})
-                Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive,
-                        protect_ids=config.get("auto", {}).get("protect_ids", "all"),
-                        learning=config.get("auto", {}).get("learning", "1.1"),
-                        compact=config.get("compact", True) is not False,
-                        keep_positions=config.get("keep_positions", True) is not False).relearn()
+            with store.alone(work) as alone:
+                if not alone:
+                    # A proxy (or another Learner process) owns the directory: relearning from here would write state
+                    # and report over its own. The mark makes it, or its next start, relearn with the change.
+                    in_use = True
+                    from datetime import datetime, timezone
+                    store.write_atomic(work / store.CHANGED,
+                                       datetime.now(timezone.utc).isoformat(timespec="microseconds") + "\n")
+                else:
+                    # Rewrite config and report now.
+                    # With the settings the work directory was learned with (kept in report.json), not the defaults:
+                    # a relearning with other thresholds could switch a tool off that the proxy would keep.
+                    from dataclasses import fields
+                    from .evidence import Adaptive
+                    config = json.loads((work / "report.config.json").read_text()) if (work / "report.config.json").exists() else {}
+                    report = json.loads((work / "report.json").read_text()) if (work / "report.json").exists() else {}
+                    saved = (report.get("adaptive") or {}).get("settings") or {}
+                    known = {f.name for f in fields(Adaptive)}
+                    adaptive = Adaptive(**{k: v for k, v in saved.items() if k in known})
+                    Learner(work, config.get("auto", {}).get("min_runs", 5), adaptive=adaptive,
+                            protect_ids=config.get("auto", {}).get("protect_ids", "all"),
+                            learning=config.get("auto", {}).get("learning", "1.1"),
+                            compact=config.get("compact", True) is not False,
+                            keep_positions=config.get("keep_positions", True) is not False).relearn()
     for p in data["promotions"]:
         mark = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"

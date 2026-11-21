@@ -112,10 +112,13 @@ to come back in a second, independent run. Promotion starts once trimming has st
   ```
 
   A reverted field is removed again and is not promoted a second time. With no process on the work
-  directory, the command also rewrites config and report at once. With a proxy running on it (since 1.4
-  the command can tell), it only saves the change and says so: the proxy picks it up at its next
-  relearning, after its next closing, and never writes it over (evidence.json is read, changed and
-  written under a lock that every process takes). The operator's choice prevails: if ordinary learning
+  directory, the command also rewrites config and report at once; two commands on one directory run one
+  after the other. With a proxy running on it, the command only saves the change, leaves a mark
+  (`.tracetrim-evidence-changed`) and says so: the proxy applies it at its next relearning (its next
+  closing, or its next start if it stops first), and never writes it over, since evidence.json is read,
+  changed and written under a lock that every process takes. The command tells a running proxy through a
+  lock the proxy holds, on Linux and macOS (since 1.4); on Windows it cannot, and relearns at once as up to
+  1.3, so stop the proxy before reverting there. The operator's choice prevails: if ordinary learning
   would keep a reverted field (its value was seen written), the field stays removed and the report lists
   it as to review.
 
