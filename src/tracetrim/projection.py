@@ -114,7 +114,9 @@ class Projection:
     unseen: str = "keep"
 
     def save(self, path: str | Path) -> None:
-        Path(path).write_text(json.dumps({
+        # Atomic since 1.4 (same bytes as before): a process stopped halfway leaves the previous file whole.
+        from .store import write_atomic
+        write_atomic(Path(path), json.dumps({
             "format": "tracetrim/projection@1",
             "mode": self.mode,
             "source": self.source,
@@ -122,7 +124,7 @@ class Projection:
             "tools": {t: sorted(p) for t, p in sorted(self.keep.items())},
             # What was seen and NOT kept: the fields this projection removes.
             "dropped": {t: sorted(self.seen.get(t, set()) - p) for t, p in sorted(self.keep.items())},
-        }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        }, indent=2, ensure_ascii=False) + "\n")
 
     @classmethod
     def load(cls, path: str | Path) -> "Projection":

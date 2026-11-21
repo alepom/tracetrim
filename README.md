@@ -187,11 +187,13 @@ Whichever way it is connected:
 
 **Closing without waiting** (1.4, off by default): relearning takes longer as runs accumulate (about 5 s on
 the billing traces and 14 s on the CI traces at 100 runs), and by default the reply to `tracetrim_done` waits
-for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is on disk and relearns
-in a thread: calls that arrive meanwhile use the policy in place, the new one is installed when it is ready,
-closings that arrive during a relearning are folded into one more relearning, and on shutdown the relearning
-in progress is completed. At the end of a sequence the report, config and projection are the same as without
-the option ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
+for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded (and marked
+pending on disk) and relearns in a thread. Only that reply is earlier: a tool call or an `expand` that arrives
+while the relearning runs waits for it, so the model receives, and the proxy learns from, exactly what it would
+without the option; every file of the work directory ends byte for byte the same. One relearning runs at a time,
+requests that arrive meanwhile fold into one more, shutdown completes the one in progress, and a closing left
+out of the report by a stopped process is relearned at the next start
+([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
 
 Everything lives in the work directory (traces, report, config, state), so learning survives restarts;
 delete it to start again. In a check with a real agent on the billing case (5 runs, 3 to learn), the

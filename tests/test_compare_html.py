@@ -76,3 +76,31 @@ def test_the_cli_writes_the_page_and_keeps_its_output(traces, tmp_path, capsys):
 def test_a_document_of_another_format_is_refused():
     with pytest.raises(ValueError):
         compare_html.render({"format": "tracetrim/report@1"})
+
+
+def test_the_page_never_replaces_an_input(traces, tmp_path):
+    from tracetrim.cli import main
+    import shutil
+    a, b = tmp_path / "a.jsonl", tmp_path / "b.jsonl"
+    shutil.copy(sorted((traces / "C4").glob("A*.jsonl"))[0], a)
+    shutil.copy(sorted((traces / "C4").glob("A*.jsonl"))[1], b)
+    before = a.read_bytes()
+    for target in (str(a), str(tmp_path / "." / "a.jsonl")):
+        with pytest.raises(SystemExit, match="one of the input traces"):
+            main(["compare", str(a), str(b), "--a", "protect_ids=all", "--b", "protect_ids=record", "--html", target])
+    assert a.read_bytes() == before
+
+
+def test_warnings_are_said_in_every_language(traces, tmp_path):
+    import shutil
+    runs = sorted((traces / "C4").glob("A*.jsonl"))[:2]
+    paths = [shutil.copy(r, tmp_path / r.name) for r in runs]
+    bad = tmp_path / "no-answer.jsonl"
+    lines = runs[0].read_text().splitlines()
+    bad.write_text("\n".join(lines[:-1] + ['{"kind": "call", "tool": "t", "arguments": {}, "output": "{}"}']) + "\n")
+    data = compare.compute([*paths, bad], compare.recipe("protect_ids=all"), compare.recipe("protect_ids=record"))
+    assert {w["code"] for w in data["warning_details"]} == {"excluded", "small_sample"}
+    page = compare_html.render(data)
+    for text in ("manca la risposta finale", "falta la respuesta final", "réponse finale absente",
+                 "campione piccolo: 2 esecuzioni idonee", "muestra pequeña: 2", "petit échantillon"):
+        assert text in page, text

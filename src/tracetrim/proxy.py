@@ -336,14 +336,18 @@ def _warn_mixed(learner):
 class BackgroundLearning:
     """`--background-relearn`: the closing replies once the run is on disk, and the relearning runs after it.
 
-    - Calls that arrive while it runs are served by the policy in place, the one learned at the previous
-      closing; the new one is installed on the event loop when it is ready, never in the middle of a call.
-    - One relearning at a time. A closing that arrives meanwhile does not queue a relearning of its own:
-      it asks for one more, which starts when the current one ends and reads every run on disk by then. So
-      policies are installed in the order of the closings, and the last one learned from the last closing.
-    - On shutdown the relearning in progress is completed, never abandoned, and from then on a closing
-      relearns before it returns, as without the option. Every file of the report is written atomically:
-      a process killed halfway leaves the previous complete file, and the next start relearns.
+    - The only coordinator of relearning while the proxy runs: closings, finished interrupted closings and the
+      idle expiry of isolated sessions all ask it; one relearning at a time. A closing that arrives meanwhile
+      asks for one more, which starts when the current one ends and reads every run on disk by then.
+    - Requests wait for it: a tool call or an `expand` that arrives while a relearning runs is served once the
+      new policy is installed (`settled`), as it would be without the option. Only the reply to
+      `tracetrim_done` is earlier, so what the model receives and what the proxy learns from are the same as
+      without the option (tests/test_background_relearn.py compares the files byte for byte).
+    - Before the reply the closing is recorded on disk as pending (`Learner.mark_report_pending`); it stays
+      pending until a relearning has covered it, so a process stopped earlier relearns at its next start.
+      Every product of the report is written atomically.
+    - On shutdown (`drain`) the relearning in progress is completed; from then on every request for one is
+      awaited before it returns, still through this coordinator, so two relearnings never run at once.
     - The report (and so the live report) is updated when the relearning ends.
     """
 
@@ -360,6 +364,12 @@ class BackgroundLearning:
             return
         self.task = asyncio.get_running_loop().create_task(self._loop())
 
+    async def request(self) -> None:
+        """A relearning is needed: started, or folded into the one running; awaited once the proxy stops."""
+        self.schedule()
+        if self.stopping:
+            await self.settled()
+
     async def _loop(self) -> None:
         import asyncio
         while True:
@@ -367,17 +377,21 @@ class BackgroundLearning:
             try:
                 self.engine.install(await asyncio.to_thread(self.engine.learn_policy))
                 self.after()
-            except Exception as e:           # noqa: BLE001 - the next closing relearns from every run on disk
+            except Exception as e:           # noqa: BLE001 - the closing stays pending on disk; the next relearns
                 self.warn(f"background relearning failed ({type(e).__name__}: {e}); the policy in place is kept")
             if not self.again:
                 return
 
-    async def drain(self) -> None:
-        """Stop scheduling, and wait for the relearning in progress (and the one it was asked for) to end."""
+    async def settled(self) -> None:
+        """Wait until no relearning is running or asked for."""
         import asyncio
-        self.stopping = True
         while self.task is not None and not self.task.done():
             await asyncio.shield(self.task)
+
+    async def drain(self) -> None:
+        """On shutdown: from now on requests are awaited; wait for the relearning in progress to end."""
+        self.stopping = True
+        await self.settled()
 
 
 def _server(o: Options):
@@ -428,11 +442,16 @@ def _server(o: Options):
                             lambda msg: print(f"[tracetrim] WARNING: {msg}", file=sys.stderr, flush=True))
 
     def after_learning():
-        st = learner.state
-        log(f"  {st['complete_runs']} complete runs · report updated · "
+        # What the relearning just published, from its own snapshot (`Learner.published`), not the state now,
+        # which a later closing may already have moved on. Without a snapshot (nothing to learn from), the state.
+        pub = learner.published
+        with learner.lock:
+            complete, off = (pub["complete_runs"], pub["off"]) if pub else \
+                (learner.state["complete_runs"], list(learner.state["off"]))
+        log(f"  {complete} complete runs · report updated · "
             + (f"trimming {len(engine.policy.tools)} tools" if engine.trimming
-               else f"learning: {max(0, o.min_runs - st['complete_runs'])} more complete runs before trimming")
-            + (f" · switched off: {', '.join(st['off'])}" if st["off"] else ""))
+               else f"learning: {max(0, o.min_runs - complete)} more complete runs before trimming")
+            + (f" · switched off: {', '.join(off)}" if off else ""))
 
     background = None
     if o.background_relearn:
@@ -442,11 +461,11 @@ def _server(o: Options):
                                         lambda msg: print(f"[tracetrim] WARNING: {msg}", file=sys.stderr, flush=True))
         learner.background = background          # for the shutdown paths of serve and serve_http
 
-    def relearn_now():
-        """After an interrupted closing was finished: relearn, in the background when that is on (two
+    async def relearn_now():
+        """After an interrupted closing was finished: relearn, through the coordinator when there is one (two
         relearnings never run at once)."""
-        if background is not None and not background.stopping:
-            background.schedule()
+        if background is not None:
+            await background.request()
         else:
             engine.relearn()
 
@@ -455,7 +474,7 @@ def _server(o: Options):
         request waits, then finds nothing left to close."""
         async with closing:
             if isolated and learner.finish_pending():
-                relearn_now()
+                await relearn_now()
             previous = learner.run.last_number
             try:
                 if engine.done(answer) is None:
@@ -468,13 +487,15 @@ def _server(o: Options):
                     session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
             _warn_mixed(learner)
             run_total = (session.live if session else live).new_run()
-            if background is not None and not background.stopping:
-                # The reply goes now; the relearning follows (BackgroundLearning).
-                background.schedule()
-                st = learner.state
-                log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): "
+            if background is not None:
+                # Pending on disk before the reply; the relearning follows (BackgroundLearning).
+                learner.mark_report_pending()
+                with learner.lock:
+                    number = learner.state["runs"]
+                log(f"run {number} closed ({'with answer' if answer else 'no answer: telemetry only'}): "
                     f"{run_total} · relearning in the background")
                 _log_unsupported()
+                await background.request()
                 return True
             # Learnt in a thread (it is slow), installed here, on the event loop: a call being trimmed on
             # the loop never sees the policy change halfway through.
@@ -565,7 +586,7 @@ def _server(o: Options):
     async def call_tool(ctx, params):
         if isolated:
             if learner.finish_pending():
-                relearn_now()
+                await relearn_now()
             connection = getattr(ctx.session, "_connection", None)
             session = isolated.session(session_keys.transport_key(connection))
             # The event loop may deliver a request before the expiry task gets
@@ -596,6 +617,8 @@ def _server(o: Options):
             # The same reply whether the run was closed now or already: it asks for nothing more.
             text = DONE_REPLY
         elif params.name == "expand":
+            if background is not None:
+                await background.settled()        # as without the option: after the relearning of the closing
             fields = requested_fields(args.get("fields"))
             cid = str(args.get("call_id", ""))
             text = isolated.expand(session, cid, fields) if isolated else engine.expand(cid, fields)
@@ -605,6 +628,8 @@ def _server(o: Options):
                 if learner and learner.events and time.time() - last_call[0] > o.idle_seconds:
                     await close_run(None)
                 last_call[0] = time.time()
+            if background is not None:
+                await background.settled()        # served with the policy learned at the last closing
             sessions = ctx.lifespan_context["sessions"]
             if params.name not in routes:           # a client that calls before listing
                 await upstream_tools(sessions)

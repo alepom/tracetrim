@@ -109,10 +109,13 @@ def _row():
 def compute(paths, a, b):
     inputs, runs = read_runs(paths)
     warnings = [f"{i['file']}: excluded ({i['excluded']})" for i in inputs if "excluded" in i]
+    # The same warnings as data (1.4), so that the HTML page can say them in each of its languages.
+    details = [{"code": "excluded", "file": i["file"], "reason": i["excluded"]} for i in inputs if "excluded" in i]
     if len(runs) < 2:
         raise ValueError("\n".join(warnings + [f"need at least 2 eligible runs, found {len(runs)}"]))
     if len(runs) < report.MIN_TRACES:
         warnings.append(f"small sample: {len(runs)} eligible runs (fewer than {report.MIN_TRACES})")
+        details.append({"code": "small_sample", "runs": len(runs), "minimum": report.MIN_TRACES})
 
     # Keep expand arguments among the words actually written by the model, while excluding its
     # replies from learning and served-token totals. The held-out judgement always comes from 1.1.
@@ -159,7 +162,8 @@ def compute(paths, a, b):
     for row in [*tools.values(), totals]:
         row["delta"] = {k: row["b"][k] - row["a"][k] for k in METRICS}
     return {"format": "tracetrim/compare@1", "configurations": configs, "method": METHOD, "tokens": TOKEN_NOTE,
-            "inputs": inputs, "eligible_runs": len(runs), "warnings": warnings, "totals": totals,
+            "inputs": inputs, "eligible_runs": len(runs), "warnings": warnings, "warning_details": details,
+            "totals": totals,
             "tools": dict(sorted(tools.items())), "full_cheaper_calls": whole_calls,
             "divergences": list(examples.values()), "observed_expand": sum(i["observed_expand"] for i in inputs),
             "limitations": LIMIT}
@@ -193,7 +197,19 @@ def table(data):
     print(f"Observed expand requests: {data['observed_expand']}. {data['limitations']}")
 
 
+def same_file(a: Path, b: Path) -> bool:
+    try:
+        return a.resolve() == b.resolve() or (a.exists() and b.exists() and a.samefile(b))
+    except OSError:
+        return False
+
+
 def command(args):
+    if getattr(args, "html", None):
+        # The page must never replace an input (REVISIONE-14b): checked before anything is read or written.
+        target = Path(args.html)
+        if any(same_file(target, Path(t)) for t in args.traces):
+            raise SystemExit(f"--html {args.html}: that is one of the input traces; choose another file")
     try:
         result = compute(args.traces, args.a, args.b)
     except ValueError as exc:

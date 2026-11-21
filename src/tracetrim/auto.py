@@ -162,6 +162,11 @@ class Learner:
         # One lock for everything the calls and the learning thread share:
         # the state, the open run and the evidence file.
         self.lock = threading.RLock()
+        # One relearning at a time, whichever thread asks (1.4: `proxy --background-relearn` relearns in a thread
+        # while the event loop can close runs); held for the whole relearning, never by a tool call.
+        self._relearning = threading.Lock()
+        # What the last relearning published, read from one consistent snapshot: for the proxy's log.
+        self.published: dict | None = None
         self._run = ContextVar("tracetrim_run", default=Run(last_number=self.state["runs"]))
         # The filtered results counted in `trimmed` since the tool's counters last started again:
         # only an expansion of one of them counts against the tool (an older result can still be
@@ -512,15 +517,29 @@ class Learner:
         return None
 
     # -- learning ---------------------------------------------------------
+    def mark_report_pending(self) -> None:
+        """Record on disk, before the closing is confirmed, that the report must include the runs closed so
+        far: a process stopped before the relearning ends relearns at its next start (`report_pending`)."""
+        with self.lock:
+            self.state["report_pending"] = True
+            self._save()
+
     def relearn(self) -> Policy | None:
         """Regenerate the report; return a new policy when one should be applied."""
+        with self._relearning:
+            return self._relearn()
+
+    def _relearn(self) -> Policy | None:
         from . import arguments, lists, measure
         from . import report as rp
         from .projection import FoldTraining, Projection
         from .traces import load
         from .usage import analyse
 
-        paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
+        # The runs this relearning covers: listed with the state, under the lock that every closing holds.
+        with self.lock:
+            runs_at_start = self.state["runs"]
+            paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
         if not paths:
             return None
         # A trace that cannot be read (written in place by 0.3.5 and cut short by a killed process) is set aside,
@@ -645,8 +664,13 @@ class Learner:
         with self.lock:
             if ready:
                 self.state["config_from_runs"] = len(complete)
-            self.state.pop("report_pending", None)
+            # Only when no run was closed meanwhile: otherwise the report is still behind, and stays pending
+            # (on disk) until a relearning covers that run too, after a restart if need be.
+            if self.state["runs"] == runs_at_start:
+                self.state.pop("report_pending", None)
             self._save()
+            self.published = {"runs": runs_at_start, "complete_runs": len(complete), "applied": ready,
+                              "tools": sorted(config["tools"]), "off": list(off)}
         return Policy(config, projection) if ready else None
 
     def _adaptive_report(self, d, data, before, after, usages, counters, count) -> dict:

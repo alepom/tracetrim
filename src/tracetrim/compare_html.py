@@ -97,6 +97,38 @@ _LABELS: dict[str, tuple[str, str, str, str, str]] = {
 }
 
 
+# The reasons why compare excludes a run (compare.read_runs) and the small-sample warning, in the five languages.
+_REASONS: dict[str, tuple[str, str, str, str, str]] = {
+    "missing final answer": ("missing final answer", "manca la risposta finale", "falta la respuesta final",
+                             "réponse finale absente", "缺少最终答案"),
+    "missing original tool output": ("missing original tool output", "manca l'output originale di un tool",
+                                     "falta la salida original de una herramienta",
+                                     "sortie d'outil originale absente", "缺少工具的原始输出"),
+    "tool output contains a trimming annotation": ("a tool output contains a trimming annotation",
+                                                   "un output contiene un'annotazione di filtro",
+                                                   "una salida contiene una anotación de filtrado",
+                                                   "une sortie contient une annotation de filtrage",
+                                                   "某个工具输出包含过滤注释"),
+}
+_WARN = {"excluded": ("excluded", "esclusa", "excluida", "exclue", "已排除"),
+         "small_sample": ("small sample: {runs} eligible runs (fewer than {minimum})",
+                          "campione piccolo: {runs} esecuzioni idonee (meno di {minimum})",
+                          "muestra pequeña: {runs} ejecuciones válidas (menos de {minimum})",
+                          "petit échantillon : {runs} exécutions retenues (moins de {minimum})",
+                          "样本较小:{runs} 个有效运行(少于 {minimum} 个)")}
+
+
+def _warning(w: dict) -> str:
+    """One warning in every language; an unknown reason is shown as compare wrote it."""
+    def render(lang):
+        i = i18n.LANGS.index(lang)
+        if w["code"] == "small_sample":
+            return html.escape(_WARN["small_sample"][i].format(runs=w["runs"], minimum=w["minimum"]))
+        reason = _REASONS.get(w["reason"], (w["reason"],) * 5)[i]
+        return f"<code>{html.escape(w['file'])}</code>: {html.escape(_WARN['excluded'][i])} ({html.escape(reason)})"
+    return rp._langs(render)
+
+
 def label(key: str, lang: str) -> str:
     return _LABELS[key][i18n.LANGS.index(lang)]
 
@@ -142,8 +174,10 @@ def render(data: dict) -> str:
              ("runs", data["eligible_runs"]), ("outputs", totals["calls"])]
     tiles_html = "".join(f'<div class="tile"><div class="v">{_num(v)}</div><div class="k">{_t(k)}</div></div>'
                          for k, v in tiles)
-    warnings = ("<h3>" + _t("warnings") + "</h3><ul>" + "".join(f"<li>{html.escape(w)}</li>" for w in data["warnings"])
-                + "</ul>") if data["warnings"] else ""
+    # Documents written before 1.4 have only the English text of the warnings.
+    items = ([_warning(w) for w in data["warning_details"]] if "warning_details" in data
+             else [html.escape(w) for w in data["warnings"]])
+    warnings = ("<h3>" + _t("warnings") + "</h3><ul>" + "".join(f"<li>{w}</li>" for w in items) + "</ul>") if items else ""
     method = (f'<p class="sub">{_t("subtitle")}</p><p class="method">{_t("method")}</p>'
               f'<p class="method">{_t("tokens")}</p>{configs}<div class="tiles">{tiles_html}</div>{warnings}')
 
