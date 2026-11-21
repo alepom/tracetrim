@@ -40,7 +40,7 @@ def ci(c, nd: int = 2) -> str:
 
 
 def share(x: float, nd: int = 1) -> str:
-    return f"{100 * x:.{nd}f}\\%"
+    return "100\\%" if x == 1 else f"{100 * x:.{nd}f}\\%"
 
 
 def ratio(x: float) -> str:
