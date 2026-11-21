@@ -1,0 +1,497 @@
+{
+  "format": "closing-reply@1",
+  "python": "3.13.5",
+  "platform": "linux",
+  "architecture": "x86_64",
+  "tracetrim": "1.3.1",
+  "unit": "seconds",
+  "repetitions": 3,
+  "measure": "wall time from the tracetrim_done request to the reply, through the proxy in process (stdio upstream, MCP in-memory client); with --background-relearn also to the policy installed",
+  "criterion": "with the option, the reply does not depend on the history (ORDINE-11, 11a)",
+  "sources": {
+    "synthetic": [
+      {
+        "name": "synthetic.jsonl",
+        "sha256": "7703389138f3ccac14854e9191b9dea3bdbed30eda68658bc83668ef2f0032b8",
+        "calls": 1,
+        "file_bytes": 9894,
+        "output_bytes": 9050
+      }
+    ],
+    "C4": [
+      {
+        "name": "A1.jsonl",
+        "sha256": "9ac815c809d2a012a171724ed4fb6f512d12544e41b6be8f4940c67401032e21",
+        "calls": 10,
+        "file_bytes": 93273,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A2.jsonl",
+        "sha256": "f2126c0f91af2a744f98b377a82c12a55530e0e623120bc45b1a11eb6a564faa",
+        "calls": 10,
+        "file_bytes": 93470,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A3.jsonl",
+        "sha256": "df4ae7ebc898e44dd614224fe6622216586fa0505eea3b49a51075a0493df213",
+        "calls": 11,
+        "file_bytes": 85484,
+        "output_bytes": 68121
+      },
+      {
+        "name": "A4.jsonl",
+        "sha256": "4590f7830a994f9cc885c840dafe4a6049f26f901efcad5a1b6d70537704f22b",
+        "calls": 10,
+        "file_bytes": 93224,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A5.jsonl",
+        "sha256": "22ec11f5fb027c3880cad57e2319a225f4ee4e96ab5b078c8d6a47337c1efd18",
+        "calls": 10,
+        "file_bytes": 93554,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A6.jsonl",
+        "sha256": "2f7628e609210663b7ea581556326ec378c44a773061e5d3d553dcf1fafb0808",
+        "calls": 11,
+        "file_bytes": 103233,
+        "output_bytes": 84234
+      },
+      {
+        "name": "A7.jsonl",
+        "sha256": "6faf18ec17ee116370b6f6e5f1d69eeb3b643b32b3d0f14af21cf0a2c551c78f",
+        "calls": 10,
+        "file_bytes": 93395,
+        "output_bytes": 75704
+      },
+      {
+        "name": "A8.jsonl",
+        "sha256": "9c3ee1f944c82dd2b2043bd5f1e22a25110f0474dcd97ebc95c566f424c1a4ad",
+        "calls": 12,
+        "file_bytes": 118009,
+        "output_bytes": 97683
+      }
+    ],
+    "C5": [
+      {
+        "name": "A1.jsonl",
+        "sha256": "c0bade0bf97d67c7b6d180fb4f0a68b3ec3e6c711deeb702b73b199ea31806f5",
+        "calls": 13,
+        "file_bytes": 280847,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A2.jsonl",
+        "sha256": "8918dd92b7f548bbf642b71e3f142297078237fc9d858488f3148ed71b8c25c8",
+        "calls": 13,
+        "file_bytes": 280982,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A3.jsonl",
+        "sha256": "9d62c73e0be3723f64a440f3bbf06ba14d1e1e01ddeeb2bd6b57bbd7a7069014",
+        "calls": 13,
+        "file_bytes": 281086,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A4.jsonl",
+        "sha256": "7bc78329249b85b2d9e38764c94cda14b7f0207949d4d102e1a5b9b0d8d157d3",
+        "calls": 13,
+        "file_bytes": 280958,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A5.jsonl",
+        "sha256": "07268ffceb14771b7454a59ae99c3c4d640686ff15f584deffb8e0967f42f7c9",
+        "calls": 13,
+        "file_bytes": 280951,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A6.jsonl",
+        "sha256": "776f30a79f41a417f6bccb9780b5bc1fe688dace2634f79b26c61eb5fb86c167",
+        "calls": 13,
+        "file_bytes": 280784,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A7.jsonl",
+        "sha256": "e2aa85cf53277e212ca9f823d1e11e9ec2acc8f7e1c868f5b7caa58a6e5ac506",
+        "calls": 13,
+        "file_bytes": 280793,
+        "output_bytes": 254345
+      },
+      {
+        "name": "A8.jsonl",
+        "sha256": "378ad0e0afa6fc8989be3bacfadcc89b8ad085b6bed19847517ebb803c3d40e0",
+        "calls": 13,
+        "file_bytes": 280959,
+        "output_bytes": 254345
+      }
+    ]
+  },
+  "results": {
+    "synthetic": [
+      {
+        "runs": 20,
+        "without_option": {
+          "median_reply": 0.11729662099969573,
+          "median_relearned": 0.11729804700007662,
+          "repetitions": [
+            {
+              "reply": 0.11707926500821486,
+              "relearned": 0.11708320799516514
+            },
+            {
+              "reply": 0.12050154600001406,
+              "relearned": 0.12050322499999311
+            },
+            {
+              "reply": 0.11729662099969573,
+              "relearned": 0.11729804700007662
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007848702007322572,
+          "median_relearned": 0.1198990330012748,
+          "repetitions": [
+            {
+              "reply": 0.006712229995173402,
+              "relearned": 0.12156580899318215
+            },
+            {
+              "reply": 0.008459396005491726,
+              "relearned": 0.11831511600757949
+            },
+            {
+              "reply": 0.007848702007322572,
+              "relearned": 0.1198990330012748
+            }
+          ]
+        }
+      },
+      {
+        "runs": 100,
+        "without_option": {
+          "median_reply": 0.5421146449953085,
+          "median_relearned": 0.5421169210021617,
+          "repetitions": [
+            {
+              "reply": 0.5421146449953085,
+              "relearned": 0.5421169210021617
+            },
+            {
+              "reply": 0.5563818599912338,
+              "relearned": 0.5563828529993771
+            },
+            {
+              "reply": 0.5262144279986387,
+              "relearned": 0.5262155329983216
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007447441996191628,
+          "median_relearned": 0.5224907450028695,
+          "repetitions": [
+            {
+              "reply": 0.006765128011466004,
+              "relearned": 0.5213838950003264
+            },
+            {
+              "reply": 0.007447441996191628,
+              "relearned": 0.5224907450028695
+            },
+            {
+              "reply": 0.007749626995064318,
+              "relearned": 0.5325163210072787
+            }
+          ]
+        }
+      },
+      {
+        "runs": 200,
+        "without_option": {
+          "median_reply": 1.032903475992498,
+          "median_relearned": 1.0329044999962207,
+          "repetitions": [
+            {
+              "reply": 1.0956841079896549,
+              "relearned": 1.0956854059913894
+            },
+            {
+              "reply": 1.0204525269946316,
+              "relearned": 1.0204541830025846
+            },
+            {
+              "reply": 1.032903475992498,
+              "relearned": 1.0329044999962207
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007949335005832836,
+          "median_relearned": 1.0194907039985992,
+          "repetitions": [
+            {
+              "reply": 0.006944361986825243,
+              "relearned": 1.0316056109877536
+            },
+            {
+              "reply": 0.008881631001713686,
+              "relearned": 1.0194907039985992
+            },
+            {
+              "reply": 0.007949335005832836,
+              "relearned": 1.008442311998806
+            }
+          ]
+        }
+      }
+    ],
+    "C4": [
+      {
+        "runs": 20,
+        "without_option": {
+          "median_reply": 0.9078721340047196,
+          "median_relearned": 0.9078739539982053,
+          "repetitions": [
+            {
+              "reply": 0.9414491860079579,
+              "relearned": 0.9414506239991169
+            },
+            {
+              "reply": 0.8940370070049539,
+              "relearned": 0.8940385330060963
+            },
+            {
+              "reply": 0.9078721340047196,
+              "relearned": 0.9078739539982053
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007227889000205323,
+          "median_relearned": 0.9467053010012023,
+          "repetitions": [
+            {
+              "reply": 0.007835447002435103,
+              "relearned": 0.9185282550024567
+            },
+            {
+              "reply": 0.006392538009095006,
+              "relearned": 0.9733425620070193
+            },
+            {
+              "reply": 0.007227889000205323,
+              "relearned": 0.9467053010012023
+            }
+          ]
+        }
+      },
+      {
+        "runs": 100,
+        "without_option": {
+          "median_reply": 4.7082828849961516,
+          "median_relearned": 4.708284786000149,
+          "repetitions": [
+            {
+              "reply": 4.7082828849961516,
+              "relearned": 4.708284786000149
+            },
+            {
+              "reply": 4.761434526008088,
+              "relearned": 4.761437018998549
+            },
+            {
+              "reply": 4.658564451005077,
+              "relearned": 4.6585662639990915
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.009996505003073253,
+          "median_relearned": 4.674386102997232,
+          "repetitions": [
+            {
+              "reply": 0.007046634011203423,
+              "relearned": 4.684449135005707
+            },
+            {
+              "reply": 0.009996505003073253,
+              "relearned": 4.674386102997232
+            },
+            {
+              "reply": 0.01835249099531211,
+              "relearned": 4.625331668998115
+            }
+          ]
+        }
+      },
+      {
+        "runs": 200,
+        "without_option": {
+          "median_reply": 9.483294970006682,
+          "median_relearned": 9.48329723200004,
+          "repetitions": [
+            {
+              "reply": 9.452802467989386,
+              "relearned": 9.452804884000216
+            },
+            {
+              "reply": 9.485514464002335,
+              "relearned": 9.485516838991316
+            },
+            {
+              "reply": 9.483294970006682,
+              "relearned": 9.48329723200004
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007555176998721436,
+          "median_relearned": 9.618632994999643,
+          "repetitions": [
+            {
+              "reply": 0.007336901006055996,
+              "relearned": 9.624184789005085
+            },
+            {
+              "reply": 0.008114689990179613,
+              "relearned": 9.618632994999643
+            },
+            {
+              "reply": 0.007555176998721436,
+              "relearned": 9.527913868994801
+            }
+          ]
+        }
+      }
+    ],
+    "C5": [
+      {
+        "runs": 20,
+        "without_option": {
+          "median_reply": 2.6920760180073557,
+          "median_relearned": 2.6920780229993397,
+          "repetitions": [
+            {
+              "reply": 2.6920760180073557,
+              "relearned": 2.6920780229993397
+            },
+            {
+              "reply": 2.7007169350108597,
+              "relearned": 2.70071930901031
+            },
+            {
+              "reply": 2.674767673990573,
+              "relearned": 2.674769261997426
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007311141001991928,
+          "median_relearned": 2.7153032310015988,
+          "repetitions": [
+            {
+              "reply": 0.00693445598881226,
+              "relearned": 2.7377453499939293
+            },
+            {
+              "reply": 0.007311141001991928,
+              "relearned": 2.7153032310015988
+            },
+            {
+              "reply": 0.009574038995197043,
+              "relearned": 2.705675119999796
+            }
+          ]
+        }
+      },
+      {
+        "runs": 100,
+        "without_option": {
+          "median_reply": 14.018375307990937,
+          "median_relearned": 14.0183774229954,
+          "repetitions": [
+            {
+              "reply": 14.018375307990937,
+              "relearned": 14.0183774229954
+            },
+            {
+              "reply": 14.026347359002102,
+              "relearned": 14.0263488440105
+            },
+            {
+              "reply": 13.801108902000124,
+              "relearned": 13.801110507003614
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.007892735011409968,
+          "median_relearned": 14.015848405004363,
+          "repetitions": [
+            {
+              "reply": 0.007892735011409968,
+              "relearned": 14.015848405004363
+            },
+            {
+              "reply": 0.008986032000393607,
+              "relearned": 13.999739929000498
+            },
+            {
+              "reply": 0.006535516993608326,
+              "relearned": 14.053523897993728
+            }
+          ]
+        }
+      },
+      {
+        "runs": 200,
+        "without_option": {
+          "median_reply": 28.22778232199198,
+          "median_relearned": 28.22778507899784,
+          "repetitions": [
+            {
+              "reply": 28.22778232199198,
+              "relearned": 28.22778507899784
+            },
+            {
+              "reply": 28.312831823001034,
+              "relearned": 28.31283351199818
+            },
+            {
+              "reply": 28.07972649700241,
+              "relearned": 28.079728525000974
+            }
+          ]
+        },
+        "background_relearn": {
+          "median_reply": 0.008522924996213987,
+          "median_relearned": 28.420083867997164,
+          "repetitions": [
+            {
+              "reply": 0.008522924996213987,
+              "relearned": 28.420083867997164
+            },
+            {
+              "reply": 0.008536790002835914,
+              "relearned": 28.372190038993722
+            },
+            {
+              "reply": 0.007089409002219327,
+              "relearned": 28.81962037899939
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

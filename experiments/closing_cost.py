@@ -1,6 +1,7 @@
 """Time one complete automatic close on a prepared history (offline).
 
 PYTHONPATH=src python -m experiments.closing_cost --dataset dataset/traces
+PYTHONPATH=src python -m experiments.closing_cost --dataset dataset/traces --reply   # 1.4: time to "Recorded."
 
 Decision fixed before measurement: design a cache if any workload takes >1 s
 median wall time at 100 runs, or if CPU/run increases by >15% on both doublings
@@ -146,11 +147,80 @@ def trial(work, samples, size, expected_calls):
     return result
 
 
+REPLY_SIZES = (20, 100, 200)
+UPSTREAM = f"{sys.executable} {ROOT / 'tests' / 'fixtures' / 'meta_server.py'}"
+
+
+def reply_trial(work, samples, size, background):
+    """Through the proxy (in process, the test fixture as upstream): one call, then tracetrim_done, on a work
+    directory holding size-1 runs. Seconds until the reply, and, with the option, until the policy is installed."""
+    import asyncio
+    from mcp import Client
+    from tracetrim import proxy
+    directory = work / "traces"
+    directory.mkdir(parents=True)
+    for i in range(size - 1):
+        (directory / f"run-{i + 1:04}.jsonl").write_bytes(samples[i % len(samples)][0])
+    store.write_json(work / "state.json", {"format": "tracetrim/state@1", "runs": size - 1,
+                                            "complete_runs": size - 1})
+
+    async def go():
+        server, learner = proxy._server(proxy.Options(upstream_cmd=UPSTREAM, auto_dir=str(work), quiet=True,
+                                                      background_relearn=background))
+        async with Client(server) as client:
+            if (await client.call_tool("volumes", {})).is_error:
+                raise RuntimeError("the upstream call failed")
+            start = time.perf_counter()
+            reply = await client.call_tool("tracetrim_done", {"answer": "spa weekend: 1600 searches a month."})
+            replied = time.perf_counter() - start
+            if reply.content[0].text != auto.DONE_REPLY:
+                raise RuntimeError("unexpected reply")
+            if background:
+                await learner.background.drain()
+            learned = time.perf_counter() - start
+        data = json.loads((work / "report.json").read_text())
+        if data["auto"]["complete_runs"] != size:
+            raise RuntimeError("the report does not include the new run")
+        return {"reply": replied, "relearned": learned}
+    return asyncio.run(go())
+
+
+def reply_main(args, sources):
+    data = {"format": "closing-reply@1", "python": platform.python_version(), "platform": sys.platform,
+            "architecture": platform.machine(), "tracetrim": VERSION, "unit": "seconds", "repetitions": 3,
+            "measure": "wall time from the tracetrim_done request to the reply, through the proxy in process "
+                       "(stdio upstream, MCP in-memory client); with --background-relearn also to the policy installed",
+            "criterion": "with the option, the reply does not depend on the history (ORDINE-11, 11a)",
+            "sources": {c: m for c, (_, m) in sources.items()}, "results": {}}
+    for case, (samples, _) in sources.items():
+        rows = []
+        for size in REPLY_SIZES:
+            row = {"runs": size}
+            for mode, background in (("without_option", False), ("background_relearn", True)):
+                repeats = []
+                for repetition in range(3):
+                    with TemporaryDirectory(prefix="closing-reply-", dir=ROOT / "out") as directory:
+                        repeats.append(reply_trial(Path(directory), samples, size, background))
+                    print(f"{case} {size} {mode} {repetition + 1}/3 reply {repeats[-1]['reply']:.3f}s "
+                          f"relearned {repeats[-1]['relearned']:.3f}s", flush=True)
+                row[mode] = {"median_reply": median(r["reply"] for r in repeats),
+                             "median_relearned": median(r["relearned"] for r in repeats), "repetitions": repeats}
+            rows.append(row)
+        data["results"][case] = rows
+    store.write_json(args.reply_output, data)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, default=ROOT / "dataset/traces")
     parser.add_argument("--output", type=Path, default=ROOT / "results/v1/closing_cost_folds.json")
+    parser.add_argument("--reply", action="store_true", help="time the reply to tracetrim_done (1.4) instead")
+    parser.add_argument("--reply-output", type=Path, default=ROOT / "results/v1/closing_reply.json")
     args = parser.parse_args()
+    if args.reply:
+        (ROOT / "out").mkdir(exist_ok=True)
+        measure.tokenizer()("warm o200k_base")
+        return reply_main(args, {c: inputs(c, args.dataset) for c in ("synthetic", "C4", "C5")})
     scratch = ROOT / "out"
     scratch.mkdir(exist_ok=True)
     sources = {c: inputs(c, args.dataset) for c in ("synthetic", "C4", "C5")}

@@ -129,7 +129,7 @@ COMMANDS = {
     "init": ["--host", "--file", "--scope", "--workdir", "--name", "--exclude", "--http", "--write", "--force", "--undo", "--no-check"],
     "proxy": ["--servers", "--upstream-cmd", "--upstream-url", "--header", "--config", "--record", "--http", "--token",
               "--allowed-host", "--quiet", "--auto", "--min-runs", "--structural", "--skill-strategy", "--no-skill",
-              "--no-compact", "--no-breakdown", "--log-client", "--isolate-sessions", "--promote", "--promote-runs", "--sample-rate",
+              "--no-compact", "--no-breakdown", "--log-client", "--isolate-sessions", "--background-relearn", "--promote", "--promote-runs", "--sample-rate",
               "--sample-max-share", "--sample-seed", "--switch-off-runs", "--no-keep-positions"],
 }
 

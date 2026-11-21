@@ -185,6 +185,8 @@ def cmd_proxy(a):
     from .proxy import load_servers
     if sum(map(bool, (a.upstream_cmd, a.upstream_url, a.servers))) != 1:
         raise SystemExit("give exactly one of --servers, --upstream-cmd or --upstream-url")
+    if a.background_relearn and not a.auto:
+        raise SystemExit("--background-relearn relearns in the background in automatic mode: add --auto WORKDIR")
     if a.isolate_sessions and not (a.http and a.auto):
         raise SystemExit("--isolate-sessions requires --http PORT and --auto WORKDIR")
     if a.auto and a.config:
@@ -217,6 +219,7 @@ def cmd_proxy(a):
                 compact=False if a.no_compact else None,
                 keep_positions=False if a.no_keep_positions else None,
                 breakdown=not a.no_breakdown, log_client=a.log_client, isolate_sessions=a.isolate_sessions,
+                background_relearn=a.background_relearn,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
                 switch_off_runs=a.switch_off_runs, protect_ids=a.protect_ids, learning=a.learning,
                 sample_max_share=a.sample_max_share, sample_seed=a.sample_seed,
@@ -437,6 +440,9 @@ def main(argv=None):
     s.add_argument("--quiet", action="store_true", help="suppress per-call output on stderr; session warnings are still printed")
     s.add_argument("--isolate-sessions", action="store_true",
                    help="keep a separate run for each HTTP transport session (--http --auto only)")
+    s.add_argument("--background-relearn", action="store_true",
+                   help="reply to tracetrim_done once the run is recorded and relearn in the background; calls "
+                        "meanwhile use the policy in place (--auto only)")
     s.add_argument("--auto", metavar="WORKDIR",
                    help="automatic mode: record runs, learn, apply safe actions, keep the report (see tracetrim.auto)")
     s.add_argument("--min-runs", type=int, default=5, help="complete runs before trimming starts (--auto; at least 2)")
