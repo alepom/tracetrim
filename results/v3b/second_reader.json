@@ -1,0 +1,38 @@
+{
+  "protocol": "protocol-v3b.md (version 2)",
+  "check": "second blind reader, added after the results",
+  "reader": "Astra, an AI agent of another session, blind to the arm and to the judge's scores",
+  "sample": {
+    "answers": 24,
+    "per_arm": 12,
+    "seed": 130441
+  },
+  "agreement_with_judge": {
+    "correctness": {
+      "exact": 0.8333333333333334,
+      "within_one": 1,
+      "quadratic_kappa": 0.8974358974358975,
+      "mean_reader": 3.25,
+      "mean_judge": 3.4166666666666665
+    },
+    "completeness": {
+      "exact": 0.625,
+      "within_one": 1,
+      "quadratic_kappa": 0.78,
+      "mean_reader": 3.0833333333333335,
+      "mean_judge": 3.4375
+    },
+    "action": {
+      "exact": 0.5,
+      "within_one": 1,
+      "quadratic_kappa": 0.7378640776699029,
+      "mean_reader": 3.1666666666666665,
+      "mean_judge": 3.3333333333333335
+    }
+  },
+  "composite_P_minus_R_on_sample": {
+    "reader": -1.5,
+    "judge": -1.0416666666666667
+  },
+  "scores_sha256": "c3da0528b931872d952acf4a2e4edacb5ca4aa003e0cf0bcc8d159789fb12ebb"
+}
