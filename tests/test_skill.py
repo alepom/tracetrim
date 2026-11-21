@@ -171,3 +171,17 @@ def test_the_proxy_lists_expand_and_publishes_the_skill_of_its_version(tmp_path,
             read = await client.read_resource(skill.URI)
             assert read.contents[0].text == skill.skill_md(done=True, version=version)
     asyncio.run(go())
+
+
+def test_every_skill_file_is_installed_with_the_package():
+    """Each text a version serves is matched by the package data of pyproject.toml (1.4: v1/ is a subfolder)."""
+    import fnmatch
+    import tomllib
+    root = Path(skill.__file__).resolve().parent
+    patterns = tomllib.loads((root.parent.parent / "pyproject.toml").read_text())["tool"]["setuptools"]["package-data"]["tracetrim"]
+    for path in (root / "skills").rglob("*.md"):
+        rel = path.relative_to(root).as_posix()
+        assert any(fnmatch.fnmatch(rel, p) and rel.count("/") == p.count("/") for p in patterns), rel
+    for version in skill.VERSIONS:
+        for part in ("done", "expand", "strategy"):
+            assert skill._file(part, version).exists()

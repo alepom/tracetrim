@@ -40,11 +40,19 @@ def _parts(strategy: bool, done: bool, expand: bool = True) -> list[str]:
     return (["done"] if done else []) + (["expand"] if expand else []) + (["strategy"] if strategy else [])
 
 
+# The parts whose text differs in an older version, kept in skills/tracetrim/v<version>/.
+OLDER = {"1": ("expand",)}
+
+
 def _file(part: str, version: str) -> Path:
     if version not in VERSIONS:
         raise ValueError(f"skill version {version!r}: one of {', '.join(VERSIONS)}")
-    older = _DIR / f"v{version}" / f"{part}.md"
-    return older if version != VERSION and older.exists() else _DIR / f"{part}.md"
+    if version != VERSION and part in OLDER.get(version, ()):
+        older = _DIR / f"v{version}" / f"{part}.md"
+        if not older.exists():           # never serve the current text under an older version
+            raise FileNotFoundError(f"skill version {version}: {older} is missing from the installation")
+        return older
+    return _DIR / f"{part}.md"
 
 
 def text(strategy: bool = False, done: bool = True, expand: bool = True, version: str = VERSION) -> str:
