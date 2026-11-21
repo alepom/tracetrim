@@ -124,7 +124,7 @@ def test_the_python_api_keeps_its_names():
 # -- command line --------------------------------------------------------------------
 
 COMMANDS = {
-    "compare": ["--a", "--b", "--json"],
+    "compare": ["--a", "--b", "--json", "--html"],
     "learn": [], "apply": [], "measure": [], "report": ["--tools"], "promotions": ["--revert"], "skill": ["--strategy"],
     "init": ["--host", "--file", "--scope", "--workdir", "--name", "--exclude", "--http", "--write", "--force", "--undo", "--no-check"],
     "proxy": ["--servers", "--upstream-cmd", "--upstream-url", "--header", "--config", "--record", "--http", "--token",

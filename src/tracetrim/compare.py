@@ -200,6 +200,10 @@ def command(args):
         raise SystemExit(str(exc)) from exc
     for warning in result["warnings"]:
         print(f"warning: {warning}", file=sys.stderr)
+    if getattr(args, "html", None):
+        from . import compare_html, store
+        store.write_atomic(Path(args.html), compare_html.render(result))
+        print(f"page: {args.html}", file=sys.stderr)
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:

@@ -227,6 +227,8 @@ annotated version costs at least as much. It lists the missed fields by name and
 visible on only one side. Production uses random annotation IDs, so token counts can vary slightly.
 
 Add `--json` for a `tracetrim/compare@1` document on stdout. Deltas are B minus A. Warnings go to stderr.
+Add `--html FILE` (1.4) to also write the comparison as one page in the style of the telemetry report, in its
+five languages, with nothing loaded from the network: the same numbers as the JSON document.
 Explicit `expand` calls in the supplied trace events are counted separately. A proxy can keep recovery
 requests in separate evidence files. Replay cannot predict whether the model would have requested a
 hidden field or changed its answer.

@@ -3,7 +3,7 @@
   tracetrim learn   traces/*.jsonl -o projection.json [--mode prudent|aggressive] [--source full|calls]
   tracetrim apply   projection.json|report.config.json TOOL < output.json
   tracetrim measure traces/*.jsonl [--source full|calls] [--per-tool]
-  tracetrim compare traces/*.jsonl --a protect_ids=all --b protect_ids=record [--json]
+  tracetrim compare traces/*.jsonl --a protect_ids=all --b protect_ids=record [--json] [--html FILE]
   tracetrim report  traces/*.jsonl -o report.html     (also report.json, .config.json, .projection.json)
   tracetrim login   --servers mcp.json                 (once, for servers that use OAuth)
   tracetrim proxy   --servers mcp.json | --upstream-cmd "python -m server" | --upstream-url URL [--header K=V]
@@ -397,6 +397,8 @@ def main(argv=None):
                        help="protect_ids=all|record, learning=1.1|1.0, keep_positions=true|false, "
                             "unseen=keep|drop, compact=true|false (defaults listed first)")
     s.add_argument("--json", action="store_true", help="write tracetrim/compare@1 JSON to stdout")
+    s.add_argument("--html", metavar="FILE",
+                   help="also write the comparison as one HTML page, with nothing loaded from the network")
     s.set_defaults(func=compare.command)
 
     s = sub.add_parser("report", help="telemetry report in five languages (HTML + JSON)")
