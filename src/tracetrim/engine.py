@@ -413,6 +413,10 @@ class Engine:
         """The relearning, without installing its result: an async adapter runs this in a thread and installs the
         policy on its own loop (`install`), so that no call is trimmed half with the old policy, half with the new."""
         new = self.learner.relearn() if self.learner is not None else None
+        if new is None and self.learner is not None and self.learner.last_ready is False and self.trimming:
+            # The config just written trims nothing (fewer complete runs than needed: a trace no longer counted as
+            # complete): the policy in place stops trimming too (REVISIONE-14b-septies: it went on filtering).
+            new = Policy({"format": "tracetrim/config@1", "tools": {}}, None)
         return self._adjusted(new) if new is not None else None
 
     def install(self, policy: Policy | None) -> bool:

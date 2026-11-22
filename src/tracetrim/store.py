@@ -175,13 +175,19 @@ _alone: ContextVar[frozenset] = ContextVar("tracetrim_alone", default=frozenset(
 
 
 _held: dict[tuple[int, str], dict] = {}    # (pid, directory) -> {"file", "count"}: the OPEN_LOCK, once per process
-_held_guard = threading.Lock()
+# (pid, directory) -> {"file", "count"}: the OPEN_LOCK held exclusively by `alone` blocks of this process.
+_exclusive: dict[tuple[int, str], dict] = {}
+# Guards both tables. A POSIX record lock belongs to the process, so within it the shared and the exclusive lock are
+# one: a Learner of this process waits on this condition while an `alone` block holds the directory, as one of
+# another process waits on the lock (REVISIONE-14b-septies: a Learner that started during the block took the
+# process's lock as shared, and the end of the block gave it up).
+_held_cond = threading.Condition()
 
 
 def _after_fork() -> None:
     """In a child made with fork(): the guards another thread of the parent may have held at that moment are new."""
-    global _guard, _held_guard
-    _guard, _held_guard = threading.Lock(), threading.Lock()
+    global _guard, _held_cond
+    _guard, _held_cond = threading.Lock(), threading.Condition()
 
 
 if hasattr(os, "register_at_fork"):
@@ -190,7 +196,8 @@ if hasattr(os, "register_at_fork"):
 
 def hold_open(directory: str | Path):
     """For the life of a Learner: the shared OPEN_LOCK, so that another process knows the directory is in use. Waits
-    while `tracetrim promotions` relearns it. Returns the function that gives it back (None without fcntl).
+    while `tracetrim promotions` relearns it, in another process or in this one. Returns the function that gives it
+    back (None without fcntl).
 
     Taken once per process and directory, and counted: a POSIX record lock belongs to the process, and closing any
     descriptor of the file would give it up for every Learner of the process (REVISIONE-14b-quater)."""
@@ -201,7 +208,9 @@ def hold_open(directory: str | Path):
     key = _key(directory)
     if key in _alone.get():
         return None
-    with _held_guard:
+    with _held_cond:
+        while key in _exclusive:
+            _held_cond.wait()
         entry = _held.get(key)
         if entry is None:
             fh = open(Path(directory) / OPEN_LOCK, "a+b")
@@ -218,7 +227,7 @@ def hold_open(directory: str | Path):
             # A Learner inherited by a child made with fork(): the descriptor is the parent's, and closing it in the
             # child would give up the child's own lock on the file (a POSIX record lock goes with any descriptor).
             return
-        with _held_guard:
+        with _held_cond:
             entry = _held.get(key)
             if entry is None:
                 return
@@ -231,35 +240,48 @@ def hold_open(directory: str | Path):
 
 @contextmanager
 def alone(directory: str | Path):
-    """True when no Learner owns the directory (and no process can start owning it until the block ends); False
-    when one does, in another process or in this one. True where it cannot be known (no fcntl), as up to 1.3."""
+    """True when no Learner owns the directory (and none can start owning it, in this process or another, until the
+    block ends); False when one does, in another process or in this one. True where it cannot be known (no fcntl),
+    as up to 1.3."""
     try:
         import fcntl
     except ImportError:
         yield True
         return
     key = _key(directory)
-    if key in _held:
-        # A Learner of this process owns it (an embedding program, a test): relearning from another Learner would
-        # write state and report over its own, as from another process. Touching the lock here would also give up
-        # the process's own (REVISIONE-14b-sexies: True here, also while a child made with fork() held it too).
+    with _held_cond:
+        if key in _held:
+            # A Learner of this process owns it (an embedding program, a test): relearning from another Learner would
+            # write state and report over its own, as from another process. Touching the lock here would also give up
+            # the process's own (REVISIONE-14b-sexies: True here, also while a child made with fork() held it too).
+            entry = None
+        elif key in _exclusive:
+            entry = _exclusive[key]          # another block of this process: the process holds it already
+            entry["count"] += 1
+        else:
+            fh = open(Path(directory) / OPEN_LOCK, "a+b")
+            try:
+                fcntl.lockf(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                fh.close()
+                entry = None
+            else:
+                entry = _exclusive[key] = {"file": fh, "count": 1}
+    if entry is None:
         yield False
         return
-    fh = open(Path(directory) / OPEN_LOCK, "a+b")
+    token = _alone.set(_alone.get() | {key})
     try:
-        try:
-            fcntl.lockf(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError:
-            yield False
-            return
-        token = _alone.set(_alone.get() | {key})
-        try:
-            yield True
-        finally:
-            _alone.reset(token)
-            fcntl.lockf(fh.fileno(), fcntl.LOCK_UN)
+        yield True
     finally:
-        fh.close()
+        _alone.reset(token)
+        with _held_cond:
+            entry["count"] -= 1
+            if entry["count"] == 0:
+                del _exclusive[key]
+                fcntl.lockf(entry["file"].fileno(), fcntl.LOCK_UN)
+                entry["file"].close()
+                _held_cond.notify_all()
 
 
 # Left by `tracetrim promotions` when it changed the evidence of a directory a proxy owns: the next relearning, in

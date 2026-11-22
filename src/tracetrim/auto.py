@@ -139,6 +139,8 @@ class Run:
     # Closed with an answer, and the reply not given yet (the proxy, 1.4): the pause after the answer starts at the
     # reply, so no call counts as following it until then.
     reply_pending: bool = False
+    # The reply was `Recorded.`, not an error: a later repeat no longer moves the start of the pause (as up to 1.3).
+    confirmed: bool = False
 
 
 class Learner:
@@ -258,6 +260,9 @@ class Learner:
         self._origins: dict[str, dict] = {}          # tool -> {"server", "tool"}, when the integration knows
         self.idle_seconds = idle_seconds
         self._count = None
+        # Whether the last relearning that wrote the config found enough complete runs to trim (None: none yet). The
+        # engine stops trimming when it did not (Engine.learn_policy; REVISIONE-14b-septies).
+        self.last_ready: bool | None = None
         # The open run, counted (contract.Sizes): tool -> [calls, raw, whole, sent]; expand: [calls, tokens].
         self.savings_path = self.dir / "savings.json"
         self.closed_sessions = 0                     # confirmed session count at the last closing
@@ -889,6 +894,7 @@ class Learner:
         store.write_json(self.dir / "report.json", d)
         self._commit(inputs, {"new": new, "resumed": resumed, "restarted": restarted, "off": off,
                               "complete_runs": len(complete), "ready": ready, "tools": sorted(config["tools"])})
+        self.last_ready = ready
         if not ready:
             return None
         policy = Policy(config, projection)
@@ -967,6 +973,10 @@ class Learner:
                         self.state["config_from_runs"] = decided["complete_runs"]
                     if self.state["runs"] == runs_at_start:
                         self.state.pop("report_pending", None)
+                        # No run closed since the inputs: the complete runs are those the report counts, by one rule
+                        # (`answered`). A count written by an earlier build that took a trace without its answer
+                        # is set right here (REVISIONE-14b-septies).
+                        self.state["complete_runs"] = decided["complete_runs"]
                     self._save()
                 store.write_json(self.dir / store.JOURNAL,
                                  {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})

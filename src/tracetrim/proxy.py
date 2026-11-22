@@ -581,16 +581,23 @@ def _server(o: Options):
                 # retry is confirmed only if it covered its run (REVISIONE-14b-quinquies: it replied with the policy
                 # of before; REVISIONE-14b-sexies: with the option, also when that relearning failed). Otherwise a
                 # failure is the reply, and the client can try again.
-                if learner.relearn_owed:
-                    await relearn_now()
+                confirmed = False
+                try:
                     if learner.relearn_owed:
-                        raise RuntimeError("the run is recorded, but its report and policy could not be updated "
-                                           "(the relearning failed): call tracetrim_done again")
-                replied(session, answered, again=True)
-                return False
+                        await relearn_now()
+                        if learner.relearn_owed:
+                            raise RuntimeError("the run is recorded, but its report and policy could not be updated "
+                                               "(the relearning failed): call tracetrim_done again")
+                    confirmed = True
+                    return False
+                finally:
+                    # The reply to a retry, an error too (REVISIONE-14b-septies: a failed retry left the pause at the
+                    # reply before it).
+                    replied(session, answered, again=True, confirmed=confirmed)
             # No await since the closing: until its reply, no call counts as following this answer (`replied`).
             if answered:
                 (session.run if session else learner.run).reply_pending = True
+            confirmed = False
             try:
                 _warn_mixed(learner)
                 run_total = (session.live if session else live).new_run()
@@ -602,29 +609,34 @@ def _server(o: Options):
                         f"{run_total} · relearning in the background")
                     _log_unsupported()
                     await background.request()
+                    confirmed = True
                     return True
                 await learn_in_thread()
                 st = learner.state
                 log(f"run {st['runs']} closed ({'with answer' if answer else 'no answer: telemetry only'}): {run_total}")
                 after_learning()
                 _log_unsupported()
+                confirmed = True
                 return True
             finally:
                 # A reply, an error too: the run is recorded (REVISIONE-14b-sexies: after a failed relearning no
                 # reply was marked, and the next call never counted as following the answer).
-                replied(session, answered)
+                replied(session, answered, confirmed=confirmed)
 
-    def replied(session, answered, again=False):
+    def replied(session, answered, again=False, confirmed=True):
         """The pause after an answer starts at the reply, as the agent sees it: without the option the reply came
         after the relearning, with it before (until 1.3 the pause was counted from the closing, relearning included).
-        `again`: the reply to a repeat or a retry; it moves the start of the pause only if no call has come since."""
+        `again`: the reply to a repeat or a retry. It moves the start of the pause only while the closing has had no
+        `Recorded.` (its replies were errors) and no call has come since: a late repeat of a confirmed closing leaves
+        the pause where it was, as up to 1.3 (REVISIONE-14b-septies). `confirmed`: this reply is `Recorded.`."""
         run = session.run if session else learner.run
         if answered:
             with learner.lock:
-                if again and run.answered_at is None:
+                if again and (run.answered_at is None or run.confirmed):
                     return
                 run.answered_at = time.time()
                 run.reply_pending = False
+                run.confirmed = confirmed
 
     async def close_idle(session=None):
         """A closing by inactivity, before a call is served. Its failure is logged and the call is served, with the

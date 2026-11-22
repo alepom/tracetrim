@@ -232,6 +232,7 @@ def cmd_proxy(a):
 
 def cmd_promotions(a):
     """List the fields promoted on evidence in a work directory, or take some back."""
+    import os
     from contextlib import nullcontext
     from datetime import datetime, timezone
 
@@ -242,12 +243,14 @@ def cmd_promotions(a):
     editing = a.revert is not None or bool(a.restore)
     if a.revert is not None and len(a.revert) > 2:
         raise SystemExit("--revert takes nothing (all), a TOOL, or a TOOL and a FIELD")
-    changed, in_use, owed = [], False, False
+    changed, in_use, owed, pending = [], False, False, False
     mark = work / store.CHANGED
     # Read, changed, written and applied under the lock that a running proxy also takes to write the evidence (1.4):
     # until 1.3 a relearning or a closing of the proxy could write its own copy over the change, and a second
-    # `tracetrim promotions` now waits for this one to end, then reads its change (REVISIONE-14b-quater).
-    with store.write_lock(work) if editing and work.is_dir() else nullcontext():
+    # `tracetrim promotions` now waits for this one to end, then reads its change (REVISIONE-14b-quater). A listing
+    # reads the evidence and the mark under it too, where it can write the lock file.
+    locked = work.is_dir() and (editing or os.access(work, os.W_OK))
+    with store.write_lock(work) if locked else nullcontext():
         if editing and work.is_dir():
             # A closing left in its journal by a stopped process goes first: replayed after this change, it would
             # write the evidence of before.
@@ -256,7 +259,14 @@ def cmd_promotions(a):
         # A change saved and not applied yet: a command stopped after saving it (or one that left it to the proxy).
         # A mark that names no saved change was left by a command stopped before saving: it goes (`pending_mark`).
         owed = editing and pending_mark(work)
-        earlier = held(data, store.changes(work) or []) if owed else []
+        noted_before = store.changes(work) if mark.exists() else []
+        if noted_before is None:
+            # A mark with no note (an earlier build of 1.4): what it was about is in the evidence as it stands, so
+            # every promotion is named as it is now; the obligation is kept (REVISIONE-14b-septies).
+            earlier = [{"tool": p["tool"], "field": p["field"], "status": p["status"]} for p in data["promotions"]]
+        else:
+            earlier = held(data, noted_before)
+        pending = bool(earlier)               # for the listing: a change saved and not applied yet
         if a.revert is not None:
             changed = evidence.revert(data, *a.revert)
         elif a.restore:
@@ -269,9 +279,12 @@ def cmd_promotions(a):
             # still saved and this one: a relearning removes it only once it has read each of them (REVISIONE-14b-
             # sexies: one that read the evidence of before removed it). Written again after the evidence, so that
             # its stamp also changes.
-            noted = {(c["tool"], c["field"]): c for c in earlier}
-            noted.update({(p["tool"], p["field"]): {"tool": p["tool"], "field": p["field"], "status": p["status"]}
-                          for p in changed})
+            # By tool, field and status: until the evidence is replaced, the earlier status of a field this command
+            # changes is still the saved one, and must stay named (REVISIONE-14b-septies: a restore stopped before
+            # the evidence left a mark naming only its own status, which was dropped with the revert still pending).
+            noted = {(c["tool"], c["field"], c["status"]): c for c in (earlier if owed else [])}
+            noted.update({(p["tool"], p["field"], p["status"]): {"tool": p["tool"], "field": p["field"],
+                                                                 "status": p["status"]} for p in changed})
             note = json.dumps({"format": "tracetrim/evidence-changed@1",
                                "at": datetime.now(timezone.utc).isoformat(timespec="microseconds"),
                                "changed": list(noted.values())}) + "\n"
@@ -314,7 +327,7 @@ def cmd_promotions(a):
     if in_use:
         print("the work directory is in use (a proxy is running on it): the change is saved, and the proxy applies it "
               "at its next relearning")
-    elif not editing and mark.exists() and (store.changes(work) is None or held(data, store.changes(work))):
+    elif not editing and pending:
         print("a change is saved and not applied yet: the next relearning applies it (repeat the command, or start "
               "the proxy)")
 

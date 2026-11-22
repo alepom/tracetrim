@@ -1941,6 +1941,8 @@ def test_a_relearning_that_read_the_evidence_before_a_revert_keeps_its_mark(tmp_
     assert not (work / store.CHANGED).exists()
 
 
+@pytest.mark.skipif(__import__("importlib").util.find_spec("fcntl") is None,
+                    reason="without fcntl the command cannot know, and relearns at once as up to 1.3")
 def test_a_learner_of_the_same_process_owns_the_directory(tmp_path, capsys):
     """REVISIONE-14b-sexies: `alone` answered True whenever this process held the directory, so `tracetrim
     promotions` called by a program running an AutoTrim relearned from a second Learner, over the first one's files.
@@ -2175,3 +2177,203 @@ def test_a_second_change_keeps_the_first_one_named_in_the_mark(tmp_path, monkeyp
     assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == \
         {"volumes": ["items[].note_1"]}
     assert not (work / store.CHANGED).exists()
+
+
+# -- REVISIONE-14b-septies ---------------------------------------------------------------------------------------
+
+def failing_save(monkeypatch):
+    """The next evidence.save raises (a command stopped between its first mark and its evidence)."""
+    from tracetrim import evidence
+    save = evidence.save
+
+    def failing(*a, **kw):
+        monkeypatch.setattr(evidence, "save", save)
+        raise OSError("simulated")
+    monkeypatch.setattr(evidence, "save", failing)
+
+
+@pytest.mark.parametrize("order", ["revert then restore", "restore then revert"])
+def test_a_change_of_the_same_field_stopped_before_its_evidence_keeps_the_saved_one(tmp_path, monkeypatch, capsys,
+                                                                                     order):
+    """REVISIONE-14b-septies: with a proxy on the directory, a change of note_0 is saved and left to it; the opposite
+    change of the same field stops before its evidence. Its mark named only its own status, the start dropped it,
+    and the saved change was never applied."""
+    import gc
+    from tracetrim import store
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    first, second = ("--revert", "--restore") if order == "revert then restore" else ("--restore", "--revert")
+    if order == "restore then revert":
+        main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])     # reverted and applied
+    proc = holder(work)
+    main(["promotions", str(work), first, "volumes", "items[].note_0"])
+    assert "in use" in capsys.readouterr().out
+    failing_save(monkeypatch)
+    with pytest.raises(OSError):
+        main(["promotions", str(work), second, "volumes", "items[].note_0"])
+    proc.stdin.close()
+    proc.wait(10)
+    proxy._server(options(work, promote=True, promote_runs=2))          # the next start
+    saved = "reverted" if first == "--revert" else "active"
+    assert [p["status"] for p in json.loads((work / "evidence.json").read_text())["promotions"]] == [saved]
+    promoted = json.loads((work / "report.config.json").read_text())["auto"]["promoted"]
+    assert promoted == ({} if saved == "reverted" else {"volumes": ["items[].note_0"]})
+    assert not (work / store.CHANGED).exists()
+
+
+def test_a_mark_with_no_note_is_kept_by_the_next_command(tmp_path, monkeypatch, capsys):
+    """REVISIONE-14b-septies: a revert of note_0 saved and left to the proxy under a mark with no note (an earlier
+    build of 1.4); a revert of note_1 then stops before its evidence. Its mark took the earlier one as naming
+    nothing, the start dropped it, and the revert of note_0 was never applied."""
+    from tracetrim import store
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    two_promotions(work)
+    proc = holder(work)
+    main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])
+    assert "in use" in capsys.readouterr().out
+    (work / store.CHANGED).write_text("2026-11-20T10:00:00.000000+00:00\n")         # the mark of an earlier build
+    failing_save(monkeypatch)
+    with pytest.raises(OSError):
+        main(["promotions", str(work), "--revert", "volumes", "items[].note_1"])
+    proc.stdin.close()
+    proc.wait(10)
+    proxy._server(options(work, promote=True, promote_runs=2))
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_1"]}
+    assert not (work / store.CHANGED).exists()
+
+
+def test_a_learner_that_starts_during_a_command_waits_for_it(tmp_path):
+    """REVISIONE-14b-septies: `tracetrim promotions` held the directory alone when an AutoTrim of the same process
+    started: its shared lock was the process's lock, the end of the command gave it up, and a command in another
+    process found the directory free while the AutoTrim lived."""
+    from tracetrim import store
+    (tmp_path / "traces").mkdir()
+    inside, release, built = threading.Event(), threading.Event(), threading.Event()
+    learners = []
+
+    def command():
+        with store.alone(tmp_path) as alone:
+            assert alone
+            inside.set()
+            release.wait(10)
+
+    def start():
+        learners.append(auto.AutoTrim(tmp_path, min_runs=2))
+        built.set()
+    a = threading.Thread(target=command)
+    a.start()
+    assert inside.wait(10)
+    b = threading.Thread(target=start)
+    b.start()
+    time.sleep(0.3)
+    assert not built.is_set()                             # waits for the command, as from another process
+    release.set()
+    a.join(10)
+    b.join(10)
+    assert built.is_set()
+    assert not alone_from_another_process(tmp_path)      # the AutoTrim holds the directory
+
+
+def test_a_trace_counted_by_an_earlier_build_stops_the_policy_when_the_count_drops(tmp_path):
+    """REVISIONE-14b-septies: min_runs 3, and an earlier build counted a trace ending with a blank answer: three
+    complete runs, filter on. Reopened, a run closed without answer relearns two complete runs and writes a config
+    that trims nothing, but the engine kept the policy and went on filtering. The state is set right as well."""
+    import gc
+    tt = auto.AutoTrim(tmp_path, min_runs=3)
+    for _ in range(3):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    assert tt.trimming
+    del tt
+    gc.collect()
+    trace = tmp_path / "traces" / "run-0003.jsonl"
+    lines = trace.read_text().splitlines()
+    trace.write_text("\n".join(lines[:-1] + ['{"kind": "message", "text": "   "}']) + "\n")   # as the build had it
+    tt = auto.AutoTrim(tmp_path, min_runs=3)
+    assert tt.trimming                                    # the config on disk, until the next relearning
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(None)                                         # a run without answer: relearned
+    assert json.loads((tmp_path / "report.config.json").read_text())["tools"] == {}
+    assert not tt.trimming
+    assert "call_id=" not in tt.output("volumes", {}, json.dumps(PAYLOAD))
+    assert json.loads((tmp_path / "state.json").read_text())["complete_runs"] == 2
+
+
+def test_the_listing_reads_the_note_of_the_mark_once(tmp_path, monkeypatch, capsys):
+    """REVISIONE-14b-septies: the listing read the note twice; the proxy removed the mark in between, and the second
+    read gave None to a function that iterates it (TypeError in a read-only command)."""
+    from tracetrim import store
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    (work / store.CHANGED).write_text(json.dumps({"format": "tracetrim/evidence-changed@1", "changed": [
+        {"tool": "volumes", "field": "items[].note_0", "status": "active"}]}))
+    changes, calls = store.changes, []
+
+    def once(directory):
+        calls.append(directory)
+        return changes(directory) if len(calls) == 1 else None          # consumed by the proxy after the first read
+    monkeypatch.setattr(store, "changes", once)
+    main(["promotions", str(work)])
+    assert "not applied yet" in capsys.readouterr().out
+
+
+def test_a_failed_retry_moves_the_start_of_the_pause(tmp_path, monkeypatch):
+    """REVISIONE-14b-septies: without the option, the closing of run 2 and its retry both reply with an error (the
+    relearning keeps failing); the call right after the retry did not count as following the answer, the pause
+    being measured from the first error."""
+    from mcp.shared.exceptions import MCPError
+    broken = broken_relearning(monkeypatch)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, idle_seconds=0.24))
+        async with Client(server) as client:
+            await run(client)
+            assert not (await client.call_tool("volumes", {})).is_error          # follows the answer of run 1
+            broken["on"] = True
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            await asyncio.sleep(0.4)
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})   # the retry, an error too
+            assert not (await client.call_tool("volumes", {})).is_error          # right after it
+            assert learner.state["answered_runs_followed_by_calls"] == 2
+    asyncio.run(go())
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_late_repeat_of_a_confirmed_closing_leaves_the_pause(tmp_path, on):
+    """REVISIONE-14b-septies: a repeat of tracetrim_done long after its `Recorded.` restarted the pause, and the next
+    call counted as following the answer (0 in 1.3.1 and before, 1 then). The pause stays at the confirmation."""
+    async def go():
+        server, learner = proxy._server(options(tmp_path, idle_seconds=0.24, background_relearn=on))
+        async with Client(server) as client:
+            await run(client)
+            if on:
+                await settled(learner)
+            await asyncio.sleep(0.5)
+            assert (await client.call_tool("tracetrim_done", {"answer": ANSWER})).content[0].text == auto.DONE_REPLY
+            assert not (await client.call_tool("volumes", {})).is_error
+            assert learner.state["answered_runs_followed_by_calls"] == 0
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+
+
+def test_a_legacy_message_that_is_not_text_is_set_aside(tmp_path):
+    """REVISIONE-14b-septies: a trace numbered after the state, ending with a message whose text is a number, stopped
+    the start with AttributeError."""
+    learner = auto.Learner(tmp_path, 2, durable_closes=False)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    learner.done("1")
+    learner.relearn()
+    (tmp_path / "traces" / "run-0002.jsonl").write_text(
+        '{"kind": "call", "tool": "t", "arguments": {}, "output": "{}"}\n{"kind": "message", "text": 42}\n')
+    del learner
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 2 and state["complete_runs"] == 1

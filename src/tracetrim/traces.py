@@ -77,7 +77,11 @@ def load_jsonl(path: Path) -> Trace:
                 turn=d.get("turn"),
             ))
         elif kind in ("prompt", "message"):
-            trace.events.append(Event(kind, text=d.get("text") or "", turn=d.get("turn")))
+            text = d.get("text") or ""
+            if not isinstance(text, str):
+                # A number, an object: not text (until 1.3 it reached the analysis, and 1.4 stopped at it).
+                raise ValueError(f"{path.name}:{n}: the text of a {kind} is not a string")
+            trace.events.append(Event(kind, text=text, turn=d.get("turn")))
         else:
             raise ValueError(f"{path.name}:{n}: unknown event kind {kind!r}")
     return trace
