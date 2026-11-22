@@ -58,8 +58,9 @@ def plain(tex_path, macros) -> str:
 
 PAPER_VERSION_TWO_DATE = "November 2026"
 # The release that version 3 of the paper comes with. Study 4's Parts A and B ran on 1.3.1 (e821e18), Part C on the
-# code released as 1.4.0; until the 1.4.0 archive has its DOI the software DOI names 1.3.1 (REPORT-14a: to update
-# at release). Version 2 came with 1.0.0 (10.5281/zenodo.24190053).
+# 1.4 development code frozen by protocol-v3c.lock, whose skill text 1.4.0 ships unchanged
+# (tests/test_v3c_skill_text.py); until the 1.4.0 archive has its DOI the software DOI names 1.3.1 (to update at
+# release, with the version). Version 2 came with 1.0.0 (10.5281/zenodo.24190053).
 PAPER_SOFTWARE_VERSION = "1.3.1"
 PAPER_SOFTWARE_DOI = "10.5281/zenodo.24406362"     # the archive of that release
 PAPER_VERSION_THREE_DATE = "November 2026"
@@ -94,7 +95,7 @@ def main():
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
         f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 3. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
-        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and the frozen 1.4 code (Part C)}}\n"
+        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and the 1.4 development code frozen by its protocol (Part C)}}\n"
         # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
         f"\\newcommand{{\\PaperVersionThreeDate}}{{{PAPER_VERSION_THREE_DATE}}}\n"

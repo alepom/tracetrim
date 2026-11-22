@@ -7,7 +7,7 @@ Table~\ref{tab:c4audit}; Section~\ref{sec:s3audit}). Study~4, added in version~3
 this paper, asks whether the prudent projection preserves the quality of the answer on tasks never used in
 development, judged blind. It has three parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
 draws new ordinary tasks for the two simulated agents. Part~B (\texttt{protocol-v3b.md}) is a stress test: billing
-tasks whose answers need exactly the fields that the projection removes. Parts A and B ran on the library at release
+tasks built around the fields that the projection removes. Parts A and B ran on the library at release
 1.3.1, unchanged. Part~C (\texttt{protocol-v3c.md}) measures a correction of the failure that Part~B found: a
 change of one rule in the text that accompanies the projection. It ran on the development code of tracetrim 1.4,
 frozen by its protocol; the text it tests is unchanged in release 1.4.0, where it is the default.
@@ -187,8 +187,8 @@ the recovery.
 
 \paragraph{A second blind reader (post hoc).} At the author's request, after the results, a second reader read
 a sample of \SfourBSecondAnswers{} answers, \SfourBSecondPerArm{} per arm, drawn with a fixed seed. The reader was
-an AI agent (Codex, GPT-6.2 Astra) in a separate session, not \texttt{\SfourJudge}; it had worked on the library in earlier sessions and
-knew the design of the study. It read each answer on its own under a new identifier, blind to the arm and to the
+an AI agent (Codex, GPT-6.2 Astra) in a separate session, not \texttt{\SfourJudge}; it had worked on the library in earlier sessions, had
+drafted protocol v3 and the rubric it read with, and knew the design of the study. It read each answer on its own under a new identifier, blind to the arm and to the
 first judge's scores. Against the first judge's combined scores on the
 same answers it agreed exactly on \SfourBSecondExactMin{} to \SfourBSecondExactMax{} of the ratings per
 dimension, within one point on \SfourBSecondWithinOne{}, with quadratic-weighted kappa \SfourBSecondKappaMin{} to

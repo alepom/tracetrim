@@ -9,8 +9,8 @@ were kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} ca
 what the learned projection removes goes well beyond the tested static baseline: beyond a minifier and a static
 metadata filter it removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what was left on three of five agents.
 On tasks held out from development (Study~4), the answers kept their judged quality on ordinary tasks, at a
-ceiling; in a stress test where the task needed exactly the fields the projection removes, they lost facts, and one
-rule added to the skill, the default from tracetrim 1.4, recovered part of them at no extra cost.
+ceiling; in a stress test built around the fields the projection removes, they lost facts, and one added rule
+(skill version 2, the default from tracetrim 1.4) recovered part of them at no extra cost.
 
 \paragraph{What the agent uses can be learned, best from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
@@ -89,8 +89,8 @@ invoice memo. After a list showed the hidden fields only by name, it concluded t
 and said so to the customer. This sharpens the earlier statement that recovery works only when the agent knows what
 is hidden: here it knew, and still did not look before declaring a fact absent. Two consequences follow. A
 projection learned on one use of a tool is a risk when the use changes, because fields that were never needed
-become the only source of the answer; in live use, adaptive learning kept the fields the agent recovered
-from the next run (Study~3), while Study~4 froze the projection by design. The hidden-field notice and the \texttt{expand} instructions are part of the
+become the only source of the answer. Adaptive learning keeps such a field from the next run once the agent has
+recovered and written it (Study~3), but it depends on that recovery, and Study~4 froze the projection by design. The hidden-field notice and the \texttt{expand} instructions are part of the
 method's safety, not a detail. Part~C measured that directly. One rule added to the skill and to the description
 of \texttt{expand}, check a hidden field before declaring information absent, raised the hidden facts reported
 from \SfourCHiddenPone{} to \SfourCHiddenPtwo{} (\SfourCPoint{}, interval \SfourCCI{}) at the same cost, and

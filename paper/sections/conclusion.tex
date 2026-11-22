@@ -6,11 +6,11 @@ live runs on one model, a fixed projection with \texttt{expand} lowered the medi
 \SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents. All implemented gates passed, but the stricter
 billing audit found less complete diagnoses in the trimmed arm (\AuditEOneAuditT{} against \AuditEOneAuditR{}
 without trimming). On tasks held out from development, judged blind, the prudent projection kept the answers' quality
-on new ordinary tasks (\SfourAPoint{} on a 0--4 scale, interval \SfourACI{}, at a ceiling). On tasks that needed the
-fields it removes, it lost facts: \SfourBHiddenP{} of them reported against \SfourBHiddenR{} (\SfourBPoint{},
+on new ordinary tasks (\SfourAPoint{} on a 0--4 scale, interval \SfourACI{}, at a ceiling). In a stress test built
+around the fields it removes, it lost facts: \SfourBHiddenP{} of them reported against \SfourBHiddenR{} (\SfourBPoint{},
 interval \SfourBCI{}, inconclusive by the preregistered rule, the upper end lying \SfourBMarginGap{} above the
 margin), at no saving; when a free-text field it had not recovered held the fact, the agent mostly declared the fact
-absent. One added rule in the skill, check a hidden
+absent. One added rule in the skill (version 2), check a hidden
 field before declaring information absent, raised that share from \SfourCHiddenPone{} to \SfourCHiddenPtwo{}
 (\SfourCPoint{}, interval \SfourCCI{}) at no extra cost, and is the default from 1.4. Fields that a changed task needed came back by themselves from the next run in \SthreeHFiveKept{} of
 \SthreeHFiveRecoveries{} cases, and, offline, learning removed \BaseLearnedStaticBigMin{} to
@@ -33,13 +33,16 @@ tokens on those real-API agents and \VtwoVsMiniv{} and \VtwoVsMinv{} on the simu
 cites most of what it receives a minifier alone did better; a fourth mechanism, translation, remains open. In short: a projection learned from
 textual reuse can shrink already minified outputs in several workloads; the quality of the answers depends on
 information that this reuse makes only partly observable, and the safeguards correct some of the documented failures.
-The method is therefore best used as tracetrim implements it: as a proposal learned from complete traces, reviewed
-by a person, applied with identifiers protected and with a way back for the agent when a cut was wrong, which in
-Study~3 also corrected the projection. It helps most where tool outputs carry much that the task does not use, and
-least where the agent cites most of what it reads, where minifying is enough. Study~4 adds a condition and shows how
-the library meets it: when the use of a tool changes, the agent's inference that a trimmed field holds nothing is
-the weak point; the instruction that is the default from 1.4 narrows it at no extra cost, without removing it, and
-in live use adaptive learning kept the fields a changed task recovered (Study~3). The evidence comes from few runs
-and one agent model, on the five agents of development and on held-out tasks for two of them. Every number in this
-paper is produced by a script from its results files, never typed, so each claim can be traced to its data and the
-measures repeated on other agents with the library itself.
+The method is therefore best used as tracetrim implements it: learned from complete traces, applied on its own only
+in its prudent form, with every other cut left as a proposal for a person to review, with identifiers protected and
+with a way back for the agent when a cut was wrong, which in Study~3 also corrected the projection. It helps most
+where tool outputs carry much that the task does not use, and least where the agent cites most of what it reads,
+where minifying is enough. Study~4 adds a condition: a projection learned on one use of a tool should not be
+trusted when the use changes, because the agent's inference that a trimmed field holds nothing is then the weak
+point. The rule of skill version 2 narrows it at no extra cost, without removing it. Adaptive learning, frozen in
+Study~4 by design, keeps a field from the next run once the agent has recovered and written it (Study~3); it cannot
+act on a field the agent never recovers, as in Part~B. The evidence comes from few runs and one agent model, on the
+five agents of development and on held-out tasks for two of them. Every measured number in this paper is produced by
+a script from a results file, never typed; Table~\ref{tab:availability} says which of them an independent reader can
+recompute from open material, and the offline measures can be repeated on other agents' traces with the library
+itself (\texttt{tracetrim measure}, \texttt{tracetrim compare}).
