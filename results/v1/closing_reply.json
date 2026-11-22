@@ -3,7 +3,7 @@
   "python": "3.13.5",
   "platform": "linux",
   "architecture": "x86_64",
-  "tracetrim": "1.3.1",
+  "tracetrim": "1.4.0",
   "unit": "seconds",
   "repetitions": 3,
   "measure": "wall time from the tracetrim_done request to the reply, through the proxy in process (stdio upstream, MCP in-memory client); with --background-relearn also to the policy installed",
@@ -140,38 +140,38 @@
       {
         "runs": 20,
         "without_option": {
-          "median_reply": 0.12174612999660894,
-          "median_relearned": 0.12174831599986646,
+          "median_reply": 0.12182376498822123,
+          "median_relearned": 0.12182529098936357,
           "repetitions": [
             {
-              "reply": 0.13837338000303134,
-              "relearned": 0.13837723700271454
+              "reply": 0.12077878598938696,
+              "relearned": 0.12078153798938729
             },
             {
-              "reply": 0.12174612999660894,
-              "relearned": 0.12174831599986646
+              "reply": 0.12705606099916622,
+              "relearned": 0.12705904198810458
             },
             {
-              "reply": 0.11722091100818943,
-              "relearned": 0.11722288200689945
+              "reply": 0.12182376498822123,
+              "relearned": 0.12182529098936357
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.010711490001995116,
-          "median_relearned": 0.12666554099996574,
+          "median_reply": 0.009208418021444231,
+          "median_relearned": 0.12588955499813892,
           "repetitions": [
             {
-              "reply": 0.010711490001995116,
-              "relearned": 0.124517994991038
+              "reply": 0.009208418021444231,
+              "relearned": 0.13437072501983494
             },
             {
-              "reply": 0.009299804994952865,
-              "relearned": 0.12748687800194602
+              "reply": 0.0072553819918539375,
+              "relearned": 0.11878397999680601
             },
             {
-              "reply": 0.019903592998161912,
-              "relearned": 0.12666554099996574
+              "reply": 0.010505701007787138,
+              "relearned": 0.12588955499813892
             }
           ]
         }
@@ -179,38 +179,38 @@
       {
         "runs": 100,
         "without_option": {
-          "median_reply": 0.48769881199405063,
-          "median_relearned": 0.4877003769943258,
+          "median_reply": 0.5292504880053457,
+          "median_relearned": 0.5292523740208708,
           "repetitions": [
             {
-              "reply": 0.4662149769865209,
-              "relearned": 0.46621666199644096
+              "reply": 0.528032289003022,
+              "relearned": 0.5280338620068505
             },
             {
-              "reply": 0.48769881199405063,
-              "relearned": 0.4877003769943258
+              "reply": 0.545993837993592,
+              "relearned": 0.5459958110004663
             },
             {
-              "reply": 0.4889404349960387,
-              "relearned": 0.48894209499121644
+              "reply": 0.5292504880053457,
+              "relearned": 0.5292523740208708
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.008141994010657072,
-          "median_relearned": 0.5142540430097142,
+          "median_reply": 0.008651995012769476,
+          "median_relearned": 0.5264127539994661,
           "repetitions": [
             {
-              "reply": 0.010546926001552492,
-              "relearned": 0.5343978360033361
+              "reply": 0.008651995012769476,
+              "relearned": 0.5264127539994661
             },
             {
-              "reply": 0.008141994010657072,
-              "relearned": 0.5142540430097142
+              "reply": 0.007917722017737105,
+              "relearned": 0.5101446800108533
             },
             {
-              "reply": 0.007355663008638658,
-              "relearned": 0.4777798150025774
+              "reply": 0.010066219023428857,
+              "relearned": 0.5279451240203343
             }
           ]
         }
@@ -218,38 +218,38 @@
       {
         "runs": 200,
         "without_option": {
-          "median_reply": 0.993269059996237,
-          "median_relearned": 0.9932703319936991,
+          "median_reply": 1.0554855480149854,
+          "median_relearned": 1.055487213016022,
           "repetitions": [
             {
-              "reply": 1.0678291210060706,
-              "relearned": 1.0678306610061554
+              "reply": 1.0846165249822661,
+              "relearned": 1.0846182879758999
             },
             {
-              "reply": 0.993269059996237,
-              "relearned": 0.9932703319936991
+              "reply": 1.025381176994415,
+              "relearned": 1.0253831809968688
             },
             {
-              "reply": 0.9181994479877176,
-              "relearned": 0.9182015809928998
+              "reply": 1.0554855480149854,
+              "relearned": 1.055487213016022
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.011287251996691339,
-          "median_relearned": 1.0172819209983572,
+          "median_reply": 0.00972745000035502,
+          "median_relearned": 1.0061936099955346,
           "repetitions": [
             {
-              "reply": 0.008229537008446641,
-              "relearned": 1.0165182689961512
+              "reply": 0.009703588002594188,
+              "relearned": 1.0056781349994708
             },
             {
-              "reply": 0.011287251996691339,
-              "relearned": 1.0172819209983572
+              "reply": 0.00972745000035502,
+              "relearned": 1.0061936099955346
             },
             {
-              "reply": 0.020979344990337268,
-              "relearned": 1.0269491839862894
+              "reply": 0.01647762002539821,
+              "relearned": 1.0618658870225772
             }
           ]
         }
@@ -259,38 +259,38 @@
       {
         "runs": 20,
         "without_option": {
-          "median_reply": 0.8730609819904203,
-          "median_relearned": 0.8730622469884111,
+          "median_reply": 0.9330907779803965,
+          "median_relearned": 0.9330923039815389,
           "repetitions": [
             {
-              "reply": 0.8888419370050542,
-              "relearned": 0.8888430240040179
+              "reply": 0.9330907779803965,
+              "relearned": 0.9330923039815389
             },
             {
-              "reply": 0.8730609819904203,
-              "relearned": 0.8730622469884111
+              "reply": 0.9379248660115991,
+              "relearned": 0.9379268019984011
             },
             {
-              "reply": 0.8550440020044334,
-              "relearned": 0.8550462150014937
+              "reply": 0.9151926419872325,
+              "relearned": 0.9151944319892209
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.008588746990426444,
-          "median_relearned": 0.9547381510055857,
+          "median_reply": 0.0076382289989851415,
+          "median_relearned": 0.9262205510167405,
           "repetitions": [
             {
-              "reply": 0.007774708006763831,
-              "relearned": 0.8983681429963326
+              "reply": 0.0072153990040533245,
+              "relearned": 0.884373893000884
             },
             {
-              "reply": 0.008588746990426444,
-              "relearned": 1.0347272099897964
+              "reply": 0.0076382289989851415,
+              "relearned": 0.9765988019935321
             },
             {
-              "reply": 0.010648846000549383,
-              "relearned": 0.9547381510055857
+              "reply": 0.007720115012489259,
+              "relearned": 0.9262205510167405
             }
           ]
         }
@@ -298,38 +298,38 @@
       {
         "runs": 100,
         "without_option": {
-          "median_reply": 4.42589608799608,
-          "median_relearned": 4.425898091998533,
+          "median_reply": 4.730449714988936,
+          "median_relearned": 4.730451624986017,
           "repetitions": [
             {
-              "reply": 4.625604091997957,
-              "relearned": 4.625606435001828
+              "reply": 4.67345912498422,
+              "relearned": 4.673460684978636
             },
             {
-              "reply": 4.42589608799608,
-              "relearned": 4.425898091998533
+              "reply": 4.776989575999323,
+              "relearned": 4.776991259976057
             },
             {
-              "reply": 4.268478398997104,
-              "relearned": 4.268480163998902
+              "reply": 4.730449714988936,
+              "relearned": 4.730451624986017
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.011966970007051714,
-          "median_relearned": 4.307361795988982,
+          "median_reply": 0.009333606984000653,
+          "median_relearned": 4.721067331993254,
           "repetitions": [
             {
-              "reply": 0.013242672008345835,
-              "relearned": 4.495489833003376
+              "reply": 0.009990755002945662,
+              "relearned": 4.703985464002471
             },
             {
-              "reply": 0.011966970007051714,
-              "relearned": 4.274851622001734
+              "reply": 0.009333606984000653,
+              "relearned": 4.721067331993254
             },
             {
-              "reply": 0.008357799000805244,
-              "relearned": 4.307361795988982
+              "reply": 0.008924145018681884,
+              "relearned": 4.801432963024126
             }
           ]
         }
@@ -337,38 +337,38 @@
       {
         "runs": 200,
         "without_option": {
-          "median_reply": 9.149878733995138,
-          "median_relearned": 9.149880855999072,
+          "median_reply": 9.728013870015275,
+          "median_relearned": 9.728015480999602,
           "repetitions": [
             {
-              "reply": 8.912494431002415,
-              "relearned": 8.912496673001442
+              "reply": 9.704999204986962,
+              "relearned": 9.705001103982795
             },
             {
-              "reply": 9.149878733995138,
-              "relearned": 9.149880855999072
+              "reply": 9.774987890996272,
+              "relearned": 9.7749894070148
             },
             {
-              "reply": 9.439562565996312,
-              "relearned": 9.439564674001304
+              "reply": 9.728013870015275,
+              "relearned": 9.728015480999602
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.008494866007822566,
-          "median_relearned": 9.389684496010887,
+          "median_reply": 0.011227537004742771,
+          "median_relearned": 9.662306759011699,
           "repetitions": [
             {
-              "reply": 0.00918985799944494,
-              "relearned": 9.039806772998418
+              "reply": 0.011227537004742771,
+              "relearned": 9.639154314994812
             },
             {
-              "reply": 0.007777566002914682,
-              "relearned": 9.389684496010887
+              "reply": 0.010232770000584424,
+              "relearned": 9.855541338009061
             },
             {
-              "reply": 0.008494866007822566,
-              "relearned": 9.44045729401114
+              "reply": 0.011466972006019205,
+              "relearned": 9.662306759011699
             }
           ]
         }
@@ -378,38 +378,38 @@
       {
         "runs": 20,
         "without_option": {
-          "median_reply": 2.5474365709960693,
-          "median_relearned": 2.547438908004551,
+          "median_reply": 2.746262314991327,
+          "median_relearned": 2.746264543005964,
           "repetitions": [
             {
-              "reply": 2.6462916700111236,
-              "relearned": 2.6462929810077185
+              "reply": 2.7790142070152797,
+              "relearned": 2.7790155820257496
             },
             {
-              "reply": 2.5350031909911195,
-              "relearned": 2.5350049720000243
+              "reply": 2.7303804169932846,
+              "relearned": 2.7303823920083232
             },
             {
-              "reply": 2.5474365709960693,
-              "relearned": 2.547438908004551
+              "reply": 2.746262314991327,
+              "relearned": 2.746264543005964
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.0109013750043232,
-          "median_relearned": 2.6240118489949964,
+          "median_reply": 0.008103830012260005,
+          "median_relearned": 2.7902781709854025,
           "repetitions": [
             {
-              "reply": 0.0109013750043232,
-              "relearned": 2.6240118489949964
+              "reply": 0.007262600993271917,
+              "relearned": 2.7902781709854025
             },
             {
-              "reply": 0.015439005990629084,
-              "relearned": 2.59948000399163
+              "reply": 0.008103830012260005,
+              "relearned": 2.7934065370063763
             },
             {
-              "reply": 0.008300296001834795,
-              "relearned": 2.691686452002614
+              "reply": 0.009095279005123302,
+              "relearned": 2.775685672007967
             }
           ]
         }
@@ -417,38 +417,38 @@
       {
         "runs": 100,
         "without_option": {
-          "median_reply": 14.062034329996095,
-          "median_relearned": 14.062035595998168,
+          "median_reply": 13.414074577012798,
+          "median_relearned": 13.414076404005755,
           "repetitions": [
             {
-              "reply": 13.894709266998689,
-              "relearned": 13.894711872999324
+              "reply": 13.871671922010137,
+              "relearned": 13.871673223009566
             },
             {
-              "reply": 14.062034329996095,
-              "relearned": 14.062035595998168
+              "reply": 13.339337590005016,
+              "relearned": 13.339340081001865
             },
             {
-              "reply": 14.350264626991702,
-              "relearned": 14.350266181994812
+              "reply": 13.414074577012798,
+              "relearned": 13.414076404005755
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.008676115001435392,
-          "median_relearned": 14.056650964004803,
+          "median_reply": 0.00973348002298735,
+          "median_relearned": 13.092591590015218,
           "repetitions": [
             {
-              "reply": 0.008676115001435392,
-              "relearned": 14.356127709004795
+              "reply": 0.010889386001508683,
+              "relearned": 13.437353246001294
             },
             {
-              "reply": 0.01089170300110709,
-              "relearned": 13.932872121004038
+              "reply": 0.00973348002298735,
+              "relearned": 13.092591590015218
             },
             {
-              "reply": 0.008366025998839177,
-              "relearned": 14.056650964004803
+              "reply": 0.009692298015579581,
+              "relearned": 12.953681598999538
             }
           ]
         }
@@ -456,38 +456,38 @@
       {
         "runs": 200,
         "without_option": {
-          "median_reply": 28.127452461994835,
-          "median_relearned": 28.127455007008393,
+          "median_reply": 26.423760370002128,
+          "median_relearned": 26.42376180901192,
           "repetitions": [
             {
-              "reply": 30.458503595000366,
-              "relearned": 30.458505476010032
+              "reply": 25.870895275991643,
+              "relearned": 25.870897299988428
             },
             {
-              "reply": 28.127452461994835,
-              "relearned": 28.127455007008393
+              "reply": 26.423760370002128,
+              "relearned": 26.42376180901192
             },
             {
-              "reply": 27.696166880996316,
-              "relearned": 27.69616918799875
+              "reply": 26.52543441700982,
+              "relearned": 26.52543591998983
             }
           ]
         },
         "background_relearn": {
-          "median_reply": 0.009676417001173832,
-          "median_relearned": 28.354540412998176,
+          "median_reply": 0.009365126985358074,
+          "median_relearned": 26.01522924398887,
           "repetitions": [
             {
-              "reply": 0.011892844995600171,
-              "relearned": 28.354540412998176
+              "reply": 0.01300045900279656,
+              "relearned": 26.006856645981316
             },
             {
-              "reply": 0.007750434000627138,
-              "relearned": 28.667802418000065
+              "reply": 0.008816663001198322,
+              "relearned": 26.0562512690085
             },
             {
-              "reply": 0.009676417001173832,
-              "relearned": 27.620265176010435
+              "reply": 0.009365126985358074,
+              "relearned": 26.01522924398887
             }
           ]
         }

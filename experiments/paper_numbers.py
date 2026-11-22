@@ -61,7 +61,7 @@ PAPER_VERSION_TWO_DATE = "November 2026"
 # 1.4 development code frozen by protocol-v3c.lock, whose skill text 1.4.0 ships unchanged
 # (tests/test_v3c_skill_text.py); until the 1.4.0 archive has its DOI the software DOI names 1.3.1 (to update at
 # release, with the version). Version 2 came with 1.0.0 (10.5281/zenodo.24190053).
-PAPER_SOFTWARE_VERSION = "1.3.1"
+PAPER_SOFTWARE_VERSION = "1.4.0"
 PAPER_SOFTWARE_DOI = "10.5281/zenodo.24406362"     # the archive of that release
 PAPER_VERSION_THREE_DATE = "November 2026"
 # Version 3's own DOI exists only once the author creates the new version on Zenodo: until then the status line

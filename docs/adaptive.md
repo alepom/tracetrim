@@ -249,14 +249,19 @@ Before the change the saving on this tool was 61%.
   - the size of a late `expand` reply (on a result of a run already closed) is added to the savings by a write of
     its own: a stop or a disk error at that moment can leave that reply out of the savings, or count it twice;
   - after a read error of `savings.json` at a closing, the run's savings wait for the next save, and are lost if
-    the process ends first; a read error of the savings during a relearning leaves the report without them until
-    the next one;
-  - a disk error on `evidence/` after the evidence is written loses that run's log of requests: the report's check
-    of the answer then treats the run as not trimmed;
-  - with `--background-relearn`, a relearning that fails keeps the policy in place until the next closing, with a
-    warning (after `promotions --revert`, the field reverted is served until then);
+    the process ends first; a read error of `savings.json` during a relearning fails that relearning, which stays
+    owed;
+  - with `--background-relearn`, or after a closing by inactivity (where no one retries), a relearning that fails
+    keeps the policy in place until the next closing, with a warning (after `promotions --revert`, the field
+    reverted is served until then); a restart relearns at once;
   - where no one retries a closing (at shutdown, or when the pause closes a run), three disk errors in a row keep
-    the run without its evidence, as until 1.3;
+    the run without its evidence, as until 1.3, when the evidence is what fails; when the lock, the scan of the
+    traces or the journal fails, the run stays open (at shutdown it is lost). A run kept without its evidence has
+    no log of requests in `evidence/`: the report's check of the answer treats it as not trimmed;
+  - a closing by inactivity recorded at its first try, with a secondary write failing (the savings, say), is
+    right on disk, but the proxy's log can miss its line and add its calls to the next run's count;
+  - a refused closing (an empty answer) whose state cannot be written counts twice in `refused_closings` if the
+    agent repeats it;
   - after a read error, `tracetrim promotions` can say that a change is not applied yet when it is: the next
     relearning applies it either way.
 - A work directory of 1.4 stopped with a journal still pending (a relearning's or a late `expand`'s) does not open

@@ -135,7 +135,7 @@ tt.done(final_answer)
 
 `tt.output` records the call and returns what the model should receive: the whole result during the
 first runs (as compact JSON), the trimmed one after. If `tt.done` raises (a disk error), call it again
-with the same answer before the next call: the run is still open. `tt.done` closes the run, updates the report
+with the same answer before the next call: the run is still open, or its report is still owed. `tt.done` closes the run, updates the report
 (`tt.report`, `tracetrim-data/report.html`) and, once `min_runs` runs exist, starts trimming; what
 was learned survives restarts. The rules are those of the proxy's automatic mode. Arguments can be
 a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a description and a JSON
@@ -187,9 +187,9 @@ Whichever way it is connected:
   matter, record them (`AutoTrim` takes `turn`, JSONL traces accept a `"turn"` field).
 
 **Closing without waiting** (1.4, off by default): relearning takes longer as runs accumulate (about 5 s on
-the billing traces and 14 s on the CI traces at 100 runs), and by default the reply to `tracetrim_done` waits
-for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded, and relearns
-in a thread, never on its event loop. Only that reply is earlier: a request that arrives while the relearning
+the billing traces and 13 s on the CI traces at 100 runs), and by default the reply to `tracetrim_done` waits
+for it. With `--background-relearn` the proxy replies `Recorded.` as soon as the run is recorded (under 0.02 s at 20, 100
+and 200 runs), and relearns in a thread, never on its event loop. Only that reply is earlier: a request that arrives while the relearning
 runs (a tool call, an `expand`, another closing, a tool listing) waits for it and is served with the new
 policy, and a call already on its way to the upstream server is recorded before the relearning reads the runs.
 With one agent at a time, whose requests follow one another, the model receives, and the proxy learns from,
@@ -206,8 +206,9 @@ Since 1.4, in every mode, a closing writes its files through a journal: a proces
 all of them or none, and the next start relearns what no report covers yet. A closing that meets a disk error
 before its journal (the evidence, the lock, the scan of the traces, the journal itself) fails as a whole, and the
 run stays open for the retry (`AutoTrim.done` again, or the agent's `tracetrim_done`). Where no one retries, at
-shutdown and when the pause closes a run without `tracetrim_done`, the closing is tried again at once and then kept
-without its evidence, as until 1.3: the run is never lost, and never left open for the next task to join. Two
+shutdown and when the pause closes a run without `tracetrim_done`, the closing is tried again at once and, if the
+evidence still cannot be read, kept without it, as until 1.3: with one or two disk errors the run is never lost, and
+never left open for the next task to join. Two
 consequences: the work
 directory needs file locks (`flock` and POSIX `lockf`; on a file system without them neither the proxy nor
 `AutoTrim` starts, and they say so), and a trace the disk cannot read (an I/O or permission error) stops the relearning with that
@@ -387,8 +388,8 @@ removed and the *misses* (held-out calls in which a field the agent used would h
 
 ## The study behind it
 
-tracetrim comes with a [study](https://doi.org/10.5281/zenodo.24189959), with protocols frozen before every run, of
-where this works and where it fails. In short:
+tracetrim comes with a [study](https://doi.org/{PAPER_DOI}), with protocols frozen before every run, of
+where this works, where it fails, and what it does to the quality of the answers. In short:
 
 | | |
 |---|---|
@@ -398,10 +399,12 @@ where this works and where it fails. In short:
 | Live runs with `expand`: billed input tokens | −56% (real API) and −32% (simulated); every run passed its gates; a later re-check found one unsupported volume among 180 reported keyword–volume pairs |
 | Learning from tool calls only (what a gateway sees) | a used field missed in 49% of the held-out structured calls it trims (156/317, 3 agents on real APIs), against 4% with the answer |
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
+| Answer quality on held-out tasks, judged blind (1.3.1, two simulated agents) | ordinary tasks: no loss (+0.05 on a 0–4 scale, 95% interval −0.01 to +0.13, at a ceiling); a stress test built around the removed fields: 83.75% of those facts reported, against 100% with complete outputs |
+| The fix, skill version 2 (the default from 1.4) | hidden facts reported: 85.1% → 92.3% (+0.072, 95% interval +0.003 to +0.144), at no extra cost |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
-automatic mode. Read the [paper](https://doi.org/10.5281/zenodo.24189959) before trimming anything that
-matters. Measures made after the paper, on the functions of 0.4 and later, are in
+automatic mode; 1.4 makes skill version 2 the default. Read the [paper](https://doi.org/{PAPER_DOI}) before
+trimming anything that matters. Measures made after the paper, on the functions of 0.4 and later, are in
 [docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md),
 [docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md) and, for 1.1,
 [docs/measures-v1.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v1.md).
@@ -426,7 +429,9 @@ matters. Measures made after the paper, on the functions of 0.4 and later, are i
 generated from their public OpenAPI descriptions), the gates and thermometers, and every
 analysis. `protocol.md` is the frozen protocol with all deviations. Every number of the paper is
 generated by `python -m experiments.paper_numbers` from `results/`, and every chart by
-`python -m experiments.paper_figures` from `results/` and the traces. Run them from the repository root
+`python -m experiments.paper_figures` from `results/` and the traces. Study 4 adds its frozen protocols with their
+locks (`protocol-v3.md`, `protocol-v3b.md`, `protocol-v3c.md`), its synthetic worlds, prompts and rubric
+(`experiments/v3/`, `experiments/v3b/`, `experiments/v3c/`) and its aggregate results (`results/v3*`). Run them from the repository root
 with `PYTHONPATH=src`. The traces are in the Zenodo dataset: unzip it at the root, and the scripts read
 `dataset/traces/` (C3, C4 and C5; C1 and C2 are released as derived records only, since the search
 data cannot be redistributed, so their analyses run where they were recorded and their results are in
@@ -435,10 +440,10 @@ servers download their pinned OpenAPI descriptions on first use.
 
 ## Citation
 
-Paper: Alessio Pomaro, *Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces,
-and When They Pay Off*, preprint, version 2, 2026. DOI [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959) (version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934)).
+Paper: Alessio Pomaro, *Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces
+with tracetrim, from Cost to Answer Quality*, preprint, version 3, 2026. DOI [{PAPER_DOI}](https://doi.org/{PAPER_DOI}) (version 2: [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959); version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934); all versions: [10.5281/zenodo.23953933](https://doi.org/10.5281/zenodo.23953933)).
 
-Software, protocols and dataset: DOI [10.5281/zenodo.24406362](https://doi.org/10.5281/zenodo.24406362) (version 1.3.1; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
+Software, protocols and dataset: DOI [{SOFTWARE_DOI}](https://doi.org/{SOFTWARE_DOI}) (version 1.4.0; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
 See `CITATION.cff`.
 
 ## License

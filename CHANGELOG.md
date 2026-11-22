@@ -40,7 +40,8 @@ on Zenodo with the paper, version 3: DOI {SOFTWARE_DOI}.
   that meets a disk error before its journal (the evidence, the lock, the scan of the traces, the journal itself)
   fails as a whole and stays open for the retry: `AutoTrim.done` tries it again at once, and if it still raises,
   call it again with the same answer; the agent retries `tracetrim_done`. Where no one retries, at shutdown and
-  when the pause closes a run, the closing is tried again and then kept without its evidence, as until 1.3.
+  when the pause closes a run, the closing is tried again at once and, if the evidence still cannot be read, kept
+  without it, as until 1.3.
 - A trace the disk cannot read (an I/O or permission error) stops the relearning with that error, to be tried
   again at the next closing; until 1.3 it was set aside as corrupt. A trace whose content is not valid is still
   set aside.
@@ -57,8 +58,8 @@ on Zenodo with the paper, version 3: DOI {SOFTWARE_DOI}.
   A request that arrives meanwhile (a tool call, an `expand`, another closing, a tool listing) waits for it and is
   served with the new policy; a call already on its way to the upstream is recorded first. With one agent at a
   time, what the model receives and what the proxy learns are those of the mode without the option, file for
-  file. Through the proxy, the reply took {REPLY_WITH} at 20, 100 and 200 runs, against {REPLY_WITHOUT} without
-  the option (`experiments/closing_cost.py --reply`, `results/v1/closing_reply.json`).
+  file. Through the proxy, on the public traces, the reply took under 0.02 s at 20, 100 and 200 runs (median of
+  three), against up to 26 s without the option (`experiments/closing_cost.py --reply`, `results/v1/closing_reply.json`).
 - **`tracetrim compare ... --html FILE`**: the comparison as one offline page in the five languages of the report,
   with the same numbers as `--json`, which gains `warning_details`. The page never replaces an input trace.
 
@@ -75,8 +76,8 @@ on Zenodo with the paper, version 3: DOI {SOFTWARE_DOI}.
   when the command is repeated.
 - A retry of `tracetrim_done` after a failure is confirmed only once the report and the policy cover its run; a
   closing whose request is cancelled keeps the next one waiting until its relearning ends; a closing by
-  inactivity never fails the call that follows, and a disk error never leaves its run open for the next task to
-  join; a run open at shutdown is kept even if the relearning fails.
+  inactivity never fails the call that follows, and a single disk error never leaves its run open for the next
+  task to join; a run open at shutdown is kept even if the relearning fails.
 - An engine stops trimming when the relearned config no longer trims.
 - Files of the work directory are read, not checked first: on Python 3.14 a single disk error made them look
   missing. A read error of the saved policy at start, or of `savings.json`, is raised instead of starting again
