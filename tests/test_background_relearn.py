@@ -2606,21 +2606,35 @@ def test_a_read_error_of_the_savings_never_writes_their_history_over(tmp_path, m
 
 # -- REVISIONE-14b-decies (independent review) -------------------------------------------------------------------
 
-def test_a_read_error_of_the_evidence_fails_the_closing_and_keeps_its_notes(tmp_path, monkeypatch):
+@pytest.mark.parametrize("errors", [1, 2])
+def test_a_read_error_of_the_evidence_fails_the_closing_and_keeps_its_notes(tmp_path, monkeypatch, errors):
     """REVISIONE-14b-decies (also in 1.3.1): one read of evidence.json failed during a closing; the run was recorded
-    without its evidence, and the request for note_1 of that run was lost for good. The closing now fails as a whole,
-    the run stays open with its notes, and the retry records them."""
+    without its evidence, and the request for note_1 of that run was lost for good. The closing now fails as a whole
+    and the run stays open with its notes. `AutoTrim.done` tries once more at once (REVISIONE-14b-duodecies, limit 1);
+    if that fails too, it raises, and the caller's retry records them."""
+    import errno
     tt = promoting_autotrim(tmp_path)
     for _ in range(2):
         tt.output("volumes", {}, json.dumps(PAYLOAD))
         tt.done(ANSWER)
     out = tt.output("volumes", {}, json.dumps(PAYLOAD))
     tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_1"]})
-    read_fails_once(monkeypatch, "evidence.json")["on"] = True
-    with pytest.raises(OSError):
-        tt.done(ANSWER)
-    assert tt.learner.events                              # still open
-    tt.done(ANSWER)                                       # the retry
+    read, left = Path.read_text, {"n": errors}
+
+    def failing(self, *a, **kw):
+        if left["n"] and self.name == "evidence.json":
+            left["n"] -= 1
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(Path, "read_text", failing)
+    if errors == 2:
+        with pytest.raises(OSError):
+            tt.done(ANSWER)
+        assert tt.learner.events                          # still open
+        tt.done(ANSWER)                                   # the retry
+    else:
+        tt.done(ANSWER)                                   # tried again within done
+        assert not tt.learner.events
     fields = json.loads((tmp_path / "evidence.json").read_text())["tools"]["volumes"]["fields"]
     assert "run-0003" in fields["items[].note_1"]["requested"]
     assert (tmp_path / "evidence" / "run-0003.jsonl").exists()
@@ -2751,11 +2765,12 @@ def test_a_disk_error_during_a_closing_never_starts_a_file_again_on_python_3_14(
     tt.done(ANSWER)
     promos = json.loads((work / "evidence.json").read_text())["promotions"]
     assert [(p["field"], p["status"]) for p in promos] == [("items[].note_0", "active")]
-    # Every run in the savings: the evidence error left run 7 open (closed by the next done), the savings error
-    # recorded it and kept its counts for the next save.
+    # Every run in the savings: the evidence error failed the closing of run 7 before its journal, and `AutoTrim.done`
+    # tried it again at once (REVISIONE-14b-duodecies); the savings error recorded it and kept its counts for the next
+    # save. Two runs either way.
     total = json.loads((work / "state.json").read_text())["runs"]
     runs = json.loads((work / "savings.json").read_text())["runs"]
-    assert total == (7 if name == "evidence.json" else 8) and set(runs) == {f"run-{i:04d}" for i in range(1, total + 1)}
+    assert total == 8 and set(runs) == {f"run-{i:04d}" for i in range(1, total + 1)}
 
 
 def test_a_disk_error_on_the_state_at_start_never_resets_it_on_python_3_14(tmp_path, monkeypatch):
@@ -2898,3 +2913,162 @@ def test_the_command_says_applied_when_its_relearning_also_promotes(tmp_path, mo
     assert "do not show it yet" not in out and "could not be rewritten" not in out
     assert json.loads((tmp_path / "report.config.json").read_text())["auto"]["promoted"] == \
         {"volumes": ["items[].note_1"]}
+
+
+# -- REVISIONE-14b-duodecies (independent review) ----------------------------------------------------------------
+
+def fault_once(monkeypatch, fault):
+    """Armed, the next read of evidence.json, or the next write of a closing's journal, fails with EIO once."""
+    import errno
+    from tracetrim import store
+    if fault == "evidence.json":
+        return read_fails_once(monkeypatch, "evidence.json")
+    write_json, armed = store.write_json, {"on": False}
+
+    def failing(path, data):
+        if armed["on"] and Path(path).name == store.JOURNAL:
+            armed["on"] = False
+            raise OSError(errno.EIO, "simulated")
+        return write_json(path, data)
+    monkeypatch.setattr(store, "write_json", failing)
+    return armed
+
+
+def requested_in(work, field="items[].note_1"):
+    from tracetrim import evidence
+    fields = evidence.load(work / "evidence.json")["tools"].get("volumes", {}).get("fields", {})
+    return sorted(fields.get(field, {}).get("requested", []))
+
+
+@pytest.mark.parametrize("fault", ["evidence.json", "journal"])
+@pytest.mark.parametrize("on", [False, True])
+def test_a_failed_closing_by_inactivity_never_joins_two_tasks(tmp_path, monkeypatch, on, fault):
+    """REVISIONE-14b-duodecies: task A asked note_1 back and ended without tracetrim_done; after the pause, the first
+    call of task B closed A by inactivity, and one disk error failed that closing (the rule of decies: the run stays
+    open). The call was served in the open run: A and B became one run, note_1 counted in one run instead of two, and
+    its promotion never came. The closing is now retried, as at shutdown: two runs, note_1 promoted, C sees it."""
+    armed = fault_once(monkeypatch, fault)
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, idle_seconds=0.3, background_relearn=on, promote=True,
+                                                promote_runs=2))
+        async with Client(server) as client:
+            async def call():
+                out = (await client.call_tool("volumes", {})).content[0].text
+                if on:
+                    await settled(learner)
+                return out, re.search(r"call_id=(c[0-9a-f]{8})", out)
+
+            for _ in range(4):
+                await call()
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+                if on:
+                    await settled(learner)
+            _, m = await call()                                       # task A
+            await client.call_tool("expand", {"call_id": m.group(1), "fields": ["items[].note_1"]})
+            await asyncio.sleep(0.45)
+            armed["on"] = True
+            _, m = await call()                                       # task B: closes A first
+            assert not armed["on"]                                    # the fault was met
+            await client.call_tool("expand", {"call_id": m.group(1), "fields": ["items[].note_1"]})
+            await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            if on:
+                await settled(learner)
+            out, _ = await call()                                     # task C
+            assert "note_1" in visible(out)
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())
+    names = sorted(p.name for p in (tmp_path / "traces").glob("run-000[5-9]*"))
+    assert names == ["run-0005-noanswer.jsonl", "run-0006.jsonl"]
+    assert requested_in(tmp_path) == ["run-0005", "run-0006"]
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 6                         # the counts of the tool start again at the promotion
+
+
+def test_a_failed_sweep_of_an_isolated_session_never_joins_two_tasks(tmp_path, monkeypatch):
+    """REVISIONE-14b-duodecies, with isolated sessions: the sweep closes a session's idle run; one read error of the
+    evidence failed it, and the next call of that session joined the open run. It is now retried as well."""
+    servers, learners = capture_uvicorn(monkeypatch), capture_learners(monkeypatch)
+    armed = read_fails_once(monkeypatch, "evidence.json")
+    work = tmp_path / "work"
+
+    async def go():
+        task, url = await start_http(options(work, idle_seconds=0.25, isolate_sessions=True, promote=True,
+                                             promote_runs=2), servers)
+        async with Client(url, mode="legacy") as client:
+            for _ in range(4):
+                assert not (await client.call_tool("volumes", {})).is_error
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            out = (await client.call_tool("volumes", {})).content[0].text          # task A
+            cid = re.search(r"call_id=(c[0-9a-f]{8})", out).group(1)
+            await client.call_tool("expand", {"call_id": cid, "fields": ["items[].note_1"]})
+            armed["on"] = True
+            for _ in range(300):                                                    # the sweep closes A
+                if not armed["on"]:
+                    break
+                await asyncio.sleep(0.01)
+            assert not armed["on"]
+            out = (await client.call_tool("volumes", {})).content[0].text          # task B, within the pause
+            cid = re.search(r"call_id=(c[0-9a-f]{8})", out).group(1)
+            await client.call_tool("expand", {"call_id": cid, "fields": ["items[].note_1"]})
+            await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            out = (await client.call_tool("volumes", {})).content[0].text          # task C
+            assert "note_1" in visible(out)
+        await stop_http(task, servers)
+    asyncio.run(go())
+    names = sorted(p.name for p in (work / "traces").glob("run-000[5-6]*"))
+    assert names == ["run-0005-noanswer.jsonl", "run-0006.jsonl"]
+    assert requested_in(work) == ["run-0005", "run-0006"]
+
+
+def test_close_unattended_keeps_the_run_apart_after_two_failures(tmp_path, monkeypatch):
+    """Three read errors of the evidence (two closings that fail, then one kept without its evidence): the run is
+    kept apart, as until 1.3, never left open for the next task's calls, and the error is returned for the caller."""
+    import errno
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_1"]})
+    read, left = Path.read_text, {"n": 3}
+
+    def failing(self, *a, **kw):
+        if left["n"] and self.name == "evidence.json":
+            left["n"] -= 1
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(Path, "read_text", failing)
+    path, kept = tt.learner.close_unattended()
+    monkeypatch.undo()
+    assert path is None and isinstance(kept, OSError) and not tt.learner.events
+    assert (tmp_path / "traces" / "run-0003-noanswer.jsonl").exists()
+
+
+def test_a_failed_publication_at_shutdown_never_loses_the_open_run(tmp_path, monkeypatch):
+    """REVISIONE-14b-duodecies, limit 2: with the option, the shutdown finished a pending publication before the
+    closing and outside its retries; an error there escaped and the open run was lost. The closing publishes it
+    within its retries."""
+    import errno
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, background_relearn=True))
+        async with Client(server) as client:
+            await run(client)
+            await settled(learner)
+            assert not (await client.call_tool("volumes", {})).is_error          # an open run
+            original, left = learner.finish_pending, {"n": 1}
+
+            def failing():
+                if left["n"]:
+                    left["n"] -= 1
+                    raise OSError(errno.EIO, "simulated")
+                return original()
+            monkeypatch.setattr(learner, "finish_pending", failing)
+            await learner.background.drain()
+            await learner.background.flush()
+            await learner.background.drain()
+            assert left["n"] == 0 and not learner.events
+    asyncio.run(go())
+    assert (tmp_path / "traces" / "run-0002-noanswer.jsonl").exists()

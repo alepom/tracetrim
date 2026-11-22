@@ -426,7 +426,13 @@ class BackgroundLearning:
         """On shutdown, after `drain`: the open run (of `run`, an isolated session's) is kept for telemetry, as
         `Learner.flush` does, and relearned through this coordinator: in a thread, one relearning at a time."""
         learner = self.engine.learner
-        if learner.finish_pending():
+        try:
+            pending = learner.finish_pending()
+        except OSError:
+            # The closing below publishes it first, within its retries: an error here never loses the open run
+            # (REVISIONE-14b-duodecies, limit 2).
+            pending = False
+        if pending:
             await self.request()
         with learner.use_run(run) if run is not None else nullcontext():
             path = learner.flush(relearn=False)
@@ -569,7 +575,15 @@ def _server(o: Options):
             answered = bool(answer and answer.strip())
             recorded = False
             try:
-                path = engine.done(answer)
+                if answer is None:
+                    # A closing by inactivity (`close_idle`, the sweep of isolated sessions): no one tries it again,
+                    # and the next task's call is on its way. Retried, then kept without what failed, as at shutdown:
+                    # never left open for that call to join (REVISIONE-14b-duodecies: two tasks in one run).
+                    path, kept = learner.close_unattended()
+                    if kept is not None:
+                        raise kept
+                else:
+                    path = engine.done(answer)
             except Exception:
                 # Recorded, then a write failed (its publication, a secondary file): the error is the reply to a
                 # closing on disk, and the pause starts at it until a retry is confirmed (REVISIONE-14b-octies).
@@ -647,9 +661,11 @@ def _server(o: Options):
                 run.confirmed = confirmed
 
     async def close_idle(session=None):
-        """A closing by inactivity, before a call is served. Its failure is logged and the call is served, with the
-        policy in place: in the run just recorded if only its relearning failed (which stays owed), in the open run
-        if the closing itself could not be written (REVISIONE-14b-sexies: the call failed before the upstream)."""
+        """A closing by inactivity, before a call is served. The closing is retried, then kept without what failed
+        (`Learner.close_unattended`). A failure that remains is logged and the call is served with the policy in place
+        (REVISIONE-14b-sexies: the call failed before the upstream): in a new run when the closing was recorded (its
+        evidence missing, or its relearning failed and owed), in the open run only if even the trace could not be
+        written."""
         try:
             await close_run(None, session)
         except Exception as e:                   # noqa: BLE001

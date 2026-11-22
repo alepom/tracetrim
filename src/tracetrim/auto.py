@@ -784,30 +784,38 @@ class Learner:
         earlier = store.read_text(log) or ""           # a read error is raised: the earlier notes are never dropped
         store.write_atomic(log, earlier + "".join(json.dumps(n, ensure_ascii=False) + "\n" for n in notes))
 
+    def close_unattended(self) -> tuple[Path | None, OSError | None]:
+        """Close the open run without an answer, where no one will try the closing again: at shutdown (`flush`) and
+        when the pause closes a run (the proxy's closing by inactivity, the sweep of isolated sessions).
+
+        A closing that meets an I/O error is tried again, then kept without what failed (its evidence), as until 1.3:
+        never left open, where the calls of the next task would join it, and never lost with the tool's counts
+        (REVISIONE-14b-undecies for the shutdown, -duodecies for the pause). Returns the trace written (None: nothing
+        to close) and the error of a run recorded without what failed, for the caller to raise once it has relearned.
+        An error that leaves even that run unwritten is raised."""
+        before = self.run.last_number
+        try:
+            return self.done(None), None
+        except OSError:
+            pass
+        for keep in (False, True):
+            self._keep_without_evidence = keep
+            try:
+                return self.done(None), None
+            except OSError as e:
+                if self.run.last_number != before:
+                    return None, e               # recorded without what failed, as until 1.3
+                if keep:
+                    raise
+            finally:
+                self._keep_without_evidence = False
+        return None, None                        # not reached: the loop returns or raises
+
     def flush(self, relearn: bool = True) -> Path | None:
         """On shutdown: keep the calls of an unfinished run, for telemetry. `relearn=False`: the caller relearns
         (the proxy with `--background-relearn`, through its coordinator); the run is pending on disk until then.
-
-        There is no retry after a shutdown: a closing that meets an I/O error is tried once more, then kept without
-        what failed (its evidence), as until 1.3, rather than lost with the tool's counts (REVISIONE-14b-undecies)."""
-        before, kept = self.run.last_number, None
-        try:
-            path = self.done(None)
-        except OSError:
-            path = None
-            for keep in (False, True):
-                self._keep_without_evidence = keep
-                try:
-                    path = self.done(None)
-                    break
-                except OSError as e:
-                    if self.run.last_number != before:
-                        kept = e                 # recorded without what failed, as until 1.3: raised at the end
-                        break
-                    if keep:
-                        raise
-                finally:
-                    self._keep_without_evidence = False
+        There is no retry after a shutdown: the run is closed by `close_unattended`."""
+        path, kept = self.close_unattended()
         if path is None and kept is None:
             with self.lock:
                 # Nothing to close, but `expand` requests made since the last closing
@@ -1329,7 +1337,16 @@ class AutoTrim:
     def done(self, answer: str | None) -> None:
         """Close the run with the final answer: report updated, policy reloaded
         when ready. Calling it again before any new tool call does nothing, except
-        what a failure left to do. If it raises (a disk error), call it again with
-        the same answer before the next tool call: the run is still open, or its
-        relearning is still owed, and the retry finishes it."""
-        self.engine.close(answer)
+        what a failure left to do. A closing that meets a disk error before its
+        run is recorded is tried again at once. If it still raises, call it again
+        with the same answer before the next tool call: the run is still open, or
+        its relearning is still owed, and the retry finishes it."""
+        before = self.learner.run.last_number
+        try:
+            self.engine.close(answer)
+        except OSError:
+            if self.learner.run.last_number != before:
+                raise                    # recorded: what is left (a secondary write, the relearning) is the retry's
+            # Not recorded, the run still open: once more at once, so that a single disk error asks nothing of the
+            # program, which may be about to end (REVISIONE-14b-duodecies, limit 1).
+            self.engine.close(answer)

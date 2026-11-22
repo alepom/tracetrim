@@ -4,6 +4,91 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.4.0
+
+Answer quality, measured, and a skill text that acts on what was found. **What the model receives changes in one
+place: the text of the skill and of `expand` (version 2, below).** With the other default options it receives
+what it received in 1.3.1; the numbers, figures and results files of Studies 1–3 regenerate identical. Archived
+on Zenodo with the paper, version 3: DOI {SOFTWARE_DOI}.
+
+- **The paper, version 3** (*Agents Read More Than They Use: Learning Tool-Output Projections from Execution
+  Traces with tracetrim, from Cost to Answer Quality*, DOI {PAPER_DOI}) adds Study 4: answer quality on tasks
+  held out from development, judged blind under three frozen protocols, on synthetic worlds that are released.
+  On new ordinary tasks the prudent projection kept the quality of the answers (+0.05 on a 0–4 scale, 95%
+  interval [−0.01; +0.13], at a ceiling). A stress test, with tasks built to need exactly the fields it removes,
+  found the weak point: the agent reported 83.75% of those facts against 100% with complete outputs, and when a
+  free-text field it had not recovered held the fact, it mostly declared the fact absent.
+
+### Changed behaviour
+
+- **Skill version 2, the default.** The skill and the description of `expand` add one rule: before stating that
+  information is missing or unknown, check whether a hidden field could hold it, and expand it first. In Study 4,
+  Part C, it raised the hidden facts reported from 85.1% to 92.3% (+0.072, 95% interval [+0.003; +0.144]) at the
+  same cost (1.00 times on those tasks, 0.94 on ordinary ones). `proxy --skill-version 1`,
+  `tracetrim skill --skill-version 1` and `AutoTrim(skill_version="1")` restore the text of 1.3; a text is never
+  served under another version's number.
+- The pause after an answer (`answered_runs_followed_by_calls`) is measured from the reply to `tracetrim_done` to
+  the arrival of the next call, as the agent sees it; a call received before the reply is not counted. Until 1.3
+  it ran from the closing to the call's result, which counted the relearning the agent waited for.
+- A report reads one moment of the work directory (the runs it lists, with their savings, counters and evidence):
+  what is recorded while it is computed is in the next one.
+- `tracetrim promotions --revert/--restore` on a work directory that a running proxy or `AutoTrim` holds saves the
+  change and leaves the relearning to that process, at its next closing; with no process on it, it relearns at
+  once, as before. It waits for another command on the same directory.
+- `Learner.done` no longer relearns: `Engine.close`, `AutoTrim.done` and the proxy do.
+- A closing writes its files through a journal in every mode (until 1.3 only with `--isolate-sessions`). A closing
+  that meets a disk error before its journal (the evidence, the lock, the scan of the traces, the journal itself)
+  fails as a whole and stays open for the retry: `AutoTrim.done` tries it again at once, and if it still raises,
+  call it again with the same answer; the agent retries `tracetrim_done`. Where no one retries, at shutdown and
+  when the pause closes a run, the closing is tried again and then kept without its evidence, as until 1.3.
+- A trace the disk cannot read (an I/O or permission error) stops the relearning with that error, to be tried
+  again at the next closing; until 1.3 it was set aside as corrupt. A trace whose content is not valid is still
+  set aside.
+- The work directory takes file locks (`flock` and POSIX `lockf`; `msvcrt` on Windows): on a file system without
+  them, neither the proxy nor `AutoTrim` starts, and they say so.
+- `AutoTrim.offered` raises on an error reading `tools.json`, instead of treating it as empty.
+- A work directory of 1.4 stopped with a journal still pending does not open with 1.3.1: open it once with 1.4
+  before going back.
+
+### Added
+
+- **`proxy --background-relearn`** (`--auto`, off by default): the reply to `tracetrim_done` no longer waits for
+  relearning. The proxy records the run, replies `Recorded.`, and relearns in a thread, never on its event loop.
+  A request that arrives meanwhile (a tool call, an `expand`, another closing, a tool listing) waits for it and is
+  served with the new policy; a call already on its way to the upstream is recorded first. With one agent at a
+  time, what the model receives and what the proxy learns are those of the mode without the option, file for
+  file. Through the proxy, the reply took {REPLY_WITH} at 20, 100 and 200 runs, against {REPLY_WITHOUT} without
+  the option (`experiments/closing_cost.py --reply`, `results/v1/closing_reply.json`).
+- **`tracetrim compare ... --html FILE`**: the comparison as one offline page in the five languages of the report,
+  with the same numbers as `--json`, which gains `warning_details`. The page never replaces an input trace.
+
+### Fixed
+
+- **A stopped process or a single disk error no longer loses or mixes up learning.** A process stopped at any
+  point of a closing leaves all of its files or none, and the next start relearns what no report covers yet; a
+  relearning's decisions and a late `expand` are written through the journal as well, once and in full; a write
+  after an interrupted publication finishes it first and never writes over the evidence it brings back. A trace
+  written by 1.3 before its state is taken into the state, once.
+- **`tracetrim promotions` and a running proxy no longer write over each other's evidence**: every change to
+  `evidence.json` is made under a lock that both take. A change saved by an interrupted command, or left by
+  `tracetrim promotions` of 1.3 and not yet in the config, is applied at the next start, by the next relearning or
+  when the command is repeated.
+- A retry of `tracetrim_done` after a failure is confirmed only once the report and the policy cover its run; a
+  closing whose request is cancelled keeps the next one waiting until its relearning ends; a closing by
+  inactivity never fails the call that follows, and a disk error never leaves its run open for the next task to
+  join; a run open at shutdown is kept even if the relearning fails.
+- An engine stops trimming when the relearned config no longer trims.
+- Files of the work directory are read, not checked first: on Python 3.14 a single disk error made them look
+  missing. A read error of the saved policy at start, or of `savings.json`, is raised instead of starting again
+  from nothing; a failed scan of the traces never passes for an empty directory.
+- Trace records end at a newline only (an answer holding U+2028 was set aside); a trace without its answer, or with
+  a line that is not an event, is not counted as a complete run.
+- The projection file is written atomically, like the other products of the report.
+
+Developed by the main session (Claude Code) and reviewed in repeated rounds by Astra (Codex, GPT-6.2 Astra) and
+by independent reviewer agents. Every blocking problem they raised was fixed with a regression test; the limits
+that remain are in `docs/adaptive.md`. Tested on Python 3.13 and on a real Python 3.14.
+
 ## 1.3.1
 
 Faster closings. **Nothing changes in what the model receives, in the report, in the configs or in when a new

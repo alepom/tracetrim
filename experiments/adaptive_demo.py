@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import re
 import sys
 import tempfile
@@ -88,7 +89,10 @@ class Mcp:
         if adaptive.sample_rate:
             flags += ["--sample-rate", str(adaptive.sample_rate), "--sample-seed", str(adaptive.sample_seed),
                       "--sample-max-share", str(adaptive.sample_max_share)]
-        self.params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), args=[
+        # The proxy runs the code of this checkout: the stdio client passes on only a few variables, so without
+        # PYTHONPATH the child would import whichever tracetrim the interpreter has installed, or none.
+        env = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
+        self.params = StdioServerParameters(command=sys.executable, cwd=str(ROOT), env=env, args=[
             "-m", "tracetrim.cli", "proxy", "--upstream-cmd", upstream,
             "--auto", str(work), "--min-runs", str(MIN_RUNS), "--quiet", "--no-compact", *flags])
 

@@ -134,7 +134,8 @@ tt.done(final_answer)
 ```
 
 `tt.output` records the call and returns what the model should receive: the whole result during the
-first runs (as compact JSON), the trimmed one after. `tt.done` closes the run, updates the report
+first runs (as compact JSON), the trimmed one after. If `tt.done` raises (a disk error), call it again
+with the same answer before the next call: the run is still open. `tt.done` closes the run, updates the report
 (`tt.report`, `tracetrim-data/report.html`) and, once `min_runs` runs exist, starts trimming; what
 was learned survives restarts. The rules are those of the proxy's automatic mode. Arguments can be
 a dict or the JSON string most SDKs hand you; `tt.expand_tool` is a name, a description and a JSON
@@ -202,10 +203,12 @@ call it sent keeps the relearning waiting until the upstream server answers that
 ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
 
 Since 1.4, in every mode, a closing writes its files through a journal: a process stopped at any point leaves
-all of them or none, and the next start relearns what no report covers yet. A closing whose evidence the disk
-fails to read fails as a whole, and the run stays open for the retry (`AutoTrim.done` again, or the agent's
-`tracetrim_done`); at shutdown, where there is no retry, it is tried once more and then kept without its
-evidence, as until 1.3. Two consequences: the work
+all of them or none, and the next start relearns what no report covers yet. A closing that meets a disk error
+before its journal (the evidence, the lock, the scan of the traces, the journal itself) fails as a whole, and the
+run stays open for the retry (`AutoTrim.done` again, or the agent's `tracetrim_done`). Where no one retries, at
+shutdown and when the pause closes a run without `tracetrim_done`, the closing is tried again at once and then kept
+without its evidence, as until 1.3: the run is never lost, and never left open for the next task to join. Two
+consequences: the work
 directory needs file locks (`flock` and POSIX `lockf`; on a file system without them neither the proxy nor
 `AutoTrim` starts, and they say so), and a trace the disk cannot read (an I/O or permission error) stops the relearning with that
 error, to be tried again at the next closing; until 1.3 it was set aside as corrupt. A trace whose content is

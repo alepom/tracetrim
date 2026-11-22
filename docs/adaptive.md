@@ -242,3 +242,22 @@ Before the change the saving on this tool was 61%.
 - One run at a time per proxy or `AutoTrim`.
 - An `expand` on a result of an earlier run is recorded as requested and recovered; reuse is not
   looked for.
+- **The work directory, with disk errors** (1.4). Closings, relearnings, late `expand` requests and
+  `tracetrim promotions` go through journals and locks: a stop or a single disk error at any point leaves the runs,
+  the evidence, the counters and the configuration consistent. What can still be lost or delayed is a measure, or
+  needs more than one fault:
+  - the size of a late `expand` reply (on a result of a run already closed) is added to the savings by a write of
+    its own: a stop or a disk error at that moment can leave that reply out of the savings, or count it twice;
+  - after a read error of `savings.json` at a closing, the run's savings wait for the next save, and are lost if
+    the process ends first; a read error of the savings during a relearning leaves the report without them until
+    the next one;
+  - a disk error on `evidence/` after the evidence is written loses that run's log of requests: the report's check
+    of the answer then treats the run as not trimmed;
+  - with `--background-relearn`, a relearning that fails keeps the policy in place until the next closing, with a
+    warning (after `promotions --revert`, the field reverted is served until then);
+  - where no one retries a closing (at shutdown, or when the pause closes a run), three disk errors in a row keep
+    the run without its evidence, as until 1.3;
+  - after a read error, `tracetrim promotions` can say that a change is not applied yet when it is: the next
+    relearning applies it either way.
+- A work directory of 1.4 stopped with a journal still pending (a relearning's or a late `expand`'s) does not open
+  with 1.3.1; open it once with 1.4 before going back.
