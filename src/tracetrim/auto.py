@@ -208,6 +208,9 @@ class Learner:
             weakref.finalize(self, give_back)
         self.durable_closes = durable_closes
         self.pending_close = False
+        # At shutdown, after a retry that failed too: an I/O error on the evidence no longer fails the closing, and the
+        # run is kept without what failed, as until 1.3 (`flush`).
+        self._keep_without_evidence = False
         # Relearnings owed: every run recorded, and every publication finished after an interruption, calls for one,
         # and `relearn_owed` stays true until a relearning that read them has ended without error. An integration
         # asks before confirming a closing, so that a retry after a failure, or after a publication that another
@@ -227,6 +230,7 @@ class Learner:
             recovered = store.recover_close(self.dir)
             store.clean(self.dir)
             store.clean(self.dir / "traces")
+            store.clean(self.dir / "evidence")
             marked = pending_mark(self.dir)
             try:
                 behind_config = config_disagrees(self.dir, evidence.load(self.dir / "evidence.json"))
@@ -728,7 +732,7 @@ class Learner:
         try:
             self._absorb(run, events, notes, answer if complete else None)
         except OSError as e:
-            if self.durable_closes:
+            if self.durable_closes and not self._keep_without_evidence:
                 # Before the journal nothing is written: the closing fails, the run stays open with its notes, and
                 # the retry writes them (REVISIONE-14b-decies: recorded without them, they were lost for good).
                 raise
@@ -782,9 +786,29 @@ class Learner:
 
     def flush(self, relearn: bool = True) -> Path | None:
         """On shutdown: keep the calls of an unfinished run, for telemetry. `relearn=False`: the caller relearns
-        (the proxy with `--background-relearn`, through its coordinator); the run is pending on disk until then."""
-        path = self.done(None)
-        if path is None:
+        (the proxy with `--background-relearn`, through its coordinator); the run is pending on disk until then.
+
+        There is no retry after a shutdown: a closing that meets an I/O error is tried once more, then kept without
+        what failed (its evidence), as until 1.3, rather than lost with the tool's counts (REVISIONE-14b-undecies)."""
+        before, kept = self.run.last_number, None
+        try:
+            path = self.done(None)
+        except OSError:
+            path = None
+            for keep in (False, True):
+                self._keep_without_evidence = keep
+                try:
+                    path = self.done(None)
+                    break
+                except OSError as e:
+                    if self.run.last_number != before:
+                        kept = e                 # recorded without what failed, as until 1.3: raised at the end
+                        break
+                    if keep:
+                        raise
+                finally:
+                    self._keep_without_evidence = False
+        if path is None and kept is None:
             with self.lock:
                 # Nothing to close, but `expand` requests made since the last closing
                 # are only in memory (until 0.3.5 they were lost here). They are about
@@ -794,6 +818,8 @@ class Learner:
                 self.run.notes = []
         if relearn and (path is not None or self.relearn_owed):
             self.relearn()
+        if kept is not None:
+            raise kept
         return path
 
     # -- learning ---------------------------------------------------------
@@ -1302,5 +1328,8 @@ class AutoTrim:
 
     def done(self, answer: str | None) -> None:
         """Close the run with the final answer: report updated, policy reloaded
-        when ready. Calling it again before any new tool call does nothing."""
+        when ready. Calling it again before any new tool call does nothing, except
+        what a failure left to do. If it raises (a disk error), call it again with
+        the same answer before the next tool call: the run is still open, or its
+        relearning is still owed, and the retry finishes it."""
         self.engine.close(answer)

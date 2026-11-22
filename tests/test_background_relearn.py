@@ -2825,3 +2825,76 @@ def test_a_read_error_of_the_saved_policy_at_start_is_raised(tmp_path, monkeypat
     tt = promoting_autotrim(work)
     out = tt.output("volumes", {}, json.dumps(PAYLOAD))
     assert "call_id=" in out and "note_0" not in visible(out)
+
+
+# -- REVISIONE-14b-undecies (independent review) -----------------------------------------------------------------
+
+@pytest.mark.parametrize("errors", [1, 3], ids=["one read error", "the retry fails too"])
+def test_a_run_open_at_shutdown_survives_a_read_error_of_the_evidence(tmp_path, monkeypatch, errors):
+    """REVISIONE-14b-undecies: at shutdown the open run is closed by `flush`; one read error of evidence.json failed
+    the closing (the rule of decies), and with no retry after a shutdown the run was lost with the tool's counts.
+    `flush` now tries once more, then keeps the run without its evidence, as until 1.3."""
+    import errno
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_1"]})
+    read, left = Path.read_text, {"n": errors}
+
+    def failing(self, *a, **kw):
+        if left["n"] and self.name == "evidence.json":
+            left["n"] -= 1
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(Path, "read_text", failing)
+    if errors == 1:
+        tt.learner.flush()
+    else:
+        with pytest.raises(OSError):
+            tt.learner.flush()                            # kept, and the failure said
+    monkeypatch.undo()
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["runs"] == 3 and (tmp_path / "traces" / "run-0003-noanswer.jsonl").exists()
+    assert state["trimmed"] == {"volumes": 1} and state["expanded"] == {"volumes": 1}
+    from tracetrim import evidence
+    fields = evidence.load(tmp_path / "evidence.json")["tools"].get("volumes", {}).get("fields", {})
+    assert ("run-0003" in fields.get("items[].note_1", {}).get("requested", [])) is (errors == 1)
+
+
+def test_the_command_says_applied_when_its_relearning_also_promotes(tmp_path, monkeypatch, capsys):
+    """REVISIONE-14b-undecies: the relearning of `tracetrim promotions` also promoted note_1, owed since the last one
+    failed; the command compared the config with the evidence of before that commit, and said the revert of note_0
+    was not shown yet, while it was."""
+    import gc
+    from tracetrim.cli import main
+    tt = promoting_autotrim(tmp_path)
+    relearn, broken = auto.Learner._relearn, {"on": False}
+
+    def failing(self):
+        if broken["on"]:
+            raise RuntimeError("simulated")
+        return relearn(self)
+    monkeypatch.setattr(auto.Learner, "_relearn", failing)
+    for i in range(1, 7):
+        out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+        m = re.search(r"call_id=(c[0-9a-f]{8})", out)
+        if m and i >= 3:
+            tt.expand({"call_id": m.group(1), "fields": ["items[].note_0" if i < 5 else "items[].note_1"]})
+        broken["on"] = i == 6                             # the relearning that would promote note_1 fails
+        try:
+            tt.done(ANSWER)
+        except RuntimeError:
+            assert i == 6
+    monkeypatch.undo()
+    assert json.loads((tmp_path / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_0"]}
+    del tt
+    gc.collect()
+    capsys.readouterr()
+    main(["promotions", str(tmp_path), "--revert", "volumes", "items[].note_0"])
+    out = capsys.readouterr().out
+    assert "do not show it yet" not in out and "could not be rewritten" not in out
+    assert json.loads((tmp_path / "report.config.json").read_text())["auto"]["promoted"] == \
+        {"volumes": ["items[].note_1"]}

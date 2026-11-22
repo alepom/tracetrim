@@ -318,9 +318,11 @@ def cmd_promotions(a):
                             compact=config.get("compact", True) is not False,
                             keep_positions=config.get("keep_positions", True) is not False,
                             relearn_at_start=False).relearn()
-                    # Applied only if the config now says what the evidence says and no mark waits: with no readable
-                    # run the relearning writes no config (REVISIONE-14b-decies: the command said it applied it).
-                    applied = not store.present(mark) and not config_disagrees(work, data)
+                    # Applied only if the config now says what the evidence on disk says (after the relearning's own
+                    # promotions) and no mark waits: with no readable run the relearning writes no config
+                    # (REVISIONE-14b-decies: the command said it applied it; REVISIONE-14b-undecies: compared with
+                    # the evidence of before the commit, a new promotion made it say the opposite).
+                    applied = not store.present(mark) and not config_disagrees(work, evidence.load(path))
     for p in data["promotions"]:
         flag = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"
@@ -330,8 +332,8 @@ def cmd_promotions(a):
     elif (a.revert is not None or a.restore) and not changed:
         print("nothing changed: no promotion matches")
     if applied is False:
-        print("the change is saved, but config and report could not be rewritten (no readable run): the next "
-              "relearning applies it")
+        print("the change is saved, but config and report do not show it yet (no readable run, or a file that could "
+              "not be read): the next relearning applies it")
     elif owed and not changed and not in_use:
         print("a change saved earlier was not applied yet: config and report now apply it")
     if in_use:
