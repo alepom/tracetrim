@@ -325,7 +325,10 @@ def cmd_promotions(a):
     elif (a.revert is not None or a.restore) and not changed:
         print("nothing changed: no promotion matches")
     if owed and not changed and not in_use:
-        print("a change saved earlier was not applied yet: config and report now apply it")
+        if mark.exists():                     # the relearning wrote no config (no readable trace): still waiting
+            print("a change saved earlier was not applied yet, and could not be applied now (no readable run)")
+        else:
+            print("a change saved earlier was not applied yet: config and report now apply it")
     if in_use:
         print("the work directory is in use (a proxy is running on it): the change is saved, and the proxy applies it "
               "at its next relearning")

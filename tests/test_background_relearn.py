@@ -2546,3 +2546,59 @@ def test_a_retry_after_a_failed_publication_moves_the_start_of_the_pause(tmp_pat
             if on:
                 await learner.background.drain()
     asyncio.run(go())
+
+
+# -- REVISIONE-14b-nonies (independent review) -------------------------------------------------------------------
+
+def read_fails_once(monkeypatch, name):
+    """The next read of the file `name` fails with EIO, once, when armed."""
+    import errno
+    read, armed = Path.read_text, {"on": False}
+
+    def failing(self, *a, **kw):
+        if armed["on"] and self.name == name:
+            armed["on"] = False
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(Path, "read_text", failing)
+    return armed
+
+
+@pytest.mark.parametrize("unread", ["report.config.json", "evidence.json"])
+def test_a_read_error_at_start_is_no_agreement_of_config_and_evidence(tmp_path, monkeypatch, unread):
+    """REVISIONE-14b-nonies: the revert of 1.3 stopped before its relearning (evidence reverted, config behind, no
+    mark), and at the next start one read of the config or of the evidence failed: the check took the error for an
+    agreement, and the first output had note_0. A read error now makes the relearning owed."""
+    import gc
+    from tracetrim import evidence
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    data = evidence.load(work / "evidence.json")
+    evidence.revert(data, "volumes", "items[].note_0")
+    evidence.save(work / "evidence.json", data)
+    read_fails_once(monkeypatch, unread)["on"] = True
+    tt = promoting_autotrim(work)
+    assert "note_0" not in visible(tt.output("volumes", {}, json.dumps(PAYLOAD)))
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == {}
+
+
+def test_a_read_error_of_the_savings_never_writes_their_history_over(tmp_path, monkeypatch):
+    """REVISIONE-14b-nonies (also in 1.3.1): one read of savings.json failed during a closing; the file was written
+    again from that run alone, and the savings of the runs before were lost for good. The counts now wait for the
+    next save."""
+    from tracetrim.contract import ToolCall, ToolResult
+    from tracetrim.engine import Engine
+    learner = auto.Learner(tmp_path, 2)
+    engine = Engine(learner)
+    armed = read_fails_once(monkeypatch, "savings.json")
+    for i in range(1, 5):
+        engine.observe(ToolCall("t", {}), ToolResult(json.dumps({"a": i, "b": i + 1})))
+        armed["on"] = i == 3
+        try:
+            learner.done(str(i))
+        except OSError:
+            assert i == 3                                 # recorded, its savings left for the next save
+    runs = json.loads((tmp_path / "savings.json").read_text())["runs"]
+    assert {r: v["tools"]["t"]["calls"] for r, v in runs.items()} == \
+        {"run-0001": 1, "run-0002": 1, "run-0003": 1, "run-0004": 1}

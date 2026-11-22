@@ -120,11 +120,15 @@ def trace_paths(directory: Path) -> list[Path]:
 def config_disagrees(directory: Path, data: dict) -> bool:
     """Whether the config's promoted fields differ from the active promotions of the evidence `data`: a change of the
     evidence the config does not apply yet. `tracetrim promotions` of 1.3 wrote no mark, and one stopped between the
-    evidence and its relearning left the config behind (REVISIONE-14b-octies). False without a config to compare."""
+    evidence and its relearning left the config behind (REVISIONE-14b-octies). False without a config to compare; True
+    for a config that cannot be read, which a relearning writes again (REVISIONE-14b-nonies: a read error passed for
+    agreement)."""
     try:
         config = json.loads((directory / "report.config.json").read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    except FileNotFoundError:
         return False
+    except (OSError, ValueError):
+        return True
     promoted = config.get("auto", {}).get("promoted") if isinstance(config, dict) else None
     if not isinstance(promoted, dict):
         return False
@@ -227,7 +231,9 @@ class Learner:
             try:
                 behind_config = config_disagrees(self.dir, evidence.load(self.dir / "evidence.json"))
             except (OSError, ValueError):
-                behind_config = False            # an evidence file that cannot be read: the relearning says so
+                # An evidence file that cannot be read: owed, so that the relearning reads it again and says so if it
+                # still cannot (REVISIONE-14b-nonies: taken as agreement, the config of before stayed in use).
+                behind_config = True
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
         # as in `tracetrim measure`): with fewer than two there is nothing to
         # hold out, and nothing would ever be trimmed.
@@ -428,9 +434,11 @@ class Learner:
             if self.savings_path.exists():
                 try:
                     old = json.loads(self.savings_path.read_text(encoding="utf-8"))
-                except (OSError, ValueError):
+                except ValueError:
                     old = None
-                # A measure: a file of another shape starts again rather than stopping a closing.
+                # A measure: a file of another shape starts again rather than stopping a closing. A read error is
+                # raised instead: the counts wait in `_unsaved` for the next save, and the history of the earlier runs
+                # is never written over (REVISIONE-14b-nonies; until 1.3 one failed read lost it).
                 if (isinstance(old, dict) and old.get("format") == data["format"] and isinstance(old.get("runs"), dict)
                         and all(isinstance(v, dict) for v in old["runs"].values())):
                     data.update(old)
