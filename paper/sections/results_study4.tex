@@ -1,8 +1,9 @@
 \section{Study 4: answer quality on held-out tasks, with tracetrim 1.3.1}
 \label{sec:study4}
 
-Studies~1--3 evaluated the method on the tasks on which it was developed, and the stricter billing audit of
-Study~3 found the trimmed arm's diagnoses less complete (Section~\ref{sec:s3audit}). Study~4, added in version~3 of
+Studies~1--3 evaluated the method on the tasks on which it was developed, and the stricter billing audits of
+Studies~2 and~3 found the trimmed arms' diagnoses less complete (Section~\ref{sec:study2},
+Table~\ref{tab:c4audit}; Section~\ref{sec:s3audit}). Study~4, added in version~3 of
 this paper, asks whether the prudent projection preserves the quality of the answer on tasks never used in
 development, judged blind. It has three parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
 draws new ordinary tasks for the two simulated agents. Part~B (\texttt{protocol-v3b.md}) builds billing tasks
@@ -12,24 +13,27 @@ change of one rule in the text that accompanies the projection.
 
 \paragraph{Common design.} Each run is a fresh conversation of \texttt{\SfourModel} at default parameters, in the
 study's own loop with the function-calling adapter, as in Study~3, against the simulated servers of billing support
-and CI triage serving new synthetic worlds. Two arms are common to both parts. In \emph{R} the agent receives the
-tool outputs unaltered. In \emph{P} it receives the prudent projection with today's defaults (identifiers
-protected, compact JSON, hidden fields recoverable), plus \texttt{expand} and the base instructions of the skill
-that explain it. The projection is learned once from the eight Phase~A runs of each case (Study~1) and frozen with
+and CI triage serving new synthetic worlds. Two arms are common to Parts~A and~B. In \emph{R} the agent receives the
+tool outputs unaltered. In \emph{P} it receives the prudent projection with the defaults of release 1.3.1
+(identifiers protected, compact JSON, hidden fields recoverable), plus \texttt{expand} and the base instructions
+of the skill that explain it, in version~1 (Part~C tests version~2). The projection is learned once from the eight Phase~A runs of each case (Study~1) and frozen with
 its hash, with no relearning, promotion or sampling. Worlds, prompts, reference answers, schedules and analyses were
-frozen with fingerprints before the first paid run. Every deviation was recorded before the scores it concerns, in
-a dated file committed before the judge's first request. Costs are LLM API costs per run at list prices, reported
+frozen with fingerprints before the first paid run of each campaign. Part~A's deviations were recorded in a dated
+file committed before the judge's first request; all deviations are listed at the end of this section, with when
+each was recorded. Costs are LLM API costs per run at list prices, reported
 only as ratios to R.
 
 \paragraph{Blind judge.} Every answer is scored by \texttt{\SfourJudge} on Vertex AI, with thinking level
-\texttt{\SfourJudgeThinking}, against a frozen rubric. The rubric has three integer dimensions from 0 to 4:
-correctness and attribution, coverage, and explanation and next action. The primary score is their mean. The
+\texttt{\SfourJudgeThinking}, against a frozen rubric, with structured JSON output and the model's other
+generation settings at their defaults. The rubric has three integer dimensions from 0 to 4: correctness and
+attribution, coverage, and explanation and next action. Their mean, the judged composite, is the primary outcome of
+Part~A and a secondary one in Parts~B and~C. The
 judge sees the task, the rubric, the answer and a fixed set of original tool returns from the task's world, the
 same for every answer to that task. It never sees the arm, the traces or the reference answer. The answers to a
 task are scored in one call per pass, with the evidence given once and the answers under neutral labels in a
 seeded random order. The instruction is to score each answer on its own, never ranking it against the others. A
 script removes anything that would reveal the arm, such as a trimming notice or a mention of \texttt{expand}; it
-found such text in \SfourACues{} answers in Part~A and \SfourBCues{} in Part~B. The mapping from answers to arms
+found such text in \SfourACues{} answers of Part~A and in \SfourBCues{} answers of Part~B. The mapping from answers to arms
 was sealed before the runs, with only its hash versioned. There are two independent passes; any dimension that
 differs by two points or more gets a third reading. Each estimate pairs P and R within a repetition, averages the
 pairs within a task and gives every task equal weight. Its interval is a 95\% percentile bootstrap over tasks
@@ -56,8 +60,9 @@ equally, 95\% bootstrap intervals over tasks. On CI triage every answer of every
 \label{tab:s4a}
 \end{table}
 
-\paragraph{Results.} All \SfourARuns{} runs completed, with \SfourAMissing{} missing. P minus R was \SfourAPoint{},
-95\% interval \SfourACI{}: \textbf{preserved} at the margin of $-$0.5, and also at $-$0.25 (Table~\ref{tab:s4a}).
+\paragraph{Results.} All \SfourARuns{} runs completed, with \SfourAMissing{} runs missing. P minus R was
+\SfourAPoint{}, 95\% interval \SfourACI{}: \textbf{preserved} at the margin of $-$0.5, and also at $-$0.25
+(Table~\ref{tab:s4a}, Figure~\ref{fig:quality}).
 I minus R was \SfourIPoint{} \SfourICI{}. These results hold at a ceiling. Of the \SfourARatings{} ratings,
 \SfourARatingsFour{} (\SfourACeiling) were the maximum, and in \SfourACeilingCase{} every answer of every arm
 received 4 on every dimension. Part~A therefore shows that, on tasks the agent solves well with complete outputs,
@@ -72,8 +77,9 @@ triage. The projection fell back to the whole result as cheaper in \SfourAFullCh
 \subsection{Part B: tasks that need the removed fields}
 \label{sec:s4b}
 
-\paragraph{Construction.} Part~B starts from the failure mode of the Study~3 audit: a fact needed by the answer
-sits in a field that the projection removes. \SfourBCandidates{} billing tasks of five tickets each were generated
+\paragraph{Construction.} Part~B starts from the failure mode found by the billing audit of Study~2
+(Section~\ref{sec:study2}): a fact needed by the answer sits in a field that the projection removes (there, a
+decline reason whose use the learner missed because the agent translated it). \SfourBCandidates{} billing tasks of five tickets each were generated
 with a fixed seed from seven templates. In five templates the facts of the key sit in fields that the frozen
 projection removes from a list call:
 \begin{itemize}
@@ -89,7 +95,9 @@ account with a similar name under the same email.
 Before any run, a script sent each task's typical requests through the frozen projection: search each email, then
 list each customer's invoices, charges and subscriptions. It verified that every hidden fact of the key (\SfourBVerified)
 is present in the original result and absent from what P delivers. Every hidden value remains reachable through
-\texttt{expand}, and through detail endpoints that the projection does not trim. The key is a list of facts per
+\texttt{expand}; those of invoices, charges and refunds also through detail endpoints that the projection does not
+trim, while the customer's balance and description, which no detail endpoint returns, only through
+\texttt{expand}. The key is a list of facts per
 ticket: customer, identifiers, amounts (never whole euros) and counts. A script scores it without a judge.
 
 \paragraph{A calibration that stopped the first protocol.} The first version of \texttt{protocol-v3b.md} required
@@ -112,13 +120,15 @@ composite, and how each hidden value reached the agent in P.
 \centering\small
 \input{generated/table_s4b.tex}
 \caption{Study~4B: billing tasks whose answers need fields the projection removes, \SfourBRunsPerArm{} runs per arm.
-Shares of the key's facts reported correctly, scored by script; composite and dimensions from the blind judge.
+Shares of the key's facts reported correctly, scored by script, averaged within task with tasks weighted
+equally; composite and dimensions from the blind judge.
 Intervals: 95\% bootstrap over tasks. The primary outcome and its interval are in bold.}
 \label{tab:s4b}
 \end{table}
 
 \paragraph{Results.} R reported \SfourBHiddenR{} of the hidden facts and P \SfourBHiddenP{}: P minus R was
-\textbf{\SfourBPoint{}}, 95\% interval \textbf{\SfourBCI{}} (Table~\ref{tab:s4b}). The upper end lies
+\textbf{\SfourBPoint{}}, 95\% interval \textbf{\SfourBCI{}} (Table~\ref{tab:s4b},
+Figure~\ref{fig:quality}). The upper end lies
 \SfourBMarginGap{} above the margin, so by the preregistered rule the result is \emph{\SfourBVerdict}, not a
 material loss. But the point estimate is beyond the margin, the whole interval is below zero, and P was above R
 on \SfourBTasksAbove{} task. Preservation is not shown, and a loss is present. Both secondary outcomes
@@ -128,6 +138,15 @@ the ceiling: \SfourBRatingsFour{} of \SfourBRatings{} were the maximum. The pass
 to \SfourBExactMax{} per dimension (kappa from \SfourBKappaMin{}), with \SfourBAdjudicated{} third readings. The
 gates did not see the loss: they passed \SfourBGates{} answers, because every identifier P cited was real. Numbers
 without support in the outputs were \SfourBUnsupportedR{} in R and \SfourBUnsupportedP{} in P.
+
+\begin{figure}[t]
+\centering
+\input{generated/fig_quality.tex}
+\caption{Study~4, P minus R per held-out task (dots), with the preregistered estimate and its 95\% bootstrap interval
+(black) and the preregistered margin (dashed line: $-$0.5 left, $-$0.10 right). Left: Part~A, judged composite on ordinary tasks. Right: Part~B, share of hidden
+facts reported, on tasks that need the removed fields.}
+\label{fig:quality}
+\end{figure}
 
 \begin{table}[t]
 \centering\small
@@ -142,11 +161,12 @@ fact (a deviation; the facts reported are scored independently).}
 \paragraph{The mechanism: absence concluded from a trimmed view.} Table~\ref{tab:s4b_hidden} shows where P lost.
 \begin{itemize}
 \item \emph{Credit balance.} The agent recovered the customer's credit balance with \texttt{expand} every time,
-but it never recovered the customer's description, which explains where the last credit came from. It gave the
-origin in \SfourBOriginP{} answers, necessarily without the description: as the difference between two balances. Otherwise it wrote that the
-data did not say: ``from the available data the document or movement at the origin of the last credit cannot be
-identified''.
-\item \emph{Invoice memo.} When it did not open the invoice's detail (\SfourBMemoMissed{} times), it stated that
+but it never recovered the customer's description, the only field that says where the last credit came from and
+how much it was. It wrote that the origin could not be identified: ``from the available data the document or
+movement at the origin of the last credit cannot be identified''. In \SfourBOriginP{} answers it still gave the
+amount of that credit, which is what the key scores, as the difference between two balances.
+\item \emph{Invoice memo.} When it did not open the invoice's detail (\SfourBMemoMissed{} times), it typically
+stated that
 ``the invoice line does not indicate the number of TB''. The statement is false, and the agent drew it from a
 trimmed view.
 \item \emph{Refunds.} The number of licences refunded came back in \SfourBRefundP{} answers, although the
@@ -155,21 +175,24 @@ description was reached only \SfourBRefundReached{} times: the agent divided the
 \end{itemize}
 The agent saw a line naming the hidden fields after every trimmed result, and used \texttt{expand}
 \SfourBExpand{} times, in \SfourBExpandRuns{} of \SfourBRunsPerArm{} runs. What it did not do was check them before
-declaring a fact absent. This is the mechanism behind the billing audit of Study~3, observed directly.
+declaring a fact absent. In Study~2 the removed field made the diagnosis less informative; here the agent went
+further and declared the fact absent. The recurring gap of the Study~3 audit is a different case: it occurred in
+every arm, with or without trimming (Section~\ref{sec:s3audit}).
 
 \paragraph{Cost.} P delivered \SfourBTokens{} fewer tool-output tokens than R, but made more calls
 (\SfourBCallsP{} against \SfourBCallsR{} per run) and more turns (\SfourBTurnsP{} against \SfourBTurnsR{}). Its LLM
 API cost per run was \SfourBCost{} times R's. On tasks that keep needing removed fields, the saving disappears in
 the recovery.
 
-\paragraph{A second blind reader (post hoc).} At the author's request, after the results, a second AI judge
-read a sample of \SfourBSecondAnswers{} answers, \SfourBSecondPerArm{} per arm, drawn with a fixed seed. The judge
-was an AI agent in a separate session, not \texttt{\SfourJudge}. It read each answer on its own under a new
-identifier, blind to the arm and to the first judge's scores. Against the first judge's combined scores on the
+\paragraph{A second blind reader (post hoc).} At the author's request, after the results, a second reader read
+a sample of \SfourBSecondAnswers{} answers, \SfourBSecondPerArm{} per arm, drawn with a fixed seed. The reader was
+an AI agent in a separate session, not \texttt{\SfourJudge}; it had worked on the library in earlier sessions and
+knew the design of the study. It read each answer on its own under a new identifier, blind to the arm and to the
+first judge's scores. Against the first judge's combined scores on the
 same answers it agreed exactly on \SfourBSecondExactMin{} to \SfourBSecondExactMax{} of the ratings per
 dimension, within one point on \SfourBSecondWithinOne{}, with quadratic-weighted kappa \SfourBSecondKappaMin{} to
 \SfourBSecondKappaMax{}. On the sample, P minus R on the composite was \SfourBSecondReaderDiff{} for the second
-reader and \SfourBSecondJudgeDiff{} for the first. The loss does not depend on the judge.
+reader and \SfourBSecondJudgeDiff{} for the first: on this sample the second reader found the same loss, larger.
 
 \subsection{Part C: correcting the inference of absence}
 \label{sec:s4c}
@@ -177,7 +200,7 @@ reader and \SfourBSecondJudgeDiff{} for the first. The loss does not depend on t
 \paragraph{The correction.} Version~2 of the skill, the text that tells the agent how to work with trimmed
 results, adds one rule, also to the description of \texttt{expand}: before stating that information is missing
 or unknown, check whether a hidden field could hold it (a description, note, memo or reason) and expand it first.
-Nothing else changes: not the projection, not the notice after a trimmed result, not the tools.
+Nothing else changes: not the projection, not the notice after a trimmed result, not the other tools.
 
 \paragraph{Design.} \texttt{protocol-v3c.md} was preregistered and frozen, the library under test included,
 before the first run. It has two arms on the frozen prudent policy of Parts~A and~B: P1 with the text of
@@ -201,17 +224,18 @@ The judge and the scoring are those of Part~B.
 \centering\small
 \input{generated/table_s4c.tex}
 \caption{Study~4C: the same frozen projection with the skill text of version~1 (P1) and version~2 (P2), on the
-tasks of Part~B (\SfourCRunsPerArm{} runs per arm); costs also on the ordinary tasks of Part~A. Intervals: 95\%
+tasks of Part~B (\SfourCRunsPerArm{} runs per arm); costs also on the ordinary tasks of Part~A. Shares are averaged
+within task, tasks weighted equally. Intervals: 95\%
 bootstrap over tasks. The primary outcome and its interval are in bold.}
 \label{tab:s4c}
 \end{table}
 
-\paragraph{Results.} All \SfourCRuns{} runs completed, with \SfourCMissing{} missing. P1 reported
+\paragraph{Results.} All \SfourCRuns{} runs completed, with \SfourCMissing{} runs missing. P1 reported
 \SfourCHiddenPone{} of the hidden facts, which reproduces Part~B's P, and P2 reported \SfourCHiddenPtwo{}: P2
 minus P1 was \textbf{\SfourCPoint{}}, 95\% interval \textbf{\SfourCCI{}}. That is \emph{\SfourCVerdict} by the
 preregistered rule, though the lower end is close to zero (Table~\ref{tab:s4c}). The gain is where Part~B lost:
 \begin{itemize}
-\item the origin of the last credit, \SfourCOriginPone{} against \SfourCOriginPtwo{}, with the customer's
+\item the amount of the last credit, \SfourCOriginPone{} against \SfourCOriginPtwo{}, with the customer's
 description recovered by \texttt{expand} \SfourCOriginExpandPtwo{} times, never in P1;
 \item the TB of the invoice memo, \SfourCMemoPone{} against \SfourCMemoPtwo{}.
 \end{itemize}
@@ -226,24 +250,17 @@ runs for P1. Its cost per run relative to P1 was \SfourCHardCost{} on the hard t
 the ordinary ones, where gates passed in \SfourCOrdinaryGates{} answers.
 
 All three conditions of the decision rule hold, and version~\SfourCDefault{} is the default from tracetrim 1.4;
-version~1 remains available as an option. Against R of Part~B, which was not run again, the gap narrowed but
+version~1 remains available as an option. Against R of Part~B, a historical reference that was not run again, the gap narrowed but
 did not close: P1 minus R \SfourCPoneMinusR{} \SfourCPoneMinusRCI{}, P2 minus R \SfourCPtwoMinusR{}
 \SfourCPtwoMinusRCI{}. This comparison is descriptive only.
 
-\begin{figure}[t]
-\centering
-\input{generated/fig_quality.tex}
-\caption{Study~4, P minus R per held-out task (dots), with the preregistered estimate and its 95\% bootstrap interval
-(black) and the preregistered margin (dashed line: $-$0.5 left, $-$0.10 right). Left: Part~A, judged composite on ordinary tasks. Right: Part~B, share of hidden
-facts reported, on tasks that need the removed fields.}
-\label{fig:quality}
-\end{figure}
-
-\paragraph{Deviations.} Every deviation was recorded before the scores it concerns.
+\paragraph{Deviations.} Every deviation was recorded before the scores it concerns, except two marked below: the
+error in Part~B's check of how a hidden value reached the agent, found after its analysis, and the second reader,
+added after its results.
 \begin{itemize}
-\item The protocols named an AI agent in two independent sessions as the judge. Before any score, the author
+\item Protocol v3 named an AI agent in two independent sessions as the judge. Before any score, the author
 replaced it with \texttt{\SfourJudge}, called by a script, and grouped the answers by task. The change and its
-reasons were committed before the judge's first request.
+reasons were committed before the judge's first request. Protocols v3b and v3c named this judge from the start.
 \item In Part~A, the first block of the schedule served as the pilot and counts in the campaign.
 \item The scripts added after the freeze were checked against the frozen files by a separate verifier.
 \item The rubric's three dimensions are the only scores. Severe errors and missing items were not counted
@@ -251,7 +268,7 @@ separately.
 \item Part~B ran under its second version, and the first version is kept with its calibration. Its scorer gained
 whole-cent amounts before the second version, and two scripts changed in form only, before any score.
 \item Part~B's check of how a hidden value reached the agent is wrong for the replacement link
-(Table~\ref{tab:s4b_hidden}).
+(Table~\ref{tab:s4b_hidden}); found after the analysis.
 \item The second reader of Part~B was added after its results, at the author's request: a check of the judge,
 not an outcome.
 \item Part~C froze the whole library. Corrections to other functions, made during its campaign, were committed

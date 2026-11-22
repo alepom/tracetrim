@@ -66,13 +66,13 @@ author's review. No independent human rater read every answer, and no agreement 
   scored on its own; a contrast between neighbouring answers would affect every arm alike, but cannot be excluded.
   Part~A ran at a ceiling (\SfourACeiling{} of the ratings were the maximum), so it had little room to detect a loss.
   Part~B's tasks were built to need removed fields, and its reference arm reported all of them. It measures how much a
-  projection loses when the use of a tool changes, not how often that happens in real use. Its primary result missed
-  the preregistered margin by \SfourBMarginGap{} and is reported as inconclusive as the rule requires, although its
-  whole interval lies below zero. Its objective scorer checks the presence of facts, not the reasoning around them.
-  Tasks per part are few (\SfourATasks{} and \SfourBTasks), with two or three runs per task and arm. The protocols'
-  judge was changed before any score, and Part~B ran under a second version written after a calibration that stopped
-  the first; both changes are dated and reported. The second reader of Part~B is also an AI agent, added after the
-  results, on a sample. Part~C's correction was designed after Part~B and tested on the same tasks: its gain may
+  projection loses when the use of a tool changes, not how often that happens in real use. The upper end of its
+  primary interval lies \SfourBMarginGap{} above the preregistered margin of a material loss, so the result is
+  reported as inconclusive, as the rule requires, although the whole interval lies below zero. Its objective scorer checks the presence of facts, not the reasoning around them.
+  Tasks per part are few (\SfourATasks{} and \SfourBTasks), with two or three runs per task and arm. Part~A's judge
+  was changed before any score, and Part~B ran under a second version written after a calibration that stopped
+  the first; both changes are dated and reported. The second reader of Part~B is also an AI agent, which had worked on
+  the project and knew its design, added after the results, on a sample of \SfourBSecondAnswers{} answers. Part~C's correction was designed after Part~B and tested on the same tasks: its gain may
   be smaller on other tasks, which its check on ordinary tasks covers only for cost and gates. Its lower bound is
   close to zero, and its comparison with R is historical.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built

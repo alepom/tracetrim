@@ -8,8 +8,8 @@ every implemented gate passing. Learning kept up with a changed task by itself: 
 were kept from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases, with no correction needed. And
 what the learned projection removes goes well beyond the tested static baseline: beyond a minifier and a static
 metadata filter it removed \BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what was left on three of five agents.
-On tasks held out from development (Study~4), the answers kept their judged quality where the needed fields survived
-the projection, and lost facts where the task needed the fields it removes.
+On tasks held out from development (Study~4), the answers kept their judged quality on ordinary tasks, at a
+ceiling, and lost facts where the task needed the fields the projection removes.
 
 \paragraph{What the agent uses can be learned, best from complete traces.} On four of the five agents, most of what
 tools return is never visibly used, and a projection learned from a handful of runs of the same task removes most
@@ -81,7 +81,7 @@ would gain a modest share of the cost where they are cached, which a few extra t
 answers were as good with the prudent projection as without (\SfourAPoint{} on the judged composite, interval
 \SfourACI{}), but the agent solved those tasks almost perfectly in every arm, so the test had little room to find a
 loss. Where the answer needed exactly the removed fields, the loss was measurable: \SfourBHiddenP{} of those facts
-against \SfourBHiddenR{}, and the judge's composite fell by a whole level. The failure was not a failure to recover
+against \SfourBHiddenR{}, and the judge's composite fell by almost a whole level (\SfourBCompositePoint{}). The failure was not a failure to recover
 in general. The agent called \texttt{expand} in \SfourBExpandRuns{} of \SfourBRunsPerArm{} runs, and recovered
 numeric fields (balances, credit notes) reliably. It failed on free-text fields, a customer's description or an
 invoice memo. After a list showed the hidden fields only by name, it concluded that the information did not exist

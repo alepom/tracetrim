@@ -195,9 +195,9 @@ def macros(m, GEN: Path) -> None:
     m("SfourBRefundReached", word(refund["P_reached"]))
 
     label = {"balance: data[].balance": ("Current credit balance", "customer \\texttt{balance}"),
-             "balance: data[].description": ("Origin of the last credit", "customer \\texttt{description}"),
+             "balance: data[].description": ("Amount of the last credit", "customer \\texttt{description}"),
              "credit_note: data[].post_payment_credit_notes_amount": ("Credit note after payment",
-                                                                      "invoice \\texttt{post\\_payment\\_credit\\-\\_notes\\_amount}"),
+                                                                      "invoice \\texttt{post\\_payment\\_credit\\allowbreak{}\\_notes\\_amount}"),
              "memo: data[].description": ("TB in the invoice memo", "invoice \\texttt{description}"),
              "partial_refund: data[].refunds.data[].description": ("Licences refunded", "refund \\texttt{description}"),
              "replacement: data[].from_invoice.invoice": ("Invoice replaced", "invoice \\texttt{from\\_invoice}")}
@@ -208,7 +208,8 @@ def macros(m, GEN: Path) -> None:
         reached = "n/a$^{\\ddagger}$" if v["P_reached"] is None else f"{v['P_reached']}/{v['P'][1]}" + (f" ({via})" if via else "")
         rows.append(f"{what} & {field} & {v['R'][0]}/{v['R'][1]} & {v['P'][0]}/{v['P'][1]} & {reached} \\\\")
     (GEN / "table_s4b_hidden.tex").write_text(
-        "\\begin{tabular}{p{0.2\\textwidth}p{0.27\\textwidth}rrp{0.25\\textwidth}}\n\\toprule\nHidden fact & Field removed from the list call & R & P & "
+        "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{0.2\\textwidth}>{\\raggedright\\arraybackslash}p{0.27\\textwidth}"
+        "rr>{\\raggedright\\arraybackslash}p{0.25\\textwidth}}\n\\toprule\nHidden fact & Field removed from the list call & R & P & "
         "Value reached the model in P \\\\\n\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n",
         encoding="utf-8")
 
@@ -289,20 +290,22 @@ def macros(m, GEN: Path) -> None:
             m(f"SfourC{name}{tag}", f"{hf[key][arm]['reported']}/{hf[key][arm]['facts']}")
     m("SfourCOriginExpandPtwo", str(hf["balance: data[].description"]["P2"]["via"].get("expand", 0)))
 
+    credit, memo = hf["balance: data[].description"], hf["memo: data[].description"]
+    # The two hidden facts behind the gain, under the primary row they belong to (REVISIONE-14a, M9), each over its own
+    # number of facts (F6).
     rows = [f"Hidden facts reported (primary) & {share(c['hidden_fact_share_by_arm']['P1'])} & "
             f"{share(c['hidden_fact_share_by_arm']['P2'])} & \\textbf{{{sgn(pc['point'], 3)}}} & "
             f"\\textbf{{{ci(pc['ci95'], 3)}}} \\\\",
+            f"\\quad amount of the last credit & {credit['P1']['reported']}/{credit['P1']['facts']} & "
+            f"{credit['P2']['reported']}/{credit['P2']['facts']} & & \\\\",
+            f"\\quad TB in the invoice memo & {memo['P1']['reported']}/{memo['P1']['facts']} & "
+            f"{memo['P2']['reported']}/{memo['P2']['facts']} & & \\\\",
             f"All key facts reported & {share(c['fact_share_by_arm']['P1'])} & {share(c['fact_share_by_arm']['P2'])} & "
             f"{sgn(fc['point'], 3)} & {ci(fc['ci95'], 3)} \\\\",
             f"Judged composite (0--4) & {jc['by_arm']['P1']:.2f} & {jc['by_arm']['P2']:.2f} & {sgn(jc['point'])} & "
             f"{ci(jc['ci95'])} \\\\",
-            f"\\quad origin of the last credit & {hf['balance: data[].description']['P1']['reported']}/27 & "
-            f"{hf['balance: data[].description']['P2']['reported']}/27 & & \\\\",
-            f"\\quad TB in the invoice memo & {hf['memo: data[].description']['P1']['reported']}/27 & "
-            f"{hf['memo: data[].description']['P2']['reported']}/27 & & \\\\",
             f"Cost per run, hard tasks (P2/P1) & & & {ratio(c['hard_cost_P2_over_P1'])} & \\\\",
             f"Cost per run, ordinary tasks (P2/P1) & & & {ratio(c['ordinary_cost_P2_over_P1'])} & \\\\"]
-    rows = [r.replace("/27", "/" + str(hf["balance: data[].description"]["P1"]["facts"])) for r in rows]
     (GEN / "table_s4c.tex").write_text(
         "\\begin{tabular}{lrrrr}\n\\toprule\nOutcome & P1 (text v1) & P2 (text v2) & P2 $-$ P1 & 95\\% interval \\\\\n"
         "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n", encoding="utf-8")

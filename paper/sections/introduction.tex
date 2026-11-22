@@ -43,9 +43,10 @@ while the agent works, with \texttt{expand} requests as evidence (E2), and, with
 agent how to organise its tool calls, on a second model (E3, reported in an appendix). It also reports offline
 analyses, among them a comparison with a minifier and with a static filter fixed before any number, and post-hoc
 audits of the answers, each labelled as such. \textbf{Study~4}, added in version 3, tests answer quality on tasks
-held out from development, under two more frozen protocols and a blind judge. On new ordinary tasks the prudent
+held out from development, under three more frozen protocols and a blind judge. On new ordinary tasks the prudent
 projection did not lower the judged quality (at a ceiling). On tasks built so that the answer needs the fields it
-removes, the agent reported fewer of those facts and, when it had not recovered a field, declared the fact absent.
+removes, the agent reported fewer of those facts: when a free-text field it had not recovered held the fact, it
+mostly declared the fact absent.
 A one-rule change to the text that accompanies the projection recovered part of that loss at no extra cost.
 
 The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
@@ -59,5 +60,6 @@ itself;
 any trimming; (vi) a live measure of that implementation's fixed trimming and adaptive learning, and of a call-organising
 text, with the hypotheses that failed reported as failed; (vii) an offline comparison with minification and a
 pre-registered static filter, which separates what learning adds from what any serialiser or metadata filter
-removes; (viii) a blind, preregistered test of answer quality on held-out tasks, which finds no loss where the needed
-fields are kept and a measurable loss where they are removed, with its mechanism and a measured correction.
+removes; (viii) a blind, preregistered test of answer quality on held-out tasks, which finds no loss on ordinary tasks, at
+a ceiling, and a measurable loss where the answer needs the removed fields, with its mechanism and a measured
+correction.
