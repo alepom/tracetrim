@@ -1,26 +1,24 @@
 Language-model agents read tool outputs written for programs: most of what an API returns is never visibly reused,
-yet is paid for at every turn. We learn from an agent's own traces which fields of each tool output it visibly
-reuses and remove the rest, protecting identifiers and letting the agent recover any hidden field with an
-\texttt{expand} tool. In live runs of tracetrim 0.4 on \texttt{\SthreeModelA}, under frozen protocols, a fixed
-projection with \texttt{expand} lowered the median LLM API cost per run by \SthreeEOneTrimCosti{} and
-\SthreeEOneTrimCostiv{} on two agents with every implemented gate passing, though a stricter audit found billing
-diagnoses less complete with trimming; when a changed task
-needed removed fields, adaptive learning kept them from the next run in \SthreeHFiveKept{} of
-\SthreeHFiveRecoveries{} cases. Offline, with today's defaults, the learned projection removed \BaseLearnedRawi,
-\BaseLearnedRawiii{} and \BaseLearnedRawv{} of held-out tool-output tokens on three of five agents, and
-\BaseLearnedStaticBigMin{} to \BaseLearnedStaticBigMax{} of what a minifier and a static metadata filter fixed in
-advance leave there. Earlier studies (versions 0.1 and 0.2) explain these defaults: learned from tool calls alone, as
-a gateway would, the 0.1 aggressive projection missed a used field in \MissesPooledShareRealCalls{} of the held-out
-structured calls it trims on the real-API agents, against \MissesPooledShareRealFull{} from complete traces; replays
-located three failure mechanisms (transformed values, fields used only to reason, invented identifiers), which the
-safeguards of 0.2 repaired on the conversations already observed. The method helps most where outputs carry much the
-task does not use, least where the agent cites most of what it reads. On tasks held out from development, judged
-blind (tracetrim 1.3.1), the prudent projection did not lower answer quality on new ordinary tasks (difference
-\SfourAPoint{}, 95\% interval \SfourACI{} on a 0--4 scale, at a ceiling), but on tasks built to need the fields it
-removes the agent reported \SfourBHiddenP{} of those facts against \SfourBHiddenR{} with complete outputs
-(\SfourBPoint{}, \SfourBCI{}), at no saving: when a free-text field it had not recovered held the fact, it mostly
-declared the fact absent.
-One added instruction, to check hidden fields before declaring information absent, raised that share from
-\SfourCHiddenPone{} to \SfourCHiddenPtwo{} (\SfourCPoint{}, \SfourCCI{}) at no extra cost, and is the default from
-tracetrim 1.4.
-The library, a telemetry report and an MCP proxy are released.
+yet it is paid for at every turn. We present tracetrim, a library that learns from an agent's own traces which
+fields of each tool output the agent visibly reuses and removes the rest, protecting identifiers and letting the
+agent recover any hidden field with an \texttt{expand} tool. In live runs of tracetrim 0.4 on \texttt{\SthreeModelA},
+under frozen protocols, a fixed projection with \texttt{expand} lowered the median LLM API cost per run by
+\SthreeEOneTrimCosti{} and \SthreeEOneTrimCostiv{} on two agents with every implemented gate passing, though a
+stricter audit found billing diagnoses less complete with trimming; when a changed task needed removed fields,
+adaptive learning kept them from the next run in \SthreeHFiveKept{} of \SthreeHFiveRecoveries{} cases. Offline,
+with today's defaults, the learned projection removed \BaseLearnedRawi, \BaseLearnedRawiii{} and \BaseLearnedRawv{}
+of held-out tool-output tokens on three of five agents, and \BaseLearnedStaticBigMin{} to
+\BaseLearnedStaticBigMax{} of what a minifier and a static metadata filter fixed in advance leave there. Earlier
+studies explain these defaults: learned from tool calls alone, as a gateway would, the 0.1 aggressive projection
+missed a used field in \MissesPooledShareRealCalls{} of the held-out structured calls it trims on the real-API
+agents, against \MissesPooledShareRealFull{} from complete traces, and replays located three failure mechanisms,
+invented identifiers among them, that the safeguards of 0.2 repaired on the conversations observed. On tasks held out from development, judged blind, the prudent projection of tracetrim
+1.3.1 did not lower answer quality on new ordinary tasks (difference \SfourAPoint{}, 95\% interval \SfourACI{} on a
+0--4 scale, at a ceiling). A stress test, with tasks built to need exactly the fields it removes, found its weak
+point: the agent reported \SfourBHiddenP{} of those facts against \SfourBHiddenR{} with complete outputs
+(\SfourBPoint{}, \SfourBCI{}), at no saving, and when a free-text field it had not recovered held the fact, it
+mostly declared the fact absent. One added instruction, to check hidden fields before declaring information absent,
+raised that share from \SfourCHiddenPone{} to \SfourCHiddenPtwo{} (\SfourCPoint{}, \SfourCCI{}) at no extra cost,
+and is the default from tracetrim 1.4. The method helps most where outputs carry much the task does not use, least
+where the agent cites most of what it reads. The library, an MCP proxy that can keep learning while the agent works,
+and a telemetry report useful on its own are released.

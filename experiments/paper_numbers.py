@@ -94,7 +94,7 @@ def main():
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
         f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 3. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
-        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and 1.4.0 (Part C)}}\n"
+        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and the frozen 1.4 code (Part C)}}\n"
         # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
         f"\\newcommand{{\\PaperVersionThreeDate}}{{{PAPER_VERSION_THREE_DATE}}}\n"

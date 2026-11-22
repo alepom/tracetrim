@@ -33,10 +33,13 @@ tokens on those real-API agents and \VtwoVsMiniv{} and \VtwoVsMinv{} on the simu
 cites most of what it receives a minifier alone did better; a fourth mechanism, translation, remains open. In short: a projection learned from
 textual reuse can shrink already minified outputs in several workloads; the quality of the answers depends on
 information that this reuse makes only partly observable, and the safeguards correct some of the documented failures.
-The method is therefore best used as it is implemented: as a proposal learned from complete traces, reviewed by a
-person, applied with identifiers protected and with a way back for the agent when a cut was wrong, which in Study 3
-also corrected the projection. It helps most where tool outputs carry much that the task does not use, and least
-where the agent cites most of what it reads, where minifying is enough. Study~4 adds a condition: a projection
-learned on one use of a tool should not be trusted when the use changes. There, the agent's inference that a
-trimmed field holds nothing is the weak point. A better instruction narrows it, and does not remove it. The evidence comes from few runs and one agent model, on the five agents of development and on
-held-out tasks for two of them.
+The method is therefore best used as tracetrim implements it: as a proposal learned from complete traces, reviewed
+by a person, applied with identifiers protected and with a way back for the agent when a cut was wrong, which in
+Study~3 also corrected the projection. It helps most where tool outputs carry much that the task does not use, and
+least where the agent cites most of what it reads, where minifying is enough. Study~4 adds a condition and shows how
+the library meets it: when the use of a tool changes, the agent's inference that a trimmed field holds nothing is
+the weak point; the instruction that is the default from 1.4 narrows it at no extra cost, without removing it, and
+in live use adaptive learning kept the fields a changed task recovered (Study~3). The evidence comes from few runs
+and one agent model, on the five agents of development and on held-out tasks for two of them. Every number in this
+paper is produced by a script from its results files, never typed, so each claim can be traced to its data and the
+measures repeated on other agents with the library itself.
