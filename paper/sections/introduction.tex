@@ -57,8 +57,8 @@ learning without the final answer misses far more of what is used (with the aggr
 three agents with real APIs), so a proxy placed only between agent and tools (an MCP gateway) learns poorly by
 itself;
 (iii) a characterisation of the failure modes, including identifier fabrication; (iv) safeguards and their test;
-(v) an open-source implementation, a library and an MCP proxy placed in front of any server, that keeps learning
-while the agent works, protects identifiers, leaves a way back through \texttt{expand}, and keeps a bilingual
+(v) an open-source implementation, used in an agent's own function-calling loop or as an MCP proxy in front of any
+server, that keeps learning while the agent works, protects identifiers, leaves a way back through \texttt{expand}, and keeps a bilingual
 telemetry report that is useful on its own, independently of any trimming; (vi) a live measure of that implementation's fixed trimming and adaptive learning, and of a call-organising
 text, with the hypotheses that failed reported as failed; (vii) an offline comparison with minification and a
 pre-registered static filter, which separates what learning adds from what any serialiser or metadata filter
