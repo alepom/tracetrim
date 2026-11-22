@@ -388,7 +388,7 @@ removed and the *misses* (held-out calls in which a field the agent used would h
 
 ## The study behind it
 
-tracetrim comes with a [study](https://doi.org/{PAPER_DOI}), with protocols frozen before every run, of
+tracetrim comes with a [study](https://doi.org/10.5281/zenodo.24446740), with protocols frozen before every run, of
 where this works, where it fails, and what it does to the quality of the answers. In short:
 
 | | |
@@ -403,7 +403,7 @@ where this works, where it fails, and what it does to the quality of the answers
 | The fix, skill version 2 (the default from 1.4) | hidden facts reported: 85.1% → 92.3% (+0.072, 95% interval +0.003 to +0.144), at no extra cost |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
-automatic mode; 1.4 makes skill version 2 the default. Read the [paper](https://doi.org/{PAPER_DOI}) before
+automatic mode; 1.4 makes skill version 2 the default. Read the [paper](https://doi.org/10.5281/zenodo.24446740) before
 trimming anything that matters. Measures made after the paper, on the functions of 0.4 and later, are in
 [docs/measures-v04.md](https://github.com/alepom/tracetrim/blob/master/docs/measures-v04.md),
 [docs/definitions.md](https://github.com/alepom/tracetrim/blob/master/docs/definitions.md) and, for 1.1,
@@ -441,9 +441,9 @@ servers download their pinned OpenAPI descriptions on first use.
 ## Citation
 
 Paper: Alessio Pomaro, *Agents Read More Than They Use: Learning Tool-Output Projections from Execution Traces
-with tracetrim, from Cost to Answer Quality*, preprint, version 3, 2026. DOI [{PAPER_DOI}](https://doi.org/{PAPER_DOI}) (version 2: [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959); version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934); all versions: [10.5281/zenodo.23953933](https://doi.org/10.5281/zenodo.23953933)).
+with tracetrim, from Cost to Answer Quality*, preprint, version 3, 2026. DOI [10.5281/zenodo.24446740](https://doi.org/10.5281/zenodo.24446740) (version 2: [10.5281/zenodo.24189959](https://doi.org/10.5281/zenodo.24189959); version 1: [10.5281/zenodo.23953934](https://doi.org/10.5281/zenodo.23953934); all versions: [10.5281/zenodo.23953933](https://doi.org/10.5281/zenodo.23953933)).
 
-Software, protocols and dataset: DOI [{SOFTWARE_DOI}](https://doi.org/{SOFTWARE_DOI}) (version 1.4.0; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
+Software, protocols and dataset: DOI [10.5281/zenodo.24446750](https://doi.org/10.5281/zenodo.24446750) (version 1.4.0; all versions: [10.5281/zenodo.23954124](https://doi.org/10.5281/zenodo.23954124)).
 See `CITATION.cff`.
 
 ## License

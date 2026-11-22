@@ -9,10 +9,10 @@ later versions add ways to use the library, and were checked end to end, not eva
 Answer quality, measured, and a skill text that acts on what was found. **What the model receives changes in one
 place: the text of the skill and of `expand` (version 2, below).** With the other default options it receives
 what it received in 1.3.1; the numbers, figures and results files of Studies 1–3 regenerate identical. Archived
-on Zenodo with the paper, version 3: DOI {SOFTWARE_DOI}.
+on Zenodo with the paper, version 3: DOI 10.5281/zenodo.24446750.
 
 - **The paper, version 3** (*Agents Read More Than They Use: Learning Tool-Output Projections from Execution
-  Traces with tracetrim, from Cost to Answer Quality*, DOI {PAPER_DOI}) adds Study 4: answer quality on tasks
+  Traces with tracetrim, from Cost to Answer Quality*, DOI 10.5281/zenodo.24446740) adds Study 4: answer quality on tasks
   held out from development, judged blind under three frozen protocols, on synthetic worlds that are released.
   On new ordinary tasks the prudent projection kept the quality of the answers (+0.05 on a 0–4 scale, 95%
   interval [−0.01; +0.13], at a ceiling). A stress test, with tasks built to need exactly the fields it removes,

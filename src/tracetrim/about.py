@@ -14,8 +14,8 @@ ORCID = "0009-0008-6975-996X"
 WEBSITE = "https://www.alessiopomaro.it/"
 
 REPOSITORY = "https://github.com/alepom/tracetrim"
-PAPER_DOI = "10.5281/zenodo.24189959"            # version 2; version 1: 10.5281/zenodo.23953934
-SOFTWARE_DOI = "10.5281/zenodo.24406362"         # 1.3.1 (1.1.1 to 1.3.0 are not archived); 1.1.0: 10.5281/zenodo.24263018; 1.0.0: 10.5281/zenodo.24190053; 0.3.4: 10.5281/zenodo.23954125
+PAPER_DOI = "10.5281/zenodo.24446740"            # version 3; version 2: 10.5281/zenodo.24189959; version 1: 10.5281/zenodo.23953934
+SOFTWARE_DOI = "10.5281/zenodo.24446750"         # 1.4.0; 1.3.1: 10.5281/zenodo.24406362 (1.1.1 to 1.3.0 are not archived); 1.1.0: 10.5281/zenodo.24263018; 1.0.0: 10.5281/zenodo.24190053; 0.3.4: 10.5281/zenodo.23954125
 LICENSE = "MIT"
 
 
