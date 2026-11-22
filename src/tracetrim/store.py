@@ -216,9 +216,12 @@ def hold_open(directory: str | Path):
             fh = open(Path(directory) / OPEN_LOCK, "a+b")
             try:
                 fcntl.lockf(fh.fileno(), fcntl.LOCK_SH)
-            except OSError:
+            except OSError as e:
                 fh.close()
-                return None
+                # Raised, not ignored: a Learner that serves without it is invisible to `tracetrim promotions`, which
+                # would then relearn the directory from another process (REVISIONE-14b-octies). The write lock needs
+                # working locks on this file system as well.
+                raise OSError(e.errno, f"the work directory {directory} could not be locked ({e.strerror})") from e
             entry = _held[key] = {"file": fh, "count": 0}
         entry["count"] += 1
 

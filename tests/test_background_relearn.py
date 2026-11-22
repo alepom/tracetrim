@@ -2377,3 +2377,172 @@ def test_a_legacy_message_that_is_not_text_is_set_aside(tmp_path):
     auto.Learner(tmp_path, 2)
     state = json.loads((tmp_path / "state.json").read_text())
     assert state["runs"] == 2 and state["complete_runs"] == 1
+
+
+# -- REVISIONE-14b-octies ----------------------------------------------------------------------------------------
+
+def visible(out: str) -> dict:
+    """The record the model reads, without the `[trimmed]` line."""
+    return json.loads(out.split("\n", 1)[0])["items"][0]
+
+
+def promoting_autotrim(work):
+    from tracetrim.evidence import Adaptive
+    return auto.AutoTrim(work, min_runs=2, adaptive=Adaptive(promote=True, promote_requested_runs=2))
+
+
+@pytest.mark.parametrize("then", ["repeated", "reopened"])
+def test_a_revert_of_1_3_stopped_before_its_relearning_is_applied(tmp_path, capsys, then):
+    """REVISIONE-14b-octies: `tracetrim promotions` of 1.3 saved the revert and stopped before relearning (no mark in
+    1.3): evidence reverted, config still promoting note_0. Repeated, the command found nothing to change; reopened,
+    AutoTrim served note_0 until a new closing. The disagreement is now owed, and the first output has no note_0."""
+    import gc
+    from tracetrim import evidence
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    data = evidence.load(work / "evidence.json")
+    evidence.revert(data, "volumes", "items[].note_0")
+    evidence.save(work / "evidence.json", data)                        # what 1.3 left: no mark, the config behind
+    if then == "repeated":
+        main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])
+        assert "not applied yet" in capsys.readouterr().out
+    tt = promoting_autotrim(work)
+    assert "note_0" not in visible(tt.output("volumes", {}, json.dumps(PAYLOAD)))
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == {}
+
+
+def test_a_failed_scan_of_the_traces_never_consumes_the_mark(tmp_path, monkeypatch):
+    """REVISIONE-14b-octies: during the command's relearning the scan of traces/ failed once (EIO); glob gave no file,
+    the relearning took it for a directory with no runs, consumed the mark, and the config kept note_0, also after a
+    retry and a reopening. The scan now fails the relearning, and the mark stays."""
+    import errno
+    import gc
+    import os
+    from tracetrim.cli import main
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    scandir, glob, inputs = os.scandir, Path.glob, auto.Learner._inputs
+    armed = {"on": False, "done": False}
+
+    def failing(path="."):
+        if armed["on"] and str(path).rstrip("/").endswith("traces"):
+            armed["on"] = False
+            raise OSError(errno.EIO, "simulated")
+        return scandir(path)
+
+    def globbing(self, pattern, *a, **kw):
+        if armed["on"] and self.name == "traces":
+            armed["on"] = False
+            return iter([])                              # glob gives up on an unreadable directory, silently
+        return glob(self, pattern, *a, **kw)
+
+    def reading(self):
+        if not armed["done"]:
+            armed["on"] = armed["done"] = True
+        return inputs(self)
+    monkeypatch.setattr(os, "scandir", failing)
+    monkeypatch.setattr(Path, "glob", globbing)
+    monkeypatch.setattr(auto.Learner, "_inputs", reading)
+    try:
+        main(["promotions", str(work), "--revert", "volumes", "items[].note_0"])
+    except OSError:
+        pass                                              # the relearning failed: the change waits under its mark
+    monkeypatch.undo()
+    gc.collect()
+    tt = promoting_autotrim(work)
+    assert "note_0" not in visible(tt.output("volumes", {}, json.dumps(PAYLOAD)))
+    assert json.loads((work / "report.config.json").read_text())["auto"]["promoted"] == {}
+
+
+def test_a_read_error_never_sets_a_sound_trace_aside(tmp_path, monkeypatch):
+    """REVISIONE-14b-octies: one read of run-0001.jsonl failed (EIO) during a relearning: the trace became .corrupt,
+    the complete runs fell to one and the filter went off. A read error now fails the relearning, which stays owed;
+    the trace stays, and the retry relearns both runs."""
+    import errno
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    assert tt.trimming
+    read, armed = Path.read_text, {"on": False}
+
+    def failing(self, *a, **kw):
+        if armed["on"] and self.name == "run-0001.jsonl":
+            armed["on"] = False
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(Path, "read_text", failing)
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    armed["on"] = True
+    try:
+        tt.done(None)
+    except OSError:
+        pass
+    assert (tmp_path / "traces" / "run-0001.jsonl").exists() and not list(tmp_path.glob("traces/*.corrupt"))
+    assert tt.trimming
+    tt.done(None)                                         # the retry: nothing to close, the relearning owed
+    assert tt.trimming and not tt.learner.relearn_owed
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 2
+    assert json.loads((tmp_path / "state.json").read_text())["complete_runs"] == 2
+
+
+def test_an_answer_with_a_unicode_line_separator_is_a_complete_run(tmp_path):
+    """REVISIONE-14b-octies: an answer holding U+2028 is written as is inside its JSON string; the reader split the
+    record there (splitlines) and set the trace aside as corrupt."""
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done("spa weekend has 1600 searches a month.")
+    assert not list(tmp_path.glob("traces/*.corrupt"))
+    assert json.loads((tmp_path / "report.json").read_text())["auto"]["complete_runs"] == 2
+    assert tt.trimming
+
+
+@pytest.mark.skipif(__import__("importlib").util.find_spec("fcntl") is None, reason="fcntl only")
+def test_a_learner_that_cannot_take_its_presence_lock_does_not_start(tmp_path, monkeypatch):
+    """REVISIONE-14b-octies: the shared lock failed once (ENOLCK); the Learner started without it, and a command in
+    another process relearned the directory under it. The failure now stops the Learner before it serves."""
+    import errno
+    import fcntl
+    lockf, armed = fcntl.lockf, {"on": True}
+
+    def failing(fd, cmd, *a):
+        if armed["on"] and cmd == fcntl.LOCK_SH:
+            armed["on"] = False
+            raise OSError(errno.ENOLCK, "No locks available")
+        return lockf(fd, cmd, *a)
+    monkeypatch.setattr(fcntl, "lockf", failing)
+    with pytest.raises(OSError, match="could not be locked"):
+        auto.AutoTrim(tmp_path, min_runs=2)
+    tt = auto.AutoTrim(tmp_path, min_runs=2)             # the next start, the lock working
+    assert not alone_from_another_process(tmp_path) and tt.learner is not None
+
+
+@pytest.mark.parametrize("on", [False, True])
+def test_a_retry_after_a_failed_publication_moves_the_start_of_the_pause(tmp_path, monkeypatch, on):
+    """REVISIONE-14b-octies: run 1 confirmed; the publication of run 2 fails at the state, and the run carried the
+    confirmation of run 1. The retry 900 ms later replied `Recorded.`, and the call right after it did not count as
+    following the answer (pause 650 ms)."""
+    from mcp.shared.exceptions import MCPError
+    armed = fail_once(monkeypatch, "state.json")
+
+    async def go():
+        server, learner = proxy._server(options(tmp_path, idle_seconds=0.65, background_relearn=on))
+        async with Client(server) as client:
+            await run(client)
+            if on:
+                await settled(learner)
+            assert not (await client.call_tool("volumes", {})).is_error          # follows the answer of run 1
+            armed["on"] = True
+            with pytest.raises(MCPError):
+                await client.call_tool("tracetrim_done", {"answer": ANSWER})
+            await asyncio.sleep(0.9)
+            assert (await client.call_tool("tracetrim_done", {"answer": ANSWER})).content[0].text == auto.DONE_REPLY
+            assert not (await client.call_tool("volumes", {})).is_error          # right after the confirmation
+            assert learner.state["answered_runs_followed_by_calls"] == 2
+            if on:
+                await learner.background.drain()
+    asyncio.run(go())

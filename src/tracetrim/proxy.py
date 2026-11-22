@@ -566,15 +566,23 @@ def _server(o: Options):
             if learner.finish_pending():
                 await relearn_now(quiet=True)
             previous = learner.run.last_number
+            answered = bool(answer and answer.strip())
+            recorded = False
             try:
                 path = engine.done(answer)
+            except Exception:
+                # Recorded, then a write failed (its publication, a secondary file): the error is the reply to a
+                # closing on disk, and the pause starts at it until a retry is confirmed (REVISIONE-14b-octies).
+                recorded = learner.run.last_number != previous
+                raise
             finally:
                 # Once the trace is on disk, its original handles must keep
                 # pointing to that closed run even if a secondary write failed.
                 if session and session.run.last_number != previous:
                     closed = session.run
                     session.run = Run(last_number=closed.last_number, answered_at=closed.answered_at)
-            answered = bool(answer and answer.strip())
+                if recorded:
+                    replied(session, answered, confirmed=False)
             if path is None:
                 # Nothing left to close: a repeat, or the retry of a closing that failed. If a relearning is owed (its
                 # own failed, or another request finished its publication), it is made before the reply, and the

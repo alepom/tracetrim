@@ -57,7 +57,9 @@ def load_jsonl(path: Path) -> Trace:
     `arguments` may be an object or the JSON text the model wrote.
     """
     trace = Trace(path.name)
-    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    # Records end at "\n", as the writers end them: splitlines() also ends one at U+2028, U+2029 and other
+    # separators a JSON string may hold as they are (REVISIONE-14b-octies: an answer with U+2028 was set aside).
+    for n, line in enumerate(path.read_text(encoding="utf-8").split("\n"), 1):
         if not line.strip():
             continue
         d = json.loads(line)

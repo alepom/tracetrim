@@ -43,6 +43,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import re
 import threading
 import time
@@ -106,6 +107,29 @@ def held(data: dict, changes: list) -> list:
     and perhaps not applied yet. One it does not hold was noted by a command stopped before saving it."""
     have = statuses(data)
     return [c for c in changes if (c.get("tool"), c.get("field"), c.get("status")) in have]
+
+
+def trace_paths(directory: Path) -> list[Path]:
+    """The traces of a work directory (`traces/run-*.jsonl`), sorted. Listed with os.scandir, which raises when the
+    directory cannot be read: glob gives no file instead, and a relearning took a directory it could not read for one
+    with no runs, and consumed the mark of a change it never applied (REVISIONE-14b-octies)."""
+    with os.scandir(directory) as entries:
+        return sorted(Path(e.path) for e in entries if e.name.startswith("run-") and e.name.endswith(".jsonl"))
+
+
+def config_disagrees(directory: Path, data: dict) -> bool:
+    """Whether the config's promoted fields differ from the active promotions of the evidence `data`: a change of the
+    evidence the config does not apply yet. `tracetrim promotions` of 1.3 wrote no mark, and one stopped between the
+    evidence and its relearning left the config behind (REVISIONE-14b-octies). False without a config to compare."""
+    try:
+        config = json.loads((directory / "report.config.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    promoted = config.get("auto", {}).get("promoted") if isinstance(config, dict) else None
+    if not isinstance(promoted, dict):
+        return False
+    have = {(t, f) for t, fields in promoted.items() if isinstance(fields, list) for f in fields}
+    return have != {(t, f) for t, fields in evidence.promoted(data).items() for f in fields}
 
 
 def pending_mark(directory: Path) -> bool:
@@ -200,6 +224,10 @@ class Learner:
             store.clean(self.dir)
             store.clean(self.dir / "traces")
             marked = pending_mark(self.dir)
+            try:
+                behind_config = config_disagrees(self.dir, evidence.load(self.dir / "evidence.json"))
+            except (OSError, ValueError):
+                behind_config = False            # an evidence file that cannot be read: the relearning says so
         # Whether a tool is trimmed is decided on held-out runs (leave-one-out,
         # as in `tracetrim measure`): with fewer than two there is nothing to
         # hold out, and nothing would ever be trimmed.
@@ -272,7 +300,7 @@ class Learner:
         # from the journal of an interrupted closing, or taken in by `_realign`; or a change of the evidence that
         # `tracetrim promotions` left to the proxy (store.CHANGED).
         self.needs_relearn = bool(recovered or behind or self.state.get("report_pending")
-                                  or marked)
+                                  or marked or behind_config)
         self._owed = int(self.needs_relearn)
         if self.needs_relearn and relearn_at_start:
             self.relearn()
@@ -280,7 +308,7 @@ class Learner:
     def _realign(self) -> bool:
         """Take into the state the traces numbered after its runs (see the constructor). True when there were."""
         later = {}
-        for p in (self.dir / "traces").glob("run-*.jsonl"):
+        for p in trace_paths(self.dir / "traces"):
             m = re.match(r"run-(\d+)", p.name)
             if m and int(m[1]) > self.state["runs"]:
                 # Its number is taken whatever it holds; it counts as complete only if it can be read (a trace cut
@@ -526,7 +554,7 @@ class Learner:
     def _next_run(self) -> int:
         # Also from the files: if the process died after writing a trace and
         # before saving the state, the next run must not overwrite it.
-        on_disk = [int(m[1]) for p in (self.dir / "traces").glob("run-*.jsonl")
+        on_disk = [int(m[1]) for p in trace_paths(self.dir / "traces")
                    if (m := re.match(r"run-(\d+)", p.name))]
         return max([self.state["runs"], *on_disk]) + 1
 
@@ -667,6 +695,9 @@ class Learner:
         if complete:
             self.state["complete_runs"] += 1
             self.run.answered_at = time.time()
+            # Not confirmed until its own reply says `Recorded.` (REVISIONE-14b-octies: the flag of the run before
+            # was carried over, and a retry after a failed publication left the pause where it was).
+            self.run.confirmed = False
         # In the same write that records the run: no report covers it yet. The relearning that does clears it; a
         # process stopped before then relearns at its next start (1.4: in every mode, not only with isolated sessions).
         self.state["report_pending"] = True
@@ -751,7 +782,7 @@ class Learner:
                 state = copy.deepcopy({k: self.state[k] for k in self._READ if k in self.state})
             # Before the evidence: a mark with no note is covered only if it is still the one read here (`_covered`).
             marker = store.stamp(self.dir / store.CHANGED)
-            paths = sorted((self.dir / "traces").glob("run-*.jsonl"))
+            paths = trace_paths(self.dir / "traces")
             try:
                 savings = json.loads(self.savings_path.read_text(encoding="utf-8")) \
                     if self.savings_path.exists() else None
@@ -776,13 +807,14 @@ class Learner:
         inputs = self._inputs()
         state, paths = inputs["state"], inputs["paths"]
         runs_at_start = state["runs"]
-        # A trace that cannot be read (written in place by 0.3.5 and cut short by a killed process) is set aside,
-        # as state.json is: until 1.0 it stopped every later relearning.
+        # A trace that is not valid (written in place by 0.3.5 and cut short by a killed process) is set aside, as
+        # state.json is: until 1.0 it stopped every later relearning. One the disk failed to read is not: the
+        # relearning fails, and stays owed (REVISIONE-14b-octies: a sound trace was set aside after one read error).
         readable = {}
         for p in paths:
             try:
                 readable[p] = load(p)
-            except (ValueError, OSError):
+            except ValueError:
                 try:
                     p.replace(p.with_name(p.name + ".corrupt"))
                 except OSError:
@@ -948,7 +980,7 @@ class Learner:
             if decided is None:                  # no readable run: nothing published, nothing left to cover
                 if self.state["runs"] == runs_at_start and self.state.pop("report_pending", None) is not None:
                     self._save()
-                self._covered(inputs)
+                # The mark stays: no config was written that applies its change (REVISIONE-14b-octies).
                 self._paid = max(self._paid, inputs["owed"])
                 return
             previous = copy.deepcopy(self.state)

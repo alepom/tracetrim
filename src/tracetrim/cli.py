@@ -237,7 +237,7 @@ def cmd_promotions(a):
     from datetime import datetime, timezone
 
     from . import evidence, store
-    from .auto import Learner, held, pending_mark
+    from .auto import Learner, config_disagrees, held, pending_mark
     work = Path(a.workdir)
     path = work / "evidence.json"
     editing = a.revert is not None or bool(a.restore)
@@ -258,7 +258,9 @@ def cmd_promotions(a):
         data = evidence.load(path)
         # A change saved and not applied yet: a command stopped after saving it (or one that left it to the proxy).
         # A mark that names no saved change was left by a command stopped before saving: it goes (`pending_mark`).
-        owed = editing and pending_mark(work)
+        # Or a config behind the evidence with no mark at all: a command of 1.3 stopped before it relearned
+        # (REVISIONE-14b-octies: repeated, it found nothing to change).
+        owed = editing and (pending_mark(work) or config_disagrees(work, data))
         noted_before = store.changes(work) if mark.exists() else []
         if noted_before is None:
             # A mark with no note (an earlier build of 1.4): what it was about is in the evidence as it stands, so
@@ -266,7 +268,7 @@ def cmd_promotions(a):
             earlier = [{"tool": p["tool"], "field": p["field"], "status": p["status"]} for p in data["promotions"]]
         else:
             earlier = held(data, noted_before)
-        pending = bool(earlier)               # for the listing: a change saved and not applied yet
+        pending = bool(earlier) or config_disagrees(work, data)     # for the listing: saved, not applied yet
         if a.revert is not None:
             changed = evidence.revert(data, *a.revert)
         elif a.restore:

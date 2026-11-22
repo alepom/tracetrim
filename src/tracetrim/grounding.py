@@ -144,7 +144,7 @@ def filtered_tools(workdir: Path, run: str) -> list[str]:
     if not log.exists():
         return []
     tools = []
-    for line in log.read_text(encoding="utf-8").splitlines():
+    for line in log.read_text(encoding="utf-8").split("\n"):      # records end at "\n" (traces.load_jsonl)
         try:
             n = json.loads(line)
         except ValueError:
