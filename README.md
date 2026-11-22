@@ -202,9 +202,10 @@ call it sent keeps the relearning waiting until the upstream server answers that
 ([results/v1/closing_reply.json](https://github.com/alepom/tracetrim/blob/master/results/v1/closing_reply.json)).
 
 Since 1.4, in every mode, a closing writes its files through a journal: a process stopped at any point leaves
-all of them or none, and the next start relearns what no report covers yet. Two consequences: the work
-directory needs file locks (`flock` and POSIX `lockf`; on a file system without them the proxy does not start,
-and says so), and a trace the disk cannot read (an I/O or permission error) stops the relearning with that
+all of them or none, and the next start relearns what no report covers yet; a closing that meets a disk error
+before its journal fails as a whole, and the run stays open for the retry. Two consequences: the work
+directory needs file locks (`flock` and POSIX `lockf`; on a file system without them neither the proxy nor
+`AutoTrim` starts, and they say so), and a trace the disk cannot read (an I/O or permission error) stops the relearning with that
 error, to be tried again at the next closing; until 1.3 it was set aside as corrupt. A trace whose content is
 not valid is still set aside.
 

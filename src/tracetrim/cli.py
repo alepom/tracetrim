@@ -243,15 +243,16 @@ def cmd_promotions(a):
     editing = a.revert is not None or bool(a.restore)
     if a.revert is not None and len(a.revert) > 2:
         raise SystemExit("--revert takes nothing (all), a TOOL, or a TOOL and a FIELD")
-    changed, in_use, owed, pending = [], False, False, False
+    changed, in_use, owed, pending, applied = [], False, False, False, None
     mark = work / store.CHANGED
     # Read, changed, written and applied under the lock that a running proxy also takes to write the evidence (1.4):
     # until 1.3 a relearning or a closing of the proxy could write its own copy over the change, and a second
     # `tracetrim promotions` now waits for this one to end, then reads its change (REVISIONE-14b-quater). A listing
     # reads the evidence and the mark under it too, where it can write the lock file.
-    locked = work.is_dir() and (editing or os.access(work, os.W_OK))
+    exists = store.present(work)              # an error other than a missing directory is raised (store.present)
+    locked = exists and (editing or os.access(work, os.W_OK))
     with store.write_lock(work) if locked else nullcontext():
-        if editing and work.is_dir():
+        if editing and exists:
             # A closing left in its journal by a stopped process goes first: replayed after this change, it would
             # write the evidence of before.
             store.recover_close(work)
@@ -261,7 +262,7 @@ def cmd_promotions(a):
         # Or a config behind the evidence with no mark at all: a command of 1.3 stopped before it relearned
         # (REVISIONE-14b-octies: repeated, it found nothing to change).
         owed = editing and (pending_mark(work) or config_disagrees(work, data))
-        noted_before = store.changes(work) if mark.exists() else []
+        noted_before = store.changes(work) if store.present(mark) else []
         if noted_before is None:
             # A mark with no note (an earlier build of 1.4): what it was about is in the evidence as it stands, so
             # every promotion is named as it is now; the obligation is kept (REVISIONE-14b-septies).
@@ -305,8 +306,9 @@ def cmd_promotions(a):
                     # a relearning with other thresholds could switch a tool off that the proxy would keep.
                     from dataclasses import fields
                     from .evidence import Adaptive
-                    config = json.loads((work / "report.config.json").read_text()) if (work / "report.config.json").exists() else {}
-                    report = json.loads((work / "report.json").read_text()) if (work / "report.json").exists() else {}
+                    # Read, not checked first: a file that cannot be read is an error, never the defaults (store.present).
+                    config = json.loads(store.read_text(work / "report.config.json") or "{}")
+                    report = json.loads(store.read_text(work / "report.json") or "{}")
                     saved = (report.get("adaptive") or {}).get("settings") or {}
                     known = {f.name for f in fields(Adaptive)}
                     adaptive = Adaptive(**{k: v for k, v in saved.items() if k in known})
@@ -316,6 +318,9 @@ def cmd_promotions(a):
                             compact=config.get("compact", True) is not False,
                             keep_positions=config.get("keep_positions", True) is not False,
                             relearn_at_start=False).relearn()
+                    # Applied only if the config now says what the evidence says and no mark waits: with no readable
+                    # run the relearning writes no config (REVISIONE-14b-decies: the command said it applied it).
+                    applied = not store.present(mark) and not config_disagrees(work, data)
     for p in data["promotions"]:
         flag = " <- changed" if p in changed else ""
         print(f"{p['status']:<9} {p['tool']}  {p['field']}  ({p['reason']} in {len(p['runs'])} run"
@@ -324,11 +329,11 @@ def cmd_promotions(a):
         print("no promotions")
     elif (a.revert is not None or a.restore) and not changed:
         print("nothing changed: no promotion matches")
-    if owed and not changed and not in_use:
-        if mark.exists():                     # the relearning wrote no config (no readable trace): still waiting
-            print("a change saved earlier was not applied yet, and could not be applied now (no readable run)")
-        else:
-            print("a change saved earlier was not applied yet: config and report now apply it")
+    if applied is False:
+        print("the change is saved, but config and report could not be rewritten (no readable run): the next "
+              "relearning applies it")
+    elif owed and not changed and not in_use:
+        print("a change saved earlier was not applied yet: config and report now apply it")
     if in_use:
         print("the work directory is in use (a proxy is running on it): the change is saved, and the proxy applies it "
               "at its next relearning")

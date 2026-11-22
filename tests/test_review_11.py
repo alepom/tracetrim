@@ -138,10 +138,16 @@ def test_the_learning_switch_is_recorded_and_checked(tmp_path):
 
 # -- the learner -------------------------------------------------------------------------------
 
-def test_a_failure_after_the_trace_is_written_keeps_the_counts(tmp_path, monkeypatch):
+@pytest.mark.parametrize("durable", [True, False])
+def test_a_failure_after_the_trace_is_written_keeps_the_counts(tmp_path, monkeypatch, durable):
+    """File after file (`durable_closes=False`, the writes of 1.3): the run is recorded with what did not fail. Through
+    the journal (1.4, the default), an I/O error on the evidence fails the closing as a whole: the run stays open with
+    its counts and notes, and the retry records all of them (REVISIONE-14b-decies: recorded without its evidence,
+    the run lost it for good)."""
     from tracetrim import evidence
     from tracetrim.auto import AutoTrim
     tt = AutoTrim(tmp_path, min_runs=3)
+    tt.learner.durable_closes = durable
     for i in range(3):
         tt.output(billing.TOOL, billing.arguments(i), billing.output(i))
         tt.done(billing.answer(i))
@@ -154,6 +160,13 @@ def test_a_failure_after_the_trace_is_written_keeps_the_counts(tmp_path, monkeyp
     with pytest.raises(OSError):
         tt.done(billing.answer(3))
     st = json.loads((tmp_path / "state.json").read_text())
+    if durable:
+        assert st["runs"] == 3 and tt.learner.events                     # still open
+        monkeypatch.undo()
+        tt.done(billing.answer(3))                                       # the retry
+        st = json.loads((tmp_path / "state.json").read_text())
+        fields = json.loads((tmp_path / "evidence.json").read_text())["tools"][billing.TOOL]["fields"]
+        assert any("run-0004" in f.get("requested", []) for f in fields.values())
     assert st["runs"] == 4 and st["complete_runs"] == 4
     assert "run-0004" in json.loads((tmp_path / "savings.json").read_text())["runs"]
 

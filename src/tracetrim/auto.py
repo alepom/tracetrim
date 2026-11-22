@@ -141,7 +141,7 @@ def pending_mark(directory: Path) -> bool:
     the evidence holds, which a relearning has to apply. A mark that names none was left by a command stopped before
     saving its change: it is removed, and nothing is owed. A mark with no note (an earlier build of 1.4) counts."""
     mark = directory / store.CHANGED
-    if not mark.exists():
+    if not store.present(mark):
         return False
     changes = store.changes(directory)
     try:
@@ -257,9 +257,12 @@ class Learner:
                       "expand_runs": {}, "sampling": {},
                       # Results passed whole because the filtered one would not have been shorter.
                       "full_cheaper": {}}
-        if self.state_path.exists():
+        # A state that cannot be read is an error, not a missing file (store.present: on Python 3.14 exists() hid the
+        # error, and the counters and the tools switched off started again).
+        text = store.read_text(self.state_path)
+        if text is not None:
             try:
-                self.state.update(json.loads(self.state_path.read_text()))
+                self.state.update(json.loads(text))
             except json.JSONDecodeError:
                 # Written in place by a version before atomic writes, and cut short.
                 # The traces are intact: counters restart, learning does not.
@@ -431,9 +434,10 @@ class Learner:
             return
         try:
             data = {"format": "tracetrim/savings@1", "unit": self._unit(), "runs": {}}
-            if self.savings_path.exists():
+            text = store.read_text(self.savings_path)
+            if text is not None:
                 try:
-                    old = json.loads(self.savings_path.read_text(encoding="utf-8"))
+                    old = json.loads(text)
                 except ValueError:
                     old = None
                 # A measure: a file of another shape starts again rather than stopping a closing. A read error is
@@ -534,8 +538,6 @@ class Learner:
             # Against the tool: once per result, however many times it is asked, only when a
             # removed field came back, and only for results counted since its counters started again.
             counts = first and call_id in self._counted.get(tool, set())
-            if counts:
-                self.expanded(tool)
             note = {"kind": "expand", "index": self.run.index_of.get(call_id), "after": len(self.events),
                     "tool": tool, "call_id": call_id, "requested": requested, "returned": returned,
                     "recovered": recovered, "targeted": targeted, "broad": broad,
@@ -544,10 +546,45 @@ class Learner:
                 # No run is open: the request is about a result of the run just closed (the agent closed too
                 # early). Its evidence goes there now, as `flush` does; until 1.0 it went to the next run, and
                 # one task could count as two runs for the switch-off and the promotions.
-                self._absorb(f"run-{self.run.last_number:04d}", [], [dict(note, index=None)], None)
-                self._save()
+                self._late([dict(note, index=None)], counted=tool if counts else None)
             else:
+                if counts:
+                    self.expanded(tool)
                 self.notes.append(note)
+
+    def _late(self, notes: list[dict], counted: str | None = None, sizes: bool = False) -> None:
+        """Notes of the run just closed (a late `expand`; at shutdown, the notes made since the last closing), with
+        the count against the tool, the state and, with `sizes`, the savings: written through the journal, all or
+        none (REVISIONE-14b-decies: a process stopped between these writes left the evidence without the tool's
+        counts, and a failed state write, retried by the model, counted the request twice). Rolled back when the
+        journal is not written; once it is, the notes are recorded, and a failed publication is finished by the next
+        write, or at the next start."""
+        run = f"run-{self.run.last_number:04d}"
+        with self.lock, store.write_lock(self.dir):
+            self.finish_pending()
+            previous, unsaved, followed = copy.deepcopy(self.state), self._unsaved, self._followed
+            sizes_before = (self.run.sizes, self.run.expand_sizes)
+            try:
+                with store.collect_close() as files:
+                    if counted is not None:
+                        self.expanded(counted)
+                    if notes:
+                        self._absorb(run, [], notes, None)
+                    if sizes:
+                        self._save_sizes(run)
+                    self._count_followed()
+                    self._save()
+                store.write_json(self.dir / store.JOURNAL,
+                                 {p.relative_to(self.dir).as_posix(): text for p, text in files.items()})
+            except BaseException:
+                self.state, self._unsaved, self._followed = previous, unsaved, followed
+                self.run.sizes, self.run.expand_sizes = sizes_before
+                raise
+            self.pending_close = True
+            try:
+                self._publish_pending(owe=False)
+            except OSError:
+                pass                             # recorded in the journal: published by the next write
 
     def refused(self) -> None:
         """A closing that carried no answer and was refused: the run stays
@@ -690,7 +727,13 @@ class Learner:
         failed = None
         try:
             self._absorb(run, events, notes, answer if complete else None)
-        except Exception as e:           # noqa: BLE001
+        except OSError as e:
+            if self.durable_closes:
+                # Before the journal nothing is written: the closing fails, the run stays open with its notes, and
+                # the retry writes them (REVISIONE-14b-decies: recorded without them, they were lost for good).
+                raise
+            failed = e
+        except Exception as e:           # noqa: BLE001 - the evidence file is not valid: the run is kept, as in 1.0
             failed = e
         try:
             self._save_sizes(run)
@@ -734,7 +777,7 @@ class Learner:
                     runs.append(run)
         (self.dir / "evidence").mkdir(exist_ok=True)
         log = self.dir / "evidence" / f"{run}.jsonl"
-        earlier = log.read_text(encoding="utf-8") if log.exists() else ""
+        earlier = store.read_text(log) or ""           # a read error is raised: the earlier notes are never dropped
         store.write_atomic(log, earlier + "".join(json.dumps(n, ensure_ascii=False) + "\n" for n in notes))
 
     def flush(self, relearn: bool = True) -> Path | None:
@@ -743,16 +786,12 @@ class Learner:
         path = self.done(None)
         if path is None:
             with self.lock:
-                self.finish_pending()
                 # Nothing to close, but `expand` requests made since the last closing
                 # are only in memory (until 0.3.5 they were lost here). They are about
-                # results of the last run: that is where their evidence goes.
-                if self.notes:
-                    notes, self.run.notes = [dict(n, index=None) for n in self.notes], []
-                    self._absorb(f"run-{self.run.last_number:04d}", [], notes, None)
-                self._save_sizes(f"run-{self.run.last_number:04d}")
-                self._count_followed()
-                self._save()
+                # results of the last run: that is where their evidence goes, with the savings and the state.
+                notes = [dict(n, index=None) for n in self.notes]
+                self._late(notes, sizes=True)
+                self.run.notes = []
         if relearn and (path is not None or self.relearn_owed):
             self.relearn()
         return path
@@ -791,10 +830,10 @@ class Learner:
             # Before the evidence: a mark with no note is covered only if it is still the one read here (`_covered`).
             marker = store.stamp(self.dir / store.CHANGED)
             paths = trace_paths(self.dir / "traces")
+            text = store.read_text(self.savings_path)    # a read error fails the relearning, which stays owed
             try:
-                savings = json.loads(self.savings_path.read_text(encoding="utf-8")) \
-                    if self.savings_path.exists() else None
-            except (OSError, ValueError):
+                savings = json.loads(text) if text is not None else None
+            except ValueError:
                 savings = None                       # a measure: the report goes without the section
             data = evidence.load(self.evidence_path)
             tools = definitions.load(self.dir)
@@ -1043,7 +1082,7 @@ class Learner:
         mark names its changes (REVISIONE-14b-sexies: a relearning that read the evidence of before the change took
         a mark of the same stamp as covered). A mark with no note goes if it is still the one the inputs saw."""
         mark = self.dir / store.CHANGED
-        if not mark.exists():
+        if not store.present(mark):
             return
         changes = store.changes(self.dir)
         if changes is None:
@@ -1114,16 +1153,19 @@ class Learner:
     def initial_policy(self) -> Policy | None:
         """The config learned in a previous session, if any."""
         p = self.dir / "report.config.json"
-        if p.exists():
+        text = store.read_text(p)
+        if text is not None:
             try:
-                config = json.loads(p.read_text())
+                config = json.loads(text)
             except ValueError:               # cut short (written in place up to 0.3.5): learnt again at the next closing
                 return None
             if config.get("auto", {}).get("applied") and config.get("tools"):
                 try:
                     policy = Policy.load(p)
-                except (ValueError, OSError, KeyError):  # its projection unreadable: learnt again at the next closing
+                except (ValueError, KeyError):   # its projection not valid: learnt again at the next closing
                     return None
+                # A read error is raised, not taken for a projection not valid: the engine would serve nothing
+                # trimmed, a reverted field included, with no relearning owed (REVISIONE-14b-decies).
                 # Written by the last relearning, after every correction made so far: one made by the recovery in the
                 # constructor too (REVISIONE-14b-sexies: read as older, its results did not count).
                 policy.corrections = self._corrections

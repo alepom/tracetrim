@@ -43,6 +43,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .contract import KINDS, RECOVERED, REQUESTED, REUSED, SEEN_FULL, USED_IN_FULL, Evidence
+from .store import read_text as store_read_text
 from .store import write_json
 from .usage import keys_of, leaves, ngrams, parse_output, transformed_keys, words
 
@@ -80,10 +81,13 @@ def empty() -> dict:
 
 
 def load(path: str | Path) -> dict:
-    path = Path(path)
-    if not path.exists():
+    """The evidence file, or an empty one when it does not exist. Any other error is raised: until 1.3 a file that
+    could not be checked (Python 3.14's exists() hides the error) was taken as missing, and written again empty, with
+    its promotions and reverts (REVISIONE-14b-decies)."""
+    text = store_read_text(path)
+    if text is None:
         return empty()
-    data = json.loads(path.read_text(encoding="utf-8"))
+    data = json.loads(text)
     if data.get("format") != FORMAT:
         raise ValueError(f"{path.name}: not a tracetrim evidence file")
     data.setdefault("resumed", [])          # files written before this key existed

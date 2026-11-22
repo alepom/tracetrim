@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -32,22 +33,49 @@ def collect_close():
         _writes.reset(token)
 
 
+def present(path: str | Path) -> bool:
+    """Whether a file exists. Unlike Path.exists, an error other than its absence is raised: on Python 3.14 exists()
+    answers False for any OSError, and a file that could not be checked was taken as missing and started again
+    empty (REVISIONE-14b-decies)."""
+    try:
+        os.stat(path)
+    except FileNotFoundError:
+        return False
+    return True
+
+
+def read_text(path: str | Path) -> str | None:
+    """The text of a file, or None when it does not exist; any other error is raised (see `present`)."""
+    try:
+        return Path(path).read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return None
+
+
+_LOG = re.compile(r"evidence/run-(\d{4,})\.jsonl")
+
+
 def recover_close(directory: Path) -> bool:
     journal = directory / JOURNAL
-    if not journal.exists():
+    text = read_text(journal)
+    if text is None:
         return False
-    files = json.loads(journal.read_text(encoding="utf-8"))
+    files = json.loads(text)
     # Accept only a single run and the known files owned by this coordinator.
     number = json.loads(files["state.json"])["runs"]
-    if type(number) is not int or number < 1:
+    if type(number) is not int or number < 0:
         raise ValueError("invalid run number in close journal")
     run = f"run-{number:04d}"
     traces = {f"traces/{run}.jsonl", f"traces/{run}-noanswer.jsonl"}
-    allowed = traces | {f"evidence/{run}.jsonl", "state.json", "savings.json", "evidence.json"}
-    # A closing: one trace and its files. A relearning's commit (1.4): the state and the evidence, no trace.
-    closing = len(traces.intersection(files)) == 1
-    commit = not traces.intersection(files) and files.keys() <= {"state.json", "evidence.json"}
-    if not (closing or commit) or files.keys() - allowed:
+    # A closing: one trace and its files.
+    closing = (number >= 1 and len(traces.intersection(files)) == 1
+               and files.keys() <= traces | {f"evidence/{run}.jsonl", "state.json", "savings.json", "evidence.json"})
+    # No trace (1.4): a relearning's commit (the state and the evidence), or the notes of a run already closed (a late
+    # `expand`, the notes kept at shutdown) with the state, the evidence, the savings and that run's log.
+    logs = {name for name in files if (m := _LOG.fullmatch(name)) and int(m[1]) <= number}
+    notes = (not traces.intersection(files) and len(logs) <= 1
+             and files.keys() <= {"state.json", "evidence.json", "savings.json"} | logs)
+    if not (closing or notes):
         raise ValueError("invalid files in close journal")
     for name, content in files.items():
         path = directory / name

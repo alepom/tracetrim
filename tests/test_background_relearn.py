@@ -2602,3 +2602,226 @@ def test_a_read_error_of_the_savings_never_writes_their_history_over(tmp_path, m
     runs = json.loads((tmp_path / "savings.json").read_text())["runs"]
     assert {r: v["tools"]["t"]["calls"] for r, v in runs.items()} == \
         {"run-0001": 1, "run-0002": 1, "run-0003": 1, "run-0004": 1}
+
+
+# -- REVISIONE-14b-decies (independent review) -------------------------------------------------------------------
+
+def test_a_read_error_of_the_evidence_fails_the_closing_and_keeps_its_notes(tmp_path, monkeypatch):
+    """REVISIONE-14b-decies (also in 1.3.1): one read of evidence.json failed during a closing; the run was recorded
+    without its evidence, and the request for note_1 of that run was lost for good. The closing now fails as a whole,
+    the run stays open with its notes, and the retry records them."""
+    tt = promoting_autotrim(tmp_path)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_1"]})
+    read_fails_once(monkeypatch, "evidence.json")["on"] = True
+    with pytest.raises(OSError):
+        tt.done(ANSWER)
+    assert tt.learner.events                              # still open
+    tt.done(ANSWER)                                       # the retry
+    fields = json.loads((tmp_path / "evidence.json").read_text())["tools"]["volumes"]["fields"]
+    assert "run-0003" in fields["items[].note_1"]["requested"]
+    assert (tmp_path / "evidence" / "run-0003.jsonl").exists()
+
+
+@pytest.mark.parametrize("failing", ["journal", "state.json"])
+def test_a_late_expand_is_counted_once(tmp_path, monkeypatch, failing):
+    """REVISIONE-14b-decies (also in 1.3.1): a late expand (after the closing, before the next call) wrote evidence,
+    log and state one after the other; a failed state write made it raise, and the model's retry counted it twice.
+    Now it goes through the journal: rolled back if the journal is not written, recorded once if it is."""
+    from tracetrim import store
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)
+    request = {"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_0"]}
+    if failing == "journal":
+        write_json, armed = store.write_json, {"on": True}
+
+        def writing(path, data):
+            if armed["on"] and Path(path).name == store.JOURNAL:
+                armed["on"] = False
+                raise OSError("simulated")
+            return write_json(path, data)
+        monkeypatch.setattr(store, "write_json", writing)
+        with pytest.raises(OSError):
+            tt.expand(request)
+    else:
+        fail_once(monkeypatch, "state.json")["on"] = True
+        tt.expand(request)                                # recorded in the journal; published by the next write
+    tt.expand(request)                                    # the model asks again
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["expanded"] == {"volumes": 1} and state["expand_runs"] == {"volumes": ["run-0003"]}
+    notes = [json.loads(n) for n in (tmp_path / "evidence" / "run-0003.jsonl").read_text().splitlines()
+             if json.loads(n)["kind"] == "expand"]
+    # Rolled back, the first request left nothing, and the model's is the one recorded; recorded, the first stands
+    # and the model's is a repeat.
+    assert [n["counts"] for n in notes] == ([True] if failing == "journal" else [True, False])
+
+
+def test_a_stop_during_a_late_expand_leaves_all_of_it_or_none(tmp_path, monkeypatch):
+    """REVISIONE-14b-decies (also in 1.3.1): stopped after the evidence of a late expand and before the state, the
+    request was in the evidence and never in the tool's counts. Through the journal, the next start has both."""
+    from tracetrim import store
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)
+    replace = store.os.replace
+
+    def stopping(src, dst):
+        if Path(dst).name == "run-0003.jsonl" and Path(dst).parent.name == "evidence":
+            raise Stop()                                  # the evidence is published, the log and the state are not
+        return replace(src, dst)
+    monkeypatch.setattr(store.os, "replace", stopping)
+    with pytest.raises(Stop):
+        tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]{8})", out).group(1), "fields": ["items[].note_0"]})
+    monkeypatch.setattr(store.os, "replace", replace)
+    del tt
+    import gc
+    gc.collect()
+    auto.Learner(tmp_path, 2)                             # the next start
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["expanded"] == {"volumes": 1} and state["expand_runs"] == {"volumes": ["run-0003"]}
+    assert "run-0003" in json.loads((tmp_path / "evidence.json").read_text())["tools"]["volumes"]["fields"][
+        "items[].note_0"]["requested"]
+
+
+def disk_error(monkeypatch, name):
+    """A disk error on the file `name` as Python 3.14 meets it: os.stat fails, Path.exists answers False (its 3.14 body),
+    and the read fails; once each, from `arm()`."""
+    import errno
+    import os
+    stat, read, armed = os.stat, Path.read_text, {"stat": False, "read": False}
+
+    def failing_stat(path, *a, **kw):
+        if armed["stat"] and Path(path).name == name:
+            armed["stat"] = False
+            raise OSError(errno.EIO, "simulated")
+        return stat(path, *a, **kw)
+
+    def exists_3_14(self, *, follow_symlinks=True):
+        try:
+            os.stat(self, follow_symlinks=follow_symlinks)
+        except (OSError, ValueError):
+            return False
+        return True
+
+    def failing_read(self, *a, **kw):
+        if armed["read"] and self.name == name:
+            armed["read"] = False
+            raise OSError(errno.EIO, "simulated")
+        return read(self, *a, **kw)
+    monkeypatch.setattr(os, "stat", failing_stat)
+    monkeypatch.setattr(Path, "exists", exists_3_14)
+    monkeypatch.setattr(Path, "read_text", failing_read)
+
+    def arm(on=True):
+        armed["stat"] = armed["read"] = on
+    return arm
+
+
+@pytest.mark.parametrize("name", ["evidence.json", "savings.json"])
+def test_a_disk_error_during_a_closing_never_starts_a_file_again_on_python_3_14(tmp_path, monkeypatch, name):
+    """REVISIONE-14b-decies (also in 1.3.1): on Python 3.14 Path.exists answers False for any error; one disk error on
+    evidence.json (or savings.json) during a closing took the file for missing and wrote it again from that run
+    alone: promotions and reverts lost (the history of savings). The files are now read, not checked."""
+    import gc
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    tt = promoting_autotrim(work)
+    arm = disk_error(monkeypatch, name)
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    arm()
+    try:
+        tt.done(ANSWER)
+    except OSError:
+        pass
+    arm(False)
+    tt.output("volumes", {}, json.dumps(PAYLOAD))
+    tt.done(ANSWER)
+    promos = json.loads((work / "evidence.json").read_text())["promotions"]
+    assert [(p["field"], p["status"]) for p in promos] == [("items[].note_0", "active")]
+    # Every run in the savings: the evidence error left run 7 open (closed by the next done), the savings error
+    # recorded it and kept its counts for the next save.
+    total = json.loads((work / "state.json").read_text())["runs"]
+    runs = json.loads((work / "savings.json").read_text())["runs"]
+    assert total == (7 if name == "evidence.json" else 8) and set(runs) == {f"run-{i:04d}" for i in range(1, total + 1)}
+
+
+def test_a_disk_error_on_the_state_at_start_never_resets_it_on_python_3_14(tmp_path, monkeypatch):
+    """REVISIONE-14b-decies (also in 1.3.1): one disk error on state.json at start (Python 3.14) took it for missing:
+    counters and refused closings started again, and were written so. The start now fails, and the next one reads
+    them."""
+    tt = auto.AutoTrim(tmp_path, min_runs=2)
+    for _ in range(2):
+        tt.output("volumes", {}, json.dumps(PAYLOAD))
+        tt.done(ANSWER)
+    tt.learner.refused()
+    del tt
+    import gc
+    gc.collect()
+    arm = disk_error(monkeypatch, "state.json")
+    arm()
+    with pytest.raises(OSError):
+        auto.Learner(tmp_path, 2)
+    arm(False)
+    auto.Learner(tmp_path, 2)
+    state = json.loads((tmp_path / "state.json").read_text())
+    assert state["refused_closings"] == 1 and state["runs"] == 2 and state["complete_runs"] == 2
+
+
+def test_a_disk_error_on_a_pending_journal_at_start_never_drops_it_on_python_3_14(tmp_path, monkeypatch):
+    """REVISIONE-14b-decies: a closing stopped in its journal, and one disk error on the journal at the next start
+    (Python 3.14): the journal was taken for missing, and the next closing wrote its own over it. The start now
+    fails, and the next one publishes it."""
+    from tracetrim import store
+    learner = auto.Learner(tmp_path, 2)
+    learner.events.append({"kind": "call", "tool": "t", "arguments": {}, "output": '{"a": 1, "b": 2}'})
+    armed = fail_once(monkeypatch, "run-0001.jsonl")
+    armed["on"] = True
+    with pytest.raises(OSError):
+        learner.done("1")                                 # nothing published: the run is in the journal
+    monkeypatch.undo()
+    del learner
+    import gc
+    gc.collect()
+    assert (tmp_path / store.JOURNAL).exists()
+    arm = disk_error(monkeypatch, store.JOURNAL)
+    arm()
+    with pytest.raises(OSError):
+        auto.Learner(tmp_path, 2)
+    arm(False)
+    learner = auto.Learner(tmp_path, 2)
+    assert (tmp_path / "traces" / "run-0001.jsonl").exists() and learner.state["runs"] == 1
+
+
+def test_a_read_error_of_the_saved_policy_at_start_is_raised(tmp_path, monkeypatch):
+    """REVISIONE-14b-decies (also in 1.3.1): one read of report.projection.json failed at start and was taken for a
+    projection not valid: the engine served nothing trimmed, note_0 of a saved revert included, with no relearning
+    owed. The start now fails, and the next one serves the config."""
+    import gc
+    from tracetrim import evidence
+    work = tmp_path / "work"
+    promote_sequence(work, False, promote_runs=2, expand_runs=(3, 4))
+    gc.collect()
+    data = evidence.load(work / "evidence.json")
+    evidence.revert(data, "volumes", "items[].note_0")
+    evidence.save(work / "evidence.json", data)          # the revert of 1.3, stopped before its relearning
+    read_fails_once(monkeypatch, "report.projection.json")["on"] = True
+    with pytest.raises(OSError):
+        promoting_autotrim(work)
+    monkeypatch.undo()
+    gc.collect()
+    tt = promoting_autotrim(work)
+    out = tt.output("volumes", {}, json.dumps(PAYLOAD))
+    assert "call_id=" in out and "note_0" not in visible(out)

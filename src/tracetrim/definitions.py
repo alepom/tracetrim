@@ -72,12 +72,13 @@ def record(workdir: str | Path, tools: list[dict]) -> bool:
     """Write the tool list as published, if it changed. True when written."""
     path = Path(workdir) / FILE
     data = {"format": FORMAT, "tools": tools}
-    if path.exists():
+    text = store.read_text(path)                  # a read error is raised (store.present)
+    if text is not None:
         try:
-            if json.loads(path.read_text(encoding="utf-8")).get("tools") == tools:
+            if json.loads(text).get("tools") == tools:
                 return False
-        except (OSError, ValueError, AttributeError):
-            pass                                  # unreadable: written again
+        except (ValueError, AttributeError):
+            pass                                  # of another shape: written again
     store.write_json(path, data)
     return True
 
@@ -91,11 +92,9 @@ def read(path: str | Path) -> list[dict] | None:
     """A tool list from a file: ours, a saved `tools/list` result ({"tools": [...]}),
     or a plain JSON list of tools. None when missing or unreadable."""
     path = Path(path)
-    if not path.exists():
-        return None
     try:
         tools = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    except (OSError, ValueError):                 # missing or unreadable: a measure, the report goes without it
         return None
     if isinstance(tools, dict):                   # ours, or a saved `tools/list` result
         tools = tools.get("tools")
