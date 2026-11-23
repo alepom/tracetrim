@@ -65,5 +65,8 @@ await tt.aflush()
 
 It does not change which tools the model sees, and it does not wrap LangChain's `create_agent` middleware (the
 `ToolNode` path covers agents built with LangGraph). The same limits as the rest of tracetrim apply: it learns from
-*visible* reuse, so a field used only to reason can be removed; `expand` brings it back. See the paper, Study 4,
+*visible* reuse, so a field used only to reason can be removed (a `status` the model filters on but never
+writes); `expand` brings it back. To stop paying for that `expand` in every run, turn promotion on: with
+`TraceTrim(..., adaptive=Adaptive(promote=True))` (`from tracetrim.evidence import Adaptive`), a field the model
+asks for by name in two runs is kept from then on. See the paper, Study 4,
 for what that means for answer quality.
