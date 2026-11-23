@@ -1,0 +1,261 @@
+{
+  "protocol": "protocol-v3d.md",
+  "model": "gemini-3.8-flash",
+  "runs": 108,
+  "missing": {
+    "R": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "primary_hidden_fact_share_P2_minus_P1": {
+    "point": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "tasks": 12,
+    "verdict": "no improvement shown",
+    "per_task": {
+      "C4b-06": 0.0,
+      "C4b-11": 0.0,
+      "C4b-12": 0.0,
+      "C4b-09": 0.0,
+      "C4b-02": 0.0,
+      "C4b-01": 0.0,
+      "C4b-10": 0.0,
+      "C4b-03": 0.0,
+      "C4b-07": 0.0,
+      "C4b-08": 0.0,
+      "C4b-05": 0.0,
+      "C4b-04": 0.0
+    }
+  },
+  "P1_minus_R": {
+    "point": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "tasks": 12,
+    "verdict": "no improvement shown",
+    "per_task": {
+      "C4b-06": 0.0,
+      "C4b-11": 0.0,
+      "C4b-12": 0.0,
+      "C4b-09": 0.0,
+      "C4b-02": 0.0,
+      "C4b-01": 0.0,
+      "C4b-10": 0.0,
+      "C4b-03": 0.0,
+      "C4b-07": 0.0,
+      "C4b-08": 0.0,
+      "C4b-05": 0.0,
+      "C4b-04": 0.0
+    }
+  },
+  "P2_minus_R": {
+    "point": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "tasks": 12,
+    "verdict": "no improvement shown",
+    "per_task": {
+      "C4b-06": 0.0,
+      "C4b-11": 0.0,
+      "C4b-12": 0.0,
+      "C4b-09": 0.0,
+      "C4b-02": 0.0,
+      "C4b-01": 0.0,
+      "C4b-10": 0.0,
+      "C4b-03": 0.0,
+      "C4b-07": 0.0,
+      "C4b-08": 0.0,
+      "C4b-05": 0.0,
+      "C4b-04": 0.0
+    }
+  },
+  "fact_share_P2_minus_P1": {
+    "point": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "tasks": 12,
+    "verdict": "no improvement shown",
+    "per_task": {
+      "C4b-06": 0.0,
+      "C4b-11": 0.0,
+      "C4b-12": 0.0,
+      "C4b-09": 0.0,
+      "C4b-02": 0.0,
+      "C4b-01": 0.0,
+      "C4b-10": 0.0,
+      "C4b-03": 0.0,
+      "C4b-07": 0.0,
+      "C4b-08": 0.0,
+      "C4b-05": 0.0,
+      "C4b-04": 0.0
+    }
+  },
+  "hidden_fact_share_by_arm": {
+    "R": 1.0,
+    "P1": 1.0,
+    "P2": 1.0
+  },
+  "fact_share_by_arm": {
+    "R": 1.0,
+    "P1": 1.0,
+    "P2": 1.0
+  },
+  "gates_passed_by_arm": {
+    "R": 36,
+    "P1": 36,
+    "P2": 36
+  },
+  "process": {
+    "R": {
+      "runs": 36,
+      "calls": 15.222222222222221,
+      "turns": 7.916666666666667,
+      "expand_calls": 0,
+      "runs_with_expand": 0,
+      "cost_per_run_over_R": 1.0
+    },
+    "P1": {
+      "runs": 36,
+      "calls": 19.694444444444443,
+      "turns": 14.916666666666666,
+      "expand_calls": 171,
+      "runs_with_expand": 36,
+      "cost_per_run_over_R": 1.671851724106069
+    },
+    "P2": {
+      "runs": 36,
+      "calls": 18.63888888888889,
+      "turns": 15.277777777777779,
+      "expand_calls": 213,
+      "runs_with_expand": 36,
+      "cost_per_run_over_R": 1.6649877476082156
+    }
+  },
+  "hidden_fields": {
+    "replacement: data[].from_invoice.invoice": {
+      "R": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null
+      },
+      "P1": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null
+      },
+      "P2": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null
+      }
+    },
+    "partial_refund: data[].refunds.data[].description": {
+      "R": {
+        "facts": 24,
+        "reported": 24,
+        "reached": 24
+      },
+      "P1": {
+        "facts": 24,
+        "reported": 24,
+        "reached": 3
+      },
+      "P2": {
+        "facts": 24,
+        "reported": 24,
+        "reached": 14
+      }
+    },
+    "memo: data[].description": {
+      "R": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      }
+    },
+    "balance: data[].balance": {
+      "R": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      }
+    },
+    "balance: data[].description": {
+      "R": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      }
+    },
+    "credit_note: data[].post_payment_credit_notes_amount": {
+      "R": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P1": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      },
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27
+      }
+    }
+  },
+  "tasks": [
+    "C4b-01",
+    "C4b-02",
+    "C4b-03",
+    "C4b-04",
+    "C4b-05",
+    "C4b-06",
+    "C4b-07",
+    "C4b-08",
+    "C4b-09",
+    "C4b-10",
+    "C4b-11",
+    "C4b-12"
+  ]
+}
