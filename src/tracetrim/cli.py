@@ -203,6 +203,10 @@ def cmd_proxy(a):
         raise SystemExit("--learning sets the rules of learning: it works in automatic mode only; add --auto WORKDIR")
     if a.protect_ids != "all" and not a.auto:
         raise SystemExit("--protect-ids sets what learning keeps: it works in automatic mode only; add --auto WORKDIR")
+    if a.text_preview is not None and a.text_preview < 0:
+        raise SystemExit("--text-preview is a number of characters: 0 (off) or more")
+    if a.text_preview and not (a.auto or a.config):
+        raise SystemExit("--text-preview shows what trimming hides: it needs --auto WORKDIR or --config")
     if adaptive["--promote-runs"] and not a.promote:
         raise SystemExit("--promote-runs sets the threshold of --promote: add --promote")
     if (adaptive["--sample-max-share"] or adaptive["--sample-seed"]) and not a.sample_rate:
@@ -218,6 +222,7 @@ def cmd_proxy(a):
                 skill=not a.no_skill, skill_strategy=a.skill_strategy,
                 compact=False if a.no_compact else None,
                 keep_positions=False if a.no_keep_positions else None,
+                text_preview=a.text_preview,
                 breakdown=not a.no_breakdown, log_client=a.log_client, isolate_sessions=a.isolate_sessions,
                 background_relearn=a.background_relearn, skill_version=a.skill_version,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
@@ -534,6 +539,10 @@ def main(argv=None):
     s.add_argument("--no-keep-positions", action="store_true",
                    help="drop a list element left with no field, instead of keeping an empty one in its place "
                         "(the behaviour up to 1.1.1, when a position after it could point expand at another element)")
+    s.add_argument("--text-preview", type=int, metavar="CHARS",
+                   help="show on the [trimmed] line the first CHARS characters of the hidden free-text fields "
+                        "(descriptions, memos, notes), so that one that holds the answer does not look empty; "
+                        "off by default (0), and with --config as the config's \"text_preview\" says")
     s.add_argument("--no-breakdown", action="store_true",
                    help="do not count, call by call, what re-serialising saves apart from what removing fields "
                         "saves (the log's 'format' and 'fields', the report's section on where the saving comes from)")

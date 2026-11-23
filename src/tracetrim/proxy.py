@@ -46,7 +46,7 @@ from .about import VERSION
 from .skill import VERSION as SKILL_VERSION
 from .contract import ToolCall, ToolResult
 from .contract import FILTERED
-from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, Engine, Trimmer, expand_tool, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
+from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, TEXT_LABEL, Engine, Trimmer, expand_tool, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
 from .runtime import Policy
 
 MAX_SSE_EVENT = 16 * 1024 * 1024
@@ -102,6 +102,7 @@ class Live:
         # follows "hidden: " when it is there; this is a log line, never a reason to fail a call.
         tail = sent.rsplit(MARK, 1)[1] if MARK in sent else ""
         hidden = tail.split("hidden: ", 1)[1] if "hidden: " in tail else ""
+        hidden = hidden.split(TEXT_LABEL, 1)[0]              # the text previews (1.5) are not groups
         groups = len(hidden.split(", ")) if hidden else 0
         self._print(f"{tool:<34} {r:>8,} -> {s:>8,} {self.unit} ({self._pct(s, r)})"
                     + (f"  hidden: {groups} group{'s' if groups != 1 else ''}" if groups else ""))
@@ -167,6 +168,7 @@ class Options:
     protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
     learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
     keep_positions: bool | None = None  # a list element left with no field keeps its place; None: as the config says (on)
+    text_preview: int | None = None      # characters of hidden free text shown on the [trimmed] line; None: as the config says (0, off)
 
     isolate_sessions: bool = False    # HTTP automatic mode only
     # --auto: reply to tracetrim_done once the run is on disk, and relearn in the background (1.4, off by default:
@@ -466,7 +468,9 @@ def _server(o: Options):
     # `--structural` overrides the config: "toon" or "headroom" after the
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
-                    compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions)
+                    compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions,
+                    # In automatic mode the learned config never carries the key: the option, or off.
+                    text_preview=(o.text_preview or 0) if learner else o.text_preview)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)

@@ -30,6 +30,12 @@ class Policy:
         # the model reads is the one `expand` reads. On when the key is missing:
         # a fix (1.1.2); `"keep_positions": false` restores the earlier behaviour.
         self.keep_positions = bool(config.get("keep_positions", True))
+        # 1.5, off by default (0): the `[trimmed]` line also shows the first N characters of the hidden free-text
+        # fields, so that a description that holds the answer does not look like an empty one (tracetrim.engine).
+        preview = config.get("text_preview", 0) or 0
+        if isinstance(preview, bool) or not isinstance(preview, int) or preview < 0:
+            raise ValueError(f"text_preview is a number of characters, 0 (off) or more, not {preview!r}")
+        self.text_preview = preview
         # Optional, after the projection: "toon" (lossless re-encoding) or
         # "headroom" (experimental). The study found that a denser format can
         # change how the model reads a payload: validate before relying on it.

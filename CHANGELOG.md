@@ -4,6 +4,28 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
+## 1.5.0 (in development)
+
+New ways to use the library; with the default options the model receives what it received in 1.4.0.
+
+- **LangGraph.** `tracetrim.langgraph.TraceTrim` puts automatic mode around LangGraph's `ToolNode`
+  (`wrap_tool_call`, `awrap_tool_call`): `expand` and `tracetrim_done` as LangChain tools, one run per
+  `thread_id`, closings that wait for the calls of their conversation, `close`/`flush` from code, and
+  `idle_seconds` for conversations resumed later. Extra `langgraph`. Guide: `docs/langgraph.md`; a graph that runs
+  with no model: `examples/langgraph_agent.py`. Checked end to end with `gemini-3.8-flash` in a real graph
+  (`experiments/langgraph_gemini.py`).
+- **Text previews, off by default.** `proxy --text-preview CHARS`, `AutoTrim(text_preview=CHARS)` (and so
+  `TraceTrim`), or `"text_preview": CHARS` in a config (`--config` only: in automatic mode the option decides):
+  the `[trimmed]` line also shows, after ` · text, first characters: `, the start of the hidden free-text fields
+  (descriptions, memos, notes), cut after a whole word within CHARS characters, with `…` when there is more; at
+  most 3 distinct starts per field and 5 fields per result. It targets the weak point of Study 4: a hidden
+  description that held the fact looked like an empty one. Replayed on the 72 hard-task traces of protocol v3c
+  (arms P1 and P2), a 40-character preview would have put 38 of the 40 hidden facts the agent missed (4 synthetic
+  templates, with the fact near the start of the text) on the line itself, for 0.8% more tokens in the trimmed
+  results (`experiments/v3e/hints_offline.py`); protocol v3e measures the effect on answers. The previews count
+  in the choice between the trimmed and the whole result, as the rest of the line does. **They also feed
+  learning:** a field whose preview the model quotes counts as used, and the next relearning keeps it.
+
 ## 1.4.0
 
 Answer quality, measured, and a skill text that acts on what was found. **What the model receives changes in one

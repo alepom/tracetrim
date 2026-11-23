@@ -50,6 +50,16 @@ MAX_GROUPS = 25
 MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MARK = "\n[trimmed] "        # starts the line that follows a filtered result
 RECENT_IDS = 3               # valid call_ids named in the reply to an unknown one
+# Text previews (1.5, off by default). A hidden field is free text when one of its values is a string with a space
+# and at least TEXT_MIN characters that is not a URL: a description, a memo, a note. Ids, codes, dates, emails and
+# names of one or two short words are not. Per field, the first TEXT_VALUES distinct texts; at most TEXT_FIELDS
+# fields per result, so that a result with many hidden texts cannot make the line longer than the cut saves.
+TEXT_MIN = 12
+TEXT_VALUES = 3
+TEXT_FIELDS = 5
+# Separates the previews from the list of hidden groups, on the same line, and says what they are: the start of a
+# text, cut at a word (with "…" when there is more), never a value to quote whole. The rest comes with expand.
+TEXT_LABEL = " · text, first characters: "
 _INDEX = re.compile(r"\[(\d+)\]")
 _NOTHING = object()
 
@@ -107,6 +117,47 @@ def _pick(node, wanted: list[re.Pattern], found: set, at: str = "", addressed: l
         found.add(generic(at))
         return node
     return _NOTHING
+
+
+def is_text(value) -> bool:
+    """A free-text value, for the previews: see TEXT_MIN."""
+    if not isinstance(value, str):
+        return False
+    v = value.strip()
+    return len(v) >= TEXT_MIN and " " in v and not v.startswith(("http://", "https://"))
+
+
+def cut(text: str, chars: int) -> str:
+    """The start of a text for a preview: at most `chars` characters, cut after a whole word when there is a space in
+    the second half (a number is never split: «14,7…» would read as a value), and «…» when something is left out."""
+    if len(text) <= chars:
+        return text
+    head = text[:chars]
+    space = head.rfind(" ")
+    if space >= chars // 2:
+        head = head[:space]
+    return head.rstrip(" ,;:.") + "…"
+
+
+def previews(payload, hidden: list[str], chars: int) -> str:
+    """The text that follows the hidden groups when previews are on: for each hidden free-text field, its first
+    distinct starts (`cut`), as JSON strings (a newline or a quote cannot break the line), and how many more."""
+    if chars <= 0:
+        return ""
+    wanted = set(hidden)
+    values: dict[str, dict[str, None]] = {}      # an ordered set per field: one pass, linear in the payload
+    for path, value in leaves(payload):
+        if path in wanted and is_text(value):
+            values.setdefault(path, {})[cut(value.strip(), chars)] = None
+    parts = []
+    for path in sorted(values)[:TEXT_FIELDS]:
+        texts = list(values[path])
+        shown = ", ".join(json.dumps(t, ensure_ascii=False) for t in texts[:TEXT_VALUES])
+        more = f" (+{len(texts) - TEXT_VALUES})" if len(texts) > TEXT_VALUES else ""
+        parts.append(f"{path} {shown}{more}")
+    if len(values) > TEXT_FIELDS:
+        parts.append(f"+{len(values) - TEXT_FIELDS} more fields")
+    return TEXT_LABEL + "; ".join(parts) if parts else ""
 
 
 class Trimmer:
@@ -167,6 +218,10 @@ class Trimmer:
         ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
         items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
         listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
+        if annotate:
+            # Counted in the line below like the rest of it: if the previews make the line cost more than the cut
+            # saves, the whole result goes on instead.
+            listed += previews(payload, hidden, getattr(self.policy, "text_preview", 0))
         # The simple way for small outputs: the line that says what was removed
         # has a fixed cost, and on a small or already compact result it can cost
         # more than the cut saves. Then the whole result goes on, without the line:
@@ -259,9 +314,12 @@ class Engine:
 
     def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
                  shared: bool = False, compact: bool | None = None, breakdown: bool = True,
-                 keep_positions: bool | None = None):
+                 keep_positions: bool | None = None, text_preview: int | None = None):
         self.learner = learner
         self.keep_positions = keep_positions
+        if text_preview is not None and text_preview < 0:
+            raise ValueError("text_preview is a number of characters, 0 (off) or more")
+        self.text_preview = text_preview
         self.structural = structural
         self.breakdown = breakdown
         # Lossless, so in automatic mode it does not wait for anything to be learned.
@@ -283,6 +341,8 @@ class Engine:
             policy.compact = self.compact
         if policy is not None and self.keep_positions is not None:
             policy.keep_positions = self.keep_positions
+        if policy is not None and self.text_preview is not None:
+            policy.text_preview = self.text_preview
         return policy
 
     @property
