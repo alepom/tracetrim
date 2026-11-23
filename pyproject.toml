@@ -30,6 +30,8 @@ dependencies = []
 measure = ["tiktoken>=0.7"]
 test = ["pytest>=8", "tiktoken>=0.7", "pyyaml>=6"]
 proxy = ["mcp>=2.3"]
+# The adapter for LangGraph agents (tracetrim.langgraph): ToolNode with wrap_tool_call.
+langgraph = ["langgraph>=1.2", "langchain-core>=1.8"]
 # Experimental, heavy (torch): see tracetrim.structural.headroom.
 headroom = ["headroom-ai>=0.39"]
 

@@ -51,6 +51,9 @@ hold arguments, results, headers, tokens or the values of what a client declares
   Pass every argument after `min_runs` by keyword.
 - `learn(..., protect_ids=...)`: `True` and `False` keep their meaning; since 1.1 it also takes `"all"`
   (the same as `True`), `"record"` and `"none"` (the same as `False`).
+- `tracetrim.langgraph.TraceTrim` (since 1.5, with the `langgraph` extra): the constructor (`workdir`, then by
+  keyword `idle_seconds`, `messages_key` and the keyword arguments of `AutoTrim`), `tools`, `instructions`,
+  `report`, `wrap_tool_call`, `awrap_tool_call`, `close`, `flush`, `aclose`, `aflush`.
 - `tracetrim.evidence.Adaptive` and its fields.
 - `tracetrim.runtime.Policy`: `Policy.load`, `apply`.
 - `tracetrim.contract`: `ToolCall`, `ToolResult`, `Observation`, `Sizes`, `Evidence` and the exposure
@@ -96,6 +99,6 @@ Something stable that has to go is first **deprecated**, in a minor release:
 
 ## Dependencies
 
-Python 3.10 or later. The extras (`measure`, `proxy`, `headroom`) keep their names; their version
+Python 3.10 or later. The extras (`measure`, `proxy`, `langgraph`, `headroom`) keep their names; their version
 ranges may move in a minor release, and the CHANGELOG says so. `headroom` is experimental and outside
 these promises.

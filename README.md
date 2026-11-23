@@ -111,6 +111,22 @@ URL `https://your-tunnel.example/mcp`, header `Authorization: Bearer CHOOSE_A_SE
 report is at `http://127.0.0.1:8799/report?token=CHOOSE_A_SECRET` on the machine running the proxy.
 `docs/demo_playground.sh` does all of this for the demo.
 
+### LangGraph
+
+In a LangGraph agent, tracetrim goes around the `ToolNode`: one line changes, nothing else in the graph.
+
+```python
+from tracetrim.langgraph import TraceTrim          # pip install "tracetrim[langgraph,measure]"
+
+tt = TraceTrim("tracetrim-data/", min_runs=5)
+tools = my_tools + tt.tools                        # expand and tracetrim_done; tt.instructions in the system prompt
+tools_node = ToolNode(tools, wrap_tool_call=tt.wrap_tool_call, awrap_tool_call=tt.awrap_tool_call)
+```
+
+Each conversation (`thread_id`) has its own run and recovers only its own results; the learned policy is shared.
+Details and a complete graph that runs with no model and no key: [docs/langgraph.md](https://github.com/alepom/tracetrim/blob/master/docs/langgraph.md),
+[examples/langgraph_agent.py](https://github.com/alepom/tracetrim/blob/master/examples/langgraph_agent.py).
+
 ### Function calling, without MCP
 
 If your agent runs its own tools (function calling), there is no proxy to put in between: the
@@ -413,6 +429,8 @@ trimming anything that matters. Measures made after the paper, on the functions 
 
 - [docs/hosts.md](https://github.com/alepom/tracetrim/blob/master/docs/hosts.md): `tracetrim init`, host
   formats, and what was verified host by host.
+- [docs/langgraph.md](https://github.com/alepom/tracetrim/blob/master/docs/langgraph.md): tracetrim in a
+  LangGraph agent.
 - [docs/skill.md](https://github.com/alepom/tracetrim/blob/master/docs/skill.md): the instructions
   tracetrim gives the model, and how to check whether a host loads them.
 - [docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md): how automatic
