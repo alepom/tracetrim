@@ -1,0 +1,249 @@
+{
+  "protocol": "protocol-v3e.md",
+  "runs": 92,
+  "missing": {
+    "P2": 0,
+    "P2T": 0
+  },
+  "primary_hidden_fact_share_P2T_minus_P2": {
+    "point": 0.08287037037037036,
+    "ci95": [
+      0.046296296296296294,
+      0.12268518518518517
+    ],
+    "tasks": 12,
+    "verdict": "improved",
+    "per_task": {
+      "C4b-09": 0.0,
+      "C4b-08": 0.06666666666666665,
+      "C4b-03": 0.1333333333333333,
+      "C4b-06": 0.0,
+      "C4b-12": 0.055555555555555546,
+      "C4b-02": 0.0,
+      "C4b-04": 0.11111111111111112,
+      "C4b-10": 0.06666666666666665,
+      "C4b-01": 0.13333333333333333,
+      "C4b-05": 0.06666666666666665,
+      "C4b-07": 0.11111111111111112,
+      "C4b-11": 0.25
+    }
+  },
+  "secondary_fact_share_P2T_minus_P2": {
+    "point": 0.02196231319038338,
+    "ci95": [
+      0.015423976608187147,
+      0.029759584145549075
+    ],
+    "tasks": 12,
+    "verdict": "improved",
+    "per_task": {
+      "C4b-09": 0.01666666666666668,
+      "C4b-08": 0.018518518518518528,
+      "C4b-03": 0.03508771929824565,
+      "C4b-06": 0.0,
+      "C4b-12": 0.01666666666666668,
+      "C4b-02": 0.017543859649122823,
+      "C4b-04": 0.017543859649122823,
+      "C4b-10": 0.017543859649122823,
+      "C4b-01": 0.03508771929824561,
+      "C4b-05": 0.01666666666666668,
+      "C4b-07": 0.01666666666666668,
+      "C4b-11": 0.05555555555555558
+    }
+  },
+  "hidden_fact_share_by_arm": {
+    "P2": 0.9125,
+    "P2T": 0.9953703703703703
+  },
+  "fact_share_by_arm": {
+    "P2": 0.9766487979207277,
+    "P2T": 0.9986111111111111
+  },
+  "hidden_fields": {
+    "credit_note: data[].post_payment_credit_notes_amount": {
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 27,
+        "reported": 26,
+        "reached": 26,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      }
+    },
+    "replacement: data[].from_invoice.invoice": {
+      "P2": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 30,
+        "reported": 30,
+        "reached": null,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      }
+    },
+    "partial_refund: data[].refunds.data[].description": {
+      "P2": {
+        "facts": 24,
+        "reported": 23,
+        "reached": 6,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 24,
+        "reported": 24,
+        "reached": 24,
+        "on_preview": 24,
+        "reported_from_preview_only": 0
+      }
+    },
+    "balance: data[].balance": {
+      "P2": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      }
+    },
+    "balance: data[].description": {
+      "P2": {
+        "facts": 27,
+        "reported": 20,
+        "reached": 17,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "on_preview": 27,
+        "reported_from_preview_only": 0
+      }
+    },
+    "memo: data[].description": {
+      "P2": {
+        "facts": 27,
+        "reported": 21,
+        "reached": 21,
+        "on_preview": 0,
+        "reported_from_preview_only": 0
+      },
+      "P2T": {
+        "facts": 27,
+        "reported": 27,
+        "reached": 27,
+        "on_preview": 24,
+        "reported_from_preview_only": 0
+      }
+    }
+  },
+  "hard_process": {
+    "P2": {
+      "runs": 36,
+      "calls": 15.027777777777779,
+      "turns": 5.111111111111111,
+      "expand_calls": 170,
+      "runs_with_expand": 35,
+      "outputs_delivered_tokens": 385204,
+      "flags": []
+    },
+    "P2T": {
+      "runs": 36,
+      "calls": 13.777777777777779,
+      "turns": 4.805555555555555,
+      "expand_calls": 174,
+      "runs_with_expand": 36,
+      "outputs_delivered_tokens": 359816,
+      "flags": []
+    }
+  },
+  "hard_cost_P2T_over_P2": 0.9191077732027643,
+  "ordinary_process": {
+    "P2": {
+      "runs": 10,
+      "calls": 15,
+      "turns": 3.2,
+      "expand_calls": 5,
+      "runs_with_expand": 1,
+      "outputs_delivered_tokens": 94299,
+      "flags": []
+    },
+    "P2T": {
+      "runs": 10,
+      "calls": 15,
+      "turns": 3.4,
+      "expand_calls": 5,
+      "runs_with_expand": 1,
+      "outputs_delivered_tokens": 90319,
+      "flags": []
+    }
+  },
+  "ordinary_cost_P2T_over_P2": 0.9997379453149845,
+  "ordinary_gates": {
+    "P2": 10,
+    "P2T": 10
+  },
+  "ordinary_unsupported": {
+    "P2": 0,
+    "P2T": 0
+  },
+  "decision": {
+    "h1": true,
+    "ordinary_cost_ratio": 0.9997379453149845,
+    "ordinary_cost_within_limit": true,
+    "ordinary_gates": {
+      "P2": 10,
+      "P2T": 10
+    },
+    "ordinary_gates_not_fewer": true,
+    "recommend_default_on": true
+  },
+  "tasks": {
+    "hard": [
+      "C4b-01",
+      "C4b-02",
+      "C4b-03",
+      "C4b-04",
+      "C4b-05",
+      "C4b-06",
+      "C4b-07",
+      "C4b-08",
+      "C4b-09",
+      "C4b-10",
+      "C4b-11",
+      "C4b-12"
+    ],
+    "ordinary": [
+      "C4-01",
+      "C4-02",
+      "C4-03",
+      "C4-04",
+      "C4-05",
+      "C4-06",
+      "C4-07",
+      "C4-08",
+      "C4-09",
+      "C4-10"
+    ]
+  }
+}
