@@ -7,7 +7,7 @@ in front of any server without changing your agent.
 
 **tracetrim in two minutes** (video, no sound):
 
-https://github.com/user-attachments/assets/ca29bcbb-f702-48b5-887e-14e0ac48ea5f
+https://github.com/user-attachments/assets/2845b394-e414-4c5f-bea0-57f747bf0aa6
 
 
 In short: the first runs are only observed; from then on each tool's output reaches the model without
