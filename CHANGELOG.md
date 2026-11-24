@@ -8,9 +8,9 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 LangGraph, and **one change in what the model receives: text previews on the `[trimmed]` line, on by default**
 (*Changed behaviour*, below). With `text_preview=0` the model receives what it received in 1.4.0. Archived on Zenodo
-with the paper, version 4: DOI {SOFTWARE_DOI}.
+with the paper, version 4: DOI 10.5281/zenodo.24516562.
 
-- **The paper, version 4** (DOI {PAPER_DOI}) adds two parts to Study 4, scored by scripts under frozen protocols.
+- **The paper, version 4** (DOI 10.5281/zenodo.24516537) adds two parts to Study 4, scored by scripts under frozen protocols.
   Part D runs the stress test with an agent of another model family, `gemini-3.8-flash`: nothing was lost (100% of
   the hidden facts in every arm); it called `expand` in every run, also with skill version 1; the
   price was more turns, and the projection cost 1.67 times the complete outputs per run. Part E measures the text

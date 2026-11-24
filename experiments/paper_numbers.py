@@ -65,7 +65,7 @@ PAPER_VERSION_TWO_DATE = "November 2026"
 PAPER_SOFTWARE_VERSION = "1.5.0"
 # The archive of that release, once the author reserves its DOI on Zenodo; until then the line names the concept DOI
 # of the software, which resolves to the latest version.
-PAPER_SOFTWARE_DOI = None
+PAPER_SOFTWARE_DOI = "10.5281/zenodo.24516562"
 SOFTWARE_CONCEPT_DOI = "10.5281/zenodo.23954124"
 PAPER_VERSION_THREE_DATE = "November 2026"
 PAPER_VERSION_FOUR_DATE = "November 2026"
@@ -73,7 +73,7 @@ PAPER_VERSION_FOUR_DATE = "November 2026"
 # names the concept DOI, which resolves to the latest version.
 PAPER_CONCEPT_DOI = "10.5281/zenodo.23953933"
 PAPER_V3_DOI = "10.5281/zenodo.24446740"
-PAPER_V4_DOI = None                                # reserved by the author on Zenodo before the release
+PAPER_V4_DOI = "10.5281/zenodo.24516537"
 
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
