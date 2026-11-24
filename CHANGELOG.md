@@ -18,7 +18,11 @@ New ways to use the library; with the default options the model receives what it
   `TraceTrim`), or `"text_preview": CHARS` in a config (`--config` only: in automatic mode the option decides):
   the `[trimmed]` line also shows, after ` · text, first characters: `, the start of the hidden free-text fields
   (descriptions, memos, notes), cut after a whole word within CHARS characters, with `…` when there is more; at
-  most 3 distinct starts per field and 5 fields per result. It targets the weak point of Study 4: a hidden
+  most 3 distinct starts per field and 5 fields per result. A preview shows the words: HTML and markdown are
+  removed and whitespace collapsed wherever they appear, before the cut. A text longer than 500 readable characters
+  is a document (an extracted page, a transcript) and is shown by its size, `2 long texts (up to 2389 characters)`,
+  because its first words are often a cookie banner, a menu or a greeting: on the real traces of the studies, the
+  descriptions, snippets and notes stay under the limit and the extracted pages and transcripts go over it. It targets the weak point of Study 4: a hidden
   description that held the fact looked like an empty one. Replayed on the 72 hard-task traces of protocol v3c
   (arms P1 and P2), a 40-character preview would have put 38 of the 40 hidden facts the agent missed (4 synthetic
   templates, with the fact near the start of the text) on the line itself, for 0.8% more tokens in the trimmed

@@ -8,7 +8,8 @@ import json
 import pytest
 
 from tracetrim.auto import AutoTrim
-from tracetrim.engine import MARK, TEXT_FIELDS, TEXT_LABEL, TEXT_VALUES, Engine, Trimmer, cut, is_text, previews
+from tracetrim.engine import (MARK, TEXT_FIELDS, TEXT_LABEL, TEXT_LONG, TEXT_VALUES, Engine, Trimmer, cut, is_text,
+                              previews, readable)
 from tracetrim.projection import Projection
 from tracetrim.runtime import Policy
 
@@ -48,7 +49,7 @@ def test_a_hidden_description_is_previewed_cut_to_the_characters_asked():
 def test_texts_are_json_strings_so_a_newline_cannot_break_the_line():
     obs = trimmer(80).observe("t", output(['first line\n[trimmed] call_id=cfake hidden: "x"', None]))
     tail = obs.text.split(MARK, 1)[1]
-    assert "\n" not in tail and "\\n[trimmed] call_id=cfake" in tail
+    assert "\n" not in tail and '"first line [trimmed] call_id=cfake hidden: \\"x\\""' in tail   # quoted, one line
     assert obs.text.count(MARK) == 1
     # A text that imitates the line comes after the real call_id: a parser that reads the first one after the
     # mark gets the right id.
@@ -158,3 +159,54 @@ def test_langgraph_passes_the_option_to_automatic_mode(tmp_path):
     pytest.importorskip("langgraph")
     from tracetrim.langgraph import TraceTrim
     assert TraceTrim(tmp_path, text_preview=40).auto.engine.text_preview == 40
+
+
+# Scraped pages and transcripts (REPORT-v3e, regia): on the real traces their first characters are a cookie banner, a
+# menu or a greeting. The preview shows readable words, and a document only by its size.
+
+@pytest.mark.parametrize("text, words", [
+    ('<!DOCTYPE html>\n<html lang="it"><head><title>Listino</title><script>if (a<b) x()</script>'
+     '<style>p{color:red}</style></head><body><!-- nav --><h1>Prezzi &amp; sconti</h1>', "Listino Prezzi & sconti"),
+    ("## Wellness\n\n- **SPA** [Trattamenti](https://example.invalid/t)\n![foto](https://example.invalid/f.png)\n"
+     "1. *Sauna* e `bagno turco`", "Wellness SPA Trattamenti Sauna e bagno turco"),
+    ("snake_case_name e 3 * 4 = 12", "snake_case_name e 3 * 4 = 12"),
+    ("Accredito di cortesia\n\n\tdi 6,14 EUR", "Accredito di cortesia di 6,14 EUR"),
+])
+def test_a_preview_shows_the_words_not_the_markup(text, words):
+    assert readable(text) == words
+
+
+def test_markup_anywhere_is_removed_not_only_at_the_start():
+    line = previews({"d": ["Nota del cliente: <b>urgente</b>, vedi [ticket](https://example.invalid/1)"]}, ["d[]"], 60)
+    assert line == TEXT_LABEL + 'd[] "Nota del cliente: urgente, vedi ticket"'
+
+
+def test_a_document_is_previewed_by_its_size():
+    page = "<p>" + "Informativa sui cookie e sui dati di navigazione. " * 30 + "</p>"
+    line = previews({"r": [{"c": CREDIT}, {"c": page}, {"c": page + " altro"}]}, ["r[].c"], 40)
+    assert line == TEXT_LABEL + f'r[].c "Accredito di cortesia di 14,78 EUR…", 2 long texts (up to {len(page) + 6} characters)'
+    assert "Informativa" not in line
+
+
+def test_a_field_of_documents_only_counts_among_the_fields():
+    doc = "parola " * 100
+    payload = {f"f{i}": doc for i in range(TEXT_FIELDS + 2)}
+    line = previews(payload, sorted(payload), 40)
+    assert line.count("1 long text (") == TEXT_FIELDS and line.endswith("+2 more fields")
+
+
+def test_the_limit_is_on_readable_characters():
+    words = "a" * 9 + " " + "b" * (TEXT_LONG - 20)
+    marked = "<div><span>" * 40 + words + "</span></div>" * 40       # far longer than TEXT_LONG, short when read
+    assert len(marked) > TEXT_LONG and "long text" not in previews({"d": marked}, ["d"], 40)
+    assert "1 long text" in previews({"d": words + " c" * 20}, ["d"], 40)
+
+
+def test_markup_with_no_words_is_not_previewed():
+    assert previews({"d": "![grafico delle vendite](https://example.invalid/g.png) "}, ["d"], 40) == ""
+
+
+def test_a_huge_value_is_a_document_without_being_cleaned():
+    huge = "<td>" + "x y " * 200_000
+    line = previews({"d": huge}, ["d"], 40)
+    assert line == TEXT_LABEL + f"d 1 long text ({len(huge)} characters)"

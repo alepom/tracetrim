@@ -12,6 +12,7 @@ agent its own proxy (or its own `AutoTrim`) and work directory.
 """
 from __future__ import annotations
 
+import html
 import json
 import re
 import secrets
@@ -60,6 +61,21 @@ TEXT_FIELDS = 5
 # Separates the previews from the list of hidden groups, on the same line, and says what they are: the start of a
 # text, cut at a word (with "…" when there is more), never a value to quote whole. The rest comes with expand.
 TEXT_LABEL = " · text, first characters: "
+# A preview shows readable text: markup (HTML tags and entities, markdown syntax, link and image targets) is removed
+# and whitespace collapsed before the cut, wherever it appears, so a scraped page shows its words and not
+# «<!DOCTYPE html>» or «## Menu\n\n». A text longer than TEXT_LONG readable characters is a document (a page, a
+# transcript): its first words rarely say what it is about (a cookie banner, a menu, a greeting), so the preview gives
+# its size instead. On the real traces of the studies, descriptions, snippets and notes stay under it (95th
+# percentile 356 characters); extracted pages and transcripts go over it (median about 2,000).
+TEXT_LONG = 500
+_HTML_DROP = re.compile(r"<(script|style)\b.*?</\1\s*>|<!--.*?-->", re.I | re.S)
+_HTML_TAG = re.compile(r"<[!/?]?[A-Za-z][^<>]*>")
+_MD_IMAGE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
+_MD_LINK = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+_MD_LINE = re.compile(r"^[ \t]*(?:#{1,6}|>|[-*+]|\d{1,3}[.)])[ \t]+", re.M)   # heading, quote and list marks
+_MD_MARK = re.compile(r"\*\*|__|`+|(?<!\w)[*_](?=\S)|(?<=\S)[*_](?!\w)")     # emphasis and code, not snake_case
+_SPACE = re.compile(r"\s+")
+_BEFORE_MARK = re.compile(r" ([,.;:!?)])")                   # «urgente</b>, vedi» reads «urgente, vedi»
 _INDEX = re.compile(r"\[(\d+)\]")
 _NOTHING = object()
 
@@ -139,24 +155,51 @@ def cut(text: str, chars: int) -> str:
     return head.rstrip(" ,;:.") + "…"
 
 
+def readable(text: str) -> str:
+    """The words of a text, for a preview: HTML (scripts, styles and comments with their content, then tags and
+    entities) and markdown marks removed, links reduced to their text, images dropped, whitespace collapsed."""
+    if "<" in text:
+        text = _HTML_TAG.sub(" ", _HTML_DROP.sub(" ", text))
+    if "&" in text:
+        text = html.unescape(text)
+    text = _MD_LINK.sub(r"\1", _MD_IMAGE.sub(" ", text))
+    text = _MD_MARK.sub("", _MD_LINE.sub("", text))
+    return _BEFORE_MARK.sub(r"\1", _SPACE.sub(" ", text)).strip()
+
+
 def previews(payload, hidden: list[str], chars: int) -> str:
     """The text that follows the hidden groups when previews are on: for each hidden free-text field, its first
-    distinct starts (`cut`), as JSON strings (a newline or a quote cannot break the line), and how many more."""
+    distinct starts (`cut` of the `readable` text), as JSON strings (a newline or a quote cannot break the line), and
+    how many more; texts longer than TEXT_LONG are documents, counted with the size of the longest instead."""
     if chars <= 0:
         return ""
     wanted = set(hidden)
     values: dict[str, dict[str, None]] = {}      # an ordered set per field: one pass, linear in the payload
+    long: dict[str, list[int]] = {}              # per field: how many documents, and the longest (characters)
     for path, value in leaves(payload):
         if path in wanted and is_text(value):
-            values.setdefault(path, {})[cut(value.strip(), chars)] = None
+            # beyond 8 × TEXT_LONG raw characters a value is a document whatever its markup: no cleaning to pay for
+            words = "" if len(value) > TEXT_LONG * 8 else readable(value)
+            if len(value) > TEXT_LONG * 8 or len(words) > TEXT_LONG:
+                n = long.setdefault(path, [0, 0])
+                n[0] += 1
+                n[1] = max(n[1], len(value))
+            elif len(words) >= TEXT_MIN:
+                values.setdefault(path, {})[cut(words, chars)] = None
     parts = []
-    for path in sorted(values)[:TEXT_FIELDS]:
-        texts = list(values[path])
-        shown = ", ".join(json.dumps(t, ensure_ascii=False) for t in texts[:TEXT_VALUES])
-        more = f" (+{len(texts) - TEXT_VALUES})" if len(texts) > TEXT_VALUES else ""
-        parts.append(f"{path} {shown}{more}")
-    if len(values) > TEXT_FIELDS:
-        parts.append(f"+{len(values) - TEXT_FIELDS} more fields")
+    for path in sorted(values.keys() | long.keys())[:TEXT_FIELDS]:
+        texts = list(values.get(path, ()))
+        shown = [json.dumps(t, ensure_ascii=False) for t in texts[:TEXT_VALUES]]
+        if len(texts) > TEXT_VALUES:
+            shown[-1] += f" (+{len(texts) - TEXT_VALUES})"
+        if path in long:
+            n, size = long[path]
+            shown.append(f"1 long text ({size} characters)" if n == 1 else
+                         f"{n} long texts (up to {size} characters)")
+        parts.append(f"{path} {', '.join(shown)}")
+    fields = len(values.keys() | long.keys())
+    if fields > TEXT_FIELDS:
+        parts.append(f"+{fields - TEXT_FIELDS} more fields")
     return TEXT_LABEL + "; ".join(parts) if parts else ""
 
 
