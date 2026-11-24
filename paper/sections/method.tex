@@ -62,8 +62,8 @@ appear once.
 \paragraph{\texttt{expand}.} At run time, a projected output is followed by a line listing the hidden fields,
 grouped two levels deep and largest groups first, and the agent can retrieve any of them with an \texttt{expand}
 tool. This turns a loss into a round trip, provided the agent knows what is missing. Since release 1.5 the line
-also shows the first words of each hidden free-text field (a description, a memo, a note), so that a field that holds
-the answer does not look like an empty one; Study~4E measures this (Section~\ref{sec:s4e}).
+also shows the first words of the hidden free-text fields (a description, a memo, a note; a long text by its size),
+so that a field that holds the answer does not look like an empty one; Study~4E measures this (Section~\ref{sec:s4e}).
 
 \paragraph{Safeguards (version 0.2, Study 2).} S1 keeps identifying fields (\texttt{id}, \texttt{*\_id},
 \texttt{doi}, \texttt{url}, \texttt{number}, \texttt{title}, \texttt{name} and similar) whatever the usage says.

@@ -17,7 +17,7 @@ from .projection import Projection, dumps
 from .usage import parse_output
 
 # Characters of hidden free text shown on the `[trimmed]` line (tracetrim.engine.previews). On by default since 1.5:
-# in protocol v3e, 40 characters raised the hidden facts reported from 91.2% to 99.5% at the same cost on ordinary
+# in protocol v3e, 40 characters raised the hidden facts reported from 91.3% to 99.5% at the same cost on ordinary
 # tasks. 0 turns them off, as in 1.4.
 TEXT_PREVIEW = 40
 

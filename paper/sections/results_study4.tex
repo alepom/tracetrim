@@ -5,7 +5,8 @@ Studies~1--3 evaluated the method on the tasks on which it was developed, and th
 Studies~2 and~3 found the trimmed arms' diagnoses less complete (Section~\ref{sec:study2},
 Table~\ref{tab:c4audit}; Section~\ref{sec:s3audit}). Study~4, added in version~3 of
 this paper, asks whether the prudent projection preserves the quality of the answer on tasks never used in
-development, judged blind. It has five parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
+development. It has five parts with separate frozen protocols: Parts~A--C are judged blind, Parts~D and~E are
+scored by scripts. Part~A (\texttt{protocol-v3.md})
 draws new ordinary tasks for the two simulated agents. Part~B (\texttt{protocol-v3b.md}) is a stress test: billing
 tasks built around the fields that the projection removes. Parts A and B ran on the library at release
 1.3.1, unchanged. Part~C (\texttt{protocol-v3c.md}) measures a correction of the failure that Part~B found: a
@@ -16,7 +17,7 @@ scored by scripts with no judge. Part~D (\texttt{protocol-v3d.md}) repeats the s
 model family; Part~E (\texttt{protocol-v3e.md}) measures a second correction, a preview of the hidden free text on
 the notice after a trimmed result.
 
-\paragraph{Common design.} Each run is a fresh conversation of \texttt{\SfourModel} at default parameters, in the
+\paragraph{Common design.} In Parts~A--C and~E each run is a fresh conversation of \texttt{\SfourModel} at default parameters, in the
 study's own loop with the function-calling adapter, as in Study~3, against the simulated servers of billing support
 and CI triage serving new synthetic worlds. Two arms are common to Parts~A and~B. In \emph{R} the agent receives the
 tool outputs unaltered. In \emph{P} it receives the prudent projection with the defaults of release 1.3.1
@@ -265,7 +266,7 @@ did not close: P1 minus R \SfourCPoneMinusR{} \SfourCPoneMinusRCI{}, P2 minus R 
 \paragraph{Design.} Parts~B and~C rest on one agent model. Part~D's protocol, \texttt{protocol-v3d.md}, was
 preregistered and frozen with the library under test before the first run. It runs the \SfourDTasks{} tasks of
 Part~B with a model of another family, \texttt{\SfourDModel}, on Vertex AI at its default thinking level, through the adapter of Study~3 (E3) and the
-loop of Parts~A--C. It has three arms, each run three times per task: R, with complete outputs, and P1 and P2, the
+loop of Parts~A--C. It is the model that judged Parts~A--C, here in another role. It has three arms, each run three times per task: R, with complete outputs, and P1 and P2, the
 frozen prudent projection with the skill text of version~1 and of version~2. The primary outcome is P2 minus P1 on
 the hidden-fact share, with the estimator and the rule of Part~C; P1 minus R and P2 minus R are secondary. Every
 measure is computed by scripts from the frozen keys. Comparisons with the model of Parts~B and~C are descriptive:
@@ -283,19 +284,19 @@ tasks weighted equally.}
 \paragraph{Results.} All \SfourDRuns{} runs completed, with \SfourDMissing{} runs missing. Every arm reported every
 hidden fact (\SfourDHiddenR{}, \SfourDHiddenPone{} and \SfourDHiddenPtwo{}) and passed every gate
 (Table~\ref{tab:s4d}). P2 minus P1 was \SfourDPtwoMinusPone{}, interval \SfourDPtwoMinusPoneCI{}: \emph{\SfourDPtwoMinusPoneVerdict}
-by the rule, at a ceiling, because there was no loss to recover. The difference from Part~B lies in how the agent
-works with a trimmed result. This model called \texttt{expand} in every run of both P arms (\SfourDExpandPone{} and
+by the rule, at a ceiling: there was no loss to recover. This model called \texttt{expand} in every run of both P arms (\SfourDExpandPone{} and
 \SfourDExpandPtwo{} calls in \SfourDExpandRunsPone{} and \SfourDExpandRunsPtwo{} of \SfourDRunsPerArm{} runs), also
-with the text of version~1, with which the model of Part~B declared facts absent. It paid in turns: \SfourDTurnsR{}
-per run in R, \SfourDTurnsPone{} and \SfourDTurnsPtwo{} in P1 and P2. Since every turn sends the context again, P1
-and P2 cost \SfourDCostPone{} and \SfourDCostPtwo{} times R per run, where the projection had cost \SfourBCost{}
-times R with the model of Part~B. The loss of Part~B is therefore not a property of the projection alone: it depends
-on how readily the agent recovers hidden fields, and so does the cost of that safety.
+with the text of version~1, with which the model of Part~B declared facts absent. It took more turns, \SfourDTurnsR{}
+per run in R against \SfourDTurnsPone{} and \SfourDTurnsPtwo{} in P1 and P2, and more calls; P1 and P2 cost
+\SfourDCostPone{} and \SfourDCostPtwo{} times R per run, where the projection had cost \SfourBCost{} times R with the
+model of Part~B. Read descriptively (different runs, different model), the contrast with Part~B suggests that how
+much of the projection's risk becomes a loss depends on the agent: the loss was absent with an agent that expanded
+hidden fields in every run, and so was the saving.
 
 \subsection{Part E: previews of hidden text}
 \label{sec:s4e}
 
-\paragraph{The change.} In Parts~B and~C the facts that stayed lost sat in free-text fields: the notice after a
+\paragraph{The change.} In Parts~B and~C most of the facts that stayed lost sat in free-text fields: the notice after a
 trimmed result named \texttt{data[].description}, but an empty description and one that explained a credit looked
 the same. Release 1.5 adds text previews (Section~\ref{sec:method}): the notice also shows the start of each hidden
 free-text field, cut after the last whole word within $N$ characters. Replayed on the \SfourEHintTraces{} hard-task
@@ -322,8 +323,10 @@ ordinary tasks and passes no fewer gates there. Every measure is computed by scr
 \input{generated/table_s4e.tex}
 \caption{Study~4E: the frozen projection with the skill text of version~2, without (P2) and with
 \SfourEPreview{}-character text previews (P2T), on the tasks of Part~B (\SfourERunsPerArm{} runs per arm); costs and
-gates also on the ordinary tasks of Part~A. Shares averaged within task, tasks weighted equally. Intervals: 95\%
-bootstrap over tasks. The primary outcome and its interval are in bold.}
+gates also on the ordinary tasks of Part~A. Shares averaged within task, tasks weighted equally; the rows by kind of
+fact count facts over all runs; the costs are ratios. The two other kinds of hidden fact, a balance and a
+replacement link, were reported in every run of both arms (\SfourEBalanceAlways{} and \SfourEReplacementAlways{}).
+Intervals: 95\% bootstrap over tasks. The primary outcome and its interval are in bold.}
 \label{tab:s4e}
 \end{table}
 
@@ -335,10 +338,15 @@ free-text fields: the amount of the last credit, \SfourEOriginPtwo{} against \Sf
 invoice memo, \SfourEMemoPtwo{} against \SfourEMemoPtwoT{}. Credit notes, a numeric field with no preview, went from
 \SfourECreditNotePtwo{} to \SfourECreditNotePtwoT{}.
 
-The preview did not replace recovery; it prompted it. \SfourEFromPreviewOnly{} facts were reported with the preview as
-their only way to the agent, and the descriptions of partial refunds reached the agent in a tool result
-\SfourERefundReachedPtwoT{} times in P2T against \SfourERefundReachedPtwo{} in P2: seeing that a field held something
-relevant, the agent expanded it. P2T cost \SfourEHardCost{} times P2 per run on the hard tasks, with fewer calls
+The preview did not replace recovery. In P2T, \SfourEFromPreviewOnly{} facts were reported with the preview as their
+only way to the agent; the hidden facts reached it in tool results instead, more often than in P2. The customer's
+description reached it through \texttt{expand} in \SfourEOriginExpandPtwoT{} of \SfourEOriginFacts{} cases, against
+\SfourEOriginExpandPtwo{} in P2; the descriptions of partial refunds in \SfourERefundExpandPtwoT{} of
+\SfourERefundFacts{}, against none in P2, where they arrived only through a call for one record
+(\SfourERefundDetailPtwo{} times; \texttt{experiments/v3e/routes.py}, written after the analysis). The total number of
+\texttt{expand} calls barely changed (\SfourEExpandPtwo{} against \SfourEExpandPtwoT{}): we read this as the preview
+steering recovery to the field that held the fact, an interpretation the design supports (the arms differ only in
+the previews) but does not isolate. P2T cost \SfourEHardCost{} times P2 per run on the hard tasks, with fewer calls
 (\SfourECallsPtwoT{} against \SfourECallsPtwo{}), and \SfourEOrdinaryCost{} on the ordinary ones, where gates passed
 in \SfourEOrdinaryGates{} answers and \SfourEUnsupported{} value lacked support in the tool outputs. All three
 conditions of the decision rule hold, and the previews are on by default from tracetrim 1.5, at

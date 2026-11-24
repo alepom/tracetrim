@@ -12,7 +12,7 @@ with the paper, version 4: DOI {SOFTWARE_DOI}.
 
 - **The paper, version 4** (DOI {PAPER_DOI}) adds two parts to Study 4, scored by scripts under frozen protocols.
   Part D runs the stress test with an agent of another model family, `gemini-3.8-flash`: nothing was lost (100% of
-  the hidden facts in every arm), because it expanded hidden fields in every run, also with skill version 1; the
+  the hidden facts in every arm); it called `expand` in every run, also with skill version 1; the
   price was more turns, and the projection cost 1.67 times the complete outputs per run. Part E measures the text
   previews below.
 
@@ -44,7 +44,7 @@ with the paper, version 4: DOI {SOFTWARE_DOI}.
 
 - **Text previews are on by default, at 40 characters.** Protocol v3e (`protocol-v3e.md`, preregistered; agent
   `gpt-5.6-terra`, skill version 2, 92 runs, none missing) compared the default of 1.4 with the same policy plus
-  40-character previews. On the hard tasks of Study 4 the hidden facts reported rose from 91.2% to 99.5% (+0.083,
+  40-character previews. On the hard tasks of Study 4 the hidden facts reported rose from 91.3% to 99.5% (+0.083,
   95% interval [+0.046; +0.123]), better in 9 tasks of 12 and worse in none; the cost was 0.92 times on those tasks
   and 1.00 on ordinary ones, with the same gates passed (10 of 10). The preview did not replace `expand`: no fact
   was reported from a preview alone; seeing that a field held something relevant, the agent expanded it. The rule

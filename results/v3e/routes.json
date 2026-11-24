@@ -1,0 +1,90 @@
+{
+  "protocol": "protocol-v3e.md",
+  "written_after_the_analysis": true,
+  "hidden_fields": {
+    "credit_note: data[].post_payment_credit_notes_amount": {
+      "P2": {
+        "facts": 27,
+        "reached": 27,
+        "via": {
+          "expand": 26,
+          "detail": 7
+        }
+      },
+      "P2T": {
+        "facts": 27,
+        "reached": 26,
+        "via": {
+          "expand": 25,
+          "detail": 5
+        }
+      }
+    },
+    "partial_refund: data[].refunds.data[].description": {
+      "P2": {
+        "facts": 24,
+        "reached": 6,
+        "via": {
+          "detail": 6
+        }
+      },
+      "P2T": {
+        "facts": 24,
+        "reached": 24,
+        "via": {
+          "expand": 24
+        }
+      }
+    },
+    "balance: data[].balance": {
+      "P2": {
+        "facts": 27,
+        "reached": 27,
+        "via": {
+          "expand": 27
+        }
+      },
+      "P2T": {
+        "facts": 27,
+        "reached": 27,
+        "via": {
+          "expand": 27
+        }
+      }
+    },
+    "balance: data[].description": {
+      "P2": {
+        "facts": 27,
+        "reached": 17,
+        "via": {
+          "expand": 17
+        }
+      },
+      "P2T": {
+        "facts": 27,
+        "reached": 27,
+        "via": {
+          "expand": 27
+        }
+      }
+    },
+    "memo: data[].description": {
+      "P2": {
+        "facts": 27,
+        "reached": 21,
+        "via": {
+          "expand": 13,
+          "detail": 8
+        }
+      },
+      "P2T": {
+        "facts": 27,
+        "reached": 27,
+        "via": {
+          "expand": 24,
+          "detail": 3
+        }
+      }
+    }
+  }
+}

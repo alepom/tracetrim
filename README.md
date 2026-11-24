@@ -419,8 +419,8 @@ where this works, where it fails, and what it does to the quality of the answers
 | Where it fails | values the agent transforms, fields used only to reason, and — without an id field — agents **inventing** ids |
 | Answer quality on held-out tasks, judged blind (1.3.1, two simulated agents) | ordinary tasks: no loss (+0.05 on a 0–4 scale, 95% interval −0.01 to +0.13, at a ceiling); a stress test built around the removed fields: 83.75% of those facts reported, against 100% with complete outputs |
 | The fix, skill version 2 (the default from 1.4) | hidden facts reported: 85.1% → 92.3% (+0.072, 95% interval +0.003 to +0.144), at no extra cost |
-| The same stress test with an agent of another model family (`gemini-3.8-flash`) | nothing lost: 100% of the hidden facts in every arm, because it expanded hidden fields in every run; the price is more turns (1.67 times the cost of complete outputs per run) |
-| Text previews, the first words of hidden free text on the `[trimmed]` line (the default from 1.5) | hidden facts reported: 91.2% → 99.5% (+0.083, 95% interval +0.046 to +0.123), better in 9 of 12 tasks and worse in none, at no extra cost |
+| The same stress test with an agent of another model family (`gemini-3.8-flash`) | nothing lost: 100% of the hidden facts in every arm, with `expand` called in every run; the price is more turns (1.67 times the cost of complete outputs per run) |
+| Text previews, the first words of hidden free text on the `[trimmed]` line (the default from 1.5) | hidden facts reported: 91.3% → 99.5% (+0.083, 95% interval +0.046 to +0.123), better in 9 of 12 tasks and worse in none, at no extra cost |
 
 Version 0.2 keeps identifying fields and recognises transformed values by default; 0.3 adds the
 automatic mode; 1.4 makes skill version 2 the default; 1.5 turns the text previews on. Read the

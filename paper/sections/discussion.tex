@@ -99,9 +99,9 @@ not close the gap with complete outputs. On such tasks recovery also cancelled t
 times R per run in Part~B).
 
 Parts~D and~E qualify this. With an agent of another model family (Part~D) nothing was lost: it expanded hidden
-fields in every run, even with the text of version~1, but each recovery cost a turn, and P cost \SfourDCostPone{}
-times R per run. Whether trimming loses information depends on how readily the agent recovers, and what the safety
-costs depends on the same thing. Part~E addressed the cause that Part~B showed, a hidden free-text field that gives
+fields in every run, even with the text of version~1, but it took more turns (\SfourDTurnsPone{} against
+\SfourDTurnsR{} per run), and P cost \SfourDCostPone{} times R per run. These two models suggest that whether
+trimming loses information, and what the safety costs, depend on how readily the agent recovers. Part~E addressed the cause that Part~B showed, a hidden free-text field that gives
 no sign of what it holds: its first words on the notice raised the hidden facts reported from \SfourEHiddenPtwo{} to
-\SfourEHiddenPtwoT{} (\SfourEPoint{}, interval \SfourECI{}) at no extra cost. It worked by prompting recovery, not by
-replacing it: no fact reached the answer through the preview alone.
+\SfourEHiddenPtwoT{} (\SfourEPoint{}, interval \SfourECI{}) at no extra cost. It did not replace recovery: \SfourEFromPreviewOnly{}
+facts reached the answer through the preview alone, and the hidden facts reached the agent in tool results more often.

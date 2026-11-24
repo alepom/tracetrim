@@ -43,14 +43,15 @@ while the agent works, with \texttt{expand} requests as evidence (E2), and, with
 agent how to organise its tool calls, on a second model (E3, reported in an appendix). It also reports offline
 analyses, among them a comparison with a minifier and with a static filter fixed before any number, and post-hoc
 audits of the answers, each labelled as such. \textbf{Study~4}, added in version 3, tests answer quality on tasks
-held out from development, under three more frozen protocols and a blind judge. On new ordinary tasks the prudent
+held out from development, under three more frozen protocols and a blind judge; version 4 adds two more, scored by
+scripts. On new ordinary tasks the prudent
 projection did not lower the judged quality (at a ceiling). A stress test built around the fields it removes
 located the weak point: the agent reported fewer of the facts those fields held; it recovered numeric fields
 reliably, but where a free-text field held the fact it mostly declared the fact absent. One added rule in the skill
 (version 2, now its default) recovered part of that loss at no extra cost. Version 4 adds two parts: with an agent of
-another model family the stress test lost nothing, because that agent recovered hidden fields every time, at the
-price of more turns; and a preview of the hidden free text on the notice after a trimmed result recovered most of the
-rest, at no extra cost (the default from release 1.5).
+another model family the stress test lost nothing; that agent called \texttt{expand} in every run, at the price of
+more turns and cost. And a preview of the hidden free text on the notice after a trimmed result closed most of the
+rest of the gap, at no extra cost (the default from release 1.5).
 
 The contributions are: (i) a method to learn tool-output projections from traces, with a leave-one-out evaluation
 that estimates savings and misses on runs the projection has never seen; (ii) evidence that, in these agents,

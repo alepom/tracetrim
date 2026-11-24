@@ -15,14 +15,22 @@ from pathlib import Path
 
 from tracetrim.engine import TEXT_LONG, TEXT_SHARE
 
-from .paper_numbers_v3 import ci, ratio, sgn, share, word
+from .paper_numbers_v3 import ci, ratio, sgn, word
 from .paths import ROOT
 
 V3D = ROOT / "results" / "v3d" / "analysis.json"
 V3E = ROOT / "results" / "v3e" / "analysis.json"
 V3E_REPLAY = ROOT / "results" / "v3e" / "replay.json"
 V3E_HINTS = ROOT / "results" / "v3e" / "hints_offline.json"
+V3E_ROUTES = ROOT / "results" / "v3e" / "routes.json"
 PREVIEW = 40          # the characters of arm P2T (experiments/v3e/run.py), the default of 1.5 (runtime.TEXT_PREVIEW)
+
+
+def share(x: float) -> str:
+    """A share with one decimal, rounded half up as a reader would (0.9125 -> 91.3%, not the 91.2% of binary
+    rounding); 1 is written 100%."""
+    from decimal import ROUND_HALF_UP, Decimal
+    return "100\\%" if x == 1 else f"{Decimal(repr(100 * x)).quantize(Decimal('0.1'), ROUND_HALF_UP)}\\%"
 
 
 def one(x: float) -> str:
@@ -92,7 +100,8 @@ def _part_e(m, GEN: Path) -> None:
     m("SfourEFactsCI", ci(fe["ci95"], 3))
     per = pe["per_task"].values()
     m("SfourEBetterTasks", word(sum(v > 0 for v in per)))
-    m("SfourEWorseTasks", word(sum(v < 0 for v in per)))
+    worse = sum(v < 0 for v in per)
+    m("SfourEWorseTasks", "none" if worse == 0 else f"{word(worse)} task{'s' if worse > 1 else ''}")
     hf = e["hidden_fields"]
     names = {"balance: data[].description": "Origin", "memo: data[].description": "Memo",
              "partial_refund: data[].refunds.data[].description": "Refund",
@@ -102,8 +111,20 @@ def _part_e(m, GEN: Path) -> None:
             m(f"SfourE{name}{tag}", f"{hf[key][arm]['reported']}/{hf[key][arm]['facts']}")
         m(f"SfourE{name}OnPreview", f"{hf[key]['P2T']['on_preview']}/{hf[key]['P2T']['facts']}")
     m("SfourERefundReachedPtwo", str(hf['partial_refund: data[].refunds.data[].description']['P2']['reached']))
+    m("SfourEBalanceAlways", f"{hf['balance: data[].balance']['P2']['reported']}/{hf['balance: data[].balance']['P2']['facts']}")
+    m("SfourEReplacementAlways",
+      f"{hf['replacement: data[].from_invoice.invoice']['P2']['reported']}/{hf['replacement: data[].from_invoice.invoice']['P2']['facts']}")
     m("SfourERefundReachedPtwoT", f"{hf['partial_refund: data[].refunds.data[].description']['P2T']['reached']}")
     m("SfourEFromPreviewOnly", word(sum(v["P2T"]["reported_from_preview_only"] for v in hf.values())))
+    if V3E_ROUTES.exists():
+        r = json.loads(V3E_ROUTES.read_text(encoding="utf-8"))["hidden_fields"]
+        for key, name in (("balance: data[].description", "Origin"),
+                          ("partial_refund: data[].refunds.data[].description", "Refund")):
+            for arm, tag in (("P2", "Ptwo"), ("P2T", "PtwoT")):
+                via = r[key][arm]["via"]
+                m(f"SfourE{name}Expand{tag}", str(via.get("expand", 0)))
+                m(f"SfourE{name}Detail{tag}", str(via.get("detail", 0)))
+            m(f"SfourE{name}Facts", str(r[key]["P2"]["facts"]))
     hp, op = e["hard_process"], e["ordinary_process"]
     m("SfourERunsPerArm", str(hp["P2"]["runs"]))
     for arm, tag in (("P2", "Ptwo"), ("P2T", "PtwoT")):

@@ -2,7 +2,7 @@
 
 Protocol v3c lost hidden facts that sat in free-text fields: the line named `data[].description` but an empty one and
 one that explained a credit looked the same. With `text_preview=N` the line also shows the first N characters of the
-hidden texts. Protocol v3e measured it (91.2% -> 99.5% of the hidden facts reported, same cost on ordinary tasks), so
+hidden texts. Protocol v3e measured it (91.3% -> 99.5% of the hidden facts reported, same cost on ordinary tasks), so
 1.5 turns it on; text_preview=0 restores the line of 1.4 (STABILITY, CHANGELOG *Changed behaviour*)."""
 import json
 import re
