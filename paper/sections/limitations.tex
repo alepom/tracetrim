@@ -74,7 +74,11 @@ author's review. No independent human rater read every answer, and no agreement 
   the first; both changes are dated and reported. The second reader of Part~B is also an AI agent (Codex, GPT-6.2 Astra), which had worked on
   the project, drafted the rubric and knew its design, added after the results, on a sample of \SfourBSecondAnswers{} answers. Part~C's correction was designed after Part~B and tested on the same tasks: its gain may
   be smaller on other tasks, which its check on ordinary tasks covers only for cost and gates. Its lower bound is
-  close to zero, and its comparison with R is historical.
+  close to zero, and its comparison with R is historical. Part~D ran one other model, on the hard tasks only, so
+  its cost on ordinary tasks is not measured. Part~E's tasks put the fact at the start of the text, where a preview
+  reaches it; with real data the fact may sit further on, where only \texttt{expand} reaches it, and Part~E ran one
+  model. Its rules on markup, long texts and the share of the saving came after its runs and were checked by replay,
+  not by new runs.
 \item \textbf{Third-party data.} Search results and parsed pages cannot be redistributed: for the two cases built
   on them, the released data are derived per-call records: enough to recompute which fields each call used and the
   misses, but neither the token savings, which need the payloads, nor a replay of the conversations.

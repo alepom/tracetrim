@@ -5,12 +5,16 @@ Studies~1--3 evaluated the method on the tasks on which it was developed, and th
 Studies~2 and~3 found the trimmed arms' diagnoses less complete (Section~\ref{sec:study2},
 Table~\ref{tab:c4audit}; Section~\ref{sec:s3audit}). Study~4, added in version~3 of
 this paper, asks whether the prudent projection preserves the quality of the answer on tasks never used in
-development, judged blind. It has three parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
+development, judged blind. It has five parts with separate frozen protocols. Part~A (\texttt{protocol-v3.md})
 draws new ordinary tasks for the two simulated agents. Part~B (\texttt{protocol-v3b.md}) is a stress test: billing
 tasks built around the fields that the projection removes. Parts A and B ran on the library at release
 1.3.1, unchanged. Part~C (\texttt{protocol-v3c.md}) measures a correction of the failure that Part~B found: a
 change of one rule in the text that accompanies the projection. It ran on the development code of tracetrim 1.4,
-frozen by its protocol; the text it tests is unchanged in release 1.4.0, where it is the default.
+frozen by its protocol; the text it tests is unchanged in release 1.4.0, where it is the default. Parts~D and~E,
+added in version~4 of this paper, ran on the development code of tracetrim 1.5, frozen by their protocols, and are
+scored by scripts with no judge. Part~D (\texttt{protocol-v3d.md}) repeats the stress test with an agent of another
+model family; Part~E (\texttt{protocol-v3e.md}) measures a second correction, a preview of the hidden free text on
+the notice after a trimmed result.
 
 \paragraph{Common design.} Each run is a fresh conversation of \texttt{\SfourModel} at default parameters, in the
 study's own loop with the function-calling adapter, as in Study~3, against the simulated servers of billing support
@@ -255,6 +259,100 @@ version~1 remains available as an option. Against R of Part~B, a historical refe
 did not close: P1 minus R \SfourCPoneMinusR{} \SfourCPoneMinusRCI{}, P2 minus R \SfourCPtwoMinusR{}
 \SfourCPtwoMinusRCI{}. This comparison is descriptive only.
 
+\subsection{Part D: a second agent model}
+\label{sec:s4d}
+
+\paragraph{Design.} Parts~B and~C rest on one agent model. Part~D's protocol, \texttt{protocol-v3d.md}, was
+preregistered and frozen with the library under test before the first run. It runs the \SfourDTasks{} tasks of
+Part~B with a model of another family, \texttt{\SfourDModel}, on Vertex AI at its default thinking level, through the adapter of Study~3 (E3) and the
+loop of Parts~A--C. It has three arms, each run three times per task: R, with complete outputs, and P1 and P2, the
+frozen prudent projection with the skill text of version~1 and of version~2. The primary outcome is P2 minus P1 on
+the hidden-fact share, with the estimator and the rule of Part~C; P1 minus R and P2 minus R are secondary. Every
+measure is computed by scripts from the frozen keys. Comparisons with the model of Parts~B and~C are descriptive:
+different runs, different model.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_s4d.tex}
+\caption{Study~4D: the tasks of Part~B with \texttt{\SfourDModel}, complete outputs (R) and the frozen projection
+with the skill text of version~1 (P1) and~2 (P2), \SfourDRunsPerArm{} runs per arm. Shares averaged within task,
+tasks weighted equally.}
+\label{tab:s4d}
+\end{table}
+
+\paragraph{Results.} All \SfourDRuns{} runs completed, with \SfourDMissing{} runs missing. Every arm reported every
+hidden fact (\SfourDHiddenR{}, \SfourDHiddenPone{} and \SfourDHiddenPtwo{}) and passed every gate
+(Table~\ref{tab:s4d}). P2 minus P1 was \SfourDPtwoMinusPone{}, interval \SfourDPtwoMinusPoneCI{}: \emph{\SfourDPtwoMinusPoneVerdict}
+by the rule, at a ceiling, because there was no loss to recover. The difference from Part~B lies in how the agent
+works with a trimmed result. This model called \texttt{expand} in every run of both P arms (\SfourDExpandPone{} and
+\SfourDExpandPtwo{} calls in \SfourDExpandRunsPone{} and \SfourDExpandRunsPtwo{} of \SfourDRunsPerArm{} runs), also
+with the text of version~1, with which the model of Part~B declared facts absent. It paid in turns: \SfourDTurnsR{}
+per run in R, \SfourDTurnsPone{} and \SfourDTurnsPtwo{} in P1 and P2. Since every turn sends the context again, P1
+and P2 cost \SfourDCostPone{} and \SfourDCostPtwo{} times R per run, where the projection had cost \SfourBCost{}
+times R with the model of Part~B. The loss of Part~B is therefore not a property of the projection alone: it depends
+on how readily the agent recovers hidden fields, and so does the cost of that safety.
+
+\subsection{Part E: previews of hidden text}
+\label{sec:s4e}
+
+\paragraph{The change.} In Parts~B and~C the facts that stayed lost sat in free-text fields: the notice after a
+trimmed result named \texttt{data[].description}, but an empty description and one that explained a credit looked
+the same. Release 1.5 adds text previews (Section~\ref{sec:method}): the notice also shows the start of each hidden
+free-text field, cut after the last whole word within $N$ characters. Replayed on the \SfourEHintTraces{} hard-task
+traces of Part~C, a \SfourEPreview{}-character preview would have put \SfourEHintFlagged{} of the
+\SfourEHintMissed{} missed hidden facts on the notice itself, for \SfourEHintShare{} more tokens in the trimmed
+results. That shows the information would be there, not that the agent uses it.
+
+\paragraph{Design.} \texttt{protocol-v3e.md}, preregistered and frozen with the library before the first run,
+compares two arms that differ only in the previews: P2, the frozen prudent projection with the skill text of
+version~2 (the default of 1.4), and P2T, the same with \SfourEPreview{}-character previews, a length chosen on the
+traces of Part~C before any run. The runs:
+\begin{itemize}
+\item the \SfourEHardTasks{} tasks of Part~B, three times per arm;
+\item the \SfourEOrdinaryTasks{} billing tasks of Part~A, once per arm, for cost and gates where nothing needed is
+hidden.
+\end{itemize}
+That makes \SfourERuns{} runs, in seeded blocks, with the model and loop of Part~C. The primary outcome is P2T minus
+P2 on the hidden-fact share, with the estimator and rule of Part~C. As in Part~C, a decision rule fixed in advance
+turns the previews on by default only if the primary outcome improves, P2T costs at most 10\% more than P2 on the
+ordinary tasks and passes no fewer gates there. Every measure is computed by scripts from the frozen keys.
+
+\begin{table}[t]
+\centering\small
+\input{generated/table_s4e.tex}
+\caption{Study~4E: the frozen projection with the skill text of version~2, without (P2) and with
+\SfourEPreview{}-character text previews (P2T), on the tasks of Part~B (\SfourERunsPerArm{} runs per arm); costs and
+gates also on the ordinary tasks of Part~A. Shares averaged within task, tasks weighted equally. Intervals: 95\%
+bootstrap over tasks. The primary outcome and its interval are in bold.}
+\label{tab:s4e}
+\end{table}
+
+\paragraph{Results.} All \SfourERuns{} runs completed, with \SfourEMissing{} runs missing. P2 reported
+\SfourEHiddenPtwo{} of the hidden facts, close to Part~C's P2, and P2T \SfourEHiddenPtwoT{}: P2T minus P2 was
+\textbf{\SfourEPoint{}}, 95\% interval \textbf{\SfourECI{}}, \emph{\SfourEVerdict} by the preregistered rule, better
+in \SfourEBetterTasks{} of the \SfourEHardTasks{} tasks and worse in \SfourEWorseTasks{} (Table~\ref{tab:s4e}). The gain is in the
+free-text fields: the amount of the last credit, \SfourEOriginPtwo{} against \SfourEOriginPtwoT{}, and the TB of the
+invoice memo, \SfourEMemoPtwo{} against \SfourEMemoPtwoT{}. Credit notes, a numeric field with no preview, went from
+\SfourECreditNotePtwo{} to \SfourECreditNotePtwoT{}.
+
+The preview did not replace recovery; it prompted it. \SfourEFromPreviewOnly{} facts were reported with the preview as
+their only way to the agent, and the descriptions of partial refunds reached the agent in a tool result
+\SfourERefundReachedPtwoT{} times in P2T against \SfourERefundReachedPtwo{} in P2: seeing that a field held something
+relevant, the agent expanded it. P2T cost \SfourEHardCost{} times P2 per run on the hard tasks, with fewer calls
+(\SfourECallsPtwoT{} against \SfourECallsPtwo{}), and \SfourEOrdinaryCost{} on the ordinary ones, where gates passed
+in \SfourEOrdinaryGates{} answers and \SfourEUnsupported{} value lacked support in the tool outputs. All three
+conditions of the decision rule hold, and the previews are on by default from tracetrim 1.5, at
+\SfourEPreview{} characters; an option restores the notice of 1.4.
+
+\paragraph{After the runs.} Three rules were added to the previews after the campaign, prompted by real traces
+outside the study (extracted web pages, transcripts): markup is removed before the cut; a text longer than
+\SfourETextLong{} readable characters is shown by its size instead of its first words; and the previews may spend
+at most \SfourEShareBound{} of the tokens the cut saves on a result, so they never decide whether a result is sent
+whole. Replayed on every tool result of the campaign with the frozen policy, the released library produces exactly
+what the agent received: \SfourEReplayPtwoT{} results in P2T and \SfourEReplayPtwo{} in P2
+(\texttt{experiments/v3e/replay.py}). In the campaign the previews had used at most \SfourEShareMax{} of the saving
+of a result (median \SfourEShareMedian{}). Part~E's result therefore holds for the library as released.
+
 \paragraph{Deviations.} Every deviation was recorded before the scores it concerns, except two marked below: the
 error in Part~B's check of how a hidden value reached the agent, found after its analysis, and the second reader,
 added after its results.
@@ -274,4 +372,6 @@ whole-cent amounts before the second version, and two scripts changed in form on
 not an outcome.
 \item Part~C froze the whole library. Corrections to other functions, made during its campaign, were committed
 only after its analysis, so the lock was verified at every step.
+\item Parts~D and~E froze the whole library and recorded no deviation. The three rules added to the previews after
+Part~E were checked by replaying its traces, not by new runs.
 \end{itemize}

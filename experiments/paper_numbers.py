@@ -60,13 +60,20 @@ PAPER_VERSION_TWO_DATE = "November 2026"
 # The release that version 3 of the paper comes with. Study 4's Parts A and B ran on 1.3.1 (e821e18), Part C on the
 # 1.4 development code frozen by protocol-v3c.lock, whose skill text 1.4.0 ships unchanged
 # (tests/test_v3c_skill_text.py). Version 2 came with 1.0.0 (10.5281/zenodo.24190053).
-PAPER_SOFTWARE_VERSION = "1.4.0"
-PAPER_SOFTWARE_DOI = "10.5281/zenodo.24446750"     # the archive of that release
+# Version 4 comes with 1.5.0; its Parts D and E ran on the 1.5 development code frozen by their protocols
+# (protocol-v3d.lock, protocol-v3e.lock). Version 3 came with 1.4.0 (10.5281/zenodo.24446750).
+PAPER_SOFTWARE_VERSION = "1.5.0"
+# The archive of that release, once the author reserves its DOI on Zenodo; until then the line names the concept DOI
+# of the software, which resolves to the latest version.
+PAPER_SOFTWARE_DOI = None
+SOFTWARE_CONCEPT_DOI = "10.5281/zenodo.23954124"
 PAPER_VERSION_THREE_DATE = "November 2026"
+PAPER_VERSION_FOUR_DATE = "November 2026"
 # Version 3's own DOI exists only once the author creates the new version on Zenodo: until then the status line
 # names the concept DOI, which resolves to the latest version.
 PAPER_CONCEPT_DOI = "10.5281/zenodo.23953933"
 PAPER_V3_DOI = "10.5281/zenodo.24446740"
+PAPER_V4_DOI = None                                # reserved by the author on Zenodo before the release
 
 WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
@@ -93,15 +100,18 @@ def main():
     # ---- meta -------------------------------------------------------------
     (GEN / "meta.tex").write_text(
         f"\\newcommand{{\\PaperAuthors}}{{{about.AUTHOR}\\\\\\small {about.AUTHOR_ROLE}, ORCID {about.ORCID}}}\n"
-        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 3. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
-        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and the 1.4 development code frozen by its protocol (Part C)}}\n"
+        f"\\newcommand{{\\PaperVersionLine}}{{Preprint, version 4. {about.NAME} {PAPER_SOFTWARE_VERSION}; Studies 1 and 2 ran "
+        f"with versions 0.1 and 0.2, Study 3 with 0.4, Study 4 with 1.3.1 (Parts A and B) and the development code of 1.4 "
+        f"(Part C) and of 1.5 (Parts D and E), frozen by their protocols}}\n"
         # Version 2 of the preprint: month only, the day is the one of its publication on Zenodo.
         f"\\newcommand{{\\PaperVersionTwoDate}}{{{PAPER_VERSION_TWO_DATE}}}\n"
         f"\\newcommand{{\\PaperVersionThreeDate}}{{{PAPER_VERSION_THREE_DATE}}}\n"
+        f"\\newcommand{{\\PaperVersionFourDate}}{{{PAPER_VERSION_FOUR_DATE}}}\n"
         f"\\newcommand{{\\PaperStatus}}{{Preprint, not peer reviewed."
-        + (f" DOI \\href{{https://doi.org/{PAPER_V3_DOI}}}{{{PAPER_V3_DOI}}}." if PAPER_V3_DOI else
+        + (f" DOI \\href{{https://doi.org/{PAPER_V4_DOI}}}{{{PAPER_V4_DOI}}}." if PAPER_V4_DOI else
            f" All versions: DOI \\href{{https://doi.org/{PAPER_CONCEPT_DOI}}}{{{PAPER_CONCEPT_DOI}}}.") + "}\n"
-        f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{PAPER_SOFTWARE_DOI}}}{{{PAPER_SOFTWARE_DOI}}}}}\n"
+        f"\\newcommand{{\\SoftwareDOI}}{{\\href{{https://doi.org/{PAPER_SOFTWARE_DOI or SOFTWARE_CONCEPT_DOI}}}"
+        f"{{{PAPER_SOFTWARE_DOI or SOFTWARE_CONCEPT_DOI}}}}}\n"
         f"\\newcommand{{\\RepositoryURL}}{{\\url{{{about.REPOSITORY}}}}}\n", encoding="utf-8")
 
     nf = load("number_formats.json")
@@ -359,6 +369,9 @@ def main():
     # ---- Study 4 (version 3): results/v3 and results/v3b ---------------------------
     from . import paper_numbers_v3
     paper_numbers_v3.macros(m, GEN)
+    # ---- Study 4, Parts D and E (version 4): results/v3d and results/v3e --------------
+    from . import paper_numbers_v4
+    paper_numbers_v4.macros(m, GEN)
 
     (GEN / "abstract.txt").write_text(plain(ROOT / "paper" / "sections" / "abstract.tex", macros) + "\n",
                                       encoding="utf-8")

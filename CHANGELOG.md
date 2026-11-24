@@ -37,7 +37,7 @@ on by default** (*Changed behaviour*, below). With `text_preview=0` the model re
 
 - **Text previews are on by default, at 40 characters.** Protocol v3e (`protocol-v3e.md`, preregistered; agent
   `gpt-5.6-terra`, skill version 2, 92 runs, none missing) compared the default of 1.4 with the same policy plus
-  40-character previews. On the hard tasks of Study 4 the hidden facts reported rose from 91.3% to 99.5% (+0.083,
+  40-character previews. On the hard tasks of Study 4 the hidden facts reported rose from 91.2% to 99.5% (+0.083,
   95% interval [+0.046; +0.123]), better in 9 tasks of 12 and worse in none; the cost was 0.92 times on those tasks
   and 1.00 on ordinary ones, with the same gates passed (10 of 10). The preview did not replace `expand`: no fact
   was reported from a preview alone; seeing that a field held something relevant, the agent expanded it. The rule
