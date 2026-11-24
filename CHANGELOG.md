@@ -4,10 +4,17 @@ Versions up to 0.3.5 were developed on 2026-11-04, together with the study descr
 [paper](https://doi.org/10.5281/zenodo.23953934). The studies ran on 0.1 (Study 1) and 0.2 (Study 2);
 later versions add ways to use the library, and were checked end to end, not evaluated under a protocol.
 
-## 1.5.0 (in development)
+## 1.5.0
 
-New ways to use the library, and **one change in what the model receives: text previews on the `[trimmed]` line,
-on by default** (*Changed behaviour*, below). With `text_preview=0` the model receives what it received in 1.4.0.
+LangGraph, and **one change in what the model receives: text previews on the `[trimmed]` line, on by default**
+(*Changed behaviour*, below). With `text_preview=0` the model receives what it received in 1.4.0. Archived on Zenodo
+with the paper, version 4: DOI {SOFTWARE_DOI}.
+
+- **The paper, version 4** (DOI {PAPER_DOI}) adds two parts to Study 4, scored by scripts under frozen protocols.
+  Part D runs the stress test with an agent of another model family, `gemini-3.8-flash`: nothing was lost (100% of
+  the hidden facts in every arm), because it expanded hidden fields in every run, also with skill version 1; the
+  price was more turns, and the projection cost 1.67 times the complete outputs per run. Part E measures the text
+  previews below.
 
 - **LangGraph.** `tracetrim.langgraph.TraceTrim` puts automatic mode around LangGraph's `ToolNode`
   (`wrap_tool_call`, `awrap_tool_call`): `expand` and `tracetrim_done` as LangChain tools, one run per
