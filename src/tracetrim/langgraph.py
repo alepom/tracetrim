@@ -110,6 +110,7 @@ class TraceTrim:
         self._engine = threading.RLock()         # every use of the engine and the learner
         self._learning = threading.Lock()        # one relearning at a time, outside the engine lock
         self._threads: dict[Any, _Thread] = {}
+        self._swept = time.monotonic()          # the last look for idle conversations (_sweep)
         # call_id -> (thread, run of the call): an `expand` from another thread is an unknown call_id, and a
         # late `expand` (after the closing) is evidence of the run the result came from.
         self._owners: dict[str, tuple[Any, Run]] = {}
@@ -144,8 +145,11 @@ class TraceTrim:
 
     # Waits are checks under `_cond`: the sync path waits on the Condition, the async path polls on the event loop,
     # so that no worker thread is ever held by a wait (a closing waiting for a call whose trimming needs a worker).
-    def _try_enter(self, t: _Thread):
-        """Under `_cond`: count a call in ("in"), or say why it must wait ("wait") or close an idle run first ("idle")."""
+    def _try_enter(self, key: Any, t: _Thread):
+        """Under `_cond`: count a call in ("in"), or say why it must wait ("wait"), close an idle run first ("idle"),
+        or take the conversation again ("stale": `_sweep` forgot it while the call was arriving)."""
+        if self._threads.get(key) is not t:
+            return "stale"
         if t.closing:
             return "wait"
         if (self.idle_seconds is not None and t.active == 0 and (t.run.events or t.run.notes)
@@ -215,28 +219,66 @@ class TraceTrim:
 
     def _enter(self, key: Any, state: Any, call_id: str) -> tuple[_Thread, Run, int]:
         """Sync: a call of a user's tool starts, after any closing of its conversation."""
+        self._sweep()
         t = self._thread(key)
         while True:
             with self._cond:
                 self._cond.wait_for(lambda: not t.closing)
-                state_ = self._try_enter(t)
+                state_ = self._try_enter(key, t)
                 if state_ == "in":
                     return t, t.run, self._turn(t, state, call_id)
-            self._close_work(t, "idle")
+            if state_ == "stale":
+                t = self._thread(key)
+            else:
+                self._close_work(t, "idle")
 
     async def _aenter(self, key: Any, state: Any, call_id: str) -> tuple[_Thread, Run, int]:
         """Async: the same, polling on the loop. The count goes up on the loop, before any await, so a cancelled call
         can never leave it up."""
+        self._sweep()
         t = self._thread(key)
         while True:
             with self._cond:
-                state_ = self._try_enter(t)
+                state_ = self._try_enter(key, t)
                 if state_ == "in":
                     return t, t.run, self._turn(t, state, call_id)
-            if state_ == "idle":
+            if state_ == "stale":
+                t = self._thread(key)
+            elif state_ == "idle":
                 await _shielded(asyncio.to_thread(self._close_work, t, "idle"))
             else:
                 await asyncio.sleep(_POLL)
+
+    def _sweep(self) -> None:
+        """With `idle_seconds`: the idle runs of every conversation, abandoned ones above all, closed for telemetry in a
+        background thread, and conversations left with nothing open forgotten, so that memory does not grow with
+        conversations that never come back. A look at most every quarter of the pause, at the start of a call."""
+        if self.idle_seconds is None:
+            return
+        now = time.monotonic()
+        stale = []
+        with self._cond:
+            if now - self._swept < self.idle_seconds / 4:
+                return
+            self._swept = now
+            for k, t in list(self._threads.items()):
+                if t.closing or t.active or now - t.activity <= self.idle_seconds:
+                    continue
+                if t.run.events or t.run.notes:
+                    t.closing = True                 # as `_try_enter` does: its calls wait for the closing
+                    stale.append((k, t))
+                else:
+                    del self._threads[k]
+        if stale:
+            threading.Thread(target=self._close_idle, args=(stale,), name="tracetrim-idle", daemon=True).start()
+
+    def _close_idle(self, stale: list[tuple[Any, _Thread]]) -> None:
+        for k, t in stale:
+            self._close_work(t, "idle")              # never raises, and ends the closing
+            with self._cond:
+                if (self._threads.get(k) is t and not t.active and not t.closing
+                        and not (t.run.events or t.run.notes)):
+                    del self._threads[k]
 
     def _closing(self, t: _Thread, kind: str, answer: str | None = None) -> None:
         """Sync: wait for the calls running, then close."""
@@ -316,6 +358,7 @@ class TraceTrim:
         t = self._thread(key)
         with self._cond:
             owner = self._owners.get(call_id)
+            t.activity = time.monotonic()          # an expand is activity: the pause starts again, as in the proxy
         with self._engine:
             if owner is None or owner[0] != key:
                 with self.auto.learner.use_run(t.run):

@@ -12,11 +12,11 @@ on by default** (*Changed behaviour*, below). With `text_preview=0` the model re
 - **LangGraph.** `tracetrim.langgraph.TraceTrim` puts automatic mode around LangGraph's `ToolNode`
   (`wrap_tool_call`, `awrap_tool_call`): `expand` and `tracetrim_done` as LangChain tools, one run per
   `thread_id`, closings that wait for the calls of their conversation, `close`/`flush` from code, and
-  `idle_seconds` for conversations resumed later. Extra `langgraph`. Guide: `docs/langgraph.md`; a graph that runs
+  `idle_seconds` for conversations resumed later (or never: idle ones are closed in the background and forgotten). Extra `langgraph`. Guide: `docs/langgraph.md`; a graph that runs
   with no model: `examples/langgraph_agent.py`. Checked end to end with `gemini-3.8-flash` in a real graph
   (`experiments/langgraph_gemini.py`).
 - **Text previews.** The `[trimmed]` line also shows, after ` · text, first characters: `, the start of the hidden
-  free-text fields (descriptions, memos, notes), cut after a whole word within CHARS characters, with `…` when
+  free-text fields (descriptions, memos, notes), cut after the last whole word within CHARS characters, with `…` when
   there is more; at most 3 distinct starts per field and 5 fields per result. Set with `proxy --text-preview
   CHARS`, `AutoTrim(text_preview=CHARS)` (and so `TraceTrim`), or `"text_preview": CHARS` in a config (`--config`
   only: in automatic mode the option decides); 0 turns them off.
@@ -48,6 +48,9 @@ on by default** (*Changed behaviour*, below). With `text_preview=0` the model re
   both arms (`experiments/v3e/replay.py`, `results/v3e/replay.json`).
   - A config written before 1.5 has no `text_preview` key: it gets the default, 40.
   - `proxy --text-preview 0`, `AutoTrim(text_preview=0)` and `"text_preview": 0` restore the line of 1.4.
+  - `tracetrim compare` replays with the previews too; `--a text_preview=0` (or `--b`) gives the replay of 1.4.
+- A field name on the `[trimmed]` line that holds a control character, a line separator or a lone surrogate is
+  written escaped (`\u000a`): a key could otherwise open a line of its own that reads as another `[trimmed]` line.
 
 ## 1.4.0
 

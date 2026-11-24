@@ -330,6 +330,42 @@ def test_an_idle_thread_resumes_in_a_new_run(tmp_path):
     assert got == {"run-0001-noanswer.jsonl": ["old task"], "run-0002.jsonl": ["new task"]}
 
 
+def test_abandoned_threads_are_closed_in_the_background_and_forgotten(tmp_path):
+    tt = TraceTrim(tmp_path, min_runs=50, idle_seconds=0.05)
+    graph = graph_with(tt)
+    for i in range(30):
+        step(graph, f"gone-{i}", [("search_volume", {"keyword": f"task {i}"})])
+    time.sleep(0.1)
+    step(graph, "Z", [("search_volume", {"keyword": "still here"})])        # any call looks for idle conversations
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline and len(traces(tmp_path)) < 30:
+        time.sleep(0.02)
+    assert sorted(traces(tmp_path)) == [f"run-{i:04}-noanswer.jsonl" for i in range(1, 31)]
+    while time.monotonic() < deadline and len(tt._threads) > 1:
+        time.sleep(0.02)
+    assert list(tt._threads) == ["Z"]
+    step(graph, "gone-3", [("search_volume", {"keyword": "back again"})])  # a forgotten conversation starts afresh
+    step(graph, "gone-3", [("tracetrim_done", {"answer": "back again, done"})])
+    runs = {name: [e.get("arguments", {}).get("keyword") for e in run if e["kind"] == "call"]
+            for name, run in traces(tmp_path).items()}
+    assert [name for name, calls in runs.items() if calls == ["back again"]] == [max(runs)]     # closed with an answer
+    assert not max(runs).endswith("-noanswer.jsonl")
+
+
+def test_an_expand_is_activity(tmp_path):
+    tt = TraceTrim(tmp_path, min_runs=5, idle_seconds=0.3)
+    graph = graph_with(tt)
+    step(graph, "A", [("search_volume", {"keyword": "first"})])
+    for _ in range(4):                                  # 0.6 s in all, never 0.3 s without a call
+        time.sleep(0.15)
+        step(graph, "A", [("expand", {"call_id": "c00000000", "fields": ["*"]})])
+    step(graph, "A", [("search_volume", {"keyword": "second"})])
+    step(graph, "A", [("tracetrim_done", {"answer": "both done"})])
+    got = {name: [e.get("arguments", {}).get("keyword") for e in run if e["kind"] == "call"]
+           for name, run in traces(tmp_path).items()}
+    assert got == {"run-0001.jsonl": ["first", "second"]}
+
+
 def test_a_users_tool_with_tracetrims_name_is_refused(tmp_path):
     tt = TraceTrim(tmp_path)
     impostor = StructuredTool.from_function(lambda call_id, fields: "mine", name="expand", description="not ours")

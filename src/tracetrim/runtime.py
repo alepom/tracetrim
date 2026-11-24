@@ -22,6 +22,13 @@ from .usage import parse_output
 TEXT_PREVIEW = 40
 
 
+def check_preview(value) -> int:
+    """A number of characters for the text previews, the same check wherever it is set (config, Engine, AutoTrim)."""
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"text_preview is a number of characters, 0 (off) or more, not {value!r}")
+    return value
+
+
 class Policy:
     def __init__(self, config: dict, projection: Projection | None):
         self.config = config
@@ -39,11 +46,7 @@ class Policy:
         # holds the answer does not look like an empty one. TEXT_PREVIEW when the key is missing or null, as in a
         # config written before 1.5; `"text_preview": 0` restores the line of 1.4.
         preview = config.get("text_preview")
-        if preview is None:
-            preview = TEXT_PREVIEW
-        if isinstance(preview, bool) or not isinstance(preview, int) or preview < 0:
-            raise ValueError(f"text_preview is a number of characters, 0 (off) or more, not {preview!r}")
-        self.text_preview = preview
+        self.text_preview = TEXT_PREVIEW if preview is None else check_preview(preview)
         # Optional, after the projection: "toon" (lossless re-encoding) or
         # "headroom" (experimental). The study found that a denser format can
         # change how the model reads a payload: validate before relying on it.

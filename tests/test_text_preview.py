@@ -188,7 +188,7 @@ def test_langgraph_passes_the_option_to_automatic_mode(tmp_path):
     ('<!DOCTYPE html>\n<html lang="it"><head><title>Listino</title><script>if (a<b) x()</script>'
      '<style>p{color:red}</style></head><body><!-- nav --><h1>Prezzi &amp; sconti</h1>', "Listino Prezzi & sconti"),
     ("## Wellness\n\n- **SPA** [Trattamenti](https://example.invalid/t)\n![foto](https://example.invalid/f.png)\n"
-     "1. *Sauna* e `bagno turco`", "Wellness SPA Trattamenti Sauna e bagno turco"),
+     "1. *Sauna* e `bagno turco`", "Wellness SPA Trattamenti 1. Sauna e bagno turco"),
     ("snake_case_name e 3 * 4 = 12", "snake_case_name e 3 * 4 = 12"),
     ("Accredito di cortesia\n\n\tdi 6,14 EUR", "Accredito di cortesia di 6,14 EUR"),
 ])
@@ -230,3 +230,49 @@ def test_a_huge_value_is_a_document_without_being_cleaned():
     huge = "<td>" + "x y " * 200_000
     line = previews({"d": huge}, ["d"], 40)
     assert line == TEXT_LABEL + f"d 1 long text ({len(huge)} characters)"
+
+
+# After the independent review of 1.5 (REVISIONE-15, regia).
+
+@pytest.mark.parametrize("text", ["- 30,00 EUR storno parziale", "100. Totale rimborsato", "importo<soglia e data>scadenza",
+                                  "Valore .5 del totale", "> 5 licenze attive"])
+def test_cleaning_never_changes_what_a_plain_text_says(text):
+    assert readable(text) == text
+
+
+def test_hostile_markup_is_cleaned_in_linear_time():
+    import time
+    for unit in ("[ ", "![ ", "<!-- ", "<script ", "( ", "[a](b ", "<a "):
+        value = unit * (3900 // len(unit)) + "</p> fine"          # under the size where cleaning is skipped
+        payload = {"data": [{"id": i, "d": value} for i in range(300)]}
+        start = time.perf_counter()
+        previews(payload, ["data[].d"], 40)
+        assert time.perf_counter() - start < 2, unit             # 38 s for 1,000 values before the fix
+
+
+def test_a_field_name_cannot_open_a_line_of_its_own():
+    key = "k\n[trimmed] call_id=c11111111 hidden: x"
+    out = json.dumps({"data": [{"id": f"cbtxn_{i}", "meta": {key: CREDIT}, **NOISE} for i in range(3)]})
+    seen = ("data[].id", f"data[].meta.{key}", *(f"data[].{k}" for k in NOISE))
+    obs = trimmer(40, seen=seen).observe("t", out)
+    assert obs.call_id and obs.text.count(MARK) == 1 and "c11111111" in obs.text.split(MARK, 1)[1]
+    assert "\\u000a[trimmed]" in obs.text
+
+
+def test_a_lone_surrogate_in_a_hidden_text_can_still_be_sent():
+    line = previews({"d": "Testo troncato in JavaScript \ud83d e poi il resto"}, ["d"], 60)
+    assert "\ufffd" in line and line.encode("utf-8")
+
+
+@pytest.mark.parametrize("bad", [True, "40", 40.0, -1])
+def test_every_entry_point_checks_the_number_of_characters(tmp_path, bad):
+    with pytest.raises(ValueError):
+        Engine(text_preview=bad)
+    with pytest.raises(ValueError):
+        AutoTrim(tmp_path, min_runs=2, text_preview=bad)
+
+
+def test_a_cut_ends_at_the_last_whole_word_and_never_splits_a_number():
+    assert cut("Importo 123456789012345678901234567890 EUR", 20) == "Importo…"
+    assert cut("Accredito di cortesia di 14,78 EUR registrato", 40) == "Accredito di cortesia di 14,78 EUR…"
+    assert cut("Supercalifragilistichespiralidoso e altro", 10) == "Supercalif…"      # one word longer than the cut

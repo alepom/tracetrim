@@ -38,9 +38,10 @@ A complete graph that runs with no model and no key: [examples/langgraph_agent.p
   the conversation starts a new run; an `expand` of an older result is evidence of the run it came from. Trimming,
   recovering, closing and relearning are serialised, so a result is never trimmed half with an old policy.
 - **A conversation resumed later.** With `TraceTrim(..., idle_seconds=600)`, a conversation that resumes after that
-  pause starts a new run, and the calls of the old one are kept for telemetry, as the proxy does. Without it, close
-  runs with `tracetrim_done` or `tt.close`. Until a run is closed (or the pause expires at the conversation's next
-  call, or `tt.flush` runs) its calls stay in memory: for servers with many conversations, set `idle_seconds`.
+  pause starts a new run, and the calls of the old one are kept for telemetry, as the proxy does; an `expand` counts
+  as activity. Conversations that never come back are closed the same way, in the background, when a call of any
+  conversation finds them idle, and then forgotten: for servers with many conversations, set `idle_seconds`.
+  Without it, close runs with `tracetrim_done` or `tt.close`: until then (or `tt.flush`) their calls stay in memory.
 - **`tracetrim_done` on its own.** A closing in the same AI message as other tool calls is refused with an error
   that asks the model to call it alone, after reading the other results: those calls might not have started yet.
 - **Turns.** The calls of one AI message carry the same turn, and each later AI message of the run a new one, so

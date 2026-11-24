@@ -18,7 +18,8 @@ from .usage import analyse, learning_flags
 
 
 CHOICES = {"protect_ids": ("all", "record"), "learning": ("1.1", "1.0"),
-           "keep_positions": ("true", "false"), "unseen": ("keep", "drop"), "compact": ("true", "false")}
+           "keep_positions": ("true", "false"), "unseen": ("keep", "drop"), "compact": ("true", "false"),
+           "text_preview": ("40", "0")}           # since 1.5: the previews on the [trimmed] line, on by default
 METRICS = ("tokens", "miss_calls", "full_cheaper")
 METHOD = ("Leave-one-out. Used fields judged with the rules of 1.1 for both sides. "
           "Prudent filtering with expand on all learned tools. No thresholds, promotions or sampling.")
@@ -39,6 +40,7 @@ def recipe(text):
         supplied.add(key)
     for key in ("compact", "keep_positions"):
         values[key] = values[key] == "true"
+    values["text_preview"] = int(values["text_preview"])
     return values
 
 
@@ -83,8 +85,8 @@ def read_runs(paths):
 def _trimmer(training, config):
     projection = learn(training, "prudent", unseen=config["unseen"], protect_ids=config["protect_ids"])
     tools = {t: {"trim": "prudent", "expand": True} for t in projection.keep}
-    return Trimmer(Policy({"tools": tools, "compact": config["compact"],
-                           "keep_positions": config["keep_positions"]}, projection))
+    return Trimmer(Policy({"tools": tools, "compact": config["compact"], "keep_positions": config["keep_positions"],
+                           "text_preview": config["text_preview"]}, projection))
 
 
 def _served(trimmer, call, handle, count):

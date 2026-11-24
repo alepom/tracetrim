@@ -25,7 +25,10 @@ release only when a measure or a test shows it is better. Each such change:
 - comes with an option that restores the previous behaviour for the rest of 1.x (as `--no-compact`
   and `--switch-off-runs 1` do for the changes of 0.4).
 
-New functions that change what the model receives arrive **off by default**.
+New functions that change what the model receives arrive **off by default**. One is turned on by default only after
+a preregistered measurement shows that it improves the answers without raising the cost; it is then listed under
+*Changed behaviour*, with the option that turns it off. Text previews (1.5, protocol v3e) are the first case: they
+were measured off by default and ship on, with `text_preview=0`.
 
 ## Command line
 

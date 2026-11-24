@@ -469,7 +469,7 @@ def _server(o: Options):
     # projection (or alone, when there is no config yet).
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
                     compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions,
-                    # In automatic mode the learned config never carries the key: the option, or off.
+                    # In automatic mode the learned config never carries the key: the option, or the default of 1.5 (40).
                     text_preview=(TEXT_PREVIEW if o.text_preview is None else o.text_preview) if learner else o.text_preview)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None

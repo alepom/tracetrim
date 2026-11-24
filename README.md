@@ -251,7 +251,7 @@ With the public dataset unpacked at the repository root, compare identifier prot
 tracetrim compare dataset/traces/C4/A*.jsonl --a protect_ids=all --b protect_ids=record
 ```
 
-Each side starts with `protect_ids=all,learning=1.1,keep_positions=true,unseen=keep,compact=true`.
+Each side starts with `protect_ids=all,learning=1.1,keep_positions=true,unseen=keep,compact=true,text_preview=40`.
 Override one or more settings with comma-separated pairs, for example
 `--b protect_ids=record,keep_positions=false`. See `tracetrim compare --help` for accepted values.
 Supply distinct runs with the original tool outputs and a final answer. At least two eligible runs

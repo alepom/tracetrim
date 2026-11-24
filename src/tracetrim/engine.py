@@ -22,7 +22,7 @@ from pathlib import Path
 from .contract import FILTERED, FULL, FULL_CHEAPER, SAMPLED, Observation, Sizes, ToolCall, ToolResult
 from .evidence import is_broad
 from .projection import dumps
-from .runtime import Policy
+from .runtime import Policy, check_preview
 from .usage import leaves, parse_output
 
 _EXPAND_V1 = ("Some tool results are trimmed to save context: the fields removed are listed in the line "
@@ -73,14 +73,24 @@ TEXT_LONG = 500
 # protocol v3e they used at most 0.55 of it (median 0.30: experiments/v3e/replay.py), so the bound leaves the tested
 # previews as they were.
 TEXT_SHARE = 0.75
-_HTML_DROP = re.compile(r"<(script|style)\b.*?</\1\s*>|<!--.*?-->", re.I | re.S)
+# Every pattern below runs in linear time on any input (no class that can scan past the next opening bracket), and
+# HTML is recognised only by a closing tag, a comment, a doctype or a void tag: «importo<soglia e data>scadenza» is text.
+_HTML_SIGN = re.compile(r"</[A-Za-z]|<!--|<!doctype|<br\b|<[A-Za-z][^<>]*/>", re.I)
+_HTML_BLOCKS = (("<!--", "-->"), ("<script", "</script"), ("<style", "</style"))
 _HTML_TAG = re.compile(r"<[!/?]?[A-Za-z][^<>]*>")
-_MD_IMAGE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
-_MD_LINK = re.compile(r"\[([^\]]*)\]\([^)]*\)")
-_MD_LINE = re.compile(r"^[ \t]*(?:#{1,6}|>|[-*+]|\d{1,3}[.)])[ \t]+", re.M)   # heading, quote and list marks
+_ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")   # keeps the length
+_MD_IMAGE = re.compile(r"!\[[^\[\]]*\]\([^()]*\)")
+_MD_LINK = re.compile(r"\[([^\[\]]*)\]\([^()]*\)")
+# Heading marks, and bullets unless a number follows: «- 30,00 EUR storno» keeps its sign. Numbered lists and
+# quotes keep their marks («100. Totale», «> 5 licenze»).
+_MD_LINE = re.compile(r"^[ \t]*(?:#{1,6}|[-*+](?=[ \t]+\D))[ \t]+", re.M)
 _MD_MARK = re.compile(r"\*\*|__|`+|(?<!\w)[*_](?=\S)|(?<=\S)[*_](?!\w)")     # emphasis and code, not snake_case
 _SPACE = re.compile(r"\s+")
-_BEFORE_MARK = re.compile(r" ([,.;:!?)])")                   # «urgente</b>, vedi» reads «urgente, vedi»
+_BEFORE_MARK = re.compile(r" ([,.;:!?)])(?=\s|$)")         # «urgente</b>, vedi» reads «urgente, vedi»; «.5» stays
+# A field name on the line is written as it is, but a control character, a line separator or a lone surrogate would
+# let a key open a line of its own (a forged «[trimmed]») or make the text impossible to encode: written escaped.
+_UNSAFE = re.compile(r"[\x00-\x1f\x7f\x85\u2028\u2029\ud800-\udfff]")
+_SURROGATE = re.compile(r"[\ud800-\udfff]")
 _INDEX = re.compile(r"\[(\d+)\]")
 _NOTHING = object()
 
@@ -149,22 +159,54 @@ def is_text(value) -> bool:
 
 
 def cut(text: str, chars: int) -> str:
-    """The start of a text for a preview: at most `chars` characters, cut after a whole word when there is a space in
-    the second half (a number is never split: «14,7…» would read as a value), and «…» when something is left out."""
+    """The start of a text for a preview: at most `chars` characters, cut after the last whole word that fits, so
+    that a number is not split («14,7…» would read as a value), and «…» when something is left out. Only a first word
+    longer than `chars` is cut inside."""
     if len(text) <= chars:
         return text
     head = text[:chars]
-    space = head.rfind(" ")
-    if space >= chars // 2:
-        head = head[:space]
+    if text[chars] != " ":
+        space = head.rfind(" ")
+        if space > 0:
+            head = head[:space]
     return head.rstrip(" ,;:.") + "…"
+
+
+def safe(name: str) -> str:
+    """A field name as it can be written on the [trimmed] line (see _UNSAFE)."""
+    return _UNSAFE.sub(lambda m: f"\\u{ord(m.group()):04x}", name)
+
+
+def _drop_blocks(text: str) -> str:
+    """Comments, scripts and styles removed with their content, in one pass; an unclosed one runs to the end."""
+    low = text.translate(_ASCII_LOWER)
+    nxt = {o: low.find(o) for o, _ in _HTML_BLOCKS}
+    out, i = [], 0
+    while True:
+        live = [(p, o) for o, p in nxt.items() if p >= 0]
+        if not live:
+            out.append(text[i:])
+            break
+        j, o = min(live)
+        out.append(text[i:j] + " ")
+        close = dict(_HTML_BLOCKS)[o]
+        k = low.find(close, j + len(o))
+        if k < 0:
+            break
+        i = k + len(close) if close == "-->" else low.find(">", k) + 1
+        if i <= 0:
+            break
+        for m, p in nxt.items():
+            if 0 <= p < i:
+                nxt[m] = low.find(m, i)
+    return "".join(out)
 
 
 def readable(text: str) -> str:
     """The words of a text, for a preview: HTML (scripts, styles and comments with their content, then tags and
     entities) and markdown marks removed, links reduced to their text, images dropped, whitespace collapsed."""
-    if "<" in text:
-        text = _HTML_TAG.sub(" ", _HTML_DROP.sub(" ", text))
+    if "<" in text and _HTML_SIGN.search(text):
+        text = _HTML_TAG.sub(" ", _drop_blocks(text))
     if "&" in text:
         text = html.unescape(text)
     text = _MD_LINK.sub(r"\1", _MD_IMAGE.sub(" ", text))
@@ -195,14 +237,14 @@ def previews(payload, hidden: list[str], chars: int, budget: int | None = None, 
     parts = []
     for path in sorted(values.keys() | long.keys())[:TEXT_FIELDS]:
         texts = list(values.get(path, ()))
-        shown = [json.dumps(t, ensure_ascii=False) for t in texts[:TEXT_VALUES]]
+        shown = [json.dumps(_SURROGATE.sub("\ufffd", t), ensure_ascii=False) for t in texts[:TEXT_VALUES]]
         if len(texts) > TEXT_VALUES:
             shown[-1] += f" (+{len(texts) - TEXT_VALUES})"
         if path in long:
             n, size = long[path]
             shown.append(f"1 long text ({size} characters)" if n == 1 else
                          f"{n} long texts (up to {size} characters)")
-        parts.append(f"{path} {', '.join(shown)}")
+        parts.append(f"{safe(path)} {', '.join(shown)}")
     fields = len(values.keys() | long.keys())
 
     def line(n: int) -> str:
@@ -270,7 +312,7 @@ class Trimmer:
             g = ".".join(h.split(".")[:2])
             groups[g] = groups.get(g, 0) + 1
         ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
-        items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
+        items = [safe(g) if n == 1 and g in hidden else f"{safe(g)} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
         listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
         # The simple way for small outputs: the line that says what was removed
         # has a fixed cost, and on a small or already compact result it can cost
@@ -372,9 +414,7 @@ class Engine:
                  keep_positions: bool | None = None, text_preview: int | None = None):
         self.learner = learner
         self.keep_positions = keep_positions
-        if text_preview is not None and text_preview < 0:
-            raise ValueError("text_preview is a number of characters, 0 (off) or more")
-        self.text_preview = text_preview
+        self.text_preview = None if text_preview is None else check_preview(text_preview)
         self.structural = structural
         self.breakdown = breakdown
         # Lossless, so in automatic mode it does not wait for anything to be learned.
