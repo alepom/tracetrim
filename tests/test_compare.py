@@ -110,12 +110,21 @@ def test_public_phase_a(traces, capsys, case, calls, tokens_a, tokens_b):
     if len(paths) < 8:
         pytest.skip(f"complete public Phase A sample unavailable for {case}")
     published = json.loads((Path(__file__).resolve().parents[1] / "results/v1/identifiers.json").read_text())[case]
-    d = run(capsys, [str(p) for p in paths])
+    # The published numbers are a replay without text previews: text_preview=0 is the replay of 1.4 (1.5 turns
+    # them on by default).
+    d = run(capsys, [str(p) for p in paths], "protect_ids=all,text_preview=0", "protect_ids=record,text_preview=0")
     assert d["eligible_runs"] == 8 and not d["warnings"]
     assert d["totals"]["calls"] == calls and d["observed_expand"] == 0
     for side, tokens, arm in [("a", tokens_a, "all"), ("b", tokens_b, "labels")]:
         assert d["totals"][side] == {"tokens": tokens, "miss_calls": published["miss_" + arm], "full_cheaper": 0}
         assert tokens == sum(t[side]["tokens"] for t in d["tools"].values())
+    # With the previews of 1.5 the same fields are hidden (the same misses, no result sent whole for them), and the
+    # lines are longer by at most what the bound on the saving allows.
+    on = run(capsys, [str(p) for p in paths])
+    for side in ("a", "b"):
+        assert on["totals"][side]["miss_calls"] == d["totals"][side]["miss_calls"]
+        assert on["totals"][side]["full_cheaper"] == d["totals"][side]["full_cheaper"]
+        assert d["totals"][side]["tokens"] <= on["totals"][side]["tokens"]
 
 
 def test_literal_token_markers_in_tool_text(tmp_path, capsys):

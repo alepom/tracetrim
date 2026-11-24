@@ -168,6 +168,7 @@ class Options:
     protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
     learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
     keep_positions: bool | None = None  # a list element left with no field keeps its place; None: as the config says (on)
+    keep_fields: dict | None = None      # {tool: [field, ...]} never hidden (1.5, --keep-field), on top of the config's
     text_preview: int | None = None      # characters of hidden free text shown on the [trimmed] line; None: as the config says (40 when it says nothing), 0: off
 
     isolate_sessions: bool = False    # HTTP automatic mode only
@@ -470,7 +471,8 @@ def _server(o: Options):
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
                     compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions,
                     # In automatic mode the learned config never carries the key: the option, or the default of 1.5 (40).
-                    text_preview=(TEXT_PREVIEW if o.text_preview is None else o.text_preview) if learner else o.text_preview)
+                    text_preview=(TEXT_PREVIEW if o.text_preview is None else o.text_preview) if learner else o.text_preview,
+                    keep_fields=o.keep_fields)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)

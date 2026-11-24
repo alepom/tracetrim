@@ -1259,11 +1259,12 @@ class AutoTrim:
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
                  strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
                  breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1",
-                 keep_positions: bool = True, skill_version: str | None = None, text_preview: int = TEXT_PREVIEW):
+                 keep_positions: bool = True, skill_version: str | None = None, text_preview: int = TEXT_PREVIEW,
+                 keep_fields: dict[str, list[str]] | None = None):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
                                      compact=compact, keep_positions=keep_positions), structural=structural,
                              compact=compact, breakdown=breakdown, keep_positions=keep_positions,
-                             text_preview=text_preview)
+                             text_preview=text_preview, keep_fields=keep_fields)
         self.strategy = strategy
         from . import skill
         self.skill_version = skill_version or skill.VERSION

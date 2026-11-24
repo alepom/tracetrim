@@ -205,6 +205,8 @@ def cmd_proxy(a):
         raise SystemExit("--protect-ids sets what learning keeps: it works in automatic mode only; add --auto WORKDIR")
     if a.text_preview is not None and a.text_preview < 0:
         raise SystemExit("--text-preview is a number of characters: 0 (off) or more")
+    if a.keep_field and not (a.auto or a.config):
+        raise SystemExit("--keep-field says what trimming must never hide: it needs --auto WORKDIR or --config")
     if a.text_preview and not (a.auto or a.config):
         raise SystemExit("--text-preview shows what trimming hides: it needs --auto WORKDIR or --config")
     if adaptive["--promote-runs"] and not a.promote:
@@ -223,6 +225,7 @@ def cmd_proxy(a):
                 compact=False if a.no_compact else None,
                 keep_positions=False if a.no_keep_positions else None,
                 text_preview=a.text_preview,
+                keep_fields={t: [f for tt, f in a.keep_field if tt == t] for t, _ in a.keep_field} or None,
                 breakdown=not a.no_breakdown, log_client=a.log_client, isolate_sessions=a.isolate_sessions,
                 background_relearn=a.background_relearn, skill_version=a.skill_version,
                 promote=a.promote, promote_runs=a.promote_runs, sample_rate=a.sample_rate,
@@ -544,6 +547,10 @@ def main(argv=None):
                         "(descriptions, memos, notes), so that one that holds the answer does not look empty; "
                         "40 by default since 1.5, 0 turns them off (the line of 1.4); with --config, as the config's "
                         "\"text_preview\" says, 40 when it says nothing")
+    s.add_argument("--keep-field", nargs=2, action="append", default=[], metavar=("TOOL", "FIELD"),
+                   help="never hide FIELD of TOOL, whatever learning finds (repeatable): a field as the [trimmed] "
+                        "line writes it (data[].memo), or a group (data[].metadata) for every field under it; "
+                        "with --config, added to the config's \"keep_fields\"")
     s.add_argument("--no-breakdown", action="store_true",
                    help="do not count, call by call, what re-serialising saves apart from what removing fields "
                         "saves (the log's 'format' and 'fields', the report's section on where the saving comes from)")

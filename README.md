@@ -198,7 +198,9 @@ Whichever way it is connected:
   trimmed, and the report says so. Since 0.4, and off unless asked for: `--promote` keeps a single
   field the agent asked back often enough, before giving up on the tool, and `--sample-rate` passes a
   result whole now and then to see whether the agent uses what is removed
-  ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). Runs without `tracetrim_done` count for telemetry, not for learning.
+  ([docs/adaptive.md](https://github.com/alepom/tracetrim/blob/master/docs/adaptive.md)). If you know that a field
+  matters to the process even when the agent rarely uses it, an invoice memo for instance, keep it by hand
+  (since 1.5): `--keep-field TOOL data[].memo` is never hidden, whatever learning finds. Runs without `tracetrim_done` count for telemetry, not for learning.
   One agent at a time: calls that arrive together from several agents end up in the same run. Over MCP the
   proxy cannot see the model's turns, so calls emitted together are compared by arrival order: a later call's
   arguments can count as using an earlier sibling's output. In the study this changed no figure; where turns

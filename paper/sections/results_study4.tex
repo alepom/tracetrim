@@ -359,7 +359,10 @@ at most \SfourEShareBound{} of the tokens the cut saves on a result, so they nev
 whole. Replayed on every tool result of the campaign with the frozen policy, the released library produces exactly
 what the agent received: \SfourEReplayPtwoT{} results in P2T and \SfourEReplayPtwo{} in P2
 (\texttt{experiments/v3e/replay.py}). In the campaign the previews had used at most \SfourEShareMax{} of the saving
-of a result (median \SfourEShareMedian{}). Part~E's result therefore holds for the library as released.
+of a result (median \SfourEShareMedian{}). Part~E's result therefore holds for the library as released. On the
+public traces of Study~1, replayed offline with the same projection, the previews add \SfourEPublicAddedMin{} to
+\SfourEPublicAddedMax{} to the tool-output tokens served on \SfourEPublicAgents{} agents, with the same fields hidden
+(\texttt{experiments/v3e/compare\_previews.py}); what they change in the answers there is not measured.
 
 \paragraph{Deviations.} Every deviation was recorded before the scores it concerns, except two marked below: the
 error in Part~B's check of how a hidden value reached the agent, found after its analysis, and the second reader,

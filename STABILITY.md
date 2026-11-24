@@ -50,7 +50,8 @@ hold arguments, results, headers, tokens or the values of what a client declares
   - the keyword arguments `structural`, `strategy`, `adaptive`, `compact`, `breakdown`, and, since 1.1,
     `protect_ids` (`"all"`, the default, or `"record"`) and `learning` (`"1.1"`, the default, or `"1.0"`, the
     rules of 1.0: see the CHANGELOG's *Changed behaviour* for 1.1), and, since 1.5, `text_preview` (characters
-    of hidden free text shown on the `[trimmed]` line; 40 by default, 0 is off);
+    of hidden free text shown on the `[trimmed]` line; 40 by default, 0 is off) and `keep_fields` (fields never
+    hidden, `{tool: [field, ...]}`; none by default);
   - `output`, `expand`, `done`, `offered`, `instructions`, `report`, `expand_tool`, `trimming`.
 
   Pass every argument after `min_runs` by keyword.

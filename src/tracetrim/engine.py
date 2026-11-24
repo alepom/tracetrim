@@ -22,7 +22,7 @@ from pathlib import Path
 from .contract import FILTERED, FULL, FULL_CHEAPER, SAMPLED, Observation, Sizes, ToolCall, ToolResult
 from .evidence import is_broad
 from .projection import dumps
-from .runtime import Policy, check_preview
+from .runtime import Policy, check_keep_fields, check_preview
 from .usage import leaves, parse_output
 
 _EXPAND_V1 = ("Some tool results are trimmed to save context: the fields removed are listed in the line "
@@ -431,10 +431,12 @@ class Engine:
 
     def __init__(self, learner=None, policy: Policy | None = None, structural: str | None = None,
                  shared: bool = False, compact: bool | None = None, breakdown: bool = True,
-                 keep_positions: bool | None = None, text_preview: int | None = None):
+                 keep_positions: bool | None = None, text_preview: int | None = None,
+                 keep_fields: dict[str, list[str]] | None = None):
         self.learner = learner
         self.keep_positions = keep_positions
         self.text_preview = None if text_preview is None else check_preview(text_preview)
+        self.keep_fields = check_keep_fields(keep_fields)
         self.structural = structural
         self.breakdown = breakdown
         # Lossless, so in automatic mode it does not wait for anything to be learned.
@@ -458,6 +460,8 @@ class Engine:
             policy.keep_positions = self.keep_positions
         if policy is not None and self.text_preview is not None:
             policy.text_preview = self.text_preview
+        if policy is not None and self.keep_fields:
+            policy.keep(self.keep_fields)
         return policy
 
     @property

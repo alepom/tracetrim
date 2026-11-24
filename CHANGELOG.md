@@ -40,6 +40,14 @@ with the paper, version 4: DOI {SOFTWARE_DOI}.
   - **They also feed learning:** a field whose preview the model quotes counts as used, and the next relearning
     keeps it.
 
+- **Fields kept by hand, off unless asked for.** `proxy --keep-field TOOL FIELD` (repeatable),
+  `AutoTrim(keep_fields={TOOL: [FIELD, ...]})` (and so `TraceTrim`), or `"keep_fields"` in a config: those fields
+  are never hidden, whatever learning finds. A field is written as on the `[trimmed]` line (`data[].memo`); a group
+  (`data[].metadata`) keeps every field under it that learning saw. For a field that matters to the process even
+  when the agent rarely uses it, such as an invoice memo: in Study 4 an agent that did not see such a field
+  sometimes said it was not there. Learning goes on as before and its files are not changed, so dropping the
+  option restores what was learned.
+
 ### Changed behaviour
 
 - **Text previews are on by default, at 40 characters.** Protocol v3e (`protocol-v3e.md`, preregistered; agent
@@ -53,6 +61,9 @@ with the paper, version 4: DOI {SOFTWARE_DOI}.
   agent model. The rules above on words, documents and the share of the saving came after the runs: replayed on
   the 1,337 results of v3e with the frozen policy, the current library produces exactly what the agent received, in
   both arms (`experiments/v3e/replay.py`, `results/v3e/replay.json`).
+  - What they cost where nothing is tested: replayed with `tracetrim compare` on the public traces of Study 1, the
+    previews add 0.7%, 7.1% and 1.9% to the tool-output tokens served on three agents, with the same fields hidden
+    and the same misses (`experiments/v3e/compare_previews.py`, `results/v3e/compare_previews.json`).
   - A config written before 1.5 has no `text_preview` key: it gets the default, 40.
   - `proxy --text-preview 0`, `AutoTrim(text_preview=0)` and `"text_preview": 0` restore the line of 1.4.
   - `tracetrim compare` replays with the previews too; `--a text_preview=0` (or `--b`) gives the replay of 1.4.

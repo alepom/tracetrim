@@ -1,0 +1,29 @@
+{
+  "C3": {
+    "runs": 8,
+    "calls": 61,
+    "tokens_without": 1100717,
+    "tokens_with": 1108622,
+    "added": 0.0072,
+    "miss_calls_without": 2,
+    "miss_calls_with": 2
+  },
+  "C4": {
+    "runs": 8,
+    "calls": 84,
+    "tokens_without": 73942,
+    "tokens_with": 79231,
+    "added": 0.0715,
+    "miss_calls_without": 9,
+    "miss_calls_with": 9
+  },
+  "C5": {
+    "runs": 8,
+    "calls": 104,
+    "tokens_without": 216068,
+    "tokens_with": 220120,
+    "added": 0.0188,
+    "miss_calls_without": 3,
+    "miss_calls_with": 3
+  }
+}

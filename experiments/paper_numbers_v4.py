@@ -23,6 +23,7 @@ V3E = ROOT / "results" / "v3e" / "analysis.json"
 V3E_REPLAY = ROOT / "results" / "v3e" / "replay.json"
 V3E_HINTS = ROOT / "results" / "v3e" / "hints_offline.json"
 V3E_ROUTES = ROOT / "results" / "v3e" / "routes.json"
+V3E_COMPARE = ROOT / "results" / "v3e" / "compare_previews.json"
 PREVIEW = 40          # the characters of arm P2T (experiments/v3e/run.py), the default of 1.5 (runtime.TEXT_PREVIEW)
 
 
@@ -154,6 +155,13 @@ def _part_e(m, GEN: Path) -> None:
         m("SfourEShareMax", f"{s['max']:.2f}")
         assert r["text_share_bound"] == TEXT_SHARE
     m("SfourEShareBound", f"{TEXT_SHARE:.2f}")
+    if V3E_COMPARE.exists():
+        c = json.loads(V3E_COMPARE.read_text(encoding="utf-8"))
+        added = sorted(v["added"] for v in c.values())
+        m("SfourEPublicAddedMin", f"{100 * added[0]:.1f}\\%")
+        m("SfourEPublicAddedMax", f"{100 * added[-1]:.1f}\\%")
+        m("SfourEPublicAgents", word(len(c)))
+        assert all(v["miss_calls_with"] == v["miss_calls_without"] for v in c.values())
     m("SfourETextLong", str(TEXT_LONG))
     rows = [f"Hidden facts reported (primary) & {share(e['hidden_fact_share_by_arm']['P2'])} & "
             f"{share(e['hidden_fact_share_by_arm']['P2T'])} & \\textbf{{{sgn(pe['point'], 3)}}} & "

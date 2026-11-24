@@ -11,6 +11,7 @@ proxy or an SDK adapter: here they are only read and exposed.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 from .projection import Projection, dumps
@@ -29,10 +30,25 @@ def check_preview(value) -> int:
     return value
 
 
+def check_keep_fields(value) -> dict[str, list[str]]:
+    """`{tool: [field, ...]}`, the fields a person wants never hidden (1.5), the same check wherever it is set."""
+    if value is None:
+        return {}
+    if not isinstance(value, dict) or any(
+            not isinstance(tool, str) or not tool or not isinstance(fields, (list, tuple))
+            or not all(isinstance(f, str) and f for f in fields) for tool, fields in value.items()):
+        raise ValueError(f"keep_fields is {{tool: [field, ...]}} with non-empty names, not {value!r}")
+    return {tool: list(dict.fromkeys(fields)) for tool, fields in value.items()}
+
+
 class Policy:
     def __init__(self, config: dict, projection: Projection | None):
         self.config = config
+        # The projection as learned or loaded; `projection` is the one applied, with the fields kept by hand.
+        self.learned_projection = projection
         self.projection = projection
+        self.keep_fields: dict[str, list[str]] = {}
+        self.keep(check_keep_fields(config.get("keep_fields")))
         self.tools = config.get("tools", {})
         self.unescape = bool(config.get("unescape", True))
         # Compact JSON, no spaces after separators: lossless. Off when the key is
@@ -66,6 +82,29 @@ class Policy:
             raise ValueError(f"{path.name}: not a tracetrim config")
         proj = config.get("projection")
         return cls(config, Projection.load(path.parent / proj) if proj else None)
+
+    def keep(self, fields: dict[str, list[str]]) -> None:
+        """Fields never hidden, whatever learning found (1.5, `--keep-field`): for a person who knows that a field
+        matters to the process even when the agent rarely uses it, an invoice memo for instance. A field is written
+        as on the `[trimmed]` line (`data[].memo`); a group (`data[].metadata`) keeps every field under it that
+        learning saw. Added to what the projection keeps, never removed from it; the learned projection, and its
+        files, stay as they are, so dropping the option restores what was learned."""
+        for tool, wanted in fields.items():
+            have = self.keep_fields.setdefault(tool, [])
+            have.extend(f for f in wanted if f not in have)
+        p = self.learned_projection
+        if p is None or not self.keep_fields:
+            self.projection = p
+            return
+        keep = {tool: set(paths) for tool, paths in p.keep.items()}
+        for tool, wanted in self.keep_fields.items():
+            if tool not in keep:
+                continue                         # a tool the projection leaves whole
+            seen = p.seen.get(tool, set())
+            for f in wanted:
+                keep[tool].add(f)
+                keep[tool].update(s for s in seen if s.startswith(f + ".") or s.startswith(f + "["))
+        self.projection = replace(p, keep=keep)
 
     def expand_enabled(self, tool: str) -> bool:
         return bool(self.tools.get(tool, {}).get("expand"))
