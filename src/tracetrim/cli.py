@@ -542,7 +542,8 @@ def main(argv=None):
     s.add_argument("--text-preview", type=int, metavar="CHARS",
                    help="show on the [trimmed] line the first CHARS characters of the hidden free-text fields "
                         "(descriptions, memos, notes), so that one that holds the answer does not look empty; "
-                        "off by default (0), and with --config as the config's \"text_preview\" says")
+                        "40 by default since 1.5, 0 turns them off (the line of 1.4); with --config, as the config's "
+                        "\"text_preview\" says, 40 when it says nothing")
     s.add_argument("--no-breakdown", action="store_true",
                    help="do not count, call by call, what re-serialising saves apart from what removing fields "
                         "saves (the log's 'format' and 'fields', the report's section on where the saving comes from)")

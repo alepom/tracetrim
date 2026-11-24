@@ -15,7 +15,7 @@ import pytest
 
 import tracetrim
 from tracetrim.auto import DONE, DONE_REPLY, AutoTrim
-from tracetrim.engine import EXPAND, MARK
+from tracetrim.engine import EXPAND, MARK, TEXT_LABEL
 from tracetrim.evidence import Adaptive
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -51,11 +51,15 @@ def _flow(work) -> AutoTrim:
 
 def test_a_060_work_directory_is_picked_up_and_trims_as_before(workdir_060):
     expected = json.loads((FIXTURES / "workdir_060" / "expected_trimmed.json").read_text())
-    tt = AutoTrim(workdir_060, min_runs=3)
-    assert tt.trimming and tt.learner.state["complete_runs"] == 4
-    sent = tt.output(billing.TOOL, billing.arguments(3), billing.output(3))
-    body, line = sent.rsplit(MARK, 1)
-    assert json.loads(body) == expected["body"] and line.split("hidden: ")[1] == expected["hidden"]
+    # Since 1.5 the text previews (on by default) follow the hidden groups; text_preview=0 restores the line of 1.4.
+    for preview in (None, 0):
+        tt = AutoTrim(workdir_060, min_runs=3, **({} if preview is None else {"text_preview": preview}))
+        assert tt.trimming and tt.learner.state["complete_runs"] == 4
+        sent = tt.output(billing.TOOL, billing.arguments(3), billing.output(3))
+        body, line = sent.rsplit(MARK, 1)
+        hidden = line.split("hidden: ")[1]
+        assert json.loads(body) == expected["body"] and hidden.split(TEXT_LABEL)[0] == expected["hidden"]
+        assert (TEXT_LABEL in hidden) == (preview is None)
 
 
 def test_a_060_work_directory_keeps_learning_and_reporting(workdir_060):

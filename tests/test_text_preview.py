@@ -1,17 +1,19 @@
-"""Text previews on the [trimmed] line (1.5, off by default).
+"""Text previews on the [trimmed] line (1.5, on by default at 40 characters).
 
 Protocol v3c lost hidden facts that sat in free-text fields: the line named `data[].description` but an empty one and
 one that explained a credit looked the same. With `text_preview=N` the line also shows the first N characters of the
-hidden texts. Off by default, nothing changes (STABILITY)."""
+hidden texts. Protocol v3e measured it (91.3% -> 99.5% of the hidden facts reported, same cost on ordinary tasks), so
+1.5 turns it on; text_preview=0 restores the line of 1.4 (STABILITY, CHANGELOG *Changed behaviour*)."""
 import json
+import re
 
 import pytest
 
 from tracetrim.auto import AutoTrim
-from tracetrim.engine import (MARK, TEXT_FIELDS, TEXT_LABEL, TEXT_LONG, TEXT_VALUES, Engine, Trimmer, cut, is_text,
+from tracetrim.engine import (MARK, TEXT_FIELDS, TEXT_LABEL, TEXT_LONG, TEXT_SHARE, TEXT_VALUES, Engine, Trimmer, cut, is_text,
                               previews, readable)
 from tracetrim.projection import Projection
-from tracetrim.runtime import Policy
+from tracetrim.runtime import TEXT_PREVIEW, Policy
 
 NOISE = {f"n{i}": f"value number {i} of the record" for i in range(8)}
 CREDIT = "Accredito di cortesia di 14,78 EUR registrato il 20 gennaio 2027"
@@ -31,9 +33,16 @@ def output(descriptions) -> str:
                                  "code": "AB-12345678", **NOISE} for i, d in enumerate(descriptions)]})
 
 
-def test_off_by_default_the_line_is_the_line_of_1_4():
-    obs = trimmer().observe("t", output([None, CREDIT]))
-    assert obs.call_id and TEXT_LABEL not in obs.text and "Accredito" not in obs.text
+def same_id(text: str) -> str:
+    return re.sub(r"call_id=c[0-9a-f]{8}", "call_id=c00000000", text)
+
+
+def test_on_by_default_at_40_characters_and_0_restores_the_line_of_1_4():
+    on = trimmer().observe("t", output([None, CREDIT]))
+    assert TEXT_PREVIEW == 40 and TEXT_LABEL + 'data[].description "Accredito di cortesia di 14,78 EUR…"' in on.text
+    off = trimmer(0).observe("t", output([None, CREDIT]))
+    assert off.call_id and TEXT_LABEL not in off.text and "Accredito" not in off.text
+    assert same_id(on.text).startswith(same_id(off.text) + TEXT_LABEL)       # the rest of the line is the same
 
 
 def test_a_hidden_description_is_previewed_cut_to_the_characters_asked():
@@ -76,12 +85,19 @@ def test_what_counts_as_text():
     assert previews({"a": "Rimborso parziale di due licenze"}, ["a"], 0) == ""
 
 
-def test_the_previews_count_in_the_choice_of_the_whole_result():
-    # A small result: with the previews the line would cost more than the cut saves, so the whole result goes on.
+def test_the_previews_never_send_a_result_whole_and_leave_a_quarter_of_the_saving():
+    # A small result: the whole description would cost more than the share of the saving it may take. Until the
+    # bound, the previews could make the line cost more than the cut saved, and the result went on whole.
     small = json.dumps({"data": [{"id": "a", "description": "Testo libero abbastanza lungo " * 6, "n0": "x"}]})
-    tr = trimmer(400, seen=("data[].id", "data[].description", "data[].n0"))
-    obs = tr.observe("t", small)
-    assert MARK not in obs.text and json.loads(obs.text) == json.loads(small)
+    seen = ("data[].id", "data[].description", "data[].n0")
+    off, on = (trimmer(n, seen=seen).observe("t", small) for n in (0, 400))
+    assert off.call_id and on.call_id and same_id(on.text) == same_id(off.text)
+    # A larger one: the previews fit, within TEXT_SHARE of the tokens the cut saves.
+    big = output([CREDIT] * 3 + [None] * 20)
+    tr = trimmer(40)
+    on, off = tr.observe("t", big), trimmer(0).observe("t", big)
+    base, whole = tr.count(same_id(off.text)), tr.last_whole[2]
+    assert TEXT_LABEL in on.text and tr.count(same_id(on.text)) - base <= TEXT_SHARE * (whole - base)
 
 
 def test_the_engine_setting_overrides_the_config():
@@ -106,7 +122,8 @@ def test_automatic_mode_with_previews(tmp_path):
     assert tt.trimming
     sent = tt.output("t", {"q": 9}, output([None, CREDIT]))
     assert MARK in sent and "14,78 EUR" in sent.split(MARK, 1)[1]
-    assert AutoTrim(tmp_path / "other", min_runs=2).engine.text_preview == 0
+    assert AutoTrim(tmp_path / "other", min_runs=2).engine.text_preview == TEXT_PREVIEW
+    assert AutoTrim(tmp_path / "off", min_runs=2, text_preview=0).engine.text_preview == 0
 
 
 def test_a_cut_never_splits_a_word_or_a_number():
@@ -135,7 +152,10 @@ def test_a_config_value_must_be_a_number_of_characters():
     for bad in (True, -1, "40", 2.5):
         with pytest.raises(ValueError):
             Policy({"format": "tracetrim/config@1", "tools": {}, "text_preview": bad}, proj)
-    assert Policy({"format": "tracetrim/config@1", "tools": {}, "text_preview": None}, proj).text_preview == 0
+    # A config written before 1.5 says nothing: the default of 1.5. 0 is off.
+    for value, expected in ((None, TEXT_PREVIEW), (0, 0), (80, 80)):
+        assert Policy({"format": "tracetrim/config@1", "tools": {}, "text_preview": value}, proj).text_preview == expected
+    assert Policy({"format": "tracetrim/config@1", "tools": {}}, proj).text_preview == TEXT_PREVIEW
 
 
 @pytest.mark.parametrize("argv, message", [

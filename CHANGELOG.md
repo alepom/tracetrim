@@ -6,7 +6,8 @@ later versions add ways to use the library, and were checked end to end, not eva
 
 ## 1.5.0 (in development)
 
-New ways to use the library; with the default options the model receives what it received in 1.4.0.
+New ways to use the library, and **one change in what the model receives: text previews on the `[trimmed]` line,
+on by default** (*Changed behaviour*, below). With `text_preview=0` the model receives what it received in 1.4.0.
 
 - **LangGraph.** `tracetrim.langgraph.TraceTrim` puts automatic mode around LangGraph's `ToolNode`
   (`wrap_tool_call`, `awrap_tool_call`): `expand` and `tracetrim_done` as LangChain tools, one run per
@@ -14,21 +15,39 @@ New ways to use the library; with the default options the model receives what it
   `idle_seconds` for conversations resumed later. Extra `langgraph`. Guide: `docs/langgraph.md`; a graph that runs
   with no model: `examples/langgraph_agent.py`. Checked end to end with `gemini-3.8-flash` in a real graph
   (`experiments/langgraph_gemini.py`).
-- **Text previews, off by default.** `proxy --text-preview CHARS`, `AutoTrim(text_preview=CHARS)` (and so
-  `TraceTrim`), or `"text_preview": CHARS` in a config (`--config` only: in automatic mode the option decides):
-  the `[trimmed]` line also shows, after ` · text, first characters: `, the start of the hidden free-text fields
-  (descriptions, memos, notes), cut after a whole word within CHARS characters, with `…` when there is more; at
-  most 3 distinct starts per field and 5 fields per result. A preview shows the words: HTML and markdown are
-  removed and whitespace collapsed wherever they appear, before the cut. A text longer than 500 readable characters
-  is a document (an extracted page, a transcript) and is shown by its size, `2 long texts (up to 2389 characters)`,
-  because its first words are often a cookie banner, a menu or a greeting: on the real traces of the studies, the
-  descriptions, snippets and notes stay under the limit and the extracted pages and transcripts go over it. It targets the weak point of Study 4: a hidden
-  description that held the fact looked like an empty one. Replayed on the 72 hard-task traces of protocol v3c
-  (arms P1 and P2), a 40-character preview would have put 38 of the 40 hidden facts the agent missed (4 synthetic
-  templates, with the fact near the start of the text) on the line itself, for 0.8% more tokens in the trimmed
-  results (`experiments/v3e/hints_offline.py`); protocol v3e measures the effect on answers. The previews count
-  in the choice between the trimmed and the whole result, as the rest of the line does. **They also feed
-  learning:** a field whose preview the model quotes counts as used, and the next relearning keeps it.
+- **Text previews.** The `[trimmed]` line also shows, after ` · text, first characters: `, the start of the hidden
+  free-text fields (descriptions, memos, notes), cut after a whole word within CHARS characters, with `…` when
+  there is more; at most 3 distinct starts per field and 5 fields per result. Set with `proxy --text-preview
+  CHARS`, `AutoTrim(text_preview=CHARS)` (and so `TraceTrim`), or `"text_preview": CHARS` in a config (`--config`
+  only: in automatic mode the option decides); 0 turns them off.
+  - **Words, not markup.** HTML and markdown are removed and whitespace collapsed wherever they appear, before the
+    cut. A text longer than 500 readable characters is a document (an extracted page, a transcript) and is shown by
+    its size, `2 long texts (up to 2389 characters)`, because its first words are often a cookie banner, a menu or
+    a greeting. On the real traces of the studies, descriptions, snippets and notes stay under the limit;
+    extracted pages and transcripts go over it.
+  - **Never at the cost of the saving.** The previews come after the choice between the trimmed and the whole
+    result, and may spend at most three quarters of the tokens the cut saves on that result (whole fields, in
+    order; the rest counted as `+n more fields`). A result goes on whole exactly when it did in 1.4, and keeps at
+    least a quarter of its saving. In protocol v3e the previews used at most 0.55 of it (median 0.30), so the
+    bound leaves them as they were tested.
+  - **They also feed learning:** a field whose preview the model quotes counts as used, and the next relearning
+    keeps it.
+
+### Changed behaviour
+
+- **Text previews are on by default, at 40 characters.** Protocol v3e (`protocol-v3e.md`, preregistered; agent
+  `gpt-5.6-terra`, skill version 2, 92 runs, none missing) compared the default of 1.4 with the same policy plus
+  40-character previews. On the hard tasks of Study 4 the hidden facts reported rose from 91.3% to 99.5% (+0.083,
+  95% interval [+0.046; +0.123]), better in 9 tasks of 12 and worse in none; the cost was 0.92 times on those tasks
+  and 1.00 on ordinary ones, with the same gates passed (10 of 10). The preview did not replace `expand`: no fact
+  was reported from a preview alone; seeing that a field held something relevant, the agent expanded it. The rule
+  decided before the runs (previews on if the hidden facts improved, the ordinary cost stayed within 1.10 and the
+  gates were not fewer) held in all three parts. Limits: in those tasks the fact sits at the start of the text; one
+  agent model. The rules above on words, documents and the share of the saving came after the runs: replayed on
+  the 1,337 results of v3e with the frozen policy, the current library produces exactly what the agent received, in
+  both arms (`experiments/v3e/replay.py`, `results/v3e/replay.json`).
+  - A config written before 1.5 has no `text_preview` key: it gets the default, 40.
+  - `proxy --text-preview 0`, `AutoTrim(text_preview=0)` and `"text_preview": 0` restore the line of 1.4.
 
 ## 1.4.0
 

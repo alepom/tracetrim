@@ -16,6 +16,11 @@ from pathlib import Path
 from .projection import Projection, dumps
 from .usage import parse_output
 
+# Characters of hidden free text shown on the `[trimmed]` line (tracetrim.engine.previews). On by default since 1.5:
+# in protocol v3e, 40 characters raised the hidden facts reported from 91.3% to 99.5% at the same cost on ordinary
+# tasks. 0 turns them off, as in 1.4.
+TEXT_PREVIEW = 40
+
 
 class Policy:
     def __init__(self, config: dict, projection: Projection | None):
@@ -30,9 +35,12 @@ class Policy:
         # the model reads is the one `expand` reads. On when the key is missing:
         # a fix (1.1.2); `"keep_positions": false` restores the earlier behaviour.
         self.keep_positions = bool(config.get("keep_positions", True))
-        # 1.5, off by default (0): the `[trimmed]` line also shows the first N characters of the hidden free-text
-        # fields, so that a description that holds the answer does not look like an empty one (tracetrim.engine).
-        preview = config.get("text_preview", 0) or 0
+        # 1.5: the `[trimmed]` line also shows the start of the hidden free-text fields, so that a description that
+        # holds the answer does not look like an empty one. TEXT_PREVIEW when the key is missing or null, as in a
+        # config written before 1.5; `"text_preview": 0` restores the line of 1.4.
+        preview = config.get("text_preview")
+        if preview is None:
+            preview = TEXT_PREVIEW
         if isinstance(preview, bool) or not isinstance(preview, int) or preview < 0:
             raise ValueError(f"text_preview is a number of characters, 0 (off) or more, not {preview!r}")
         self.text_preview = preview

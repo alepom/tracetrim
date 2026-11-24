@@ -51,7 +51,7 @@ MAX_GROUPS = 25
 MAX_ORIGINALS = 256          # originals kept for expand; the oldest go first
 MARK = "\n[trimmed] "        # starts the line that follows a filtered result
 RECENT_IDS = 3               # valid call_ids named in the reply to an unknown one
-# Text previews (1.5, off by default). A hidden field is free text when one of its values is a string with a space
+# Text previews (1.5, on by default: runtime.TEXT_PREVIEW). A hidden field is free text when one of its values is a string with a space
 # and at least TEXT_MIN characters that is not a URL: a description, a memo, a note. Ids, codes, dates, emails and
 # names of one or two short words are not. Per field, the first TEXT_VALUES distinct texts; at most TEXT_FIELDS
 # fields per result, so that a result with many hidden texts cannot make the line longer than the cut saves.
@@ -68,6 +68,11 @@ TEXT_LABEL = " · text, first characters: "
 # its size instead. On the real traces of the studies, descriptions, snippets and notes stay under it (95th
 # percentile 356 characters); extracted pages and transcripts go over it (median about 2,000).
 TEXT_LONG = 500
+# The previews may spend at most this share of what the cut saves on a result (in tokens): they never decide whether
+# a result goes on whole, and a small result with many hidden texts keeps at least a quarter of its saving. In
+# protocol v3e they used at most 0.55 of it (median 0.30: experiments/v3e/replay.py), so the bound leaves the tested
+# previews as they were.
+TEXT_SHARE = 0.75
 _HTML_DROP = re.compile(r"<(script|style)\b.*?</\1\s*>|<!--.*?-->", re.I | re.S)
 _HTML_TAG = re.compile(r"<[!/?]?[A-Za-z][^<>]*>")
 _MD_IMAGE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
@@ -167,10 +172,11 @@ def readable(text: str) -> str:
     return _BEFORE_MARK.sub(r"\1", _SPACE.sub(" ", text)).strip()
 
 
-def previews(payload, hidden: list[str], chars: int) -> str:
+def previews(payload, hidden: list[str], chars: int, budget: int | None = None, count=len) -> str:
     """The text that follows the hidden groups when previews are on: for each hidden free-text field, its first
     distinct starts (`cut` of the `readable` text), as JSON strings (a newline or a quote cannot break the line), and
-    how many more; texts longer than TEXT_LONG are documents, counted with the size of the longest instead."""
+    how many more; texts longer than TEXT_LONG are documents, counted with the size of the longest instead. With a
+    `budget` (in the unit of `count`), as many whole fields as fit, in order, and how many were left out."""
     if chars <= 0:
         return ""
     wanted = set(hidden)
@@ -198,9 +204,14 @@ def previews(payload, hidden: list[str], chars: int) -> str:
                          f"{n} long texts (up to {size} characters)")
         parts.append(f"{path} {', '.join(shown)}")
     fields = len(values.keys() | long.keys())
-    if fields > TEXT_FIELDS:
-        parts.append(f"+{fields - TEXT_FIELDS} more fields")
-    return TEXT_LABEL + "; ".join(parts) if parts else ""
+
+    def line(n: int) -> str:
+        more = [f"+{fields - n} more fields"] if fields > n else []
+        return TEXT_LABEL + "; ".join(parts[:n] + more) if n else ""
+    n = len(parts)
+    while budget is not None and n and count(line(n)) > budget:
+        n -= 1
+    return line(n)
 
 
 class Trimmer:
@@ -261,10 +272,6 @@ class Trimmer:
         ordered = sorted(groups.items(), key=lambda x: (-x[1], x[0]))
         items = [g if n == 1 and g in hidden else f"{g} ({n} field{'' if n == 1 else 's'})" for g, n in ordered]
         listed = ", ".join(items[:MAX_GROUPS]) + (f" (+{len(items) - MAX_GROUPS} more groups)" if len(items) > MAX_GROUPS else "")
-        if annotate:
-            # Counted in the line below like the rest of it: if the previews make the line cost more than the cut
-            # saves, the whole result goes on instead.
-            listed += previews(payload, hidden, getattr(self.policy, "text_preview", 0))
         # The simple way for small outputs: the line that says what was removed
         # has a fixed cost, and on a small or already compact result it can cost
         # more than the cut saves. Then the whole result goes on, without the line:
@@ -275,10 +282,15 @@ class Trimmer:
         count = count_tokens or self.count
         whole_size = count(whole)
         self.last_whole = (tool, out, whole_size)
-        if count(candidate) >= whole_size:
+        candidate_size = count(candidate)
+        if candidate_size >= whole_size:
             return Observation(whole, FULL_CHEAPER, hidden=tuple(hidden))
         if not annotate:
             return Observation(trimmed, FILTERED, hidden=tuple(hidden))
+        # The previews come after the choice, within a share of what the cut saves: the result goes on whole exactly
+        # when it did without them (1.4), and keeps at least a quarter of its saving.
+        listed += previews(payload, hidden, getattr(self.policy, "text_preview", 0),
+                           budget=int((whole_size - candidate_size) * TEXT_SHARE), count=count)
         # Random ids: over HTTP several clients share one proxy, and a sequential
         # id would let one of them expand another's results.
         cid = "c" + secrets.token_hex(4)

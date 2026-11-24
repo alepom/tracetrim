@@ -17,6 +17,7 @@ import pytest
 
 from tracetrim import analyse, learn, load
 from tracetrim.auto import EXPAND_MAX_RATE, EXPAND_MIN_CALLS, AutoTrim, Learner
+from tracetrim.engine import TEXT_LABEL
 from tracetrim.evidence import Adaptive
 from tracetrim.projection import Projection
 from tracetrim.runtime import Policy
@@ -219,12 +220,14 @@ def expected_trimmed() -> dict:
 
 
 def test_a_035_work_directory_is_picked_up_and_trims_as_before(workdir_035):
-    tt = AutoTrim(workdir_035, min_runs=3)
-    assert tt.trimming and tt.learner.state["complete_runs"] == 3
-    sent = tt.output(billing.TOOL, billing.arguments(3), billing.output(3))
-    body, line = sent.rsplit("\n[trimmed] ", 1)
-    assert json.loads(body) == expected_trimmed()
-    assert line.split("hidden: ")[1] == ", ".join(["data[].footer", *(f"data[].{r}" for r in billing.REMARKS)])
+    groups = ", ".join(["data[].footer", *(f"data[].{r}" for r in billing.REMARKS)])
+    for preview, tail in ((None, f"{TEXT_LABEL}data[].footer "), (0, "")):     # 1.5 default, then the line of 1.4
+        tt = AutoTrim(workdir_035, min_runs=3, **({} if preview is None else {"text_preview": preview}))
+        assert tt.trimming and tt.learner.state["complete_runs"] == 3
+        sent = tt.output(billing.TOOL, billing.arguments(3), billing.output(3))
+        body, line = sent.rsplit("\n[trimmed] ", 1)
+        assert json.loads(body) == expected_trimmed()
+        assert line.split("hidden: ")[1].startswith(groups + tail) and (preview is None or line.endswith(groups))
 
 
 def test_035_traces_are_learned_from_again_with_the_same_result(workdir_035):

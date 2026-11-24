@@ -47,7 +47,7 @@ from .skill import VERSION as SKILL_VERSION
 from .contract import ToolCall, ToolResult
 from .contract import FILTERED
 from .engine import EXPAND, MARK, MAX_GROUPS, MAX_ORIGINALS, TEXT_LABEL, Engine, Trimmer, expand_tool, requested_fields  # noqa: F401  (Trimmer & co. lived here until 0.3.5)
-from .runtime import Policy
+from .runtime import TEXT_PREVIEW, Policy
 
 MAX_SSE_EVENT = 16 * 1024 * 1024
 SKILL_TTL_MS = 300_000       # how long a host may reuse the skill entry: it changes only when the proxy restarts
@@ -168,7 +168,7 @@ class Options:
     protect_ids: str = "all"         # --auto: which identifying fields learning keeps (tracetrim.projection.PROTECT_IDS)
     learning: str = "1.1"            # --auto: the learning rules (tracetrim.usage.LEARNING); "1.0" restores those of 1.0
     keep_positions: bool | None = None  # a list element left with no field keeps its place; None: as the config says (on)
-    text_preview: int | None = None      # characters of hidden free text shown on the [trimmed] line; None: as the config says (0, off)
+    text_preview: int | None = None      # characters of hidden free text shown on the [trimmed] line; None: as the config says (40 when it says nothing), 0: off
 
     isolate_sessions: bool = False    # HTTP automatic mode only
     # --auto: reply to tracetrim_done once the run is on disk, and relearn in the background (1.4, off by default:
@@ -470,7 +470,7 @@ def _server(o: Options):
     engine = Engine(learner, Policy.load(o.config) if o.config else None, o.structural, shared=o.shared,
                     compact=o.compact, breakdown=o.breakdown, keep_positions=o.keep_positions,
                     # In automatic mode the learned config never carries the key: the option, or off.
-                    text_preview=(o.text_preview or 0) if learner else o.text_preview)
+                    text_preview=(TEXT_PREVIEW if o.text_preview is None else o.text_preview) if learner else o.text_preview)
     offers_expand = engine.policy is not None or learner is not None
     rec = Path(o.record).open("a", encoding="utf-8") if o.record else None
     live = Live(o.quiet)

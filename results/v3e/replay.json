@@ -1,0 +1,22 @@
+{
+  "protocol": "protocol-v3e.md",
+  "arms": {
+    "P2": {
+      "results": 691,
+      "identical": 691,
+      "with_previews": 0
+    },
+    "P2T": {
+      "results": 646,
+      "identical": 646,
+      "with_previews": 120
+    }
+  },
+  "different_examples": [],
+  "share_of_saving_used_by_previews": {
+    "results": 120,
+    "median": 0.304,
+    "max": 0.548
+  },
+  "text_share_bound": 0.75
+}

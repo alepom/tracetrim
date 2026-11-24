@@ -13,8 +13,8 @@ tracetrim sits between an agent and its tools, so its most important interface i
 - The tools tracetrim adds: `expand` (arguments `call_id`, `fields`) and `tracetrim_done` (argument
   `answer`), with their names and required arguments. The reply to `tracetrim_done` is `Recorded.`
 - The line after a trimmed result: it starts with `[trimmed] call_id=` and lists what was removed after
-  ` hidden: `. Since 1.5, with text previews on (off by default), the list is followed by ` · text, first characters: `
-  and the previews, on the same line.
+  ` hidden: `. Since 1.5 the list is followed, on the same line, by ` · text, first characters: ` and the text
+  previews (on by default; `text_preview=0` turns them off).
 - The skill's address, `skill://tracetrim/SKILL.md`. Its text may be improved within 1.x; every change
   to the text gets a new skill version (`tracetrim.skill.VERSION`), so a host never sees two texts under
   one version.
@@ -47,7 +47,7 @@ hold arguments, results, headers, tokens or the values of what a client declares
   - the keyword arguments `structural`, `strategy`, `adaptive`, `compact`, `breakdown`, and, since 1.1,
     `protect_ids` (`"all"`, the default, or `"record"`) and `learning` (`"1.1"`, the default, or `"1.0"`, the
     rules of 1.0: see the CHANGELOG's *Changed behaviour* for 1.1), and, since 1.5, `text_preview` (characters
-    of hidden free text shown on the `[trimmed]` line; 0, the default, is off);
+    of hidden free text shown on the `[trimmed]` line; 40 by default, 0 is off);
   - `output`, `expand`, `done`, `offered`, `instructions`, `report`, `expand_tool`, `trimming`.
 
   Pass every argument after `min_runs` by keyword.

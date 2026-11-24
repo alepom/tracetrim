@@ -58,7 +58,7 @@ from . import definitions, evidence, grounding, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine, expand_tool, requested_fields  # noqa: F401  (EXPAND: imported from here before 1.4)
 from .evidence import Adaptive
-from .runtime import Policy
+from .runtime import TEXT_PREVIEW, Policy
 from .traces import load as load_trace
 
 DONE = {
@@ -1259,7 +1259,7 @@ class AutoTrim:
     def __init__(self, workdir: str | Path, min_runs: int = 5, structural: str | None = None,
                  strategy: bool = False, adaptive: Adaptive | None = None, compact: bool = True,
                  breakdown: bool = True, protect_ids: str = "all", learning: str = "1.1",
-                 keep_positions: bool = True, skill_version: str | None = None, text_preview: int = 0):
+                 keep_positions: bool = True, skill_version: str | None = None, text_preview: int = TEXT_PREVIEW):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
                                      compact=compact, keep_positions=keep_positions), structural=structural,
                              compact=compact, breakdown=breakdown, keep_positions=keep_positions,
