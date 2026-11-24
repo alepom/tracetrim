@@ -460,8 +460,14 @@ class Engine:
             policy.keep_positions = self.keep_positions
         if policy is not None and self.text_preview is not None:
             policy.text_preview = self.text_preview
-        if policy is not None and self.keep_fields:
+        if policy is not None and self.learner is not None:
+            policy.keep_only(self.keep_fields)       # automatic mode: the option decides, as for text_preview
+        elif policy is not None and self.keep_fields:
             policy.keep(self.keep_fields)
+        if policy is not None and policy.keep_unmatched and policy.tools:
+            import warnings
+            for message in policy.keep_unmatched:     # once per message (the default filter of warnings)
+                warnings.warn(message, stacklevel=2)
         return policy
 
     @property

@@ -11,6 +11,7 @@ proxy or an SDK adapter: here they are only read and exposed.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import replace
 from pathlib import Path
 
@@ -38,7 +39,28 @@ def check_keep_fields(value) -> dict[str, list[str]]:
             not isinstance(tool, str) or not tool or not isinstance(fields, (list, tuple))
             or not all(isinstance(f, str) and f for f in fields) for tool, fields in value.items()):
         raise ValueError(f"keep_fields is {{tool: [field, ...]}} with non-empty names, not {value!r}")
-    return {tool: list(dict.fromkeys(fields)) for tool, fields in value.items()}
+    # A field written with an index (data[0].memo) means the same field in every element, as in `expand`.
+    return {tool: list(dict.fromkeys(re.sub(r"\[\d+\]", "[]", f) for f in fields)) for tool, fields in value.items()}
+
+
+def kept_by_hand(projection: Projection, fields: dict[str, list[str]]) -> tuple[dict[str, set[str]], list[str]]:
+    """The paths of `projection` that the fields kept by hand cover, per tool trimmed (the field itself, with `[]`
+    for a list of values, and every field under it that learning saw), and what matches nothing, as messages."""
+    covered: dict[str, set[str]] = {}
+    unmatched = []
+    for tool, wanted in fields.items():
+        if tool not in projection.keep:
+            trimmed = ", ".join(sorted(projection.keep)) or "none yet"
+            unmatched.append(f"keep_fields: {tool!r} is not a tool this policy trims (it trims: {trimmed})")
+            continue
+        seen = projection.seen.get(tool, set())
+        paths = covered.setdefault(tool, set())
+        for f in wanted:
+            under = {s for s in seen if s == f or s.startswith(f + ".") or s.startswith(f + "[")}
+            if not under and projection.unseen == "keep":
+                unmatched.append(f"keep_fields: {f!r} of {tool!r} matches no field seen while learning")
+            paths.update(under | {f, f + "[]"})
+    return covered, unmatched
 
 
 class Policy:
@@ -48,6 +70,7 @@ class Policy:
         self.learned_projection = projection
         self.projection = projection
         self.keep_fields: dict[str, list[str]] = {}
+        self.keep_unmatched: list[str] = []      # entries of keep_fields that match nothing here, as messages
         self.keep(check_keep_fields(config.get("keep_fields")))
         self.tools = config.get("tools", {})
         self.unescape = bool(config.get("unescape", True))
@@ -83,27 +106,29 @@ class Policy:
         proj = config.get("projection")
         return cls(config, Projection.load(path.parent / proj) if proj else None)
 
+    def keep_only(self, fields: dict[str, list[str]]) -> None:
+        """Exactly these fields kept by hand, whatever the config said: automatic mode, where the option decides (the
+        learned config records the option of the run that wrote it, for `proxy --config` and `tracetrim apply`)."""
+        self.keep_fields = {}
+        self.keep(fields)
+
     def keep(self, fields: dict[str, list[str]]) -> None:
         """Fields never hidden, whatever learning found (1.5, `--keep-field`): for a person who knows that a field
         matters to the process even when the agent rarely uses it, an invoice memo for instance. A field is written
         as on the `[trimmed]` line (`data[].memo`); a group (`data[].metadata`) keeps every field under it that
         learning saw. Added to what the projection keeps, never removed from it; the learned projection, and its
-        files, stay as they are, so dropping the option restores what was learned."""
+        file, stay as they are. A tool this policy does not trim, or a field that matches nothing seen, is listed in
+        `keep_unmatched` (the engine warns): a tool name that differs from the one the proxy uses (`billing__t`)
+        would otherwise be ignored in silence."""
         for tool, wanted in fields.items():
             have = self.keep_fields.setdefault(tool, [])
             have.extend(f for f in wanted if f not in have)
         p = self.learned_projection
         if p is None or not self.keep_fields:
-            self.projection = p
+            self.projection, self.keep_unmatched = p, []
             return
-        keep = {tool: set(paths) for tool, paths in p.keep.items()}
-        for tool, wanted in self.keep_fields.items():
-            if tool not in keep:
-                continue                         # a tool the projection leaves whole
-            seen = p.seen.get(tool, set())
-            for f in wanted:
-                keep[tool].add(f)
-                keep[tool].update(s for s in seen if s.startswith(f + ".") or s.startswith(f + "["))
+        covered, self.keep_unmatched = kept_by_hand(p, self.keep_fields)
+        keep = {tool: set(paths) | covered.get(tool, set()) for tool, paths in p.keep.items()}
         self.projection = replace(p, keep=keep)
 
     def expand_enabled(self, tool: str) -> bool:

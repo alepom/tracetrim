@@ -42,11 +42,16 @@ with the paper, version 4: DOI {SOFTWARE_DOI}.
 
 - **Fields kept by hand, off unless asked for.** `proxy --keep-field TOOL FIELD` (repeatable),
   `AutoTrim(keep_fields={TOOL: [FIELD, ...]})` (and so `TraceTrim`), or `"keep_fields"` in a config: those fields
-  are never hidden, whatever learning finds. A field is written as on the `[trimmed]` line (`data[].memo`); a group
-  (`data[].metadata`) keeps every field under it that learning saw. For a field that matters to the process even
-  when the agent rarely uses it, such as an invoice memo: in Study 4 an agent that did not see such a field
-  sometimes said it was not there. Learning goes on as before and its files are not changed, so dropping the
-  option restores what was learned.
+  are never hidden, whatever learning finds. For a field that matters to the process even when the agent rarely uses
+  it, such as an invoice memo: in Study 4 an agent that did not see such a field sometimes said it was not there.
+  - TOOL as the report names it (with several servers, `server__tool`); FIELD as `expand` takes it, the full path
+    (`data[].memo`, an index meaning every element), or a group (`data[].metadata`) for every field under it that
+    learning saw. An entry that matches nothing is named in a warning, instead of being ignored.
+  - Learning goes on as before and the projection file stays as learned; requests for a field kept by hand stop
+    counting against its tool, as for a promoted field. The learned config records the fields, so `proxy --config`
+    and `tracetrim apply` serve the same (a version before 1.5 ignores the key). In automatic mode the option
+    decides: without it, what learning keeps is served again (by then perhaps the field too, if the agent used it
+    while it was visible).
 
 ### Changed behaviour
 

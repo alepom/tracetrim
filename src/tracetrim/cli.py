@@ -205,6 +205,12 @@ def cmd_proxy(a):
         raise SystemExit("--protect-ids sets what learning keeps: it works in automatic mode only; add --auto WORKDIR")
     if a.text_preview is not None and a.text_preview < 0:
         raise SystemExit("--text-preview is a number of characters: 0 (off) or more")
+    if a.config:
+        from .runtime import Policy
+        try:
+            Policy.load(a.config)                 # a value the policy refuses ends here, not in a traceback
+        except ValueError as e:
+            raise SystemExit(f"tracetrim proxy: {a.config}: {e}") from None
     if a.keep_field and not (a.auto or a.config):
         raise SystemExit("--keep-field says what trimming must never hide: it needs --auto WORKDIR or --config")
     if a.text_preview and not (a.auto or a.config):
@@ -548,9 +554,10 @@ def main(argv=None):
                         "40 by default since 1.5, 0 turns them off (the line of 1.4); with --config, as the config's "
                         "\"text_preview\" says, 40 when it says nothing")
     s.add_argument("--keep-field", nargs=2, action="append", default=[], metavar=("TOOL", "FIELD"),
-                   help="never hide FIELD of TOOL, whatever learning finds (repeatable): a field as the [trimmed] "
-                        "line writes it (data[].memo), or a group (data[].metadata) for every field under it; "
-                        "with --config, added to the config's \"keep_fields\"")
+                   help="never hide FIELD of TOOL, whatever learning finds (repeatable). TOOL as the report names it "
+                        "(with several servers, server__tool); FIELD as expand takes it, the full path (data[].memo), "
+                        "or a group (data[].metadata) for every field under it. A warning names an entry that matches "
+                        "nothing. With --config, added to the config's \"keep_fields\"")
     s.add_argument("--no-breakdown", action="store_true",
                    help="do not count, call by call, what re-serialising saves apart from what removing fields "
                         "saves (the log's 'format' and 'fields', the report's section on where the saving comes from)")

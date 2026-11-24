@@ -58,7 +58,7 @@ from . import definitions, evidence, grounding, store, turns
 from .contract import FULL, FULL_CHEAPER, KINDS, Observation, ToolCall, ToolResult
 from .engine import EXPAND, Engine, expand_tool, requested_fields  # noqa: F401  (EXPAND: imported from here before 1.4)
 from .evidence import Adaptive
-from .runtime import TEXT_PREVIEW, Policy
+from .runtime import TEXT_PREVIEW, Policy, check_keep_fields, kept_by_hand
 from .traces import load as load_trace
 
 DONE = {
@@ -175,7 +175,7 @@ class Learner:
     def __init__(self, workdir: str | Path, min_runs: int = 5, idle_seconds: float | None = None,
                  adaptive: Adaptive | None = None, protect_ids: str = "all", learning: str = "1.1",
                  compact: bool = True, keep_positions: bool = True, durable_closes: bool = True,
-                 relearn_at_start: bool = True):
+                 relearn_at_start: bool = True, keep_fields: dict[str, list[str]] | None = None):
         """`idle_seconds`: the pause after which the integration closes a run
         by itself (the proxy does; a function-calling loop closes its own
         runs, and passes None). Only used to count runs that an answer closed
@@ -186,6 +186,8 @@ class Learner:
         `learning`: the rules of usage detection and of the report's measure, "1.1" (the default) or "1.0"
         (tracetrim.usage.LEARNING). `compact`, `keep_positions`: whether run time writes compact JSON and keeps the
         places of list elements left with no field; the measure follows them, and the config records them.
+        `keep_fields`: the fields kept by hand (1.5, `runtime.Policy.keep`): the config records them, and expand
+        requests for them stop counting against their tool, as for a promoted field.
         `durable_closes`: a closing is written through a journal, all its files or none (1.4: in every mode; until
         1.3 only with the proxy's isolated sessions); False restores the writes of 1.3, file after file.
         `relearn_at_start`: a run left out of the report by a stopped process is relearned in the constructor; False
@@ -196,6 +198,7 @@ class Learner:
         self._flags = learning_flags(learning)
         self.compact = compact
         self.keep_positions = keep_positions
+        self.keep_fields = check_keep_fields(keep_fields)
         self.protect_ids = protect_mode(protect_ids)
         if self.protect_ids == "none":
             raise ValueError('protect_ids: "all" or "record" in automatic mode')
@@ -935,6 +938,8 @@ class Learner:
         config["compact"] = self.compact
         if not self.keep_positions:
             config["keep_positions"] = False
+        if self.keep_fields:
+            config["keep_fields"] = self.keep_fields      # 1.5: kept by hand; the projection file stays as learned
         d["lists"] = lists.summarise([lists.element_usage(t, **self._flags) for t in traces])
         d["arguments"] = arguments.cardinality(traces)
         ready = len(complete) >= self.min_runs
@@ -956,6 +961,9 @@ class Learner:
         # A field the operator reverted stays removed: its requests are not settled.
         reverted_now = evidence.promoted(data, "reverted")
         kept = {t: k - reverted_now.get(t, set()) for t, k in projection.keep.items()}
+        # A field kept by hand (1.5) settles its requests too: the operator has answered them.
+        for t, paths in kept_by_hand(projection, self.keep_fields)[0].items():
+            kept[t] = kept.get(t, set()) | paths
         resumed = evidence.resume(data, kept, last) if ready else []
         restarted = sorted({p["tool"] for p in new + resumed})
         for tool in restarted:
@@ -1262,7 +1270,8 @@ class AutoTrim:
                  keep_positions: bool = True, skill_version: str | None = None, text_preview: int = TEXT_PREVIEW,
                  keep_fields: dict[str, list[str]] | None = None):
         self.engine = Engine(Learner(workdir, min_runs, adaptive=adaptive, protect_ids=protect_ids, learning=learning,
-                                     compact=compact, keep_positions=keep_positions), structural=structural,
+                                     compact=compact, keep_positions=keep_positions, keep_fields=keep_fields),
+                             structural=structural,
                              compact=compact, breakdown=breakdown, keep_positions=keep_positions,
                              text_preview=text_preview, keep_fields=keep_fields)
         self.strategy = strategy

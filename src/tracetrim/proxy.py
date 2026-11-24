@@ -460,7 +460,7 @@ def _server(o: Options):
                         sample_max_share=o.sample_max_share, sample_seed=o.sample_seed)
     learner = (Learner(o.auto_dir, o.min_runs, idle_seconds=o.idle_seconds, adaptive=adaptive,
                        protect_ids=o.protect_ids, learning=o.learning, compact=o.compact is not False,
-                       keep_positions=o.keep_positions is not False,
+                       keep_positions=o.keep_positions is not False, keep_fields=o.keep_fields,
                        # With the option, a run left out of the report is relearned by the coordinator, in a thread.
                        relearn_at_start=not o.background_relearn)
                if o.auto_dir else None)

@@ -96,3 +96,66 @@ def test_the_proxy_option(monkeypatch):
     cli.main(["proxy", "--upstream-cmd", "python -m nothing", "--auto", "w", "--keep-field", "t", "data[].memo",
               "--keep-field", "t", "data[].meta", "--keep-field", "u", "x"])
     assert got["o"].keep_fields == {"t": ["data[].memo", "data[].meta"], "u": ["x"]}
+
+
+# After the independent review of keep_fields (REVISIONE-15, regia).
+
+def test_an_index_means_the_field_in_every_element():
+    p = policy({"t": ["data[0].memo"]})
+    assert p.keep_fields == {"t": ["data[].memo"]} and "data[].memo" not in hidden(Trimmer(p).observe("t", output()).text)
+
+
+def test_an_entry_that_matches_nothing_is_named():
+    p = policy({"billing__t": ["data[].memo"], "t": ["data[].memos"]})
+    assert any("'billing__t' is not a tool this policy trims (it trims: t)" in m for m in p.keep_unmatched)
+    assert any("'data[].memos' of 't' matches no field" in m for m in p.keep_unmatched)
+    with pytest.warns(UserWarning, match="billing__t"):
+        Engine(policy=policy({"billing__t": ["data[].memo"]}), breakdown=False)
+
+
+def test_a_list_of_values_is_kept_even_when_unseen_fields_are_dropped():
+    config = {"format": "tracetrim/config@1", "tools": {"t": {"trim": "auto", "expand": True}},
+              "keep_fields": {"t": ["data[].tags"]}}
+    p = Policy(config, Projection("prudent", "full", {"t": {"data[].id"}}, {"t": {"data[].id"}}, "drop"))
+    out = json.dumps({"data": [{"id": i, "tags": ["a b c", "d e f"], "x": "valore non visto " * 20} for i in range(3)]})
+    assert json.loads(Trimmer(p).observe("t", out).text.split(MARK)[0])["data"][0] == {"id": 0, "tags": ["a b c", "d e f"]}
+
+
+def _learn_then_expand(work):
+    import re
+    tt = AutoTrim(work, min_runs=2)
+    for i in range(2):
+        tt.output("t", {"q": i}, output())
+        tt.done(f"Fatture in_0, in_1 e in_2, run {i}")
+    for j in range(2):                                  # the agent asks for the memo back: why the option is added
+        sent = tt.output("t", {"q": 5 + j}, output())
+        tt.expand({"call_id": re.search(r"call_id=(c[0-9a-f]+)", sent).group(1), "fields": ["data[].memo"]})
+        tt.done(f"Fatture in_0, in_1 e in_2, run x{j}")
+
+
+@pytest.mark.parametrize("kept", [False, True])
+def test_requests_for_a_field_kept_by_hand_stop_counting_against_its_tool(tmp_path, kept):
+    _learn_then_expand(tmp_path)
+    tt = AutoTrim(tmp_path, min_runs=2, keep_fields={"t": ["data[].memo"]} if kept else None)
+    for i in range(2):
+        tt.output("t", {"q": 10 + i}, output())
+        tt.done(f"Fatture in_0, in_1 e in_2, run y{i}")
+    assert ("t" in tt.learner.state["off"]) is not kept     # without the option the tool is switched off, as in 1.4
+
+
+def test_the_learned_config_records_the_fields_for_proxy_config_and_apply(tmp_path):
+    tt = AutoTrim(tmp_path, min_runs=2, keep_fields={"t": ["data[].memo"]})
+    for i in range(2):
+        tt.output("t", {"q": i}, output())
+        tt.done(f"Fatture in_0, in_1 e in_2, run {i}")
+    config = json.loads((tmp_path / "report.config.json").read_text())
+    assert config["keep_fields"] == {"t": ["data[].memo"]}
+    assert MEMO in Policy.load(tmp_path / "report.config.json").apply("t", output())
+
+
+def test_a_config_the_policy_refuses_stops_the_proxy_with_a_message(tmp_path):
+    from tracetrim import cli
+    bad = tmp_path / "c.json"
+    bad.write_text(json.dumps({"format": "tracetrim/config@1", "tools": {}, "keep_fields": ["data[].memo"]}))
+    with pytest.raises(SystemExit, match="keep_fields is"):
+        cli.main(["proxy", "--upstream-cmd", "python -m nothing", "--config", str(bad)])
