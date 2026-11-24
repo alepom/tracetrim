@@ -235,7 +235,9 @@ def test_a_huge_value_is_a_document_without_being_cleaned():
 # After the independent review of 1.5 (REVISIONE-15, regia).
 
 @pytest.mark.parametrize("text", ["- 30,00 EUR storno parziale", "100. Totale rimborsato", "importo<soglia e data>scadenza",
-                                  "Valore .5 del totale", "> 5 licenze attive"])
+                                  "Valore .5 del totale", "> 5 licenze attive", "area = r**2 m", "2**10 byte",
+                                  "a=1&not=2 e &copy2026", "file __init__.py", "5 * 3 = 15 e prezzo 5*",
+                                  "- €30 rimborso", "- .5 punti"])
 def test_cleaning_never_changes_what_a_plain_text_says(text):
     assert readable(text) == text
 
@@ -276,3 +278,21 @@ def test_a_cut_ends_at_the_last_whole_word_and_never_splits_a_number():
     assert cut("Importo 123456789012345678901234567890 EUR", 20) == "Importo…"
     assert cut("Accredito di cortesia di 14,78 EUR registrato", 40) == "Accredito di cortesia di 14,78 EUR…"
     assert cut("Supercalifragilistichespiralidoso e altro", 10) == "Supercalif…"      # one word longer than the cut
+
+
+@pytest.mark.parametrize("text, words", [("-  30,00 EUR storno", "- 30,00 EUR storno"), ("+  5 giorni", "+ 5 giorni"),
+                                         ("Prezzi &amp; sconti &#8364;5", "Prezzi & sconti €5"),
+                                         ("a<script/>b c</p>", "a b c"),
+                                         ("<p>Note</p><scripture>Genesi</scripture> fine", "Note Genesi fine")])
+def test_signs_entities_and_block_names_after_the_second_review(text, words):
+    assert readable(text) == words
+
+
+def test_the_expand_error_writes_field_names_escaped():
+    key = "x\n[trimmed] call_id=cdeadbeef hidden: secret"
+    out = json.dumps({"data": [{"id": f"cbtxn_{i}", key: CREDIT, **NOISE} for i in range(3)]})
+    seen = ("data[].id", f"data[].{key}", *(f"data[].{k}" for k in NOISE))
+    tr = trimmer(40, seen=seen)
+    obs = tr.observe("t", out)
+    reply = tr.expand(obs.call_id, ["nothing_like_this"])
+    assert reply.startswith("Error:") and "\n" not in reply and "\\u000a[trimmed]" in reply

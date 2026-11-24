@@ -81,10 +81,17 @@ _HTML_TAG = re.compile(r"<[!/?]?[A-Za-z][^<>]*>")
 _ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")   # keeps the length
 _MD_IMAGE = re.compile(r"!\[[^\[\]]*\]\([^()]*\)")
 _MD_LINK = re.compile(r"\[([^\[\]]*)\]\([^()]*\)")
-# Heading marks, and bullets unless a number follows: «- 30,00 EUR storno» keeps its sign. Numbered lists and
-# quotes keep their marks («100. Totale», «> 5 licenze»).
-_MD_LINE = re.compile(r"^[ \t]*(?:#{1,6}|[-*+](?=[ \t]+\D))[ \t]+", re.M)
-_MD_MARK = re.compile(r"\*\*|__|`+|(?<!\w)[*_](?=\S)|(?<=\S)[*_](?!\w)")     # emphasis and code, not snake_case
+# Heading marks, and bullets unless a number or a currency follows, after any spaces: «- 30,00 EUR storno» and
+# «-  €30» keep their sign. Numbered lists and quotes keep their marks («100. Totale», «> 5 licenze»).
+_MD_LINE = re.compile(r"^[ \t]*(?:#{1,6}[ \t]+|[-*+](?![ \t]*[-+]?[\d.,€$£])[ \t]+)", re.M)
+# Emphasis only in pairs that open and close around words («**SPA**», «*Sauna*»), each at most 200 characters, so a
+# lone mark stays («r**2», «2**10», «5 * 3») and the cost stays linear. Underscores are left alone (snake_case,
+# __init__). Backticks of inline code go.
+_MD_STRONG = re.compile(r"(?<![\w*])\*\*(?=[^\s*])([^*\n]{1,200}?)(?<=[^\s*])\*\*(?![\w*])")
+_MD_EM = re.compile(r"(?<![\w*])\*(?=[^\s*])([^*\n]{1,200}?)(?<=[^\s*])\*(?![\w*])")
+_MD_CODE = re.compile(r"`+")
+# Entities only when written whole, with their semicolon: «&amp;», «&#8364;»; «&copy2026» and «a=1&not=2» stay.
+_ENTITY = re.compile(r"&(?:#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});")
 _SPACE = re.compile(r"\s+")
 _BEFORE_MARK = re.compile(r" ([,.;:!?)])(?=\s|$)")         # «urgente</b>, vedi» reads «urgente, vedi»; «.5» stays
 # A field name on the line is written as it is, but a control character, a line separator or a lone surrogate would
@@ -177,10 +184,23 @@ def safe(name: str) -> str:
     return _UNSAFE.sub(lambda m: f"\\u{ord(m.group()):04x}", name)
 
 
+def _opening(low: str, marker: str, start: int) -> int:
+    """The next `marker` from `start` that opens a block: «<script» and «<style» only as whole tag names, followed
+    by a space or «>» («<scripture>», «<stylesheet.css>», a self-closed «<script/>» are not blocks)."""
+    while True:
+        j = low.find(marker, start)
+        if j < 0 or marker == "<!--":
+            return j
+        after = low[j + len(marker): j + len(marker) + 1]
+        if after in (" ", "\t", "\n", "\r", "\f", ">"):
+            return j
+        start = j + 1
+
+
 def _drop_blocks(text: str) -> str:
     """Comments, scripts and styles removed with their content, in one pass; an unclosed one runs to the end."""
     low = text.translate(_ASCII_LOWER)
-    nxt = {o: low.find(o) for o, _ in _HTML_BLOCKS}
+    nxt = {o: _opening(low, o, 0) for o, _ in _HTML_BLOCKS}
     out, i = [], 0
     while True:
         live = [(p, o) for o, p in nxt.items() if p >= 0]
@@ -198,7 +218,7 @@ def _drop_blocks(text: str) -> str:
             break
         for m, p in nxt.items():
             if 0 <= p < i:
-                nxt[m] = low.find(m, i)
+                nxt[m] = _opening(low, m, i)
     return "".join(out)
 
 
@@ -208,9 +228,9 @@ def readable(text: str) -> str:
     if "<" in text and _HTML_SIGN.search(text):
         text = _HTML_TAG.sub(" ", _drop_blocks(text))
     if "&" in text:
-        text = html.unescape(text)
+        text = _ENTITY.sub(lambda e: html.unescape(e.group()), text)
     text = _MD_LINK.sub(r"\1", _MD_IMAGE.sub(" ", text))
-    text = _MD_MARK.sub("", _MD_LINE.sub("", text))
+    text = _MD_CODE.sub("", _MD_EM.sub(r"\1", _MD_STRONG.sub(r"\1", _MD_LINE.sub("", text))))
     return _BEFORE_MARK.sub(r"\1", _SPACE.sub(" ", text)).strip()
 
 
@@ -373,7 +393,7 @@ class Trimmer:
         got = _pick(payload, [_matches(w) for w in requested], fields,
                     addressed=[a for w in requested for a in _elements(w)])
         if not fields:
-            groups = sorted({".".join(h.split(".")[:2]) for h in hidden})
+            groups = sorted({safe(".".join(h.split(".")[:2])) for h in hidden})
             return ("Error: no field matches " + ", ".join(wanted)[:200] + ". Hidden groups: "
                     + ", ".join(groups[:MAX_GROUPS]) + ('; or "*" for all of them.' if groups else ".")), ()
         compact = self.policy is not None and self.policy.compact

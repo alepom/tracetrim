@@ -152,12 +152,16 @@ class TraceTrim:
             return "stale"
         if t.closing:
             return "wait"
-        if (self.idle_seconds is not None and t.active == 0 and (t.run.events or t.run.notes)
-                and time.monotonic() - t.activity > self.idle_seconds):
+        if t.active == 0 and self._idle(t):
             t.closing = True
             return "idle"
         t.active += 1
         return "in"
+
+    def _idle(self, t: _Thread) -> bool:
+        """Under `_cond`: is the open run past the pause? Then it is closed for telemetry before anything else."""
+        return (self.idle_seconds is not None and bool(t.run.events or t.run.notes)
+                and time.monotonic() - t.activity > self.idle_seconds)
 
     def _try_close(self, t: _Thread) -> bool:
         """Under `_cond`: start a closing once the conversation's calls running have finished."""
@@ -182,10 +186,13 @@ class TraceTrim:
             t.closing = False
             self._cond.notify_all()
 
-    def _close_work(self, t: _Thread, kind: str, answer: str | None = None) -> None:
+    def _close_work(self, t: _Thread, kind: str, answer: str | None = None, relearn: bool = True) -> bool:
         """The closing itself, once started: the run recorded under the engine lock, then the relearning outside it
         (other conversations go on being trimmed meanwhile), then the new policy installed under the lock. One
-        relearning at a time. `kind`: "answer", "telemetry" (no answer) or "idle" (the pause; never raises)."""
+        relearning at a time. `kind`: "answer", "telemetry" (no answer) or "idle" (the pause; never raises: if the
+        run cannot be recorded, its calls go on in it and the pause starts again, as in the proxy). `relearn=False`
+        leaves the relearning to the caller (the sweep: one for all the runs it closes). True if the run was
+        recorded."""
         closed, before = t.run, t.run.last_number
         try:
             with self._engine, self.auto.learner.use_run(closed):
@@ -202,7 +209,7 @@ class TraceTrim:
                         _warn(f"idle run kept without part of its evidence ({type(kept).__name__})")
                 else:
                     self.auto.learner.flush(relearn=False)
-            if closed.last_number != before or self.auto.learner.relearn_owed:
+            if relearn and (closed.last_number != before or self.auto.learner.relearn_owed):
                 try:
                     with self._learning:             # learning and installing together: no older policy over a newer
                         policy = self.auto.engine.learn_policy()
@@ -213,9 +220,15 @@ class TraceTrim:
         except Exception as e:                    # noqa: BLE001
             if kind != "idle":
                 raise
-            _warn(f"closing an idle run failed ({type(e).__name__}); the call goes on")
+            if closed.last_number == before:      # not recorded: without this the next call would try again at once
+                with self._cond:
+                    t.activity = time.monotonic()
+                _warn(f"closing an idle run failed ({type(e).__name__}); its calls go on in the open run")
+            else:
+                _warn(f"an idle run was kept, but learning from it failed ({type(e).__name__})")
         finally:
             self._end_close(t, closed, before)
+        return closed.last_number != before
 
     def _enter(self, key: Any, state: Any, call_id: str) -> tuple[_Thread, Run, int]:
         """Sync: a call of a user's tool starts, after any closing of its conversation."""
@@ -270,28 +283,57 @@ class TraceTrim:
                 else:
                     del self._threads[k]
         if stale:
-            threading.Thread(target=self._close_idle, args=(stale,), name="tracetrim-idle", daemon=True).start()
+            try:
+                threading.Thread(target=self._close_idle, args=(stale,), name="tracetrim-idle", daemon=True).start()
+            except RuntimeError as e:                # no new thread (the interpreter is shutting down): undo
+                with self._cond:
+                    for _, t in stale:
+                        t.closing = False
+                    self._cond.notify_all()
+                _warn(f"idle conversations not closed ({e}); they will be at their next call or at flush")
 
     def _close_idle(self, stale: list[tuple[Any, _Thread]]) -> None:
+        """The runs first, each released as soon as it is kept, then one relearning for all of them, as `flush`
+        does: a conversation that resumes waits for its own closing, not for the relearnings of the others."""
+        recorded = False
         for k, t in stale:
-            self._close_work(t, "idle")              # never raises, and ends the closing
+            recorded |= self._close_work(t, "idle", relearn=False)      # never raises, and ends the closing
             with self._cond:
                 if (self._threads.get(k) is t and not t.active and not t.closing
                         and not (t.run.events or t.run.notes)):
                     del self._threads[k]
+        if recorded or self.auto.learner.relearn_owed:
+            try:
+                with self._learning:
+                    policy = self.auto.engine.learn_policy()
+                    with self._engine:
+                        self.auto.engine.install(policy)
+            except Exception as e:                    # noqa: BLE001
+                _warn(f"learning after closing idle runs failed ({type(e).__name__}); the next closing tries again")
 
     def _closing(self, t: _Thread, kind: str, answer: str | None = None) -> None:
-        """Sync: wait for the calls running, then close."""
-        with self._cond:
-            self._cond.wait_for(lambda: self._try_close(t))
+        """Sync: wait for the calls running, then close. A run past the pause is closed for telemetry first, as a
+        call would find it, whether or not the sweep got there before: an answer after the pause records nothing."""
+        while True:
+            with self._cond:
+                self._cond.wait_for(lambda: self._try_close(t))
+                idle = self._idle(t)
+            if not idle:
+                break
+            self._close_work(t, "idle")
         self._close_work(t, kind, answer)
 
     async def _aclosing(self, t: _Thread, kind: str, answer: str | None = None) -> None:
         while True:
             with self._cond:
-                if self._try_close(t):
-                    break
-            await asyncio.sleep(_POLL)
+                started = self._try_close(t)
+                idle = started and self._idle(t)
+            if started and not idle:
+                break
+            if idle:
+                await _shielded(asyncio.to_thread(self._close_work, t, "idle"))
+            else:
+                await asyncio.sleep(_POLL)
         await _shielded(asyncio.to_thread(self._close_work, t, kind, answer))
 
     # -- the wrapper --------------------------------------------------------------------------------------------

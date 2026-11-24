@@ -366,6 +366,98 @@ def test_an_expand_is_activity(tmp_path):
     assert got == {"run-0001.jsonl": ["first", "second"]}
 
 
+def _in_time(fn, seconds=10):
+    import threading
+    box = {}
+    th = threading.Thread(target=lambda: box.setdefault("out", fn()), daemon=True)
+    th.start()
+    th.join(seconds)
+    assert not th.is_alive(), "the call never returned"
+    return box.get("out")
+
+
+def test_an_idle_closing_that_fails_lets_the_call_go_on_in_the_open_run(tmp_path, monkeypatch):
+    tt = TraceTrim(tmp_path, min_runs=5, idle_seconds=0.05)
+    graph = graph_with(tt)
+    step(graph, "A", [("search_volume", {"keyword": "first"})])
+    time.sleep(0.1)
+    tries = []
+
+    def full_disk():
+        tries.append(1)
+        raise OSError(28, "No space left on device")
+    monkeypatch.setattr(tt.auto.learner, "close_unattended", full_disk)
+    with _nothing():
+        _in_time(lambda: step(graph, "A", [("search_volume", {"keyword": "second"})]))
+    assert 1 <= len(tries) <= 2                  # the call, and at most the sweep: never again at once
+    monkeypatch.undo()
+    step(graph, "A", [("tracetrim_done", {"answer": "both done"})])
+    got = {name: [e.get("arguments", {}).get("keyword") for e in run if e["kind"] == "call"]
+           for name, run in traces(tmp_path).items()}
+    assert got == {"run-0001.jsonl": ["first", "second"]}
+
+
+class _nothing:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def test_the_sweep_relearns_once_for_all_the_runs_it_closes(tmp_path, monkeypatch):
+    tt = TraceTrim(tmp_path, min_runs=2, idle_seconds=0.05)
+    graph = graph_with(tt)
+    for i in range(12):
+        step(graph, f"gone-{i}", [("search_volume", {"keyword": f"task {i}"})])
+    learned = []
+    real = tt.auto.engine.learn_policy
+    monkeypatch.setattr(tt.auto.engine, "learn_policy", lambda: learned.append(1) or real())
+    time.sleep(0.1)
+    step(graph, "Z", [("search_volume", {"keyword": "still here"})])
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline and len(traces(tmp_path)) < 12:
+        time.sleep(0.02)
+    time.sleep(0.2)
+    assert len(traces(tmp_path)) == 12 and len(learned) == 1
+
+
+@pytest.mark.parametrize("traffic", [False, True])
+def test_an_answer_after_the_pause_records_nothing_whatever_the_traffic(tmp_path, traffic):
+    tt = TraceTrim(tmp_path, min_runs=5, idle_seconds=0.05)
+    graph = graph_with(tt)
+    step(graph, "A", [("search_volume", {"keyword": "old task"})])
+    time.sleep(0.1)
+    if traffic:
+        step(graph, "B", [("search_volume", {"keyword": "another conversation"})])
+        time.sleep(0.1)
+    out = step(graph, "A", [("tracetrim_done", {"answer": "late answer"})])
+    assert out[0].content == "Recorded."
+    names = sorted(traces(tmp_path))
+    assert names[0] == "run-0001-noanswer.jsonl" or "run-0001-noanswer.jsonl" in names
+    assert not any("late answer" in json.dumps(run) for run in traces(tmp_path).values())
+
+
+def test_a_sweep_that_cannot_start_a_thread_blocks_nothing(tmp_path, monkeypatch):
+    import threading
+    tt = TraceTrim(tmp_path, min_runs=5, idle_seconds=0.05)
+    graph = graph_with(tt)
+    step(graph, "A", [("search_volume", {"keyword": "first"})])
+    time.sleep(0.1)
+
+    import types
+
+    import tracetrim.langgraph as lg
+
+    class NoThread(threading.Thread):
+        def start(self):
+            raise RuntimeError("can't create new thread at interpreter shutdown")
+    monkeypatch.setattr(lg, "threading", types.SimpleNamespace(Thread=NoThread))   # only tracetrim's own thread
+    _in_time(lambda: step(graph, "Z", [("search_volume", {"keyword": "other"})]))
+    monkeypatch.undo()
+    _in_time(lambda: step(graph, "A", [("search_volume", {"keyword": "second"})]))
+
+
 def test_a_users_tool_with_tracetrims_name_is_refused(tmp_path):
     tt = TraceTrim(tmp_path)
     impostor = StructuredTool.from_function(lambda call_id, fields: "mine", name="expand", description="not ours")

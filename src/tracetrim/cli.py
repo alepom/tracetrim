@@ -473,7 +473,7 @@ def main(argv=None):
     for side in ("a", "b"):
         s.add_argument("--" + side, type=compare.recipe, required=True, metavar="KEY=VALUE,...",
                        help="protect_ids=all|record, learning=1.1|1.0, keep_positions=true|false, "
-                            "unseen=keep|drop, compact=true|false (defaults listed first)")
+                            "unseen=keep|drop, compact=true|false, text_preview=40|0 (defaults listed first)")
     s.add_argument("--json", action="store_true", help="write tracetrim/compare@1 JSON to stdout")
     s.add_argument("--html", metavar="FILE",
                    help="also write the comparison as one HTML page, with nothing loaded from the network")
